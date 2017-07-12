@@ -183,12 +183,12 @@ public class DemoMainActivity extends Activity {
         supportedRates.toArray(quotesArray);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner_view, quotesArray);
         ratesSpinner.setAdapter(adapter);
-        int currentposition = 0;
+        int currentposition = -1;
         for (String rate : quotesArray) {
+            currentposition++;
             if (rate.equals(currencyByLocale.getCurrencyCode())) {
                 break;
             }
-            currentposition++;
         }
         ratesSpinner.setSelection(currentposition);
         ratesAdapterSelectionListener();
