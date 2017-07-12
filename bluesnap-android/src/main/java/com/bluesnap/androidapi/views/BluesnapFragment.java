@@ -71,6 +71,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private ViewGroup subtotalView;
     private TextView zipTextView;
     private EditText zipEditText;
+    private boolean canOverrideButtonText;
 
 
     public BluesnapFragment() {
@@ -122,6 +123,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        canOverrideButtonText = buyNowButton.getText().toString().isEmpty();
         paymentRequest = BlueSnapService.getInstance().getPaymentRequest();
         Events.CurrencyUpdatedEvent currencyUpdatedEvent = new Events.CurrencyUpdatedEvent(paymentRequest.getAmount(), paymentRequest.getCurrencyNameCode(), paymentRequest.getTaxAmount(), paymentRequest.getSubtotalAmount());
         onCurrencyUpdated(currencyUpdatedEvent);
@@ -244,8 +246,10 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         String currencySymbol = AndroidUtil.getCurrencySymbol(currencyUpdatedEvent.newCurrencyNameCode);
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
         if (!BlueSnapService.getInstance().getPaymentRequest().isShippingRequired()) {
-            buyNowButton.setText(getResources().getString(R.string.pay)
-                    + " " + currencySymbol + " " + decimalFormat.format(currencyUpdatedEvent.updatedPrice));
+            if (canOverrideButtonText) {
+                buyNowButton.setText(getResources().getString(R.string.pay)
+                        + " " + currencySymbol + " " + decimalFormat.format(currencyUpdatedEvent.updatedPrice));
+            }
         }
         String taxValue = currencySymbol + String.valueOf(decimalFormat.format(currencyUpdatedEvent.updatedTax));
         taxValueTextView.setText(taxValue);
