@@ -53,6 +53,13 @@ public class BlueSnapService {
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
+    private TokenServiceCallback checkoutActivity;
+
+    public TokenInterface getTokenInterface() {
+        return tokenInterface;
+    }
+
+    private TokenInterface tokenInterface;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -81,11 +88,12 @@ public class BlueSnapService {
     /**
      * Setup the service to talk to the server.
      * This will reset the previous payment request
-     *
+     * @param tokenInterface A merchant function for requesting a new token if expired
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
-    public void setup(String merchantToken) {
-        bluesnapToken = new BluesnapToken(merchantToken);
+    public void setup(String merchantToken, TokenInterface tokenInterface) {
+        this.tokenInterface = tokenInterface;
+        bluesnapToken = new BluesnapToken(merchantToken, tokenInterface);
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
         setupHttpClient();
@@ -94,6 +102,24 @@ public class BlueSnapService {
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
+
+    /**
+     * Change the token after expiration occurred.
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     */
+    protected void changeExpiredToken(String merchantToken) {
+        bluesnapToken = new BluesnapToken(merchantToken, tokenInterface);
+        bluesnapToken.setToken(merchantToken);
+        clearPayPalToken();
+        Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
+        busInstance.post(new Events.TokenUpdatedEvent());
+
+    }
+
+    public void setNewToken (String newToken) {
+        changeExpiredToken(newToken);
+    }
+
 
     private void setupHttpClient() {
         httpClient.setMaxRetriesAndTimeout(2, 2000);
@@ -338,5 +364,9 @@ public class BlueSnapService {
         paymentResult.setShopperID(paymentRequest.getShopperID());
 
 
+    }
+
+    public void setCheckoutActivity(TokenServiceCallback checkoutActivity) {
+        this.checkoutActivity = checkoutActivity;
     }
 }

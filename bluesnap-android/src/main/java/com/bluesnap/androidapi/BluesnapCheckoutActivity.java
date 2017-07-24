@@ -16,11 +16,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.Card;
+import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.PrefsStorage;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.BluesnapFragment;
 import com.bluesnap.androidapi.views.CurrencyActivity;
 import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
@@ -28,6 +30,8 @@ import com.bluesnap.androidapi.views.ShippingFragment;
 import com.bluesnap.androidapi.views.WebViewActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +63,8 @@ public class BluesnapCheckoutActivity extends Activity {
     private ShippingInfo shippingInfo;
     private Card card;
     private ShippingFragment shippingFragment;
+    private Intent resultIntent;
+    private boolean rememberShopper;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,8 @@ public class BluesnapCheckoutActivity extends Activity {
         sharedCurrency = paymentRequest.getCurrencyNameCode();
         setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        // register to eventbus
+        BlueSnapService.getBus().register(this);
     }
 
     @Override
@@ -187,8 +195,22 @@ public class BluesnapCheckoutActivity extends Activity {
         }
     }
 
+    @Subscribe
+    public synchronized void onTokenUpdated(Events.TokenUpdatedEvent tokenUpdatedEvent) {
+        try {
+            tokenizeCardOnServer(resultIntent, rememberShopper);
+        } catch (UnsupportedEncodingException | JSONException e) {
+            String errorMsg = "SDK service error";
+            Log.e(TAG, errorMsg, e);
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            finish();
+        }
+    }
 
     private void tokenizeCardOnServer(final Intent resultIntent, final boolean rememberShopper) throws UnsupportedEncodingException, JSONException {
+        this.rememberShopper = rememberShopper;
+        this.resultIntent = resultIntent;
+
         blueSnapService.tokenizeCard(card, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -220,6 +242,33 @@ public class BluesnapCheckoutActivity extends Activity {
             }
 
             @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                if (statusCode == 400) {
+                    try {
+                        JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                        JSONObject rs3 = (JSONObject) rs2.get(0);
+                        if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                            blueSnapService.getTokenInterface().getNewToken(
+                                    new TokenServiceCallback() {
+                                        @Override
+                                        public void complete(String newToken) {
+                                            blueSnapService.setNewToken(newToken);
+                                        }
+                                    }
+                            );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    String errorMsg = String.format("Service Error %s, %s", statusCode);
+                    Log.e(TAG, errorMsg, throwable);
+                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+                    finish();
+                }
+            }
+
+            @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
                 Log.e(TAG, errorMsg, throwable);
@@ -229,6 +278,7 @@ public class BluesnapCheckoutActivity extends Activity {
         });
 
     }
+
 
     public Card getCard() {
         return card;

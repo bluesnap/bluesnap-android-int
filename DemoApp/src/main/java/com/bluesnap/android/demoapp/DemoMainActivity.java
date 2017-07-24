@@ -25,6 +25,8 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.TokenInterface;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -45,6 +47,7 @@ public class DemoMainActivity extends Activity {
 
     private static final String TAG = "DemoMainActivity";
     protected BlueSnapService bluesnapService;
+    protected TokenInterface tokenInterface;
     private Spinner ratesSpinner;
     private EditText productPriceEditText;
     private Currency currency;
@@ -244,11 +247,40 @@ public class DemoMainActivity extends Activity {
 
     //TODO: Find a mock merchant service t¡o provide this
     private void generateMerchantToken() {
+
+        // create the interface for activating the token creation from server
+         tokenInterface = new TokenInterface() {
+            @Override
+            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
+
+                final AsyncHttpClient httpClient = new AsyncHttpClient();
+                httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
+                httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        Log.d(TAG, responseString, throwable);
+                    }
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                        //change the expired token
+                        merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
+                        //bluesnapService.setNewToken(merchantToken);
+                        tokenServiceCallback.complete(merchantToken);
+                    }
+
+                });
+
+            }
+        };
+
+
         progressBar.setVisibility(View.VISIBLE);
 
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL+ SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
@@ -276,7 +308,7 @@ public class DemoMainActivity extends Activity {
     }
 
     private void initControlsAfterToken() {
-        bluesnapService.setup(merchantToken);
+        bluesnapService.setup(merchantToken, tokenInterface);
         bluesnapService.updateRates(new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
