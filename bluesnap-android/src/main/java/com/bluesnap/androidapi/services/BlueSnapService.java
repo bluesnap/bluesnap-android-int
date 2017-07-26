@@ -54,6 +54,7 @@ public class BlueSnapService {
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
     private TokenServiceCallback checkoutActivity;
+    private BluesnapServiceCallback bluesnapServiceCallback;
 
     public TokenInterface getTokenInterface() {
         return tokenInterface;
@@ -112,12 +113,21 @@ public class BlueSnapService {
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
         Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
-        busInstance.post(new Events.TokenUpdatedEvent());
 
     }
 
-    public void setNewToken (String newToken) {
+    public enum SetNewToken {
+        TOKENIZECARD,
+        UPDATERATES,
+        PAYPAL
+    }
+
+    public void setNewToken (String newToken, Enum<SetNewToken> tokenEnum) {
         changeExpiredToken(newToken);
+        if (SetNewToken.TOKENIZECARD.equals(tokenEnum))
+            busInstance.post(new Events.TokenUpdatedEvent());
+        else if (SetNewToken.UPDATERATES.equals(tokenEnum))
+            updateRates(bluesnapServiceCallback);
     }
 
 
@@ -155,6 +165,7 @@ public class BlueSnapService {
      * @param callback A {@link BluesnapServiceCallback}
      */
     public void updateRates(final BluesnapServiceCallback callback) {
+        this.bluesnapServiceCallback = callback;
         httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
         httpClient.get(bluesnapToken.getUrl() + RATES_SERVICE, new JsonHttpResponseHandler() {
             @Override
@@ -184,6 +195,7 @@ public class BlueSnapService {
                 Log.e(TAG, "Rates convert service error", throwable);
                 callback.onFailure();
             }
+
         });
     }
 

@@ -245,39 +245,7 @@ public class DemoMainActivity extends Activity {
         startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
     }
 
-    //TODO: Find a mock merchant service t¡o provide this
-    private void generateMerchantToken() {
-
-        // create the interface for activating the token creation from server
-         tokenInterface = new TokenInterface() {
-            @Override
-            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
-
-                final AsyncHttpClient httpClient = new AsyncHttpClient();
-                httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-                httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Log.d(TAG, responseString, throwable);
-                    }
-
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        //change the expired token
-                        merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
-                        //bluesnapService.setNewToken(merchantToken);
-                        tokenServiceCallback.complete(merchantToken);
-                    }
-
-                });
-
-            }
-        };
-
-
-        progressBar.setVisibility(View.VISIBLE);
-
+    private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
         httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
@@ -285,6 +253,51 @@ public class DemoMainActivity extends Activity {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d(TAG, responseString, throwable);
+                tokenServiceInterface.onServiceFailure();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
+                tokenServiceInterface.onServiceSuccess();
+            }
+
+        });
+    }
+
+    //TODO: Find a mock merchant service t¡o provide this
+    private void generateMerchantToken() {
+
+        // create the interface for activating the token creation from server
+        tokenInterface = new TokenInterface() {
+            @Override
+            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
+
+                merchantTokenService(new TokenServiceInterface() {
+                    @Override
+                    public void onServiceSuccess() {
+                        //change the expired token
+                        tokenServiceCallback.complete(merchantToken);
+                    }
+
+                    @Override
+                    public void onServiceFailure() {
+
+                    }
+                });
+            }
+        };
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        merchantTokenService(new TokenServiceInterface() {
+            @Override
+            public void onServiceSuccess() {
+                initControlsAfterToken();
+            }
+
+            @Override
+            public void onServiceFailure() {
                 BluesnapAlertDialog.setDialog(DemoMainActivity.this, "Cannot obtain token from merchant server", "Service error", new BluesnapAlertDialog.BluesnapDialogCallback() {
                     @Override
                     public void setPositiveDialog() {
@@ -297,13 +310,6 @@ public class DemoMainActivity extends Activity {
                     }
                 }, "Close", "Retry");
             }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
-                initControlsAfterToken();
-            }
-
         });
     }
 

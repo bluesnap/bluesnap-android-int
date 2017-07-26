@@ -253,7 +253,7 @@ public class BluesnapCheckoutActivity extends Activity {
                                     new TokenServiceCallback() {
                                         @Override
                                         public void complete(String newToken) {
-                                            blueSnapService.setNewToken(newToken);
+                                            blueSnapService.setNewToken(newToken, BlueSnapService.SetNewToken.TOKENIZECARD);
                                         }
                                     }
                             );
