@@ -157,7 +157,7 @@ public class BlueSnapService {
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
         ByteArrayEntity entity = new ByteArrayEntity(postData.toString().getBytes("UTF-8"));
