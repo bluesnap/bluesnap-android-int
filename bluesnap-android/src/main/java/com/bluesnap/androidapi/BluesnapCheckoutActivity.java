@@ -16,7 +16,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.Card;
-import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
@@ -30,7 +29,6 @@ import com.bluesnap.androidapi.views.ShippingFragment;
 import com.bluesnap.androidapi.views.WebViewActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,8 +79,6 @@ public class BluesnapCheckoutActivity extends Activity {
         sharedCurrency = paymentRequest.getCurrencyNameCode();
         setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
-        // register to eventbus
-        BlueSnapService.getBus().register(this);
     }
 
     @Override
@@ -195,18 +191,6 @@ public class BluesnapCheckoutActivity extends Activity {
         }
     }
 
-    @Subscribe
-    public synchronized void onTokenUpdated(Events.TokenUpdatedEvent tokenUpdatedEvent) {
-        try {
-            tokenizeCardOnServer(resultIntent, rememberShopper);
-        } catch (UnsupportedEncodingException | JSONException e) {
-            String errorMsg = "SDK service error";
-            Log.e(TAG, errorMsg, e);
-            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
-            finish();
-        }
-    }
-
     private void tokenizeCardOnServer(final Intent resultIntent, final boolean rememberShopper) throws UnsupportedEncodingException, JSONException {
         this.rememberShopper = rememberShopper;
         this.resultIntent = resultIntent;
@@ -253,7 +237,14 @@ public class BluesnapCheckoutActivity extends Activity {
                                     new TokenServiceCallback() {
                                         @Override
                                         public void complete(String newToken) {
-                                            blueSnapService.setNewToken(newToken, BlueSnapService.SetNewToken.TOKENIZECARD);
+                                            blueSnapService.setNewToken(newToken);
+                                            try {
+                                                tokenizeCardOnServer(resultIntent, rememberShopper);
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                     }
                             );
