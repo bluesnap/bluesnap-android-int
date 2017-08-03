@@ -226,7 +226,7 @@ public class BlueSnapService {
                                                 }
                                         );
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    Log.e(TAG, "json parsing exception", e);
                                 }
                             } else {
                                 String errorMsg = String.format("Service Error %s, %s", statusCode);
@@ -236,9 +236,9 @@ public class BlueSnapService {
                         }
                     });
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "json parsing exception", e);
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Unsupported Encoding Exception", e);
                 }
             }
         });
@@ -321,7 +321,7 @@ public class BlueSnapService {
                                                 }
                                         );
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    Log.e(TAG, "json parsing exception", e);
                                 }
                             } else {
                                 String errorMsg = String.format("Service Error %s, %s", statusCode);
@@ -331,9 +331,9 @@ public class BlueSnapService {
                         }
                     });
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "json parsing exception", e);
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Unsupported Encoding Exception", e);
                 }
             }
         });

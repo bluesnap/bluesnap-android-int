@@ -241,15 +241,15 @@ public class BluesnapCheckoutActivity extends Activity {
                                             try {
                                                 tokenizeCardOnServer(resultIntent, rememberShopper);
                                             } catch (UnsupportedEncodingException e) {
-                                                e.printStackTrace();
+                                                Log.e(TAG, "Unsupported Encoding Exception", e);
                                             } catch (JSONException e) {
-                                                e.printStackTrace();
+                                                Log.e(TAG, "json parsing exception", e);
                                             }
                                         }
                                     }
                             );
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "json parsing exception", e);
                     }
                 } else {
                     String errorMsg = String.format("Service Error %s, %s", statusCode);
