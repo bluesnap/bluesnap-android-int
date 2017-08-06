@@ -86,6 +86,10 @@ public class BlueSnapService {
         return transactionStatus;
     }
 
+    public void setup(String merchantToken) {
+        setup(merchantToken, null);
+    }
+
     /**
      * Setup the service to talk to the server.
      * This will reset the previous payment request
@@ -94,7 +98,8 @@ public class BlueSnapService {
      * @param merchantToken  A Merchant SDK token, obtained from the merchant.
      */
     public void setup(String merchantToken, TokenInterface tokenInterface) {
-        this.tokenInterface = tokenInterface;
+        if (null != tokenInterface)
+            this.tokenInterface = tokenInterface;
         bluesnapToken = new BluesnapToken(merchantToken, tokenInterface);
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
@@ -211,7 +216,7 @@ public class BlueSnapService {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400) {
+                            if (statusCode == 400 && null != tokenInterface) {
                                 try {
                                     JSONArray rs2 = (JSONArray) errorResponse.get("message");
                                     JSONObject rs3 = (JSONObject) rs2.get(0);
@@ -306,7 +311,7 @@ public class BlueSnapService {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400) {
+                            if (statusCode == 400 && null != tokenInterface) {
                                 try {
                                     JSONArray rs2 = (JSONArray) errorResponse.get("message");
                                     JSONObject rs3 = (JSONObject) rs2.get(0);
