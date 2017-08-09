@@ -85,9 +85,12 @@ public class BlueSnapService {
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
     public void setup(String merchantToken) {
+        // check if paypal url is same as before
+        if (null != getPayPalToken() && null != bluesnapToken.getMerchantToken())
+            if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && !"".equals(getPayPalToken()))
+                clearPayPalToken();
         bluesnapToken = new BluesnapToken(merchantToken);
         bluesnapToken.setToken(merchantToken);
-        clearPayPalToken();
         setupHttpClient();
         paymentResult = null;
         paymentRequest = null;
