@@ -33,6 +33,7 @@ public class PaymentResult implements Parcelable {
     private String shopperLastName;
     private String cardZipCode;
     private String paypalInvoiceId;
+    private String token;
 
 
     public PaymentResult() {
@@ -51,7 +52,7 @@ public class PaymentResult implements Parcelable {
         setPaypalInvoiceId(in.readString());
         rememberUser = in.readInt() != 0;
         returningTransaction = in.readInt() != 0;
-
+        setToken(in.readString());
     }
 
     @Override
@@ -68,6 +69,7 @@ public class PaymentResult implements Parcelable {
         dest.writeString(getPaypalInvoiceId());
         dest.writeInt(rememberUser ? 1 : 0);
         dest.writeInt(returningTransaction ? 1 : 0);
+        dest.writeString(getToken());
     }
 
     /**
@@ -137,6 +139,7 @@ public class PaymentResult implements Parcelable {
                 ", rememberUser=" + rememberUser + '\'' +
                 ", returningTransaction=" + returningTransaction + '\'' +
                 ", paypalInvoiceId=" + paypalInvoiceId + '\'' +
+                ", token=" + getToken() + '\'' +
                 '}';
     }
 
@@ -223,5 +226,13 @@ public class PaymentResult implements Parcelable {
 
     public void setPaypalInvoiceId(String paypalInvoiceId) {
         this.paypalInvoiceId = paypalInvoiceId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
