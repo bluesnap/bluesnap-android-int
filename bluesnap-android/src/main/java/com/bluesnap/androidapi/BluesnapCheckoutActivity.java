@@ -72,7 +72,7 @@ public class BluesnapCheckoutActivity extends Activity {
         expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
         prefsStorage = new PrefsStorage(this);
         final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        sharedCurrency = paymentRequest.getCurrencyNameCode();
+        checkIfCurrencyExists(paymentRequest.getCurrencyNameCode());
         setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
     }
@@ -82,6 +82,18 @@ public class BluesnapCheckoutActivity extends Activity {
         super.onStart();
         if (!paymentRequest.verify()) {
             String errorMsg = "payment request not validated";
+            Log.e(TAG, errorMsg);
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            finish();
+        }
+    }
+
+    // check currency received from merchant and verify it actually exists
+    private void checkIfCurrencyExists(String currencyNameCode) {
+        if (blueSnapService.getSupportedRates().contains(currencyNameCode)) {
+            sharedCurrency = currencyNameCode;
+        } else {
+            String errorMsg = "Currency name code Error";
             Log.e(TAG, errorMsg);
             setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
             finish();
