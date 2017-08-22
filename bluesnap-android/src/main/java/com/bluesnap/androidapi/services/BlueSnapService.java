@@ -36,6 +36,7 @@ import cz.msebera.android.httpclient.protocol.HTTP;
  */
 public class BlueSnapService {
     public static final String TOKEN_AUTHENTICATION = "Token-Authentication";
+    private static final double BLUESNAP_VERSION_HEADER = 2.0;
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final String CARD_TOKENIZE = "payment-fields-tokens/";
     private static final String RATES_SERVICE = "tokenized-services/rates";
@@ -101,6 +102,7 @@ public class BlueSnapService {
         httpClient.setConnectTimeout(20000);
         httpClient.addHeader("ANDROID_SDK_VERSION_NAME", BuildConfig.VERSION_NAME);
         httpClient.addHeader("ANDROID_SDK_VERSION_CODE", String.valueOf(BuildConfig.VERSION_CODE));
+        httpClient.addHeader("BLUESNAP_VERSION_HEADER", String.valueOf(BLUESNAP_VERSION_HEADER));
     }
 
     /**
