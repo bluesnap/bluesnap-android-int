@@ -228,12 +228,12 @@ public class BluesnapCheckoutActivity extends Activity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                if (statusCode == 400  && null != blueSnapService.getTokenInterface()) {
+                if (statusCode == 400  && null != blueSnapService.getTokenProvider()) {
                     try {
                         JSONArray rs2 = (JSONArray) errorResponse.get("message");
                         JSONObject rs3 = (JSONObject) rs2.get(0);
                         if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
-                            blueSnapService.getTokenInterface().getNewToken(
+                            blueSnapService.getTokenProvider().getNewToken(
                                     new TokenServiceCallback() {
                                         @Override
                                         public void complete(String newToken) {

@@ -26,7 +26,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.services.TokenInterface;
+import com.bluesnap.androidapi.services.TokenProvider;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -47,7 +47,7 @@ public class DemoMainActivity extends Activity {
 
     private static final String TAG = "DemoMainActivity";
     protected BlueSnapService bluesnapService;
-    protected TokenInterface tokenInterface;
+    protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private EditText productPriceEditText;
     private Currency currency;
@@ -269,7 +269,7 @@ public class DemoMainActivity extends Activity {
     private void generateMerchantToken() {
 
         // create the interface for activating the token creation from server
-        tokenInterface = new TokenInterface() {
+        tokenProvider = new TokenProvider() {
             @Override
             public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
 
@@ -314,7 +314,7 @@ public class DemoMainActivity extends Activity {
     }
 
     private void initControlsAfterToken() {
-        bluesnapService.setup(merchantToken, tokenInterface);
+        bluesnapService.setup(merchantToken, tokenProvider);
         bluesnapService.updateRates(new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {

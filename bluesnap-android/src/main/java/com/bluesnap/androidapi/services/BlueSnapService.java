@@ -56,11 +56,11 @@ public class BlueSnapService {
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
 
-    public TokenInterface getTokenInterface() {
-        return tokenInterface;
+    public TokenProvider getTokenProvider() {
+        return tokenProvider;
     }
 
-    private TokenInterface tokenInterface;
+    private TokenProvider tokenProvider;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -94,13 +94,13 @@ public class BlueSnapService {
      * Setup the service to talk to the server.
      * This will reset the previous payment request
      *
-     * @param tokenInterface A merchant function for requesting a new token if expired
+     * @param tokenProvider A merchant function for requesting a new token if expired
      * @param merchantToken  A Merchant SDK token, obtained from the merchant.
      */
-    public void setup(String merchantToken, TokenInterface tokenInterface) {
-        if (null != tokenInterface)
-            this.tokenInterface = tokenInterface;
-        bluesnapToken = new BluesnapToken(merchantToken, tokenInterface);
+    public void setup(String merchantToken, TokenProvider tokenProvider) {
+        if (null != tokenProvider)
+            this.tokenProvider = tokenProvider;
+        bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
         setupHttpClient();
@@ -116,7 +116,7 @@ public class BlueSnapService {
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
     protected void changeExpiredToken(String merchantToken) {
-        bluesnapToken = new BluesnapToken(merchantToken, tokenInterface);
+        bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
         Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
@@ -216,12 +216,12 @@ public class BlueSnapService {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400 && null != tokenInterface) {
+                            if (statusCode == 400 && null != tokenProvider) {
                                 try {
                                     JSONArray rs2 = (JSONArray) errorResponse.get("message");
                                     JSONObject rs3 = (JSONObject) rs2.get(0);
                                     if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
-                                        getTokenInterface().getNewToken(
+                                        getTokenProvider().getNewToken(
                                                 new TokenServiceCallback() {
                                                     @Override
                                                     public void complete(String newToken) {
@@ -311,12 +311,12 @@ public class BlueSnapService {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                             // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400 && null != tokenInterface) {
+                            if (statusCode == 400 && null != tokenProvider) {
                                 try {
                                     JSONArray rs2 = (JSONArray) errorResponse.get("message");
                                     JSONObject rs3 = (JSONObject) rs2.get(0);
                                     if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
-                                        getTokenInterface().getNewToken(
+                                        getTokenProvider().getNewToken(
                                                 new TokenServiceCallback() {
                                                     @Override
                                                     public void complete(String newToken) {

@@ -10,11 +10,11 @@ public class BluesnapToken {
     private static final String PROD_PART_2_URL = ".bluesnap.com/services/2/";
     private String url;
     private String merchantToken;
-    private TokenInterface tokenInterface;
+    private TokenProvider tokenProvider;
 
-    public BluesnapToken(String merchantToken, TokenInterface tokenInterface) {
+    public BluesnapToken(String merchantToken, TokenProvider tokenProvider) {
         this.merchantToken = merchantToken;
-        this.tokenInterface = tokenInterface;
+        this.tokenProvider = tokenProvider;
     }
 
     public String getUrl() throws IllegalStateException {
