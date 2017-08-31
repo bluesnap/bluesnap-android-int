@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
@@ -63,23 +64,25 @@ public class ExpressCheckoutFragment extends Fragment implements BluesnapPayment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflate = inflater.inflate(R.layout.bluesnap_expresscheckout, container, false);
-        ImageButton paypalBtn = (ImageButton) inflate.findViewById(R.id.express_co_btn_paypal);
         progressBar = (ProgressBar) inflate.findViewById(R.id.progressBarExpressCheckout);
         totalAmount = (TextView) inflate.findViewById(R.id.express_co_total);
-        paypalBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String payPalToken = BlueSnapService.getPayPalToken();
-                if ("".equals(payPalToken)) {
-                    Log.d(TAG, "create payPalToken");
-                    startPayPal();
-                } else {
-                    Log.d(TAG, "startWebViewActivity");
-                    startWebViewActivity(payPalToken);
-                }
+        if (BlueSnapService.getInstance().isPaymentMethodActive(Constants.PAYPAL)) {
+            ImageButton paypalBtn = (ImageButton) inflate.findViewById(R.id.express_co_btn_paypal);
+            paypalBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String payPalToken = BlueSnapService.getPayPalToken();
+                    if ("".equals(payPalToken)) {
+                        Log.d(TAG, "create payPalToken");
+                        startPayPal();
+                    } else {
+                        Log.d(TAG, "startWebViewActivity");
+                        startWebViewActivity(payPalToken);
+                    }
 
-            }
-        });
+                }
+            });
+        }
         return inflate;
     }
 

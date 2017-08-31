@@ -71,7 +71,7 @@
             android:textColor="@color/colorPureWhite"
             android:textSize="14sp"
             android:textStyle="normal"
-
+            android:visibility="invisible"
             />
 
         <Button
@@ -83,7 +83,9 @@
             android:textAllCaps="false"
             android:textColor="@color/colorBluesnapBlue"
             android:textSize="14sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:visibility="invisible"
+            />
 
     </LinearLayout>
 

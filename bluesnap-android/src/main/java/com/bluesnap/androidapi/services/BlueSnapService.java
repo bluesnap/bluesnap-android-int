@@ -2,6 +2,7 @@ package com.bluesnap.androidapi.services;
 
 import android.util.Log;
 import com.bluesnap.androidapi.BuildConfig;
+import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,6 +35,7 @@ public class BlueSnapService {
     private static final String CARD_TOKENIZE = "payment-fields-tokens/";
     private static final String RATES_SERVICE = "tokenized-services/rates";
     private static final BlueSnapService INSTANCE = new BlueSnapService();
+    private static final String SUPPORTED_PAYMENT_METHODS = "tokenized-services/supported-payment-methods";
     private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
@@ -44,6 +46,21 @@ public class BlueSnapService {
     private final AsyncHttpClient httpClient = new AsyncHttpClient();
     private HashMap<String, ExchangeRate> ratesMap;
     private ArrayList<ExchangeRate> ratesArray;
+
+    public boolean isexpressCheckoutActive() {
+        return isPaymentMethodActive(Constants.PAYPAL);
+    }
+
+    public boolean isPaymentMethodActive(String paymentMethod) {
+        try {
+            return (paymentMethodsObject.has(paymentMethod)) && paymentMethodsObject.getBoolean(paymentMethod);
+        } catch (JSONException e) {
+            Log.e(TAG, "json exception", e);
+            return false;
+        }
+    }
+
+    private JSONObject paymentMethodsObject = new JSONObject();
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
@@ -94,6 +111,7 @@ public class BlueSnapService {
 
         paymentResult = null;
         paymentRequest = null;
+        checkSupportedPaymentMethods();
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
@@ -167,6 +185,28 @@ public class BlueSnapService {
 
     public ArrayList<ExchangeRate> getRatesArray() {
         return ratesArray;
+    }
+
+    private void checkSupportedPaymentMethods() {
+        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
+        httpClient.get(bluesnapToken.getUrl() + SUPPORTED_PAYMENT_METHODS, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONArray paymentMethods = response.getJSONArray("paymentMethods");
+                    for (int i = 0; i < paymentMethods.length(); i++) {
+                        paymentMethodsObject.put(paymentMethods.getString(i), true);
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing exception", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(TAG, "Rates convert service error", throwable);
+            }
+        });
     }
 
     public void createPayPalToken(Double amount, String currency, final BluesnapServiceCallback callback) {

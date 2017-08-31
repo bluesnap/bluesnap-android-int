@@ -87,7 +87,8 @@ public class BluesnapCheckoutActivity extends Activity {
         prefsStorage = new PrefsStorage(this);
         final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
         checkIfCurrencyExists(paymentRequest.getCurrencyNameCode());
-        setFragmentButtonsListeners();
+        if (blueSnapService.isexpressCheckoutActive())
+            setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
         Integer kountMerchantID = getIntent().getIntExtra(EXTRA_KOUNT_MERCHANT_ID, KOUNT_MERCHANT_ID);
         context = getApplicationContext();
@@ -199,7 +200,9 @@ public class BluesnapCheckoutActivity extends Activity {
 
     private void setFragmentButtonsListeners() {
         final Button expressCheckoutButton = (Button) findViewById(R.id.expressCheckoutButton);
+        expressCheckoutButton.setVisibility(View.VISIBLE);
         final Button creditCardButton = (Button) findViewById(R.id.creditCardButton);
+        creditCardButton.setVisibility(View.VISIBLE);
         final Bundle fragmentBundle = new Bundle();
         fragmentBundle.putParcelable(EXTRA_PAYMENT_REQUEST, paymentRequest);
         expressCheckoutButton.setOnClickListener(new View.OnClickListener() {
