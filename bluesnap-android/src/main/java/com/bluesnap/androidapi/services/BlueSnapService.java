@@ -110,6 +110,9 @@ public class BlueSnapService {
     public void setup(String merchantToken, TokenProvider tokenProvider) {
         if (null != tokenProvider)
             this.tokenProvider = tokenProvider;
+
+        bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
+
         // check if paypal url is same as before
         if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && null != getPayPalToken() && !"".equals(getPayPalToken())) {
             Log.d(TAG, "clearPayPalToken");
@@ -117,8 +120,7 @@ public class BlueSnapService {
         } else {
             Log.d(TAG, "PayPal token reuse");
         }
-        bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
-        bluesnapToken.setToken(merchantToken);
+
         clearPayPalToken();
         setupHttpClient();
 

@@ -16,12 +16,17 @@ android {
         versionName androidGitVersion.name()
         versionCode androidGitVersion.code()
         //setProperty("archivesBaseName", "DemoApp-$versionName")
+        testBuildType "debug"
     }
     buildTypes {
         release {
             //runProguard false
             proguardFile getDefaultProguardFile('proguard-android.txt')
         }
+        debug {
+
+        }
+
     }
     lintOptions {
         abortOnError false
