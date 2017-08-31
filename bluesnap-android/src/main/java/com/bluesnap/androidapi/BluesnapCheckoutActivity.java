@@ -21,28 +21,21 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.PrefsStorage;
-import com.bluesnap.androidapi.views.BluesnapFragment;
-import com.bluesnap.androidapi.views.CurrencyActivity;
-import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
-import com.bluesnap.androidapi.views.ShippingFragment;
-import com.bluesnap.androidapi.views.WebViewActivity;
+import com.bluesnap.androidapi.views.*;
 import com.kount.api.DataCollector;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
+import cz.msebera.android.httpclient.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
-
-import cz.msebera.android.httpclient.Header;
 
 
 /**

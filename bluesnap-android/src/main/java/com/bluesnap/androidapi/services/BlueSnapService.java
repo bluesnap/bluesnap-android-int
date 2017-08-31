@@ -46,6 +46,7 @@ public class BlueSnapService {
     private final AsyncHttpClient httpClient = new AsyncHttpClient();
     private HashMap<String, ExchangeRate> ratesMap;
     private ArrayList<ExchangeRate> ratesArray;
+    private JSONObject paymentMethodsObject = new JSONObject();
 
     public boolean isexpressCheckoutActive() {
         return isPaymentMethodActive(Constants.PAYPAL);
@@ -59,8 +60,6 @@ public class BlueSnapService {
             return false;
         }
     }
-
-    private JSONObject paymentMethodsObject = new JSONObject();
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
@@ -94,7 +93,6 @@ public class BlueSnapService {
      * This will reset the previous payment request
      *
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
-     * @param context
      */
     public void setup(String merchantToken) {
         // check if paypal url is same as before

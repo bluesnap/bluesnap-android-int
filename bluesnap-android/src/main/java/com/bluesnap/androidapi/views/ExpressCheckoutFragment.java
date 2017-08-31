@@ -14,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
@@ -23,7 +22,6 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 
