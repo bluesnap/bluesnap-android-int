@@ -1,19 +1,17 @@
 package com.bluesnap.androidapi.services;
 
 import android.util.Log;
-
 import com.bluesnap.androidapi.BuildConfig;
-import com.bluesnap.androidapi.models.Card;
-import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.ExchangeRate;
-import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.ByteArrayEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
@@ -25,11 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.ByteArrayEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 
 /**
  * Core BlueSnap Service class that handles network and maintains {@link PaymentRequest}
@@ -90,7 +83,7 @@ public class BlueSnapService {
             Log.d(TAG, "clearPayPalToken");
             clearPayPalToken();
         } else {
-            Log.d(TAG, "same Token same PayPal Token");
+            Log.d(TAG, "PayPal token reuse");
         }
         bluesnapToken = new BluesnapToken(merchantToken);
         bluesnapToken.setToken(merchantToken);
@@ -288,7 +281,7 @@ public class BlueSnapService {
     public synchronized PaymentResult getPaymentResult() {
         if (paymentResult == null) {
             paymentResult = new PaymentResult();
-            // Copy vallues from request
+            // Copy values from request
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
             paymentResult.setShopperID(paymentRequest.getShopperID());
