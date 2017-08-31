@@ -452,6 +452,8 @@ public class BlueSnapService {
     public synchronized PaymentResult getPaymentResult() {
         if (paymentResult == null) {
             paymentResult = new PaymentResult();
+
+            paymentResult.setToken(bluesnapToken.getMerchantToken());
             // Copy values from request
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
