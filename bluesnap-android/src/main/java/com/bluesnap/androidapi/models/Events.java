@@ -10,6 +10,12 @@ public class Events {
         }
     }
 
+    public static class TokenUpdatedEvent {
+
+        public TokenUpdatedEvent() {
+        }
+    }
+
     public static class CurrencyUpdatedEvent {
         public String newCurrencyNameCode;
         public Double updatedPrice;

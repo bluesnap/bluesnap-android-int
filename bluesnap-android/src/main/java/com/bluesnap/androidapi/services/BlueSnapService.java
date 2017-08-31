@@ -63,6 +63,14 @@ public class BlueSnapService {
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
+    private TokenServiceCallback checkoutActivity;
+    private BluesnapServiceCallback bluesnapServiceCallback;
+
+    public TokenProvider getTokenProvider() {
+        return tokenProvider;
+    }
+
+    private TokenProvider tokenProvider;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -88,13 +96,20 @@ public class BlueSnapService {
         return transactionStatus;
     }
 
+    public void setup(String merchantToken) {
+        setup(merchantToken, null);
+    }
+
     /**
      * Setup the service to talk to the server.
      * This will reset the previous payment request
      *
-     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * @param tokenProvider A merchant function for requesting a new token if expired
+     * @param merchantToken  A Merchant SDK token, obtained from the merchant.
      */
-    public void setup(String merchantToken) {
+    public void setup(String merchantToken, TokenProvider tokenProvider) {
+        if (null != tokenProvider)
+            this.tokenProvider = tokenProvider;
         // check if paypal url is same as before
         if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && null != getPayPalToken() && !"".equals(getPayPalToken())) {
             Log.d(TAG, "clearPayPalToken");
@@ -102,7 +117,7 @@ public class BlueSnapService {
         } else {
             Log.d(TAG, "PayPal token reuse");
         }
-        bluesnapToken = new BluesnapToken(merchantToken);
+        bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
         setupHttpClient();
@@ -113,6 +128,24 @@ public class BlueSnapService {
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
+
+    /**
+     * Change the token after expiration occurred.
+     *
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     */
+    protected void changeExpiredToken(String merchantToken) {
+        bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
+        bluesnapToken.setToken(merchantToken);
+        clearPayPalToken();
+        Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
+
+    }
+
+    public void setNewToken(String newToken) {
+        changeExpiredToken(newToken);
+    }
+
 
     private void setupHttpClient() {
         httpClient.setMaxRetriesAndTimeout(2, 2000);
@@ -143,12 +176,28 @@ public class BlueSnapService {
     }
 
     /**
+     * Check if Token is Expired on the BlueSnap Server
+     *
+     * @param responseHandler {@link AsyncHttpResponseHandler}
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
+    private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
+        JSONObject postData = new JSONObject();
+        ByteArrayEntity entity = new ByteArrayEntity(postData.toString().getBytes("UTF-8"));
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        httpClient.put(null, bluesnapToken.getUrl() + CARD_TOKENIZE + bluesnapToken.getMerchantToken(), entity, "application/json", responseHandler);
+    }
+
+    /**
      * Update the Conversion rates map from the server.
      * The rates are merchant specific, the merchantToken is used to identify the merchant.
      *
      * @param callback A {@link BluesnapServiceCallback}
      */
     public void updateRates(final BluesnapServiceCallback callback) {
+        this.bluesnapServiceCallback = callback;
         httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
         httpClient.get(bluesnapToken.getUrl() + RATES_SERVICE, new JsonHttpResponseHandler() {
             @Override
@@ -176,7 +225,46 @@ public class BlueSnapService {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, "Rates convert service error", throwable);
-                callback.onFailure();
+                // try to PUT empty {} to check if token is expired
+                try {
+                    checkTokenIsExpired(new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            callback.onFailure();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                            if (statusCode == 400 && null != tokenProvider) {
+                                try {
+                                    JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                                    JSONObject rs3 = (JSONObject) rs2.get(0);
+                                    if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                                        getTokenProvider().getNewToken(
+                                                new TokenServiceCallback() {
+                                                    @Override
+                                                    public void complete(String newToken) {
+                                                        setNewToken(newToken);
+                                                        updateRates(bluesnapServiceCallback);
+                                                    }
+                                                }
+                                        );
+                                } catch (JSONException e) {
+                                    Log.e(TAG, "json parsing exception", e);
+                                }
+                            } else {
+                                String errorMsg = String.format("Service Error %s, %s", statusCode);
+                                Log.e(TAG, errorMsg, throwable);
+                                callback.onFailure();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing exception", e);
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "Unsupported Encoding Exception", e);
+                }
             }
         });
     }
@@ -207,7 +295,7 @@ public class BlueSnapService {
         });
     }
 
-    public void createPayPalToken(Double amount, String currency, final BluesnapServiceCallback callback) {
+    public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
         httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
         httpClient.addHeader("Accept", "application/json");
         String url = bluesnapToken.getUrl() + PAYPAL_SERVICE + amount + "&currency=" + currency;
@@ -249,11 +337,51 @@ public class BlueSnapService {
                     errorDescription.put("errorName", responseString.replaceAll("\"", "").toUpperCase());
                     errorDescription.put("code", statusCode);
                     errorDescription.put("description", responseString.replaceAll("\"", ""));
+                    Log.e(TAG, "PayPal service error", throwable);
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing exception", e);
                 }
-                Log.e(TAG, "PayPal service error", throwable);
-                callback.onFailure();
+
+                // try to PUT empty {} to check if token is expired
+                try {
+                    checkTokenIsExpired(new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            callback.onFailure();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                            if (statusCode == 400 && null != tokenProvider) {
+                                try {
+                                    JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                                    JSONObject rs3 = (JSONObject) rs2.get(0);
+                                    if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                                        getTokenProvider().getNewToken(
+                                                new TokenServiceCallback() {
+                                                    @Override
+                                                    public void complete(String newToken) {
+                                                        setNewToken(newToken);
+                                                        createPayPalToken(amount, currency, callback);
+                                                    }
+                                                }
+                                        );
+                                } catch (JSONException e) {
+                                    Log.e(TAG, "json parsing exception", e);
+                                }
+                            } else {
+                                String errorMsg = String.format("Service Error %s, %s", statusCode);
+                                Log.e(TAG, errorMsg, throwable);
+                                callback.onFailure();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing exception", e);
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "Unsupported Encoding Exception", e);
+                }
             }
         });
     }
@@ -380,6 +508,10 @@ public class BlueSnapService {
         paymentResult.setShopperID(paymentRequest.getShopperID());
 
 
+    }
+
+    public void setCheckoutActivity(TokenServiceCallback checkoutActivity) {
+        this.checkoutActivity = checkoutActivity;
     }
 
     public BluesnapToken getBlueSnapToken() {

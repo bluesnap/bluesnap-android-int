@@ -26,6 +26,8 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.TokenProvider;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -47,6 +49,7 @@ public class DemoMainActivity extends Activity {
     private static final String TAG = "DemoMainActivity";
     private static Context context;
     protected BlueSnapService bluesnapService;
+    protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private EditText productPriceEditText;
     private Currency currency;
@@ -249,17 +252,59 @@ public class DemoMainActivity extends Activity {
         startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
     }
 
-    //TODO: Find a mock merchant service t¡o provide this
-    private void generateMerchantToken() {
-        progressBar.setVisibility(View.VISIBLE);
-
+    private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL+ SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d(TAG, responseString, throwable);
+                tokenServiceInterface.onServiceFailure();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
+                tokenServiceInterface.onServiceSuccess();
+            }
+
+        });
+    }
+
+    //TODO: Find a mock merchant service t¡o provide this
+    private void generateMerchantToken() {
+
+        // create the interface for activating the token creation from server
+        tokenProvider = new TokenProvider() {
+            @Override
+            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
+
+                merchantTokenService(new TokenServiceInterface() {
+                    @Override
+                    public void onServiceSuccess() {
+                        //change the expired token
+                        tokenServiceCallback.complete(merchantToken);
+                    }
+
+                    @Override
+                    public void onServiceFailure() {
+
+                    }
+                });
+            }
+        };
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        merchantTokenService(new TokenServiceInterface() {
+            @Override
+            public void onServiceSuccess() {
+                initControlsAfterToken();
+            }
+
+            @Override
+            public void onServiceFailure() {
                 BluesnapAlertDialog.setDialog(DemoMainActivity.this, "Cannot obtain token from merchant server", "Service error", new BluesnapAlertDialog.BluesnapDialogCallback() {
                     @Override
                     public void setPositiveDialog() {
@@ -272,18 +317,11 @@ public class DemoMainActivity extends Activity {
                     }
                 }, "Close", "Retry");
             }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
-                initControlsAfterToken();
-            }
-
         });
     }
 
     private void initControlsAfterToken() {
-        bluesnapService.setup(merchantToken);
+        bluesnapService.setup(merchantToken, tokenProvider);
         bluesnapService.updateRates(new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {

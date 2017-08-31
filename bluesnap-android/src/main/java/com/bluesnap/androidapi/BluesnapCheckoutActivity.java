@@ -27,10 +27,12 @@ import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.PrefsStorage;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.*;
 import com.kount.api.DataCollector;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,6 +69,9 @@ public class BluesnapCheckoutActivity extends Activity {
     private Card card;
     private ShippingFragment shippingFragment;
     private String kountSessionId;
+    private Intent resultIntent;
+    private boolean rememberShopper;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,9 +178,6 @@ public class BluesnapCheckoutActivity extends Activity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        //final Context context = this.getApplicationContext();
-
-
 
     }
 
@@ -293,8 +295,10 @@ public class BluesnapCheckoutActivity extends Activity {
         }
     }
 
-
     private void tokenizeCardOnServer(final Intent resultIntent, final boolean rememberShopper) throws UnsupportedEncodingException, JSONException {
+        this.rememberShopper = rememberShopper;
+        this.resultIntent = resultIntent;
+
         blueSnapService.tokenizeCard(card, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -327,6 +331,40 @@ public class BluesnapCheckoutActivity extends Activity {
             }
 
             @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                if (statusCode == 400  && null != blueSnapService.getTokenProvider()) {
+                    try {
+                        JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                        JSONObject rs3 = (JSONObject) rs2.get(0);
+                        if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                            blueSnapService.getTokenProvider().getNewToken(
+                                    new TokenServiceCallback() {
+                                        @Override
+                                        public void complete(String newToken) {
+                                            blueSnapService.setNewToken(newToken);
+                                            try {
+                                                tokenizeCardOnServer(resultIntent, rememberShopper);
+                                            } catch (UnsupportedEncodingException e) {
+                                                Log.e(TAG, "Unsupported Encoding Exception", e);
+                                            } catch (JSONException e) {
+                                                Log.e(TAG, "json parsing exception", e);
+                                            }
+                                        }
+                                    }
+                            );
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                    }
+                } else {
+                    String errorMsg = String.format("Service Error %s, %s", statusCode);
+                    Log.e(TAG, errorMsg, throwable);
+                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+                    finish();
+                }
+            }
+
+            @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
                 Log.e(TAG, errorMsg, throwable);
@@ -336,6 +374,7 @@ public class BluesnapCheckoutActivity extends Activity {
         });
 
     }
+
 
     public Card getCard() {
         return card;
