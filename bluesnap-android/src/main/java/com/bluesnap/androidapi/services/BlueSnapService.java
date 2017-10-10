@@ -1,6 +1,10 @@
 package com.bluesnap.androidapi.services;
 
+import android.app.Application;
+import android.content.Context;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+
 import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.*;
@@ -9,10 +13,12 @@ import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.ByteArrayEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
@@ -21,8 +27,10 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -60,6 +68,7 @@ public class BlueSnapService {
             return false;
         }
     }
+
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
@@ -105,7 +114,7 @@ public class BlueSnapService {
      * This will reset the previous payment request
      *
      * @param tokenProvider A merchant function for requesting a new token if expired
-     * @param merchantToken  A Merchant SDK token, obtained from the merchant.
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
     public void setup(String merchantToken, TokenProvider tokenProvider) {
         if (null != tokenProvider)
@@ -520,5 +529,28 @@ public class BlueSnapService {
 
     public BluesnapToken getBlueSnapToken() {
         return bluesnapToken;
+    }
+
+    public boolean doesCountryhaveZip(Context context) {
+        return (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry(context)));
+    }
+
+    public String getUserCountry(Context context) {
+        try {
+            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            final String simCountry = tm.getSimCountryIso();
+            if (simCountry != null && simCountry.length() == 2) {
+                return simCountry.toUpperCase(Locale.US);
+            } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
+                String networkCountry = tm.getNetworkCountryIso();
+                if (networkCountry != null && networkCountry.length() == 2) {
+                    return networkCountry.toUpperCase(Locale.US);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "TelephonyManager, getSimCountryIso or getNetworkCountryIso failed");
+        }
+
+        return Locale.US.getCountry();
     }
 }

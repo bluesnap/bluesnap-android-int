@@ -35,6 +35,7 @@ public class PaymentResult implements Parcelable {
     private String paypalInvoiceId;
     private String token;
     private String kountSessionId;
+    private String email;
 
 
     public PaymentResult() {
@@ -52,6 +53,7 @@ public class PaymentResult implements Parcelable {
         setCardZipCode(in.readString());
         setPaypalInvoiceId(in.readString());
         setKountSessionId(in.readString());
+        setEmail(in.readString());
         rememberUser = in.readInt() != 0;
         returningTransaction = in.readInt() != 0;
         setToken(in.readString());
@@ -70,6 +72,7 @@ public class PaymentResult implements Parcelable {
         dest.writeString(getCardZipCode());
         dest.writeString(getPaypalInvoiceId());
         dest.writeString(getKountSessionId());
+        dest.writeString(getEmail());
         dest.writeInt(rememberUser ? 1 : 0);
         dest.writeInt(returningTransaction ? 1 : 0);
         dest.writeString(getToken());
@@ -138,6 +141,7 @@ public class PaymentResult implements Parcelable {
                 ", expDate='" + getExpDate() + '\'' +
                 ", shopperFirstName='" + getShopperFirstName() + '\'' +
                 ", shopperLastName='" + getShopperLastName() + '\'' +
+                ", email=" + email + '\'' +
                 ", cardZipCode='" + getCardZipCode() + '\'' +
                 ", rememberUser=" + rememberUser + '\'' +
                 ", returningTransaction=" + returningTransaction + '\'' +
@@ -246,5 +250,13 @@ public class PaymentResult implements Parcelable {
 
     public void setKountSessionId(String kountSessionId) {
         this.kountSessionId = kountSessionId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

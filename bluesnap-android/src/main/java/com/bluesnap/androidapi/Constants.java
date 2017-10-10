@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi;
 
+import java.util.ArrayList;
+
 /**
  * Created by roy.biber on 08/06/2016.
  */
@@ -31,5 +33,11 @@ public class Constants {
     public static String getPaypalSandUrl() {
         return PAYPAL_SAND_URL;
     }
+
+    public final static String[] COUNTRIES_WITHOUT_ZIP = {
+            "AO", "AG", "AW", "AC", "BS", "BZ", "BJ", "BW", "BO", "BF", "BI", "CM", "CF", "KM", "CG", "CD", "CK", "CW", "DJ", "DM", "TP", "GQ", "ER", "FJ", "TF", "GM", "GH", "GD", "GY", "HM",
+            "HK", "KI", "LY", "MO", "MW", "ML", "MR", "NR", "AN", "NU", "KP", "QA", "RW", "KN", "ST", "SC", "SL", "SB", "SR", "SY", "TL", "TG", "TK", "TO", "TV", "UG", "AE", "VU", "YE", "ZW"
+
+    };
 
 }

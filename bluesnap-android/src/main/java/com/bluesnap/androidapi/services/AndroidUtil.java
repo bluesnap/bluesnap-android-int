@@ -25,6 +25,9 @@ public class AndroidUtil {
     public static final String NAME_FIELD = "NAME_FIELD";
     public static final String ZIP_FIELD = "ZIP_FIELD";
     public static final String EMAIL_FIELD = "EMAIL_FIELD";
+    public static final String ADDRESS_FIELD = "ADDRESS_FIELD";
+    public static final String CITY_FIELD = "CITY_FIELD";
+    public static final String STATE_FIELD = "STATE_FIELD";
     public static final String[] STATE_NEEDED_COUNTRIES = {"US", "BR", "CA"};
     protected static Calendar calendarInstance;
     protected static DecimalFormat decimalFormat;

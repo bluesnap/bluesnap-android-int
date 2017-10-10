@@ -28,6 +28,8 @@ public class PaymentRequest implements Parcelable {
     private String userEmail;
     private boolean rememberUser;
     private boolean shippingRequired;
+    private boolean billingRequired;
+    private boolean emailRequired;
     private String shopperID;
     private Double subtotalAmount;
     private Double taxAmount;
@@ -44,6 +46,8 @@ public class PaymentRequest implements Parcelable {
         userEmail = parcel.readString();
         rememberUser = parcel.readInt() != 0;
         shippingRequired = parcel.readInt() != 0;
+        billingRequired = parcel.readInt() != 0;
+        emailRequired = parcel.readInt() != 0;
         shopperID = parcel.readString();
         subtotalAmount = parcel.readDouble();
         taxAmount = parcel.readDouble();
@@ -71,6 +75,8 @@ public class PaymentRequest implements Parcelable {
         parcel.writeString(userEmail);
         parcel.writeInt(rememberUser ? 1 : 0);
         parcel.writeInt(shippingRequired ? 1 : 0);
+        parcel.writeInt(billingRequired ? 1 : 0);
+        parcel.writeInt(emailRequired ? 1 : 0);
         parcel.writeString(shopperID);
         parcel.writeDouble(subtotalAmount != null ? subtotalAmount : 0D);
         parcel.writeDouble(taxAmount != null ? taxAmount : 0D);
@@ -125,8 +131,24 @@ public class PaymentRequest implements Parcelable {
         return shippingRequired;
     }
 
+    public boolean isBillingRequired() {
+        return billingRequired;
+    }
+
+    public boolean isEmailRequired() {
+        return emailRequired;
+    }
+
     public void setShippingRequired(boolean shippingRequired) {
         this.shippingRequired = shippingRequired;
+    }
+
+    public void setBillingRequired(boolean billingRequired) {
+        this.billingRequired = billingRequired;
+    }
+
+    public void setEmailRequired(boolean emailRequired) {
+        this.emailRequired = emailRequired;
     }
 
     public String getShopperID() {
@@ -209,6 +231,8 @@ public class PaymentRequest implements Parcelable {
 
         if (rememberUser != that.rememberUser) return false;
         if (shippingRequired != that.shippingRequired) return false;
+        if (billingRequired != that.billingRequired) return false;
+        if (emailRequired != that.emailRequired) return false;
         if (allowRememberUser != that.allowRememberUser) return false;
         if (!currencyNameCode.equals(that.currencyNameCode)) return false;
         if (!amount.equals(that.amount)) return false;
@@ -238,6 +262,8 @@ public class PaymentRequest implements Parcelable {
         result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
         result = 31 * result + (rememberUser ? 1 : 0);
         result = 31 * result + (shippingRequired ? 1 : 0);
+        result = 31 * result + (billingRequired ? 1 : 0);
+        result = 31 * result + (emailRequired ? 1 : 0);
         result = 31 * result + (shopperID != null ? shopperID.hashCode() : 0);
         result = 31 * result + (subtotalAmount != null ? subtotalAmount.hashCode() : 0);
         result = 31 * result + (taxAmount != null ? taxAmount.hashCode() : 0);

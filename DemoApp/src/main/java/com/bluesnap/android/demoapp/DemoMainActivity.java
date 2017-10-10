@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
@@ -64,6 +65,8 @@ public class DemoMainActivity extends Activity {
     private ProgressBar progressBar;
     private LinearLayout linearLayoutForProgressBar;
     private Switch shippingSwitch;
+    private Switch billingSwitch;
+    private Switch emailSwitch;
     private EditText taxAmountEditText;
 
     /**
@@ -79,6 +82,10 @@ public class DemoMainActivity extends Activity {
         progressBar = (ProgressBar) findViewById(R.id.progressBarMerchant);
         shippingSwitch = (Switch) findViewById(R.id.shippingSwitch);
         shippingSwitch.setChecked(false);
+        billingSwitch = (Switch) findViewById(R.id.billingSwitch);
+        billingSwitch.setChecked(false);
+        emailSwitch = (Switch) findViewById(R.id.emailSwitch);
+        emailSwitch.setChecked(false);
         progressBar.setVisibility(View.VISIBLE);
         productPriceEditText = (EditText) findViewById(R.id.productPriceEditText);
         taxAmountEditText = (EditText) findViewById(R.id.demoTaxEditText);
@@ -239,6 +246,12 @@ public class DemoMainActivity extends Activity {
         if (shippingSwitch.isChecked()) {
             paymentRequest.setShippingRequired(true);
         }
+        if (billingSwitch.isChecked()) {
+            paymentRequest.setBillingRequired(true);
+        }
+        if (emailSwitch.isChecked()) {
+            paymentRequest.setEmailRequired(true);
+        }
         if (!paymentRequest.verify()) {
             showDialog("PaymentRequest error");
             Log.d(TAG, paymentRequest.toString());
@@ -358,17 +371,25 @@ public class DemoMainActivity extends Activity {
         Bundle extras = data.getExtras();
         PaymentResult paymentResult = (PaymentResult) extras.get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
 
+        //Start a demo activity that shows purchase summary.
+        Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
+        intent.putExtra("MERCHANT_TOKEN", merchantToken);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
 
         // If shipping information is available show it, Here we simply log the shipping info.
         ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
             Log.d(TAG, shippingInfo.toString());
+            intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
         }
 
-        //Start a demo activity that shows purchase summary.
-        Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
-        intent.putExtra("MERCHANT_TOKEN", merchantToken);
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
+        // If billing information is available show it, Here we simply log the billing info.
+        BillingInfo billingInfo = (BillingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        if (billingInfo != null) {
+            Log.d(TAG, billingInfo.toString());
+            intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
+        }
+
         startActivity(intent);
 
         //Recreate the demo activity
