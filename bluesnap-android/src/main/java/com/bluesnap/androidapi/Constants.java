@@ -10,7 +10,6 @@ public class Constants {
     public static final String CC = "CC";
 
     public static final String RETURNING_SHOPPER = "shopperinfo";
-    public static final String REMEMBER_SHOPPER = "REMEMBER_SHOOPER";
     /* PayPal Process URL's */
     protected final static String PAYPAL_PROCEED_URL = "https://sandbox.bluesnap.com/jsp/dev_scripts/iframeCheck/pay_pal_proceed.html";
     protected final static String PAYPAL_CANCEL_URL = "https://sandbox.bluesnap.com/jsp/dev_scripts/iframeCheck/pay_pal_cancel.html";

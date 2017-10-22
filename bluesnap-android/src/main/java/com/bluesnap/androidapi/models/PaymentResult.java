@@ -21,7 +21,7 @@ public class PaymentResult implements Parcelable {
             return new PaymentResult[size];
         }
     };
-    public boolean rememberUser;
+
     public boolean returningTransaction;
     private String last4Digits;
     private Double amount;
@@ -54,7 +54,6 @@ public class PaymentResult implements Parcelable {
         setPaypalInvoiceId(in.readString());
         setKountSessionId(in.readString());
         setEmail(in.readString());
-        rememberUser = in.readInt() != 0;
         returningTransaction = in.readInt() != 0;
         setToken(in.readString());
     }
@@ -73,7 +72,6 @@ public class PaymentResult implements Parcelable {
         dest.writeString(getPaypalInvoiceId());
         dest.writeString(getKountSessionId());
         dest.writeString(getEmail());
-        dest.writeInt(rememberUser ? 1 : 0);
         dest.writeInt(returningTransaction ? 1 : 0);
         dest.writeString(getToken());
     }
@@ -143,7 +141,6 @@ public class PaymentResult implements Parcelable {
                 ", shopperLastName='" + getShopperLastName() + '\'' +
                 ", email=" + email + '\'' +
                 ", cardZipCode='" + getCardZipCode() + '\'' +
-                ", rememberUser=" + rememberUser + '\'' +
                 ", returningTransaction=" + returningTransaction + '\'' +
                 ", paypalInvoiceId=" + paypalInvoiceId + '\'' +
                 ", kountSessionId=" + kountSessionId + '\'' +
