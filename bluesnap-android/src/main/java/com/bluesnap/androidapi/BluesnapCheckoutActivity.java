@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
@@ -28,16 +29,22 @@ import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.PrefsStorage;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.views.*;
+import com.bluesnap.androidapi.views.BluesnapFragment;
+import com.bluesnap.androidapi.views.CurrencyActivity;
+import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
+import com.bluesnap.androidapi.views.ShippingFragment;
+import com.bluesnap.androidapi.views.WebViewActivity;
 import com.kount.api.DataCollector;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
+
+import cz.msebera.android.httpclient.Header;
 
 
 /**
@@ -154,12 +161,8 @@ public class BluesnapCheckoutActivity extends Activity {
                                 Log.d(TAG, "Data context: " + context);
                             }
                         });
-
-
                     }
                 });
-
-
     }
 
 
@@ -183,7 +186,7 @@ public class BluesnapCheckoutActivity extends Activity {
 
     // check currency received from merchant and verify it actually exists
     private void checkIfCurrencyExists(String currencyNameCode) {
-        if (blueSnapService.getSupportedRates().contains(currencyNameCode)) {
+        if (blueSnapService.getSupportedRates() != null && blueSnapService.getSupportedRates().contains(currencyNameCode)) {
             sharedCurrency = currencyNameCode;
         } else {
             String errorMsg = "Currency name code Error";
@@ -333,7 +336,7 @@ public class BluesnapCheckoutActivity extends Activity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                if (statusCode == 400  && null != blueSnapService.getTokenProvider()) {
+                if (statusCode == 400 && null != blueSnapService.getTokenProvider()) {
                     try {
                         JSONArray rs2 = (JSONArray) errorResponse.get("message");
                         JSONObject rs3 = (JSONObject) rs2.get(0);

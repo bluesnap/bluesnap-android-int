@@ -1,18 +1,21 @@
 package com.bluesnap.androidapi.services;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.Card;
+import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.models.ExchangeRate;
+import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.PaymentResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.ByteArrayEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
@@ -24,6 +27,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.ByteArrayEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 /**
  * Core BlueSnap Service class that handles network and maintains {@link PaymentRequest}
@@ -47,29 +55,11 @@ public class BlueSnapService {
     private HashMap<String, ExchangeRate> ratesMap;
     private ArrayList<ExchangeRate> ratesArray;
     private JSONObject paymentMethodsObject = new JSONObject();
-
-    public boolean isexpressCheckoutActive() {
-        return isPaymentMethodActive(Constants.PAYPAL);
-    }
-
-    public boolean isPaymentMethodActive(String paymentMethod) {
-        try {
-            return (paymentMethodsObject.has(paymentMethod)) && paymentMethodsObject.getBoolean(paymentMethod);
-        } catch (JSONException e) {
-            Log.e(TAG, "json exception", e);
-            return false;
-        }
-    }
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
-
-    public TokenProvider getTokenProvider() {
-        return tokenProvider;
-    }
-
     private TokenProvider tokenProvider;
 
     public static BlueSnapService getInstance() {
@@ -86,6 +76,23 @@ public class BlueSnapService {
 
     public static EventBus getBus() {
         return busInstance;
+    }
+
+    public boolean isexpressCheckoutActive() {
+        return isPaymentMethodActive(Constants.PAYPAL);
+    }
+
+    public boolean isPaymentMethodActive(String paymentMethod) {
+        try {
+            return (paymentMethodsObject.has(paymentMethod)) && paymentMethodsObject.getBoolean(paymentMethod);
+        } catch (JSONException e) {
+            Log.e(TAG, "json exception", e);
+            return false;
+        }
+    }
+
+    public TokenProvider getTokenProvider() {
+        return tokenProvider;
     }
 
     public void clearPayPalToken() {
@@ -417,12 +424,16 @@ public class BlueSnapService {
      *
      * @return {@link Set<String>}
      */
+    @Nullable
     public Set<String> getSupportedRates() {
+        if (ratesMap != null)
         return ratesMap.keySet();
+        else return null;
     }
 
     /**
      * Convert a price in USD to a price in another currency  in ISO 4217 Code.
+     * Before
      *
      * @param usdPrice  A String representation of a USD price which will be converted to a double value.
      * @param convertTo ISO 4217 compatible  3 letter currency representation

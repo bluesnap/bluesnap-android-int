@@ -32,6 +32,7 @@ android {
         abortOnError false
         ignoreWarnings false
     }
+    buildToolsVersion '25.0.0'
 }
 configurations {
 
