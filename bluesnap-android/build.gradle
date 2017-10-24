@@ -28,9 +28,10 @@ android {
     }
 
     lintOptions {
-        quiet true
+        quiet false
         abortOnError false
-        ignoreWarnings false
+        ignoreWarnings true
+        disable 'MissingTranslation' //This is disabled until we get updated translations
     }
     buildToolsVersion '25.0.3'
 }

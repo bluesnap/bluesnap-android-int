@@ -29,7 +29,10 @@ android {
 
     }
     lintOptions {
+        quiet false
         abortOnError false
+        ignoreWarnings true
+        disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
 
