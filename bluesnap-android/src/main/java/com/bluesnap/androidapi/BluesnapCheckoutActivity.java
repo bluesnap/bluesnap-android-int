@@ -98,7 +98,6 @@ public class BluesnapCheckoutActivity extends Activity {
         Integer kountMerchantID = getIntent().getIntExtra(EXTRA_KOUNT_MERCHANT_ID, KOUNT_MERCHANT_ID);
         context = getApplicationContext();
         kount = DataCollector.getInstance();
-        //kount.setContext(context);
         try {
             setupKount(kountMerchantID);
         } catch (Exception e) {
@@ -114,17 +113,16 @@ public class BluesnapCheckoutActivity extends Activity {
         }
 
 
-        kount.setDebug(true);
-        Log.d(TAG, "Data context: " + context);
         kount.setContext(context);
         kount.setLocationCollectorConfig(DataCollector.LocationConfig.COLLECT);
 
-        //TODO: decide environment based on BS token
         if (blueSnapService.getBlueSnapToken().isProduction()) {
             kount.setEnvironment(DataCollector.ENVIRONMENT_PRODUCTION);
+            kount.setDebug(false);
+
         } else {
             kount.setEnvironment(DataCollector.ENVIRONMENT_TEST);
-
+            kount.setDebug(true);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -132,9 +130,11 @@ public class BluesnapCheckoutActivity extends Activity {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
                     Log.d(TAG, "Cannot grant location permission for Kount ");
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
                 }
+                // This will prompt location access request.
+                //                else {
+                //                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
+                //                }
             }
         }
 
