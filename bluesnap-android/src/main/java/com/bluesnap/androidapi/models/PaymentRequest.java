@@ -26,7 +26,6 @@ public class PaymentRequest implements Parcelable {
     private Double amount;
     private String customTitle;
     private String userEmail;
-    private boolean rememberUser;
     private boolean shippingRequired;
     private boolean billingRequired;
     private boolean emailRequired;
@@ -37,14 +36,12 @@ public class PaymentRequest implements Parcelable {
     private Double baseAmount;
     private Double baseTaxAmount;
     private Double baseSubtotalAmount;
-    private transient boolean allowRememberUser = true;
 
     public PaymentRequest(Parcel parcel) {
         currencyNameCode = parcel.readString();
         amount = parcel.readDouble();
         customTitle = parcel.readString();
         userEmail = parcel.readString();
-        rememberUser = parcel.readInt() != 0;
         shippingRequired = parcel.readInt() != 0;
         billingRequired = parcel.readInt() != 0;
         emailRequired = parcel.readInt() != 0;
@@ -73,7 +70,6 @@ public class PaymentRequest implements Parcelable {
         parcel.writeDouble(amount);
         parcel.writeString(customTitle);
         parcel.writeString(userEmail);
-        parcel.writeInt(rememberUser ? 1 : 0);
         parcel.writeInt(shippingRequired ? 1 : 0);
         parcel.writeInt(billingRequired ? 1 : 0);
         parcel.writeInt(emailRequired ? 1 : 0);
@@ -117,14 +113,6 @@ public class PaymentRequest implements Parcelable {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
-    }
-
-    public Boolean isRememberUser() {
-        return rememberUser;
-    }
-
-    public void setRememberUser(Boolean remember) {
-        rememberUser = remember;
     }
 
     public boolean isShippingRequired() {
@@ -200,14 +188,6 @@ public class PaymentRequest implements Parcelable {
         return baseSubtotalAmount;
     }
 
-    public void allowRememberUser(boolean allowed) {
-        allowRememberUser = allowed;
-    }
-
-    public boolean isRemembersSerIsAllowed() {
-        return allowRememberUser;
-    }
-
 
     public boolean verify() {
         if (amount == null)
@@ -229,11 +209,9 @@ public class PaymentRequest implements Parcelable {
 
         PaymentRequest that = (PaymentRequest) o;
 
-        if (rememberUser != that.rememberUser) return false;
         if (shippingRequired != that.shippingRequired) return false;
         if (billingRequired != that.billingRequired) return false;
         if (emailRequired != that.emailRequired) return false;
-        if (allowRememberUser != that.allowRememberUser) return false;
         if (!currencyNameCode.equals(that.currencyNameCode)) return false;
         if (!amount.equals(that.amount)) return false;
         if (customTitle != null ? !customTitle.equals(that.customTitle) : that.customTitle != null)
@@ -260,7 +238,6 @@ public class PaymentRequest implements Parcelable {
         result = 31 * result + amount.hashCode();
         result = 31 * result + (customTitle != null ? customTitle.hashCode() : 0);
         result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
-        result = 31 * result + (rememberUser ? 1 : 0);
         result = 31 * result + (shippingRequired ? 1 : 0);
         result = 31 * result + (billingRequired ? 1 : 0);
         result = 31 * result + (emailRequired ? 1 : 0);
@@ -271,7 +248,6 @@ public class PaymentRequest implements Parcelable {
         result = 31 * result + (baseAmount != null ? baseAmount.hashCode() : 0);
         result = 31 * result + (baseTaxAmount != null ? baseTaxAmount.hashCode() : 0);
         result = 31 * result + (baseSubtotalAmount != null ? baseSubtotalAmount.hashCode() : 0);
-        result = 31 * result + (allowRememberUser ? 1 : 0);
         return result;
     }
 

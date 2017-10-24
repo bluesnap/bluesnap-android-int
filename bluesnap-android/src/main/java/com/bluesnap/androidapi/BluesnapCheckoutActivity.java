@@ -80,7 +80,6 @@ public class BluesnapCheckoutActivity extends Activity {
     private ShippingFragment shippingFragment;
     private String kountSessionId;
     private Intent resultIntent;
-    private boolean rememberShopper;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -267,17 +266,9 @@ public class BluesnapCheckoutActivity extends Activity {
 
     public void finishFromFragment() {
         Intent resultIntent = new Intent();
-        boolean rememberShopper = prefsStorage.getBoolean(Constants.REMEMBER_SHOPPER);
         resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shippingInfo);
         resultIntent.putExtra(EXTRA_BILLING_DETAILS, billingInfo);
 
-        if (rememberShopper) {
-            if (shippingInfo != null)
-                prefsStorage.putObject(Constants.SHIPPING_INFO, shippingInfo);
-        } else {
-            prefsStorage.remove(Constants.SHIPPING_INFO);
-            prefsStorage.remove(Constants.RETURNING_SHOPPER);
-        }
         Log.d(TAG, "Testing if card requires server tokenization:" + card.toString());
         if (!card.isModified()) {
             PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
@@ -290,13 +281,12 @@ public class BluesnapCheckoutActivity extends Activity {
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
             paymentResult.setReturningTransaction(true);
             prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
-            prefsStorage.putBoolean(Constants.REMEMBER_SHOPPER, rememberShopper);
             resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
             setResult(RESULT_OK, resultIntent);
             finish();
         } else {
             try {
-                tokenizeCardOnServer(resultIntent, rememberShopper);
+                tokenizeCardOnServer(resultIntent);
             } catch (UnsupportedEncodingException | JSONException e) {
                 String errorMsg = "SDK service error";
                 Log.e(TAG, errorMsg, e);
@@ -306,8 +296,7 @@ public class BluesnapCheckoutActivity extends Activity {
         }
     }
 
-    private void tokenizeCardOnServer(final Intent resultIntent, final boolean rememberShopper) throws UnsupportedEncodingException, JSONException {
-        this.rememberShopper = rememberShopper;
+    private void tokenizeCardOnServer(final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         this.resultIntent = resultIntent;
 
         blueSnapService.tokenizeCard(card, new JsonHttpResponseHandler() {
@@ -328,10 +317,6 @@ public class BluesnapCheckoutActivity extends Activity {
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server
                     card.setTokenizationSucess();
                     Log.d(TAG, "tokenization finished");
-                    if (rememberShopper)
-                        prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
-
-                    prefsStorage.putBoolean(Constants.REMEMBER_SHOPPER, rememberShopper);
                     finish();
                 } catch (NullPointerException | JSONException e) {
                     Log.e(TAG, "", e);
@@ -355,7 +340,7 @@ public class BluesnapCheckoutActivity extends Activity {
                                         public void complete(String newToken) {
                                             blueSnapService.setNewToken(newToken);
                                             try {
-                                                tokenizeCardOnServer(resultIntent, rememberShopper);
+                                                tokenizeCardOnServer(resultIntent);
                                             } catch (UnsupportedEncodingException e) {
                                                 Log.e(TAG, "Unsupported Encoding Exception", e);
                                             } catch (JSONException e) {

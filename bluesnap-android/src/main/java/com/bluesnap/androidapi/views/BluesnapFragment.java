@@ -62,7 +62,6 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private TextView invalidAddressMessageTextView, invaildCreditCardMessageTextView, invalidShopperName;
     private EditText creditCardNumberEditText, shopperFullNameEditText, cvvEditText, expDateEditText, zipEditText, emailEditText, billingAddressLineEditText, billingCityEditText, billingStateEditText;
     private ToggleButton couponButton;
-    private Switch rememberMeSwitch;
     private Card card;
     private PrefsStorage prefsStorage;
     private PaymentRequest paymentRequest;
@@ -149,9 +148,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         buyNowButton.setOnClickListener(new buyButtonClickListener());
         buyNowButton.setVisibility(View.VISIBLE);
 
-        if (paymentRequest.isRemembersSerIsAllowed()) {
-            initPrefs();
-        }
+        initPrefs();
 
         if (savedInstanceState != null) {
             shopperFullNameEditText.setText(savedInstanceState.getString("shopperFullNameEditText"));
@@ -291,14 +288,12 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         expDateEditText = (EditText) inflate.findViewById(R.id.expDateEditText);
         creditCardNumberEditText = (EditText) inflate.findViewById(R.id.creditCardNumberEditText);
         tableRowLineSeparator = (TableRow) inflate.findViewById(R.id.tableRowLineSeparator);
-        rememberMeSwitch = (Switch) inflate.findViewById(R.id.rememberMeSwitch);
         prefsStorage = new PrefsStorage(inflate.getContext());
         subtotalValueTextView = (TextView) inflate.findViewById(R.id.subtotalValueTextview);
         taxValueTextView = (TextView) inflate.findViewById(R.id.taxValueTextview);
         LinearLayout cardFieldsLinearLayout = (LinearLayout) inflate.findViewById(R.id.cardFieldsLinearLayout);
         AndroidUtil.hideKeyboardOnLayoutOfEditText(cardFieldsLinearLayout);
         //couponButton.setOnClickListener(new couponBtnClickListener()); //TODO: coupon
-        //rememberMeSwitch.setOnCheckedChangeListener(new RememberMeSwitchListener());
         return inflate;
     }
 
@@ -356,30 +351,13 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private void initPrefs() {
-        boolean rememberShopper;
         try {
-            card = (Card) prefsStorage.getObject(Constants.RETURNING_SHOPPER, Card.class);
-            rememberShopper = prefsStorage.getBoolean(Constants.REMEMBER_SHOPPER);
-            if (card == null || !rememberShopper)
+            if (card == null)
                 card = new Card();
 
-            if (!rememberShopper) {
-                return;
-            }
-
         } catch (Exception e) {
-            Log.w(TAG, "failed to load saved shopperinfo");
-            prefsStorage.remove(Constants.REMEMBER_SHOPPER);
-            prefsStorage.remove(Constants.SHIPPING_INFO);
+            Log.w(TAG, "failed to create new card");
             return;
-        }
-
-        if (card != null && card.validForReuse() && rememberShopper) {
-            populateFromCard();
-            rememberMeSwitch.setChecked(true);
-        } else {
-            prefsStorage.remove(Constants.REMEMBER_SHOPPER);
-            prefsStorage.remove(Constants.SHIPPING_INFO);
         }
     }
 
@@ -401,21 +379,6 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-    }
-
-    private void handleRememberMe() {
-        try {
-
-            if (rememberMeSwitch.isChecked()) {
-                prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
-                prefsStorage.putBoolean(Constants.REMEMBER_SHOPPER, true);
-
-            } else if (!rememberMeSwitch.isChecked()) {
-                prefsStorage.putBoolean(Constants.REMEMBER_SHOPPER, false);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Exception on saving sharedprefs", e);
-        }
     }
 
     private void setFocusOnCCFragmentEditText(final CreditCardFields checkWhichFieldIsInValid) {
@@ -632,7 +595,6 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             shopperNameIconLabelTextView.setTextColor(Color.BLACK);
             invaildCreditCardMessageTextView.setVisibility(View.GONE);
             invalidShopperName.setVisibility(View.GONE);
-            handleRememberMe();
             BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
             bluesnapCheckoutActivity.setCard(card);
 
@@ -652,7 +614,6 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
             paymentResult.setLast4Digits(card.getLast4());
             paymentResult.setExpDate(card.getExpDate());
-            paymentResult.rememberUser = rememberMeSwitch.isChecked();
             String[] nameFieldParts = shopperFullNameEditText.getText().toString().trim().split(" ");
             paymentResult.setShopperFirstName(nameFieldParts[0]);
             if (nameFieldParts.length > 1)

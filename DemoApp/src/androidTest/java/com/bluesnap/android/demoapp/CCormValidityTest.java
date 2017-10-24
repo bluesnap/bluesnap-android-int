@@ -54,7 +54,6 @@ public class CCormValidityTest extends EspressoBasedTest {
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
         paymentRequest.setCurrencyNameCode("USD");
         paymentRequest.setShippingRequired(false);
-        paymentRequest.allowRememberUser(false);
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());
