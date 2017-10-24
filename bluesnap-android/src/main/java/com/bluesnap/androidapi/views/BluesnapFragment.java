@@ -20,7 +20,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -256,7 +255,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         zipFieldLayout = (LinearLayout) inflate.findViewById(R.id.zipFieldLayout);
         zipTextView = (TextView) inflate.findViewById(R.id.zipTextView);
         zipEditText = (EditText) inflate.findViewById(R.id.zipEditText);
-        addressCountryButton = (Button) inflate.findViewById(R.id.addressCountryEditText);
+        addressCountryButton = (Button) inflate.findViewById(R.id.addressCountryButton);
         addressCountryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

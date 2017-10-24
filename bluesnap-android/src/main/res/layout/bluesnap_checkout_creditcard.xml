@@ -455,7 +455,7 @@
                             android:text="@string/country" />
 
                         <Button
-                            android:id="@+id/addressCountryEditText"
+                            android:id="@+id/addressCountryButton"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_vertical"

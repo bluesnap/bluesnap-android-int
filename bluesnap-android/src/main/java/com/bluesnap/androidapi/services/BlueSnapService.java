@@ -1,9 +1,8 @@
 package com.bluesnap.androidapi.services;
 
-import android.app.Application;
 import android.content.Context;
-import android.telephony.TelephonyManager;
 import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.bluesnap.androidapi.BuildConfig;
@@ -18,11 +17,6 @@ import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.ByteArrayEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -66,19 +60,6 @@ public class BlueSnapService {
     private ArrayList<ExchangeRate> ratesArray;
     private JSONObject paymentMethodsObject = new JSONObject();
 
-    public boolean isexpressCheckoutActive() {
-        return isPaymentMethodActive(Constants.PAYPAL);
-    }
-
-    public boolean isPaymentMethodActive(String paymentMethod) {
-        try {
-            return (paymentMethodsObject.has(paymentMethod)) && paymentMethodsObject.getBoolean(paymentMethod);
-        } catch (JSONException e) {
-            Log.e(TAG, "json exception", e);
-            return false;
-        }
-    }
-
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
@@ -101,6 +82,7 @@ public class BlueSnapService {
     public static EventBus getBus() {
         return busInstance;
     }
+
 
     public boolean isexpressCheckoutActive() {
         return isPaymentMethodActive(Constants.PAYPAL);

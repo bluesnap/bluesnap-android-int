@@ -2,12 +2,9 @@ package com.bluesnap.androidapi.views;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +29,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Locale;
 
 /**
  * Fragment to collect shipping information.
@@ -90,7 +86,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         shippingZipEditText = (EditText) inflate.findViewById(R.id.shippingZipEditText);
         shippingZipLabelTextView = (TextView) inflate.findViewById(R.id.addressZipView);
         shippingZipLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingZipLinearLayout);
-        addressCountryButton = (Button) inflate.findViewById(R.id.addressCountryEditText);
+        addressCountryButton = (Button) inflate.findViewById(R.id.shippingAddressCountryButton);
         totalAmountTextView = (TextView) inflate.findViewById(R.id.shippingBuyNowButton);
         prefsStorage = new PrefsStorage(inflate.getContext());
         subtotalView = (ViewGroup) inflate.findViewById(R.id.subtotal_tax_table_shipping);
