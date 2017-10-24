@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
@@ -56,6 +57,7 @@ public class BluesnapCheckoutActivity extends Activity {
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
     public final static String MERCHANT_TOKEN = "com.bluesnap.intent.BSNAP_CLIENT_PRIVATE_KEY";
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
+    public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final String EXTRA_KOUNT_MERCHANT_ID = "com.bluesnap.intent.KOUNT_MERCHANT_ID";
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     public static final int REQUEST_CODE_DEFAULT = 1;
@@ -73,6 +75,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private ExpressCheckoutFragment expressCheckoutFragment;
     private String sharedCurrency;
     private ShippingInfo shippingInfo;
+    private BillingInfo billingInfo;
     private Card card;
     private ShippingFragment shippingFragment;
     private String kountSessionId;
@@ -253,6 +256,10 @@ public class BluesnapCheckoutActivity extends Activity {
         return shippingFragment;
     }
 
+    public void setBillingInfo(BillingInfo billingInfo) {
+        this.billingInfo = billingInfo;
+    }
+
     public void finishFromShippingFragment(ShippingInfo shippingInfo) {
         this.shippingInfo = shippingInfo;
         finishFromFragment();
@@ -262,6 +269,7 @@ public class BluesnapCheckoutActivity extends Activity {
         Intent resultIntent = new Intent();
         boolean rememberShopper = prefsStorage.getBoolean(Constants.REMEMBER_SHOPPER);
         resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shippingInfo);
+        resultIntent.putExtra(EXTRA_BILLING_DETAILS, billingInfo);
 
         if (rememberShopper) {
             if (shippingInfo != null)

@@ -31,6 +31,7 @@ import com.bluesnap.androidapi.services.PrefsStorage;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -39,6 +40,11 @@ import java.util.Locale;
 public class ShippingFragment extends Fragment implements BluesnapPaymentFragment {
     public static final String AUTO_POPULATE_SHOPPER_NAME = "AUTO_POPULATE_SHOPPER_NAME";
     public static final String AUTO_POPULATE_ZIP = "AUTO_POPULATE_ZIP";
+    public static final String AUTO_POPULATE_EMAIL = "AUTO_POPULATE_EMAIL";
+    public static final String AUTO_POPULATE_ADDRESS = "AUTO_POPULATE_ADDRESS";
+    public static final String AUTO_POPULATE_CITY = "AUTO_POPULATE_CITY";
+    public static final String AUTO_POPULATE_STATE = "AUTO_POPULATE_STATE";
+    public static final String AUTO_POPULATE_COUNTRY = "AUTO_POPULATE_COUNTRY";
     public static final String SHIPPING_TAG = String.valueOf(ShippingFragment.class.getSimpleName());
     static final String TAG = ShippingFragment.class.getSimpleName();
     private TextView totalAmountTextView;
@@ -57,30 +63,13 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
     private TextView shippingStateLabelTextView;
     private EditText shippingZipEditText;
     private TextView shippingZipLabelTextView;
+    private LinearLayout shippingZipLinearLayout;
     private Button addressCountryButton;
     private PrefsStorage prefsStorage;
     private ViewGroup subtotalView;
     private TextView subtotalValueTextView;
     private TextView taxValueTextView;
-
-    public static String getUserCountry(Context context) {
-        try {
-            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            final String simCountry = tm.getSimCountryIso();
-            if (simCountry != null && simCountry.length() == 2) {
-                return simCountry.toUpperCase(Locale.US);
-            } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
-                String networkCountry = tm.getNetworkCountryIso();
-                if (networkCountry != null && networkCountry.length() == 2) {
-                    return networkCountry.toUpperCase(Locale.US);
-                }
-            }
-        } catch (Exception e) {
-            Log.e(SHIPPING_TAG, "TelephonyManager, getSimCountryIso or getNetworkCountryIso failed");
-        }
-
-        return Locale.US.getCountry();
-    }
+    private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,6 +89,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         shippingStateLabelTextView = (TextView) inflate.findViewById(R.id.shippingStateLabelTextView);
         shippingZipEditText = (EditText) inflate.findViewById(R.id.shippingZipEditText);
         shippingZipLabelTextView = (TextView) inflate.findViewById(R.id.addressZipView);
+        shippingZipLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingZipLinearLayout);
         addressCountryButton = (Button) inflate.findViewById(R.id.addressCountryEditText);
         totalAmountTextView = (TextView) inflate.findViewById(R.id.shippingBuyNowButton);
         prefsStorage = new PrefsStorage(inflate.getContext());
@@ -132,6 +122,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         } else {
             shippingStateEditText.setOnFocusChangeListener(null);
         }
+        changeZipTextAccordingToCountry();
     }
 
     @Subscribe
@@ -171,7 +162,17 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
             savedInstanceState = getArguments();
             shippingNameEditText.setText(savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME));
             shippingZipEditText.setText(savedInstanceState.getString(AUTO_POPULATE_ZIP));
-            addressCountryButton.setText(getUserCountry(getActivity().getApplicationContext()));
+            shippingEmailEditText.setText(savedInstanceState.getString(AUTO_POPULATE_EMAIL));
+            shippingAddressLineEditText.setText(savedInstanceState.getString(AUTO_POPULATE_ADDRESS));
+            shippingCityEditText.setText(savedInstanceState.getString(AUTO_POPULATE_CITY));
+            shippingStateEditText.setText(savedInstanceState.getString(AUTO_POPULATE_STATE));
+            addressCountryButton.setText(
+                    null != savedInstanceState.getString(AUTO_POPULATE_COUNTRY)
+                            && !"".equals(savedInstanceState.getString(AUTO_POPULATE_COUNTRY))
+                            ? savedInstanceState.getString(AUTO_POPULATE_COUNTRY)
+                            : blueSnapService.getUserCountry(getActivity().getApplicationContext())
+            );
+            changeZipTextAccordingToCountry();
         }
 
         ActivateOnFocusValidation(shippingNameEditText);
@@ -203,7 +204,8 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         } else if (editText.equals(shippingStateEditText)) {
             return AndroidUtil.validateEditTextString(shippingStateEditText, shippingStateLabelTextView);
         } else if (editText.equals(shippingZipEditText)) {
-            return AndroidUtil.validateEditTextString(shippingZipEditText, shippingZipLabelTextView, AndroidUtil.ZIP_FIELD);
+            return Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())
+                    || AndroidUtil.validateEditTextString(shippingZipEditText, shippingZipLabelTextView, AndroidUtil.ZIP_FIELD);
         } else if (editText.equals(shippingNameEditText)) {
             return AndroidUtil.validateEditTextString(shippingNameEditText, shippingNameLabelTextView, invalidNameMessageTextView, AndroidUtil.NAME_FIELD);
         } else if (editText.equals(shippingEmailEditText)) {
@@ -245,6 +247,20 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
 
     private String getCountryText() {
         return AndroidUtil.stringify(addressCountryButton.getText()).trim();
+    }
+
+    private void changeZipTextAccordingToCountry() {
+        // check if usa if so change zip text to postal code otherwise billing zip
+        shippingZipLabelTextView.setText(
+                AndroidUtil.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
+                        ? R.string.postal_code_hint
+                        : R.string.billing_zip
+        );
+        shippingZipLinearLayout.setVisibility(
+                Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())
+                        ? View.INVISIBLE
+                        : View.VISIBLE
+        );
     }
 
     private void setFocusOnShippingFragmentEditText(final CreditCardFields checkWhichFieldIsInValid) {

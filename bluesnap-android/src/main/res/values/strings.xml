@@ -16,6 +16,7 @@
     <string name="invalid_address_line">Invalid Address Line</string>
     <string name="invalid_email_address">Invalid Email Address</string>
     <string name="zip">Zip</string>
+    <string name="billing_zip">Billing Zip</string>
     <string name="country">Country</string>
     <string name="state">State</string>
     <string name="city">City</string>
@@ -24,6 +25,7 @@
     <string name="invalid_card_number">Invalid Card Number</string>
     <string name="coupon_questionmark">Coupon?</string>
     <string name="shipping">Shipping</string>
+    <string name="billing">Billing</string>
     <string name="shipping_Info">Shipping Info</string>
     <string name="pay">Pay</string>
     <string name="total">Total</string>
