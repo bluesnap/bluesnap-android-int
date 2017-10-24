@@ -17,8 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -48,7 +46,7 @@ public class CCormValidityTest extends EspressoBasedTest {
     }
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
         super.setup();
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(23.4);

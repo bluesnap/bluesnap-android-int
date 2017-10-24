@@ -18,8 +18,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -50,7 +48,7 @@ public class CurrencyChangeTest extends EspressoBasedTest {
     }
 
     @Before
-    public void setup() throws IOException {
+    public void setup() {
         super.setup();
         BlueSnapService.getInstance().setup(merchantToken);
         PaymentRequest paymentRequest = new PaymentRequest();
