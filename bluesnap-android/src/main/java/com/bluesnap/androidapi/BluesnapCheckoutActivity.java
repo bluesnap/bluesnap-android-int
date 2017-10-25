@@ -279,7 +279,6 @@ public class BluesnapCheckoutActivity extends Activity {
             paymentResult.setCardZipCode(card.getAddressZip());
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
-            paymentResult.setReturningTransaction(true);
             prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
             resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
             setResult(RESULT_OK, resultIntent);
@@ -311,7 +310,6 @@ public class BluesnapCheckoutActivity extends Activity {
                     paymentResult.setLast4Digits(Last4);
                     // update card type from server result
                     paymentResult.setCardType(ccType);
-                    paymentResult.setReturningTransaction(false);
                     resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
                     setResult(RESULT_OK, resultIntent);
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server

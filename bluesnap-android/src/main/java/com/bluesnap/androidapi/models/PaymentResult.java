@@ -22,7 +22,6 @@ public class PaymentResult implements Parcelable {
         }
     };
 
-    public boolean returningTransaction;
     private String last4Digits;
     private Double amount;
     private String currencyNameCode;
@@ -54,7 +53,6 @@ public class PaymentResult implements Parcelable {
         setPaypalInvoiceId(in.readString());
         setKountSessionId(in.readString());
         setEmail(in.readString());
-        returningTransaction = in.readInt() != 0;
         setToken(in.readString());
     }
 
@@ -72,22 +70,7 @@ public class PaymentResult implements Parcelable {
         dest.writeString(getPaypalInvoiceId());
         dest.writeString(getKountSessionId());
         dest.writeString(getEmail());
-        dest.writeInt(returningTransaction ? 1 : 0);
         dest.writeString(getToken());
-    }
-
-    /**
-     * Indicates if this is a returning shopper transaction.
-     * You should decide which server call to use according to this method.
-     *
-     * @return true if this is a returning shopper.
-     */
-    public boolean isReturningTransaction() {
-        return returningTransaction;
-    }
-
-    public void setReturningTransaction(boolean returningTransaction) {
-        this.returningTransaction = returningTransaction;
     }
 
     @Override
@@ -141,7 +124,6 @@ public class PaymentResult implements Parcelable {
                 ", shopperLastName='" + getShopperLastName() + '\'' +
                 ", email=" + email + '\'' +
                 ", cardZipCode='" + getCardZipCode() + '\'' +
-                ", returningTransaction=" + returningTransaction + '\'' +
                 ", paypalInvoiceId=" + paypalInvoiceId + '\'' +
                 ", kountSessionId=" + kountSessionId + '\'' +
                 ", token=" + getToken() + '\'' +
