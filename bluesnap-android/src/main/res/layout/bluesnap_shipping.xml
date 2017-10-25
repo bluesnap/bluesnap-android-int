@@ -238,7 +238,7 @@
                                 android:drawableLeft="@drawable/ico_field_zip"
                                 android:drawablePadding="5dp"
                                 android:padding="6sp"
-                                android:text="@string/billing_zip" />
+                                android:text="@string/zip" />
 
                             <EditText
                                 android:id="@+id/shippingZipEditText"

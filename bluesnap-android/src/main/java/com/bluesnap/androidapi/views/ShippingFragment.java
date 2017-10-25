@@ -250,7 +250,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         shippingZipLabelTextView.setText(
                 AndroidUtil.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
                         ? R.string.postal_code_hint
-                        : R.string.billing_zip
+                        : R.string.zip
         );
         shippingZipLinearLayout.setVisibility(
                 Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())
