@@ -337,16 +337,17 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
     private void changeZipTextAccordingToCountry() {
         // check if usa if so change zip text to postal code otherwise billing zip
-        zipTextView.setText(
-                AndroidUtil.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
-                        ? R.string.postal_code_hint
-                        : R.string.billing_zip
-        );
-        zipFieldLayout.setVisibility(
-                Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())
-                        ? View.INVISIBLE
-                        : View.VISIBLE
-        );
+        if (Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())) {
+            zipFieldLayout.setVisibility(View.INVISIBLE);
+            zipEditText.setText("");
+        } else {
+            zipFieldLayout.setVisibility(View.VISIBLE);
+            zipTextView.setText(
+                    AndroidUtil.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
+                            ? R.string.postal_code_hint
+                            : R.string.billing_zip
+            );
+        }
     }
 
     private void initPrefs() {
