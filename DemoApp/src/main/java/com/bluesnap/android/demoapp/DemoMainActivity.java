@@ -27,8 +27,8 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.services.TokenProvider;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -430,5 +430,9 @@ public class DemoMainActivity extends Activity {
             treeSet.add("ILS");
         }
         return treeSet;
+    }
+
+    public BlueSnapService getBluesnapService() {
+        return bluesnapService;
     }
 }
