@@ -472,11 +472,15 @@ public class BlueSnapService {
         if (paymentResult == null) {
             paymentResult = new PaymentResult();
 
-            paymentResult.setToken(bluesnapToken.getMerchantToken());
-            // Copy values from request
-            paymentResult.setAmount(paymentRequest.getAmount());
-            paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
-            paymentResult.setShopperID(paymentRequest.getShopperID());
+            try {
+                paymentResult.setToken(bluesnapToken.getMerchantToken());
+                // Copy values from request
+                paymentResult.setAmount(paymentRequest.getAmount());
+                paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
+                paymentResult.setShopperID(paymentRequest.getShopperID());
+            } catch (Exception e) {
+                Log.e(TAG, "paymentResult set Token, Amount, Currency or ShopperId resulted in an error");
+            }
         }
         return paymentResult;
     }
