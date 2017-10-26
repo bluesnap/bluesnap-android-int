@@ -36,7 +36,6 @@ import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.PrefsStorage;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -62,7 +61,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private EditText creditCardNumberEditText, shopperFullNameEditText, cvvEditText, expDateEditText, zipEditText, emailEditText, billingAddressLineEditText, billingCityEditText, billingStateEditText;
     private ToggleButton couponButton;
     private Card card;
-    private PrefsStorage prefsStorage;
+    //private PrefsStorage prefsStorage;
     private PaymentRequest paymentRequest;
     private ViewGroup subtotalView;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
@@ -287,7 +286,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         expDateEditText = (EditText) inflate.findViewById(R.id.expDateEditText);
         creditCardNumberEditText = (EditText) inflate.findViewById(R.id.creditCardNumberEditText);
         tableRowLineSeparator = (TableRow) inflate.findViewById(R.id.tableRowLineSeparator);
-        prefsStorage = new PrefsStorage(inflate.getContext());
+        //prefsStorage = new PrefsStorage(inflate.getContext());
         subtotalValueTextView = (TextView) inflate.findViewById(R.id.subtotalValueTextview);
         taxValueTextView = (TextView) inflate.findViewById(R.id.taxValueTextview);
         LinearLayout cardFieldsLinearLayout = (LinearLayout) inflate.findViewById(R.id.cardFieldsLinearLayout);

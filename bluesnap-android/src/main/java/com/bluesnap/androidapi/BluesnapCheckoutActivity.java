@@ -28,7 +28,6 @@ import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.PrefsStorage;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.BluesnapFragment;
 import com.bluesnap.androidapi.views.CurrencyActivity;
@@ -69,7 +68,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private Context context;
     private DataCollector kount;
     private BluesnapFragment bluesnapFragment;
-    private PrefsStorage prefsStorage;
+    //private PrefsStorage prefsStorage;
     private FragmentManager fragmentManager;
     private PaymentRequest paymentRequest;
     private ExpressCheckoutFragment expressCheckoutFragment;
@@ -91,7 +90,7 @@ public class BluesnapCheckoutActivity extends Activity {
         fragmentManager = getFragmentManager();
         bluesnapFragment = (BluesnapFragment) fragmentManager.findFragmentById(R.id.fraglyout);
         expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
-        prefsStorage = new PrefsStorage(this);
+        //prefsStorage = new PrefsStorage(this);
         final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
         checkIfCurrencyExists(paymentRequest.getCurrencyNameCode());
         if (blueSnapService.isexpressCheckoutActive())
@@ -279,7 +278,7 @@ public class BluesnapCheckoutActivity extends Activity {
             paymentResult.setCardZipCode(card.getAddressZip());
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
-            prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
+            //prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
             resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
             setResult(RESULT_OK, resultIntent);
             finish();

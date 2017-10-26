@@ -23,7 +23,6 @@ import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.PrefsStorage;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -61,7 +60,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
     private TextView shippingZipLabelTextView;
     private LinearLayout shippingZipLinearLayout;
     private Button addressCountryButton;
-    private PrefsStorage prefsStorage;
+    //private PrefsStorage prefsStorage;
     private ViewGroup subtotalView;
     private TextView subtotalValueTextView;
     private TextView taxValueTextView;
@@ -88,7 +87,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         shippingZipLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingZipLinearLayout);
         addressCountryButton = (Button) inflate.findViewById(R.id.shippingAddressCountryButton);
         totalAmountTextView = (TextView) inflate.findViewById(R.id.shippingBuyNowButton);
-        prefsStorage = new PrefsStorage(inflate.getContext());
+        //prefsStorage = new PrefsStorage(inflate.getContext());
         subtotalView = (ViewGroup) inflate.findViewById(R.id.subtotal_tax_table_shipping);
         subtotalValueTextView = (TextView) inflate.findViewById(R.id.subtotalValueTextviewShipping);
         taxValueTextView = (TextView) inflate.findViewById(R.id.taxValueTextviewShipping);
@@ -145,17 +144,8 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
 
         totalAmountTextView.setOnClickListener(new ShippingSubmitClickListener());
 
-        ShippingInfo shippingInfo = (ShippingInfo) prefsStorage.getObject(Constants.SHIPPING_INFO, ShippingInfo.class);
-        if (shippingInfo != null) {
-            shippingNameEditText.setText(shippingInfo.getName());
-            shippingAddressLineEditText.setText(shippingInfo.getAddressLine());
-            shippingCityEditText.setText(shippingInfo.getShippingCity());
-            shippingStateEditText.setText(shippingInfo.getState());
-            shippingZipEditText.setText(shippingInfo.getZip());
-            addressCountryButton.setText(shippingInfo.getCountry());
-            shippingEmailEditText.setText(shippingInfo.getEmail());
-        } else {
-            savedInstanceState = getArguments();
+        // ShippingInfo shippingInfo = (ShippingInfo) prefsStorage.getObject(Constants.SHIPPING_INFO, ShippingInfo.class);
+        savedInstanceState = getArguments();
             shippingNameEditText.setText(savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME));
             shippingZipEditText.setText(savedInstanceState.getString(AUTO_POPULATE_ZIP));
             shippingEmailEditText.setText(savedInstanceState.getString(AUTO_POPULATE_EMAIL));
@@ -169,7 +159,6 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                             : blueSnapService.getUserCountry(getActivity().getApplicationContext())
             );
             changeZipTextAccordingToCountry();
-        }
 
         ActivateOnFocusValidation(shippingNameEditText);
         ActivateOnFocusValidation(shippingAddressLineEditText);
