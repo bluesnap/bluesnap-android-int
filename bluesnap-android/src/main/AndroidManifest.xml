@@ -8,8 +8,8 @@
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
     <!-- Kount-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
 
     <application android:supportsRtl="true">
         <activity
