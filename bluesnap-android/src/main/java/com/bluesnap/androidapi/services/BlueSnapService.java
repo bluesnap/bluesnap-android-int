@@ -153,6 +153,9 @@ public class BlueSnapService {
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
         bluesnapToken.setToken(merchantToken);
         clearPayPalToken();
+        // after expired token is replaced - placing new token in payment result
+        if (null != paymentResult)
+            paymentResult.setToken(merchantToken);
         Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
 
     }
@@ -433,7 +436,7 @@ public class BlueSnapService {
     @Nullable
     public Set<String> getSupportedRates() {
         if (ratesMap != null)
-        return ratesMap.keySet();
+            return ratesMap.keySet();
         else return null;
     }
 
