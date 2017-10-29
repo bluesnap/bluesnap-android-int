@@ -27,8 +27,8 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.services.TokenProvider;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -98,8 +98,9 @@ public class DemoMainActivity extends Activity {
             Locale current = getResources().getConfiguration().locale;
             currencyByLocale = Currency.getInstance(current);
         } catch (Exception e) {
-            currencyByLocale = Currency.getInstance(Locale.getDefault());
+            currencyByLocale = Currency.getInstance("USD");
         }
+
         context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
         generateMerchantToken();
