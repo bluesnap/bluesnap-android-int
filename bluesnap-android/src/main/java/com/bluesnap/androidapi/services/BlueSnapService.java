@@ -467,6 +467,9 @@ public class BlueSnapService {
      */
     public Double convertPrice(Double basePrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
 
+        if (paymentRequest.getBaseCurrency().equals(newCurrencyNameCode)) {
+            return paymentRequest.getBaseAmount();
+        }
         Double baseConversionRate = ratesMap.get(paymentRequest.getBaseCurrency()).getConversionRate();
         Double usdPRice = basePrice * baseConversionRate;
         Double newPrice = ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
@@ -501,6 +504,7 @@ public class BlueSnapService {
         if (paymentRequest != null) {
             Log.w(TAG, "paymentrequest override");
         }
+        //TODO: call newPaymentRequest.verify() and verify currency
         paymentRequest = newPaymentRequest;
 
     }
