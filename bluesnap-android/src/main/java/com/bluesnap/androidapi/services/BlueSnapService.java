@@ -466,7 +466,9 @@ public class BlueSnapService {
      * @return
      */
     public Double convertPrice(Double basePrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
-        Double usdPRice = basePrice / ratesMap.get(currentCurrencyNameCode).getInverseConversionRate();
+
+        Double baseConversionRate = ratesMap.get(paymentRequest.getBaseCurrency()).getConversionRate();
+        Double usdPRice = basePrice * baseConversionRate;
         Double newPrice = ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
         return newPrice;
     }
