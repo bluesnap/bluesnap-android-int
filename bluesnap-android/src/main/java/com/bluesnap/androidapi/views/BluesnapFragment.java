@@ -187,7 +187,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
-                    AndroidUtil.validateEditTextString(zipEditText, zipTextView, AndroidUtil.ZIP_FIELD);
+                    zipFieldValidation();
             }
         });
 
