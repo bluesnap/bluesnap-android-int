@@ -472,11 +472,12 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
     private boolean zipFieldValidation() {
         String cardType = CardType.getType(creditCardNumberEditText.getText().toString().trim());
-        return !(
-                !Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())
-                        && (cardType.equals(CardType.VISA) || cardType.equals(CardType.DISCOVER))
-        )
-                || AndroidUtil.validateEditTextString(zipEditText, zipTextView, AndroidUtil.ZIP_FIELD);
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText()) && (cardType.equals(CardType.VISA) || cardType.equals(CardType.DISCOVER))) {
+            return AndroidUtil.validateEditTextString(zipEditText, zipTextView, AndroidUtil.ZIP_FIELD);
+        } else {
+            zipTextView.setTextColor(Color.BLACK);
+            return true;
+        }
     }
 
     private boolean emailFieldValidation() {
