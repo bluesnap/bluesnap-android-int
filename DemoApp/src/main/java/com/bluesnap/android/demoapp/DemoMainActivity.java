@@ -48,6 +48,8 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 public class DemoMainActivity extends Activity {
 
     private static final String TAG = "DemoMainActivity";
+    private static final int HTTP_MAX_RETRIES = 2;
+    private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
     private static Context context;
     protected BlueSnapService bluesnapService;
     protected TokenProvider tokenProvider;
@@ -267,6 +269,7 @@ public class DemoMainActivity extends Activity {
 
     private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
+        httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
         httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
 

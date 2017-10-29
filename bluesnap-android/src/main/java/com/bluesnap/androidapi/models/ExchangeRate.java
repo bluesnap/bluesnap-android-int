@@ -6,7 +6,6 @@ package com.bluesnap.androidapi.models;
 public class ExchangeRate {
     private String quoteCurrency;
     private double conversionRate;
-    private double inverseConversionRate;
 
     public String getQuoteCurrency() {
         return quoteCurrency;
@@ -22,17 +21,7 @@ public class ExchangeRate {
 
     public void setConversionRate(double conversionRate) {
         this.conversionRate = conversionRate;
-        if (conversionRate != 0)
-            setInverseConversionRate(1 / conversionRate);
-        else
-            setInverseConversionRate(0);
+
     }
 
-    public double getInverseConversionRate() {
-        return inverseConversionRate;
-    }
-
-    private void setInverseConversionRate(double inverseConversionRate) {
-        this.inverseConversionRate = inverseConversionRate;
-    }
 }
