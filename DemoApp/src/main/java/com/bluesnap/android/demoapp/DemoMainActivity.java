@@ -98,8 +98,9 @@ public class DemoMainActivity extends Activity {
             Locale current = getResources().getConfiguration().locale;
             currencyByLocale = Currency.getInstance(current);
         } catch (Exception e) {
-            currencyByLocale = Currency.getInstance(Locale.getDefault());
+            currencyByLocale = Currency.getInstance("USD");
         }
+
         context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
         generateMerchantToken();
