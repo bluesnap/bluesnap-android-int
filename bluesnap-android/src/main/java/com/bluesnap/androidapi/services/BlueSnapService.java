@@ -524,6 +524,9 @@ public class BlueSnapService {
      */
     public void verifyPaymentRequest(PaymentRequest paymentRequest) throws BSPaymentRequestException {
         paymentRequest.verify();
+        if (ratesMap == null) {
+            throw new BSPaymentRequestException("rates map is not populated. did you forget to call updateRates?");
+        }
         if (ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
             throw new BSPaymentRequestException("Currency not found");
         }
