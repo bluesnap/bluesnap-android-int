@@ -3,6 +3,8 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 /**
  * A Request for payment process in the SDK.
  * A new PaymentRequest should be used for each purchase.
@@ -189,12 +191,15 @@ public class PaymentRequest implements Parcelable {
     }
 
 
-    public boolean verify() {
+    public boolean verify() throws BSPaymentRequestException {
         if (amount == null)
-            return false;
+            throw new BSPaymentRequestException("Invalid amount");
         if (amount <= 0)
-            return false;
-        return currencyNameCode != null;
+            throw new BSPaymentRequestException(String.format("Invalid amount %f", amount));
+        if (currencyNameCode == null)
+            throw new BSPaymentRequestException("Invalid currency");
+
+        return true;
     }
 
     public boolean isSubtotalTaxSet() {

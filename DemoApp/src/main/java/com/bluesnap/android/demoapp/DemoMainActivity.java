@@ -24,6 +24,7 @@ import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
@@ -255,8 +256,10 @@ public class DemoMainActivity extends Activity {
         if (emailSwitch.isChecked()) {
             paymentRequest.setEmailRequired(true);
         }
-        if (!paymentRequest.verify()) {
-            showDialog("PaymentRequest error");
+        try {
+            paymentRequest.verify();
+        } catch (BSPaymentRequestException e) {
+            showDialog("PaymentRequest error:" + e.getMessage());
             Log.d(TAG, paymentRequest.toString());
             finish();
         }

@@ -27,6 +27,7 @@ import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.BluesnapFragment;
@@ -85,7 +86,14 @@ public class BluesnapCheckoutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_default_ui);
         paymentRequest = getIntent().getParcelableExtra(EXTRA_PAYMENT_REQUEST);
-        BlueSnapService.getInstance().setPaymentRequest(paymentRequest);
+        try {
+            BlueSnapService.getInstance().setPaymentRequest(paymentRequest);
+        } catch (BSPaymentRequestException e) {
+            String errorMsg = "payment request not validated:" + e.getMessage();
+            Log.d(TAG, e.getMessage());
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            finish();
+        }
         setMerchantCustomText();
         fragmentManager = getFragmentManager();
         bluesnapFragment = (BluesnapFragment) fragmentManager.findFragmentById(R.id.fraglyout);
@@ -170,9 +178,12 @@ public class BluesnapCheckoutActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!paymentRequest.verify()) {
-            String errorMsg = "payment request not validated";
-            Log.e(TAG, errorMsg);
+        try {
+            paymentRequest.verify();
+        } catch (BSPaymentRequestException e) {
+            String errorMsg = "payment request not validated:" + e.getMessage();
+            e.printStackTrace();
+            Log.d(TAG, errorMsg);
             setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
             finish();
         }

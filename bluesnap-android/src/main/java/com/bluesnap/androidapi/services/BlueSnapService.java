@@ -497,16 +497,36 @@ public class BlueSnapService {
         return paymentRequest;
     }
 
-    public void setPaymentRequest(PaymentRequest newPaymentRequest) {
+    /**
+     * Set a paymentRequest and call {@link #verifyPaymentRequest} on  it.
+     *
+     * @param newPaymentRequest
+     * @throws BSPaymentRequestException
+     */
+    public void setPaymentRequest(PaymentRequest newPaymentRequest) throws BSPaymentRequestException {
         if (newPaymentRequest == null)
             throw new NullPointerException("null paymentRequest");
 
         if (paymentRequest != null) {
             Log.w(TAG, "paymentrequest override");
         }
-        //TODO: call newPaymentRequest.verify() and verify currency
+        verifyPaymentRequest(newPaymentRequest);
         paymentRequest = newPaymentRequest;
+    }
 
+
+    /**
+     * Check that a payment request is valid, meaning amount is positive and currency exist in the SDL rates map
+     * see {@link #getSupportedRates()} or {@link #getRatesArray()} for a list of supported rates
+     *
+     * @param paymentRequest a {@link #paymentRequest}
+     * @throws BSPaymentRequestException
+     */
+    public void verifyPaymentRequest(PaymentRequest paymentRequest) throws BSPaymentRequestException {
+        paymentRequest.verify();
+        if (ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
+            throw new BSPaymentRequestException("Currency nout found");
+        }
     }
 
     @Subscribe
