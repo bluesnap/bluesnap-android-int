@@ -36,7 +36,7 @@ import static junit.framework.Assert.fail;
 public class BSAndroidTestsBase {
 
     private static final String TAG = BSAndroidTestsBase.class.getSimpleName();
-    private BlueSnapService blueSnapService;
+    BlueSnapService blueSnapService;
     private String merchantToken;
     private TokenProvider tokenProvider;
 

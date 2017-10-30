@@ -4,8 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.TokenProvider;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by oz on 4/4/16.
@@ -22,9 +22,6 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
 
 
     private static final String TAG = CurrencyConverterTests.class.getSimpleName();
-    private BlueSnapService blueSnapService;
-    private String merchantToken;
-    private TokenProvider tokenProvider;
 
 
     @After
@@ -46,7 +43,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
 
 
     @Test
-    public void convert_USD_to_ILS_and_Back() throws InterruptedException {
+    public void convert_USD_to_ILS_and_Back() throws InterruptedException, BSPaymentRequestException {
 
         PaymentRequest paymentRequest = new PaymentRequest();
         Double amount = 30.5D;
@@ -61,7 +58,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     }
 
     @Test
-    public void convert_ILS_to_EUR_and_Back() throws InterruptedException {
+    public void convert_ILS_to_EUR_and_Back() throws InterruptedException, BSPaymentRequestException {
 
         PaymentRequest paymentRequest = new PaymentRequest();
         Double amount = 30.5D;
@@ -75,7 +72,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     }
 
     @Test
-    public void convert_ILS_to_EUR_to_GBP_and_Back() throws InterruptedException {
+    public void convert_ILS_to_EUR_to_GBP_and_Back() throws InterruptedException, BSPaymentRequestException {
 
         PaymentRequest paymentRequest = new PaymentRequest();
         Double amount = 30.5D;
@@ -98,9 +95,30 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         paymentRequest.setAmount(amount);
         paymentRequest.setCurrencyNameCode("SOMETHING_BAD");
 
-        blueSnapService.setPaymentRequest(paymentRequest);
-        Double ILSPrice = blueSnapService.convertPrice(amount, "SOMETHING_BAD", "ILS");
+        try {
+            blueSnapService.setPaymentRequest(paymentRequest);
+            Double ILSPrice = blueSnapService.convertPrice(amount, "SOMETHING_BAD", "ILS");
+            fail("Should have trown exception");
+        } catch (BSPaymentRequestException e) {
+            assertEquals("Currency nout found", e.getMessage());
+        }
 
-        //TODO: add assestions here
+    }
+
+    @Test
+    public void null_currency_code() throws InterruptedException {
+
+        PaymentRequest paymentRequest = new PaymentRequest();
+        Double amount = 30.5D;
+        paymentRequest.setAmount(amount);
+
+        try {
+            blueSnapService.setPaymentRequest(paymentRequest);
+            Double ILSPrice = blueSnapService.convertPrice(amount, "SOMETHING_BAD", "ILS");
+            fail("Should have trown exception");
+        } catch (BSPaymentRequestException e) {
+            assertEquals("Invalid currency", e.getMessage());
+        }
+
     }
 }

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.util.Log;
 
 import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +14,8 @@ import org.robolectric.annotation.Config;
 import java.util.Random;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Created by oz on 4/4/16.
@@ -79,7 +80,13 @@ public class PaymentRequestTests {
         PaymentRequest paymentRequest = new PaymentRequest("USD");
         paymentRequest.setAmount(0D);
         PaymentRequest parceled = parcelizePaymentRequset(paymentRequest);
-        assertFalse("this should not validate", parceled.verify());
+
+        try {
+            parceled.verify();
+            fail("Should not verify zero payment");
+        } catch (BSPaymentRequestException e) {
+            assertEquals("Invalid amount 0.000000", e.getMessage());
+        }
         assertNotNull(parceled.toString());
         //assertEquals("not equals", paymentRequest, parceled);
     }
