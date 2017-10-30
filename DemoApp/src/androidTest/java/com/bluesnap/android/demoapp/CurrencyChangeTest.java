@@ -48,9 +48,8 @@ public class CurrencyChangeTest extends EspressoBasedTest {
     }
 
     @Before
-    public void setup() {
+    public void setup() throws InterruptedException {
         super.setup();
-        BlueSnapService.getInstance().setup(merchantToken);
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(AMOUNT);
         Intent intent = new Intent();

@@ -50,7 +50,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
 
     @Override
-    public void setup() {
+    public void setup() throws InterruptedException {
         super.setup();
         clearPrefs(mActivityRule.getActivity().getApplicationContext());
     }

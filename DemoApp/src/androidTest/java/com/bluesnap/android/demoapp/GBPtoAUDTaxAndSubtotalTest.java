@@ -33,6 +33,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 @LargeTest
@@ -51,10 +52,10 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
 
 
     @Override
-    public void setup() {
+    public void setup() throws InterruptedException {
         super.setup();
         clearPrefs(mActivityTestRule.getActivity().getApplicationContext());
-        mActivityTestRule.getActivity().getBluesnapService();
+
     }
 
     @Test
@@ -194,7 +195,8 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
                                         0),
                                 1),
                         isDisplayed()));
-        textView5.check(matches(withText("AU$")));
+        //Verify that subtotal contains AU currency
+        textView5.check(matches(withText(containsString("AU$"))));
 
 
     }

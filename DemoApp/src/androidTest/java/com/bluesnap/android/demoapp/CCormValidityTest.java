@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class CCormValidityTest extends EspressoBasedTest {
+    private static final String TAG = CCormValidityTest.class.getSimpleName();
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, true, false);
@@ -46,7 +47,7 @@ public class CCormValidityTest extends EspressoBasedTest {
     }
 
     @Before
-    public void setup() {
+    public void setup() throws InterruptedException {
         super.setup();
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(23.4);

@@ -2,6 +2,8 @@ package com.bluesnap.android.demoapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
@@ -12,8 +14,11 @@ import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.support.test.uiautomator.UiDevice;
 import android.util.Base64;
+import android.util.Log;
 import android.view.WindowManager;
 
+import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
 
 import org.junit.Before;
@@ -34,6 +39,7 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.containsString;
 
+
 /**
  *
  */
@@ -42,9 +48,9 @@ public class EspressoBasedTest {
     protected RandomTestValuesGenerator randomTestValuesGeneretor;
     protected IdlingResource tokenProgressBarIR;
     protected IdlingResource transactionMessageIR;
-
+    private static final String TAG = EspressoBasedTest.class.getSimpleName();
     @Before
-    public void setup() {
+    public void setup() throws InterruptedException {
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {
@@ -70,6 +76,34 @@ public class EspressoBasedTest {
             fail("Network error obtaining token:" + e.getMessage());
             e.printStackTrace();
         }
+
+
+        new Handler(Looper.getMainLooper())
+                .post(new Runnable() {
+                    @Override
+                    public void run() {
+                        BlueSnapService.getInstance().setup(merchantToken);
+                        BlueSnapService.getInstance().updateRates(new BluesnapServiceCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d(TAG, "Service got rates");
+
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                fail("Service could not update rates");
+                            }
+                        });
+                    }
+                });
+
+        while (BlueSnapService.getInstance().getRatesArray() == null) {
+            Log.d(TAG, "Waiting for update rates");
+            Thread.sleep(2000);
+        }
+
+
 
         //Wake up device again in case token fetch took to much time
         try {
