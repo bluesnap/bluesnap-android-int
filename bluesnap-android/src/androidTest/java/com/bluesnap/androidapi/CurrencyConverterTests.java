@@ -100,7 +100,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
             Double ILSPrice = blueSnapService.convertPrice(amount, "SOMETHING_BAD", "ILS");
             fail("Should have trown exception");
         } catch (BSPaymentRequestException e) {
-            assertEquals("Currency nout found", e.getMessage());
+            assertEquals("Currency not found", e.getMessage());
         }
 
     }
