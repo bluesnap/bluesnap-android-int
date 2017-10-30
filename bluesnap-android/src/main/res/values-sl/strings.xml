@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/LL</string>
     <string name="merchant">Trgovec</string>
     <string name="webview">Spletni pogled</string>
+    <string name="billing_zip">zaračunavanje zip</string>
+    <string name="billing">zaračunavanje</string>
 </resources>

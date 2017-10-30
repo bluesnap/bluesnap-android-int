@@ -53,4 +53,6 @@
     <string name="mm_yy">חודש/שנה</string>
     <string name="merchant">סוחר</string>
     <string name="webview">תצוגת אתר</string>
+    <string name="billing_zip">מיקוד</string>
+    <string name="billing">חיוב</string>
 </resources>

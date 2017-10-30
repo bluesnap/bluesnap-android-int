@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/AA</string>
     <string name="merchant">Site marchand</string>
     <string name="webview">VueWeb</string>
+    <string name="billing_zip">ZIP de facturation</string>
+    <string name="billing">facturation</string>
 </resources>

@@ -53,4 +53,6 @@
     <string name="mm_yy">AA/YY</string>
     <string name="merchant">Satıcı</string>
     <string name="webview">WebGörünümü</string>
+    <string name="billing_zip">Fatura Zip Kodu</string>
+    <string name="billing">fatura</string>
 </resources>

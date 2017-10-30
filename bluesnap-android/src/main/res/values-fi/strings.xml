@@ -53,4 +53,6 @@
     <string name="mm_yy">KK/VV</string>
     <string name="merchant">Myyjä</string>
     <string name="webview">WebNäkymä</string>
+    <string name="billing_zip">Laskutusosoitteen postinumero</string>
+    <string name="billing">laskutus</string>
 </resources>

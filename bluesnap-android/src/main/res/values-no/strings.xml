@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/ÅÅ</string>
     <string name="merchant">Selger</string>
     <string name="webview">NettVisning</string>
+    <string name="billing_zip">Frakt-zip</string>
+    <string name="billing">fakturering</string>
 </resources>

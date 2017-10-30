@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/RR</string>
     <string name="merchant">Sprzedawca</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">Kod pocztowy faktury</string>
+    <string name="billing">dane do faktury</string>
 </resources>
