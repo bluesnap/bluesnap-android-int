@@ -96,15 +96,6 @@ If the shopper purchased via PayPal, then the transaction has successfully been 
 
 If the shopper purchased via credit card, you will need to make a server-to-server call to BlueSnap's Payment API with the Hosted Payment Field token you used with the SDK. You should do this after the shopper has completed checkout and has left the SDK checkout screen. Visit the [API documentation](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) to see how to send an Auth Capture, Auth Only, Create Subscription, or Create Vaulted Shopper request (to name a few of the options).
 
-## Returning shopper
-The shopper can choose if they wish to be remembered by the SDK. The `paymentResult` includes a property that indicates if the last transaction was a returning shopper transaction.
-
-    paymentResult.isReturningTransaction()
-
-To utilize the returning shopper functionality, you need to save the vaulted shopper ID on your side. The vaulted shopper ID is sent in the response of the applicable POST API call (a few of which were mentioned above).
-
-In the future, can update the shopper's information via the [Update Vaulted Shopper](http://developers.bluesnap.com/v8976-JSON/docs/update-vaulted-shopper) request. You can also charge the vaulted shopper via the [Auth Capture](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture)/[Auth Only](https://developers.bluesnap.com/v8976-JSON/docs/auth-only) request that are mentioned above. You'll need to supply the vaulted shopper ID in the request body. Complete details can be found in the [API documentation](https://developers.bluesnap.com/v8976-JSON/docs).
-
 # Additional functionality
 
 ## Currency conversion
