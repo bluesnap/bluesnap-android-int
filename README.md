@@ -96,6 +96,33 @@ If the shopper purchased via PayPal, then the transaction has successfully been 
 
 If the shopper purchased via credit card, you will need to make a server-to-server call to BlueSnap's Payment API with the Hosted Payment Field token you used with the SDK. You should do this after the shopper has completed checkout and has left the SDK checkout screen. Visit the [API documentation](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) to see how to send an Auth Capture, Auth Only, Create Subscription, or Create Vaulted Shopper request (to name a few of the options).
 
+## Auth Capture example - Credit card payments
+For credit card payments, send an HTTP POST request to `/services/2/transactions` of the BlueSnap sandbox or production environment. 
+
+For example: 
+```cURL
+curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \ 
+-H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+-d '
+{
+	"cardTransactionType": "AUTH_CAPTURE",
+	"recurringTransaction": "ECOMMERCE",
+	"softDescriptor": "Mobile SDK test",
+	"amount": 25.00, 
+	"currency": "USD",
+	"pfToken": "812f6ee706e463d3276e3abeb21fa94072e40695ed423ddac244409b3b652eff_",
+	"transactionFraudInfo": {"fraudSessionId": "B04C4B2B6BED427284ECE2F1F870466C"},
+	"cardHolderInfo": {
+        "firstName": "Jane",
+        "lastName": "Shopper", 
+        "zip": "02451"
+	}
+}'
+```
+If successful, the response HTTP status code is 200 OK. Visit our [API Reference](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) for more details. 
+
 # Additional functionality
 
 ## Currency conversion
@@ -128,33 +155,6 @@ One way to achieve that is by overriding the SDK resources files in your applica
 
 ## Translation
 The SDK includes translated resources for many languages. The Android framework will automatically pick up the translation according to the Android framework locale.
-
-# Auth Capture example - Credit card payments
-For credit card payments, send an HTTP POST request to `/services/2/transactions` of the BlueSnap sandbox or production environment. 
-
-For example: 
-```cURL
-curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
--H 'Content-Type: application/json' \
--H 'Accept: application/json' \ 
--H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
--d '
-{
-	"cardTransactionType": "AUTH_CAPTURE",
-	"recurringTransaction": "ECOMMERCE",
-	"softDescriptor": "Mobile SDK test",
-	"amount": 25.00, 
-	"currency": "USD",
-	"pfToken": "812f6ee706e463d3276e3abeb21fa94072e40695ed423ddac244409b3b652eff_",
-	"transactionFraudInfo": {"fraudSessionId": "B04C4B2B6BED427284ECE2F1F870466C"},
-	"cardHolderInfo": {
-        "firstName": "Jane",
-        "lastName": "Shopper", 
-        "zip": "02451"
-	}
-}'
-```
-If successful, the response HTTP status code is 200 OK. Visit our [API Reference](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) for more details. 
 
 # Demo application
 To get started with the demo application, do the following:
