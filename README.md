@@ -129,7 +129,7 @@ One way to achieve that is by overriding the SDK resources files in your applica
 ## Translation
 The SDK includes translated resources for many languages. The Android framework will automatically pick up the translation according to the Android framework locale.
 
-### Auth Capture example - Credit card payments
+# Auth Capture example - Credit card payments
 For credit card payments, send an HTTP POST request to `/services/2/transactions` of the BlueSnap sandbox or production environment. 
 
 For example: 
