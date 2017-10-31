@@ -113,12 +113,14 @@ If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passe
 All the other fields that are relevant to a credit card transaction will be empty.
 
 ## Kount
-The SDK includes an integrated Kount SDK. if you are boarded to Kount a `kountSessionId` will be passed as part of the `PaymentResult`.
-If you have a Kount Enterprise Id please use
+The SDK includes an integrated Kount SDK, a `kountSessionId` will be passed as part of the `PaymentResult`.
+This `kountSessionId` is needed for creating a successful transaction (see Auth Capture example - Credit card payments).
+
+If you have the Enterprise fraud prevention service level, pass your Kount MID In the intent you pass to `BluesnapCheckoutActivity`
 
     intent.putExtra(BluesnapCheckoutActivity.EXTRA_KOUNT_MERCHANT_ID, KountMerchantId);
     
-In the intent you pass to `BluesnapCheckoutActivity`
+
 
 ## Customization and UI Overrides
 It is possible to customize the checkout experience, change colors, icons and basic layouts.
@@ -126,6 +128,33 @@ One way to achieve that is by overriding the SDK resources files in your applica
 
 ## Translation
 The SDK includes translated resources for many languages. The Android framework will automatically pick up the translation according to the Android framework locale.
+
+### Auth Capture example - Credit card payments
+For credit card payments, send an HTTP POST request to `/services/2/transactions` of the BlueSnap sandbox or production environment. 
+
+For example: 
+```cURL
+curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \ 
+-H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+-d '
+{
+	"cardTransactionType": "AUTH_CAPTURE",
+	"recurringTransaction": "ECOMMERCE",
+	"softDescriptor": "Mobile SDK test",
+	"amount": 25.00, 
+	"currency": "USD",
+	"pfToken": "812f6ee706e463d3276e3abeb21fa94072e40695ed423ddac244409b3b652eff_",
+	"transactionFraudInfo": {"fraudSessionId": "B04C4B2B6BED427284ECE2F1F870466C"},
+	"cardHolderInfo": {
+        "firstName": "Jane",
+        "lastName": "Shopper", 
+        "zip": "02451"
+	}
+}'
+```
+If successful, the response HTTP status code is 200 OK. Visit our [API Reference](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) for more details. 
 
 # Demo application
 To get started with the demo application, do the following:
