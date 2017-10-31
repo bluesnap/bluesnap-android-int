@@ -61,6 +61,18 @@ public class EspressoBasedTest {
         IdlingPolicies.setMasterPolicyTimeout(400, TimeUnit.SECONDS);
         IdlingPolicies.setIdlingResourceTimeout(400, TimeUnit.SECONDS);
 
+
+        //Wake up device again in case token fetch took to much time
+        try {
+            wakeUpDeviceScreen();
+        } catch (RemoteException e) {
+            fail("Could not wake up device");
+            e.printStackTrace();
+        }
+
+    }
+
+    public void setSDKToken() throws InterruptedException {
         try {
             URL myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION);
             HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
@@ -77,12 +89,27 @@ public class EspressoBasedTest {
             e.printStackTrace();
         }
 
-
         new Handler(Looper.getMainLooper())
                 .post(new Runnable() {
                     @Override
                     public void run() {
                         BlueSnapService.getInstance().setup(merchantToken);
+
+                    }
+                });
+
+        while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
+            Log.d(TAG, "Waiting for token setup");
+            Thread.sleep(2000);
+
+        }
+    }
+
+    public void setRates() throws InterruptedException {
+        new Handler(Looper.getMainLooper())
+                .post(new Runnable() {
+                    @Override
+                    public void run() {
                         BlueSnapService.getInstance().updateRates(new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
@@ -102,18 +129,8 @@ public class EspressoBasedTest {
             Log.d(TAG, "Waiting for update rates");
             Thread.sleep(2000);
         }
-
-
-
-        //Wake up device again in case token fetch took to much time
-        try {
-            wakeUpDeviceScreen();
-        } catch (RemoteException e) {
-            fail("Could not wake up device");
-            e.printStackTrace();
-        }
-
     }
+
 
     public void clearPrefs(Context context) {
         PrefsStorage prefsStorage = new PrefsStorage(context);

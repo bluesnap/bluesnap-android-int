@@ -50,6 +50,9 @@ public class CurrencyChangeTest extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException {
         super.setup();
+        super.setSDKToken();
+        super.setRates();
+
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(AMOUNT);
         Intent intent = new Intent();

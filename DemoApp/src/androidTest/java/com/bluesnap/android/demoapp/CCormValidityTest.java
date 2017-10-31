@@ -49,6 +49,8 @@ public class CCormValidityTest extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException {
         super.setup();
+        super.setSDKToken();
+        super.setRates();
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(23.4);
         Intent intent = new Intent();
