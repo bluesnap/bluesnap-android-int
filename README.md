@@ -112,6 +112,14 @@ The SDK provides the following methods for your convenience:
 If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passed as part of the `PaymentResult`.
 All the other fields that are relevant to a credit card transaction will be empty.
 
+## Kount
+The SDK includes an integrated Kount SDK. if you are boarded to Kount a `kountSessionId` will be passed as part of the `PaymentResult`.
+If you have a Kount Enterprise Id please use
+
+    intent.putExtra(BluesnapCheckoutActivity.EXTRA_KOUNT_MERCHANT_ID, KountMerchantId);
+    
+In the intent you pass to `BluesnapCheckoutActivity`
+
 ## Customization and UI Overrides
 It is possible to customize the checkout experience, change colors, icons and basic layouts.
 One way to achieve that is by overriding the SDK resources files in your application and provide matching resource file names to override the SDK default values.
