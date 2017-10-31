@@ -467,11 +467,12 @@ public class BlueSnapService {
      */
     public Double convertPrice(Double basePrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
 
-        if (paymentRequest.getBaseCurrency().equals(newCurrencyNameCode)) {
+        String baseCurrency = paymentRequest.getBaseCurrency();
+        if (baseCurrency.equals(newCurrencyNameCode)) {
             return paymentRequest.getBaseAmount();
         }
-        Double baseConversionRate = ratesMap.get(paymentRequest.getBaseCurrency()).getConversionRate();
-        Double usdPRice = basePrice * baseConversionRate;
+        Double baseConversionRate = ratesMap.get(baseCurrency).getConversionRate();
+        Double usdPRice = baseCurrency.equals("USD") ? basePrice * baseConversionRate : basePrice * (1/baseConversionRate);
         Double newPrice = ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
         return newPrice;
     }

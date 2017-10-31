@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -98,7 +101,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
 
         blueSnapService.setPaymentRequest(paymentRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "USD");
-        assertEquals("16.45", convertedOncePrice);
+        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
     }
     @Test
     public void non_existing_currency_code() throws InterruptedException {
