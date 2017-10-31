@@ -88,6 +88,19 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     }
 
     @Test
+    public void convert_EUR_to_USD() throws InterruptedException, BSPaymentRequestException {
+
+        PaymentRequest paymentRequest = new PaymentRequest();
+        Double amount = 10D;
+        paymentRequest.setAmount(amount);
+        paymentRequest.setCurrencyNameCode("EUR");
+
+
+        blueSnapService.setPaymentRequest(paymentRequest);
+        Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "USD");
+        assertEquals("16.45", convertedOncePrice);
+    }
+    @Test
     public void non_existing_currency_code() throws InterruptedException {
 
         PaymentRequest paymentRequest = new PaymentRequest();
