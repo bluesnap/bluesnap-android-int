@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/JJ</string>
     <string name="merchant">Händler</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">Rechnungs-Zip</string>
+    <string name="billing">Abrechnung</string>
 </resources>

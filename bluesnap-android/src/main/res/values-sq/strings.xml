@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/VV</string>
     <string name="merchant">Tregtar</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">Kodi postal i faturimit</string>
+    <string name="billing">faturimit</string>
 </resources>

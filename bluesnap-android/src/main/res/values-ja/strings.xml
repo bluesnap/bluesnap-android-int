@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/YY</string>
     <string name="merchant">業者</string>
     <string name="webview">ウェブ表示</string>
+    <string name="billing_zip">請求先郵便番号</string>
+    <string name="billing">課金</string>
 </resources>

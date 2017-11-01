@@ -53,4 +53,6 @@
     <string name="mm_yy">월/년</string>
     <string name="merchant">판매자</string>
     <string name="webview">웹검토</string>
+    <string name="billing_zip">청구할 주소</string>
+    <string name="billing">과금</string>
 </resources>

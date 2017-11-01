@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- this is for the demo app crash reports, not the SDK -->
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <!-- Wake lok and keyguard for UI tests , not the SDK -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".MainApplication"

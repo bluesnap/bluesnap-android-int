@@ -1,6 +1,7 @@
 package com.bluesnap.android.demoapp;
 
 import com.bluesnap.androidapi.services.BluesnapToken;
+import com.bluesnap.androidapi.services.TokenProvider;
 
 /**
  * Created by roy.biber on 04/08/2016.
@@ -13,7 +14,7 @@ public class DemoToken extends BluesnapToken{
     public static final String SANDBOX_USER = "sdkuser";
     public static final String SANDBOX_PASS = "SDKuser123";
 
-    public DemoToken(String merchantToken) {
-        super(merchantToken);
+    public DemoToken(String merchantToken, TokenProvider tokenProvider) {
+        super(merchantToken, tokenProvider);
     }
 }

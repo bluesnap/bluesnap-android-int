@@ -1,10 +1,17 @@
 package com.bluesnap.androidapi;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -15,23 +22,28 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.PrefsStorage;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.BluesnapFragment;
 import com.bluesnap.androidapi.views.CurrencyActivity;
 import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
 import com.bluesnap.androidapi.views.ShippingFragment;
 import com.bluesnap.androidapi.views.WebViewActivity;
+import com.kount.api.DataCollector;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -45,43 +57,151 @@ public class BluesnapCheckoutActivity extends Activity {
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
     public final static String MERCHANT_TOKEN = "com.bluesnap.intent.BSNAP_CLIENT_PRIVATE_KEY";
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
+    public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
+    public static final String EXTRA_KOUNT_MERCHANT_ID = "com.bluesnap.intent.KOUNT_MERCHANT_ID";
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     public static final int REQUEST_CODE_DEFAULT = 1;
+    public static final int KOUNT_MERCHANT_ID = 700000;
     private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     private static final int RESULT_SDK_FAILED = -2;
+    private static final int KOUNT_REQUST_ID = 3;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    private Context context;
+    private DataCollector kount;
     private BluesnapFragment bluesnapFragment;
-    private PrefsStorage prefsStorage;
+    //private PrefsStorage prefsStorage;
     private FragmentManager fragmentManager;
     private PaymentRequest paymentRequest;
     private ExpressCheckoutFragment expressCheckoutFragment;
     private String sharedCurrency;
     private ShippingInfo shippingInfo;
+    private BillingInfo billingInfo;
     private Card card;
     private ShippingFragment shippingFragment;
+    private String kountSessionId;
+    private Intent resultIntent;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_default_ui);
         paymentRequest = getIntent().getParcelableExtra(EXTRA_PAYMENT_REQUEST);
-        BlueSnapService.getInstance().setPaymentRequest(paymentRequest);
+        try {
+            BlueSnapService.getInstance().setPaymentRequest(paymentRequest);
+        } catch (BSPaymentRequestException e) {
+            String errorMsg = "payment request not validated:" + e.getMessage();
+            Log.d(TAG, e.getMessage());
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            finish();
+        }
         setMerchantCustomText();
         fragmentManager = getFragmentManager();
         bluesnapFragment = (BluesnapFragment) fragmentManager.findFragmentById(R.id.fraglyout);
         expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
-        prefsStorage = new PrefsStorage(this);
+        //prefsStorage = new PrefsStorage(this);
         final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        sharedCurrency = paymentRequest.getCurrencyNameCode();
-        setFragmentButtonsListeners();
+        checkIfCurrencyExists(paymentRequest.getCurrencyNameCode());
+        if (blueSnapService.isexpressCheckoutActive())
+            setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        Integer kountMerchantID = getIntent().getIntExtra(EXTRA_KOUNT_MERCHANT_ID, KOUNT_MERCHANT_ID);
+        context = getApplicationContext();
+        kount = DataCollector.getInstance();
+        try {
+            setupKount(kountMerchantID);
+        } catch (Exception e) {
+            Log.e(TAG, "Kount SDK initialization error");
+        }
     }
+
+    private void setupKount(Integer kountMerchantID) {
+        if (kountMerchantID == null || kountMerchantID == 0) {
+            kount.setMerchantID(KOUNT_MERCHANT_ID);
+        } else {
+            kount.setMerchantID(kountMerchantID);
+        }
+
+
+        kount.setContext(context);
+        kount.setLocationCollectorConfig(DataCollector.LocationConfig.COLLECT);
+
+        if (blueSnapService.getBlueSnapToken().isProduction()) {
+            kount.setEnvironment(DataCollector.ENVIRONMENT_PRODUCTION);
+            kount.setDebug(false);
+
+        } else {
+            kount.setEnvironment(DataCollector.ENVIRONMENT_TEST);
+            kount.setDebug(true);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
+                    Log.d(TAG, "Cannot grant location permission for Kount ");
+                }
+                // This will prompt location access request.
+                //                else {
+                //                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
+                //                }
+            }
+        }
+
+
+        //Run this inside it's on thread.
+        (new Handler(Looper.getMainLooper()))
+                .post(new Runnable() {
+                    public void run() {
+
+                        kountSessionId = UUID.randomUUID().toString();
+                        kountSessionId = kountSessionId.replace("-", "");
+
+                        kount.collectForSession(kountSessionId, new DataCollector.CompletionHandler() {
+                            /* Add handler code here if desired. The handler is optional. */
+                            @Override
+                            public void completed(String sessionID) {
+                                Log.d(TAG, "Kount DataCollector completed");
+                                Log.d(TAG, "Data context: " + context);
+                            }
+
+                            @Override
+                            public void failed(String sessionID, final DataCollector.Error error) {
+                                Log.e(TAG, "Kount DataCollector failed: " + error);
+                                Log.d(TAG, "Data context: " + context);
+                            }
+                        });
+                    }
+                });
+    }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        if (!paymentRequest.verify()) {
-            String errorMsg = "payment request not validated";
+        try {
+            paymentRequest.verify();
+        } catch (BSPaymentRequestException e) {
+            String errorMsg = "payment request not validated:" + e.getMessage();
+            e.printStackTrace();
+            Log.d(TAG, errorMsg);
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            finish();
+        }
+
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+    }
+
+    // check currency received from merchant and verify it actually exists
+    private void checkIfCurrencyExists(String currencyNameCode) {
+        if (blueSnapService.getSupportedRates() != null && blueSnapService.getSupportedRates().contains(currencyNameCode)) {
+            sharedCurrency = currencyNameCode;
+        } else {
+            String errorMsg = "Currency name code Error";
             Log.e(TAG, errorMsg);
             setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
             finish();
@@ -90,7 +210,9 @@ public class BluesnapCheckoutActivity extends Activity {
 
     private void setFragmentButtonsListeners() {
         final Button expressCheckoutButton = (Button) findViewById(R.id.expressCheckoutButton);
+        expressCheckoutButton.setVisibility(View.VISIBLE);
         final Button creditCardButton = (Button) findViewById(R.id.creditCardButton);
+        creditCardButton.setVisibility(View.VISIBLE);
         final Bundle fragmentBundle = new Bundle();
         fragmentBundle.putParcelable(EXTRA_PAYMENT_REQUEST, paymentRequest);
         expressCheckoutButton.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +265,10 @@ public class BluesnapCheckoutActivity extends Activity {
         return shippingFragment;
     }
 
+    public void setBillingInfo(BillingInfo billingInfo) {
+        this.billingInfo = billingInfo;
+    }
+
     public void finishFromShippingFragment(ShippingInfo shippingInfo) {
         this.shippingInfo = shippingInfo;
         finishFromFragment();
@@ -150,34 +276,26 @@ public class BluesnapCheckoutActivity extends Activity {
 
     public void finishFromFragment() {
         Intent resultIntent = new Intent();
-        boolean rememberShopper = prefsStorage.getBoolean(Constants.REMEMBER_SHOPPER);
         resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shippingInfo);
+        resultIntent.putExtra(EXTRA_BILLING_DETAILS, billingInfo);
 
-        if (rememberShopper) {
-            if (shippingInfo != null)
-                prefsStorage.putObject(Constants.SHIPPING_INFO, shippingInfo);
-        } else {
-            prefsStorage.remove(Constants.SHIPPING_INFO);
-            prefsStorage.remove(Constants.RETURNING_SHOPPER);
-        }
         Log.d(TAG, "Testing if card requires server tokenization:" + card.toString());
         if (!card.isModified()) {
             PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
+            paymentResult.setKountSessionId(kountSessionId);
             paymentResult.setLast4Digits(card.getLast4());
             paymentResult.setCardType(card.getType());
             paymentResult.setExpDate(card.getExpDate());
             paymentResult.setCardZipCode(card.getAddressZip());
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
-            paymentResult.setReturningTransaction(true);
-            prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
-            prefsStorage.putBoolean(Constants.REMEMBER_SHOPPER, rememberShopper);
+            //prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
             resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
             setResult(RESULT_OK, resultIntent);
             finish();
         } else {
             try {
-                tokenizeCardOnServer(resultIntent, rememberShopper);
+                tokenizeCardOnServer(resultIntent);
             } catch (UnsupportedEncodingException | JSONException e) {
                 String errorMsg = "SDK service error";
                 Log.e(TAG, errorMsg, e);
@@ -187,8 +305,9 @@ public class BluesnapCheckoutActivity extends Activity {
         }
     }
 
+    private void tokenizeCardOnServer(final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
+        this.resultIntent = resultIntent;
 
-    private void tokenizeCardOnServer(final Intent resultIntent, final boolean rememberShopper) throws UnsupportedEncodingException, JSONException {
         blueSnapService.tokenizeCard(card, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -196,25 +315,55 @@ public class BluesnapCheckoutActivity extends Activity {
                     String Last4 = response.getString("last4Digits");
                     String ccType = response.getString("ccType");
                     PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
+                    paymentResult.setKountSessionId(kountSessionId);
                     // update last4 from server result
                     paymentResult.setLast4Digits(Last4);
                     // update card type from server result
                     paymentResult.setCardType(ccType);
-                    paymentResult.setReturningTransaction(false);
                     resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
                     setResult(RESULT_OK, resultIntent);
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server
                     card.setTokenizationSucess();
                     Log.d(TAG, "tokenization finished");
-                    if (rememberShopper)
-                        prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
-
-                    prefsStorage.putBoolean(Constants.REMEMBER_SHOPPER, rememberShopper);
                     finish();
                 } catch (NullPointerException | JSONException e) {
                     Log.e(TAG, "", e);
                     String errorMsg = String.format("Service Error %s", e.getMessage());
                     setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                if (statusCode == 400 && null != blueSnapService.getTokenProvider()) {
+                    try {
+                        JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                        JSONObject rs3 = (JSONObject) rs2.get(0);
+                        if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                            blueSnapService.getTokenProvider().getNewToken(
+                                    new TokenServiceCallback() {
+                                        @Override
+                                        public void complete(String newToken) {
+                                            blueSnapService.setNewToken(newToken);
+                                            try {
+                                                tokenizeCardOnServer(resultIntent);
+                                            } catch (UnsupportedEncodingException e) {
+                                                Log.e(TAG, "Unsupported Encoding Exception", e);
+                                            } catch (JSONException e) {
+                                                Log.e(TAG, "json parsing exception", e);
+                                            }
+                                        }
+                                    }
+                            );
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                    }
+                } else {
+                    String errorMsg = String.format("Service Error %s, %s", statusCode);
+                    Log.e(TAG, errorMsg, throwable);
+                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
                     finish();
                 }
             }
@@ -229,6 +378,7 @@ public class BluesnapCheckoutActivity extends Activity {
         });
 
     }
+
 
     public Card getCard() {
         return card;

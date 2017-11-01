@@ -53,4 +53,6 @@
     <string name="mm_yy">Vista de la web</string>
     <string name="merchant">Vendedor</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">Código zip de facturación</string>
+    <string name="billing">facturación</string>
 </resources>

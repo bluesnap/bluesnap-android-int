@@ -3,6 +3,8 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 /**
  * A Request for payment process in the SDK.
  * A new PaymentRequest should be used for each purchase.
@@ -26,8 +28,9 @@ public class PaymentRequest implements Parcelable {
     private Double amount;
     private String customTitle;
     private String userEmail;
-    private boolean rememberUser;
     private boolean shippingRequired;
+    private boolean billingRequired;
+    private boolean emailRequired;
     private String shopperID;
     private Double subtotalAmount;
     private Double taxAmount;
@@ -35,15 +38,15 @@ public class PaymentRequest implements Parcelable {
     private Double baseAmount;
     private Double baseTaxAmount;
     private Double baseSubtotalAmount;
-    private transient boolean allowRememberUser = true;
 
     public PaymentRequest(Parcel parcel) {
         currencyNameCode = parcel.readString();
         amount = parcel.readDouble();
         customTitle = parcel.readString();
         userEmail = parcel.readString();
-        rememberUser = parcel.readInt() != 0;
         shippingRequired = parcel.readInt() != 0;
+        billingRequired = parcel.readInt() != 0;
+        emailRequired = parcel.readInt() != 0;
         shopperID = parcel.readString();
         subtotalAmount = parcel.readDouble();
         taxAmount = parcel.readDouble();
@@ -69,8 +72,9 @@ public class PaymentRequest implements Parcelable {
         parcel.writeDouble(amount);
         parcel.writeString(customTitle);
         parcel.writeString(userEmail);
-        parcel.writeInt(rememberUser ? 1 : 0);
         parcel.writeInt(shippingRequired ? 1 : 0);
+        parcel.writeInt(billingRequired ? 1 : 0);
+        parcel.writeInt(emailRequired ? 1 : 0);
         parcel.writeString(shopperID);
         parcel.writeDouble(subtotalAmount != null ? subtotalAmount : 0D);
         parcel.writeDouble(taxAmount != null ? taxAmount : 0D);
@@ -113,20 +117,28 @@ public class PaymentRequest implements Parcelable {
         this.userEmail = userEmail;
     }
 
-    public Boolean isRememberUser() {
-        return rememberUser;
-    }
-
-    public void setRememberUser(Boolean remember) {
-        rememberUser = remember;
-    }
-
     public boolean isShippingRequired() {
         return shippingRequired;
     }
 
+    public boolean isBillingRequired() {
+        return billingRequired;
+    }
+
+    public boolean isEmailRequired() {
+        return emailRequired;
+    }
+
     public void setShippingRequired(boolean shippingRequired) {
         this.shippingRequired = shippingRequired;
+    }
+
+    public void setBillingRequired(boolean billingRequired) {
+        this.billingRequired = billingRequired;
+    }
+
+    public void setEmailRequired(boolean emailRequired) {
+        this.emailRequired = emailRequired;
     }
 
     public String getShopperID() {
@@ -178,21 +190,16 @@ public class PaymentRequest implements Parcelable {
         return baseSubtotalAmount;
     }
 
-    public void allowRememberUser(boolean allowed) {
-        allowRememberUser = allowed;
-    }
 
-    public boolean isRemembersSerIsAllowed() {
-        return allowRememberUser;
-    }
-
-
-    public boolean verify() {
+    public boolean verify() throws BSPaymentRequestException {
         if (amount == null)
-            return false;
+            throw new BSPaymentRequestException("Invalid amount");
         if (amount <= 0)
-            return false;
-        return currencyNameCode != null;
+            throw new BSPaymentRequestException(String.format("Invalid amount %f", amount));
+        if (currencyNameCode == null)
+            throw new BSPaymentRequestException("Invalid currency");
+
+        return true;
     }
 
     public boolean isSubtotalTaxSet() {
@@ -207,9 +214,9 @@ public class PaymentRequest implements Parcelable {
 
         PaymentRequest that = (PaymentRequest) o;
 
-        if (rememberUser != that.rememberUser) return false;
         if (shippingRequired != that.shippingRequired) return false;
-        if (allowRememberUser != that.allowRememberUser) return false;
+        if (billingRequired != that.billingRequired) return false;
+        if (emailRequired != that.emailRequired) return false;
         if (!currencyNameCode.equals(that.currencyNameCode)) return false;
         if (!amount.equals(that.amount)) return false;
         if (customTitle != null ? !customTitle.equals(that.customTitle) : that.customTitle != null)
@@ -236,8 +243,9 @@ public class PaymentRequest implements Parcelable {
         result = 31 * result + amount.hashCode();
         result = 31 * result + (customTitle != null ? customTitle.hashCode() : 0);
         result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
-        result = 31 * result + (rememberUser ? 1 : 0);
         result = 31 * result + (shippingRequired ? 1 : 0);
+        result = 31 * result + (billingRequired ? 1 : 0);
+        result = 31 * result + (emailRequired ? 1 : 0);
         result = 31 * result + (shopperID != null ? shopperID.hashCode() : 0);
         result = 31 * result + (subtotalAmount != null ? subtotalAmount.hashCode() : 0);
         result = 31 * result + (taxAmount != null ? taxAmount.hashCode() : 0);
@@ -245,7 +253,6 @@ public class PaymentRequest implements Parcelable {
         result = 31 * result + (baseAmount != null ? baseAmount.hashCode() : 0);
         result = 31 * result + (baseTaxAmount != null ? baseTaxAmount.hashCode() : 0);
         result = 31 * result + (baseSubtotalAmount != null ? baseSubtotalAmount.hashCode() : 0);
-        result = 31 * result + (allowRememberUser ? 1 : 0);
         return result;
     }
 

@@ -17,8 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -36,6 +34,7 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class CCormValidityTest extends EspressoBasedTest {
+    private static final String TAG = CCormValidityTest.class.getSimpleName();
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, true, false);
@@ -48,15 +47,16 @@ public class CCormValidityTest extends EspressoBasedTest {
     }
 
     @Before
-    public void setup() throws IOException {
+    public void setup() throws InterruptedException {
         super.setup();
+        super.setSDKToken();
+        super.setRates();
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(23.4);
         Intent intent = new Intent();
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
         paymentRequest.setCurrencyNameCode("USD");
         paymentRequest.setShippingRequired(false);
-        paymentRequest.allowRememberUser(false);
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());

@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/JJ</string>
     <string name="merchant">Verkoper</string>
     <string name="webview">WebWeergave</string>
+    <string name="billing_zip">Postcode voor facturering</string>
+    <string name="billing">facturering</string>
 </resources>

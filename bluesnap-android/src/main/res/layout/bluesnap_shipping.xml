@@ -223,6 +223,7 @@
                         android:paddingTop="2dp">
 
                         <LinearLayout
+                            android:id="@+id/shippingZipLinearLayout"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_marginBottom="1dp"
@@ -234,7 +235,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
-                                android:drawableLeft="@drawable/ico_blank"
+                                android:drawableLeft="@drawable/ico_field_zip"
                                 android:drawablePadding="5dp"
                                 android:padding="6sp"
                                 android:text="@string/zip" />
@@ -246,7 +247,6 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_weight="1"
                                 android:background="@android:color/white"
-                                android:hint="@string/postal_code_hint"
                                 android:inputType="textPostalAddress"
                                 android:maxLength="10"
                                 android:nextFocusDown="@+id/shippingCityEditText"
@@ -392,7 +392,7 @@
                                 android:text="@string/country" />
 
                             <Button
-                                android:id="@+id/addressCountryEditText"
+                                android:id="@+id/shippingAddressCountryButton"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"

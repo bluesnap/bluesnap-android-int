@@ -53,4 +53,6 @@
     <string name="mm_yy">شهر/سنة</string>
     <string name="merchant">التاجر</string>
     <string name="webview">عرض الويب</string>
+    <string name="billing_zip">الفاتوره البريديه</string>
+    <string name="billing">الفواتير</string>
 </resources>

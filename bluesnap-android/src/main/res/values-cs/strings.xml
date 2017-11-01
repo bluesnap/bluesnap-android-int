@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/RR</string>
     <string name="merchant">Obchodník</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">PSČ pro fakturaci</string>
+    <string name="billing">fakturace</string>
 </resources>

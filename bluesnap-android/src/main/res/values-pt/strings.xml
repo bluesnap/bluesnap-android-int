@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/AA</string>
     <string name="merchant">Comerciante</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">CEP de cobrança</string>
+    <string name="billing">faturamento</string>
 </resources>

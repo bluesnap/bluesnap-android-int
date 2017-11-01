@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,13 +19,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TokenProvider;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -44,7 +49,11 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 public class DemoMainActivity extends Activity {
 
     private static final String TAG = "DemoMainActivity";
+    private static final int HTTP_MAX_RETRIES = 2;
+    private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
+    private static Context context;
     protected BlueSnapService bluesnapService;
+    protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private EditText productPriceEditText;
     private Currency currency;
@@ -59,6 +68,8 @@ public class DemoMainActivity extends Activity {
     private ProgressBar progressBar;
     private LinearLayout linearLayoutForProgressBar;
     private Switch shippingSwitch;
+    private Switch billingSwitch;
+    private Switch emailSwitch;
     private EditText taxAmountEditText;
 
     /**
@@ -74,6 +85,10 @@ public class DemoMainActivity extends Activity {
         progressBar = (ProgressBar) findViewById(R.id.progressBarMerchant);
         shippingSwitch = (Switch) findViewById(R.id.shippingSwitch);
         shippingSwitch.setChecked(false);
+        billingSwitch = (Switch) findViewById(R.id.billingSwitch);
+        billingSwitch.setChecked(false);
+        emailSwitch = (Switch) findViewById(R.id.emailSwitch);
+        emailSwitch.setChecked(false);
         progressBar.setVisibility(View.VISIBLE);
         productPriceEditText = (EditText) findViewById(R.id.productPriceEditText);
         taxAmountEditText = (EditText) findViewById(R.id.demoTaxEditText);
@@ -84,8 +99,10 @@ public class DemoMainActivity extends Activity {
             Locale current = getResources().getConfiguration().locale;
             currencyByLocale = Currency.getInstance(current);
         } catch (Exception e) {
-            currencyByLocale = Currency.getInstance(Locale.getDefault());
+            currencyByLocale = Currency.getInstance("USD");
         }
+
+        context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
         generateMerchantToken();
     }
@@ -233,26 +250,81 @@ public class DemoMainActivity extends Activity {
         if (shippingSwitch.isChecked()) {
             paymentRequest.setShippingRequired(true);
         }
-        if (!paymentRequest.verify()) {
-            showDialog("PaymentRequest error");
+        if (billingSwitch.isChecked()) {
+            paymentRequest.setBillingRequired(true);
+        }
+        if (emailSwitch.isChecked()) {
+            paymentRequest.setEmailRequired(true);
+        }
+        try {
+            paymentRequest.verify();
+        } catch (BSPaymentRequestException e) {
+            showDialog("PaymentRequest error:" + e.getMessage());
             Log.d(TAG, paymentRequest.toString());
             finish();
         }
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
+
+        // Put KOUNT merchant ID
+        //intent.putExtra(BluesnapCheckoutActivity.EXTRA_KOUNT_MERCHANT_ID, 123);
+
         startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
     }
 
-    //TODO: Find a mock merchant service t¡o provide this
-    private void generateMerchantToken() {
-        progressBar.setVisibility(View.VISIBLE);
-
+    private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
+        httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL+ SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.d(TAG, responseString, throwable);
+                tokenServiceInterface.onServiceFailure();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
+                tokenServiceInterface.onServiceSuccess();
+            }
+
+        });
+    }
+
+    //TODO: Find a mock merchant service t¡o provide this
+    private void generateMerchantToken() {
+
+        // create the interface for activating the token creation from server
+        tokenProvider = new TokenProvider() {
+            @Override
+            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
+
+                merchantTokenService(new TokenServiceInterface() {
+                    @Override
+                    public void onServiceSuccess() {
+                        //change the expired token
+                        tokenServiceCallback.complete(merchantToken);
+                    }
+
+                    @Override
+                    public void onServiceFailure() {
+
+                    }
+                });
+            }
+        };
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        merchantTokenService(new TokenServiceInterface() {
+            @Override
+            public void onServiceSuccess() {
+                initControlsAfterToken();
+            }
+
+            @Override
+            public void onServiceFailure() {
                 BluesnapAlertDialog.setDialog(DemoMainActivity.this, "Cannot obtain token from merchant server", "Service error", new BluesnapAlertDialog.BluesnapDialogCallback() {
                     @Override
                     public void setPositiveDialog() {
@@ -265,27 +337,18 @@ public class DemoMainActivity extends Activity {
                     }
                 }, "Close", "Retry");
             }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
-                initControlsAfterToken();
-            }
-
         });
     }
 
     private void initControlsAfterToken() {
-        bluesnapService.setup(merchantToken);
+        bluesnapService.setup(merchantToken, tokenProvider);
         bluesnapService.updateRates(new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 Set<String> supportedRates = bluesnapService.getSupportedRates();
                 updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
-
                 progressBar.setVisibility(View.INVISIBLE);
                 linearLayoutForProgressBar.setVisibility(View.VISIBLE);
-
                 productPriceEditText.setVisibility(View.VISIBLE);
                 productPriceEditText.requestFocus();
             }
@@ -315,17 +378,25 @@ public class DemoMainActivity extends Activity {
         Bundle extras = data.getExtras();
         PaymentResult paymentResult = (PaymentResult) extras.get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
 
+        //Start a demo activity that shows purchase summary.
+        Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
+        intent.putExtra("MERCHANT_TOKEN", merchantToken);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
 
         // If shipping information is available show it, Here we simply log the shipping info.
         ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
             Log.d(TAG, shippingInfo.toString());
+            intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
         }
 
-        //Start a demo activity that shows purchase summary.
-        Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
-        intent.putExtra("MERCHANT_TOKEN", merchantToken);
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
+        // If billing information is available show it, Here we simply log the billing info.
+        BillingInfo billingInfo = (BillingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        if (billingInfo != null) {
+            Log.d(TAG, billingInfo.toString());
+            intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
+        }
+
         startActivity(intent);
 
         //Recreate the demo activity
@@ -366,5 +437,9 @@ public class DemoMainActivity extends Activity {
             treeSet.add("ILS");
         }
         return treeSet;
+    }
+
+    public BlueSnapService getBluesnapService() {
+        return bluesnapService;
     }
 }

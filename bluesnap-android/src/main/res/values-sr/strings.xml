@@ -53,4 +53,6 @@
     <string name="mm_yy">ММ/ГГ</string>
     <string name="merchant">Трговац</string>
     <string name="webview">Веб приказ</string>
+    <string name="billing_zip">Поштански број за фактуре</string>
+    <string name="billing">наплате</string>
 </resources>

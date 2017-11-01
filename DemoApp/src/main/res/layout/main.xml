@@ -52,15 +52,15 @@
 
                 <TextView
                     android:id="@+id/currencySym"
-                    android:layout_width="50dp"
+                    android:layout_width="30dp"
                     android:layout_height="fill_parent"
-                    android:gravity="center_vertical|right"
+                    android:gravity="center_vertical|end"
                     android:hint="$"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <EditText
                     android:id="@+id/productPriceEditText"
-                    android:layout_width="130dp"
+                    android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
@@ -78,7 +78,7 @@
 
                 <Spinner
                     android:id="@+id/rateSpinner"
-                    android:layout_width="150dp"
+                    android:layout_width="fill_parent"
                     android:layout_height="fill_parent" />
 
             </TableRow>
@@ -147,6 +147,32 @@
             android:enabled="true"
             android:text="@string/shipping"
             android:textSize="14sp" />
+
+        <Switch
+            android:id="@+id/billingSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:allowUndo="true"
+            android:checked="false"
+            android:clickable="true"
+            android:enabled="true"
+            android:text="@string/billing"
+            android:textSize="14sp" />
+
+        <Switch
+            android:id="@+id/emailSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:allowUndo="true"
+            android:checked="false"
+            android:clickable="true"
+            android:enabled="true"
+            android:text="@string/emailField"
+            android:textSize="14sp" />
     </LinearLayout>
 
 
@@ -172,7 +198,6 @@
         android:id="@+id/paymentResultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/rememberMeSwitch"
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

@@ -53,4 +53,6 @@
     <string name="mm_yy">HH/ÉÉ</string>
     <string name="merchant">Kereskedő</string>
     <string name="webview">Webes nézet</string>
+    <string name="billing_zip">Számlázási irányítószám</string>
+    <string name="billing">számlázás</string>
 </resources>

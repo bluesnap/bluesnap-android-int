@@ -11,23 +11,32 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 18
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionName androidGitVersion.name()
         versionCode androidGitVersion.code()
         //setProperty("archivesBaseName", "DemoApp-$versionName")
+        testBuildType "debug"
     }
     buildTypes {
         release {
             //runProguard false
             proguardFile getDefaultProguardFile('proguard-android.txt')
         }
+        debug {
+
+        }
+
     }
     lintOptions {
+        quiet false
         abortOnError false
+        ignoreWarnings true
+        disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
 
+    buildToolsVersion '25.0.3'
 }
 String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
 
@@ -80,6 +89,7 @@ dependencies {
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations'
     androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
 }
 configurations.all {

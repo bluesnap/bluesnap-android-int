@@ -62,28 +62,30 @@
         android:paddingTop="20dp">
 
         <Button
-            android:id="@+id/creditCardButton"
-            android:layout_width="160sp"
-            android:layout_height="30sp"
-            android:background="@drawable/bg_tab_creditcard_sel"
-            android:text="@string/credit_debit_card"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPureWhite"
-            android:textSize="14sp"
-            android:textStyle="normal"
-
+                android:id="@+id/creditCardButton"
+                android:layout_width="160sp"
+                android:layout_height="30sp"
+                android:background="@drawable/bg_tab_creditcard_sel"
+                android:text="@string/credit_debit_card"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPureWhite"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:visibility="invisible"
             />
 
         <Button
-            android:id="@+id/expressCheckoutButton"
-            android:layout_width="160sp"
-            android:layout_height="30sp"
-            android:background="@drawable/bg_tab_expresscheckout"
-            android:text="@string/express_checkout"
-            android:textAllCaps="false"
-            android:textColor="@color/colorBluesnapBlue"
-            android:textSize="14sp"
-            android:textStyle="normal" />
+                android:id="@+id/expressCheckoutButton"
+                android:layout_width="160sp"
+                android:layout_height="30sp"
+                android:background="@drawable/bg_tab_expresscheckout"
+                android:text="@string/express_checkout"
+                android:textAllCaps="false"
+                android:textColor="@color/colorBluesnapBlue"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:visibility="invisible"
+        />
 
     </LinearLayout>
 

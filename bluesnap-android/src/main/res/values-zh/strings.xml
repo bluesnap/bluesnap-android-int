@@ -53,4 +53,6 @@
     <string name="mm_yy">月/年</string>
     <string name="merchant">店主</string>
     <string name="webview">WebView</string>
+    <string name="billing_zip">帳單郵政編碼</string>
+    <string name="billing">计费</string>
 </resources>

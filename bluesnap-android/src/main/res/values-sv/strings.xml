@@ -53,4 +53,6 @@
     <string name="mm_yy">MM/YY</string>
     <string name="merchant">Handlare</string>
     <string name="webview">Sidöversikt</string>
+    <string name="billing_zip">Faktureringspostnummer</string>
+    <string name="billing">fakturering</string>
 </resources>

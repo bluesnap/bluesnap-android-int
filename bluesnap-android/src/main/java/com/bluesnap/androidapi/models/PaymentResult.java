@@ -21,8 +21,7 @@ public class PaymentResult implements Parcelable {
             return new PaymentResult[size];
         }
     };
-    public boolean rememberUser;
-    public boolean returningTransaction;
+
     private String last4Digits;
     private Double amount;
     private String currencyNameCode;
@@ -33,6 +32,9 @@ public class PaymentResult implements Parcelable {
     private String shopperLastName;
     private String cardZipCode;
     private String paypalInvoiceId;
+    private String token;
+    private String kountSessionId;
+    private String email;
 
 
     public PaymentResult() {
@@ -49,9 +51,9 @@ public class PaymentResult implements Parcelable {
         setShopperLastName(in.readString());
         setCardZipCode(in.readString());
         setPaypalInvoiceId(in.readString());
-        rememberUser = in.readInt() != 0;
-        returningTransaction = in.readInt() != 0;
-
+        setKountSessionId(in.readString());
+        setEmail(in.readString());
+        setToken(in.readString());
     }
 
     @Override
@@ -66,22 +68,9 @@ public class PaymentResult implements Parcelable {
         dest.writeString(getShopperLastName());
         dest.writeString(getCardZipCode());
         dest.writeString(getPaypalInvoiceId());
-        dest.writeInt(rememberUser ? 1 : 0);
-        dest.writeInt(returningTransaction ? 1 : 0);
-    }
-
-    /**
-     * Indicates if this is a returning shopper transaction.
-     * You should decide which server call to use according to this method.
-     *
-     * @return true if this is a returning shopper.
-     */
-    public boolean isReturningTransaction() {
-        return returningTransaction;
-    }
-
-    public void setReturningTransaction(boolean returningTransaction) {
-        this.returningTransaction = returningTransaction;
+        dest.writeString(getKountSessionId());
+        dest.writeString(getEmail());
+        dest.writeString(getToken());
     }
 
     @Override
@@ -133,10 +122,11 @@ public class PaymentResult implements Parcelable {
                 ", expDate='" + getExpDate() + '\'' +
                 ", shopperFirstName='" + getShopperFirstName() + '\'' +
                 ", shopperLastName='" + getShopperLastName() + '\'' +
+                ", email=" + email + '\'' +
                 ", cardZipCode='" + getCardZipCode() + '\'' +
-                ", rememberUser=" + rememberUser + '\'' +
-                ", returningTransaction=" + returningTransaction + '\'' +
                 ", paypalInvoiceId=" + paypalInvoiceId + '\'' +
+                ", kountSessionId=" + kountSessionId + '\'' +
+                ", token=" + getToken() + '\'' +
                 '}';
     }
 
@@ -223,5 +213,29 @@ public class PaymentResult implements Parcelable {
 
     public void setPaypalInvoiceId(String paypalInvoiceId) {
         this.paypalInvoiceId = paypalInvoiceId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getKountSessionId() {
+        return kountSessionId;
+    }
+
+    public void setKountSessionId(String kountSessionId) {
+        this.kountSessionId = kountSessionId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

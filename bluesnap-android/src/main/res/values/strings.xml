@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MerchantApp</string>
-    <string name="drawable">buynow</string>
+    <string name="app_name" translatable="false">MerchantApp</string>
+    <string name="drawable" translatable="false">buynow</string>
     <string name="emailField">Email</string>
     <string name="card">Card</string>
     <string name="cvv">CVV</string>
@@ -16,6 +16,7 @@
     <string name="invalid_address_line">Invalid Address Line</string>
     <string name="invalid_email_address">Invalid Email Address</string>
     <string name="zip">Zip</string>
+    <string name="billing_zip">Billing Zip</string>
     <string name="country">Country</string>
     <string name="state">State</string>
     <string name="city">City</string>
@@ -24,46 +25,47 @@
     <string name="invalid_card_number">Invalid Card Number</string>
     <string name="coupon_questionmark">Coupon?</string>
     <string name="shipping">Shipping</string>
+    <string name="billing">Billing</string>
     <string name="shipping_Info">Shipping Info</string>
     <string name="pay">Pay</string>
     <string name="total">Total</string>
-    <string name="buynowbutton">BuyNowbutton</string>
+    <string name="buynowbutton" translatable="false">BuyNowbutton</string>
 
     <string name="search">Search</string>
     <string name="language">Language -</string>
     <string name="select_language">Select Language</string>
-    <string name="title_activity_language">LanguageActivity</string>
+    <string name="title_activity_language" translatable="false">LanguageActivity</string>
 
     <string name="currency">Currency -</string>
     <string name="select_currency">Select Currency</string>
-    <string name="title_activity_currency">CurrencyActivity</string>
+    <string name="title_activity_currency" translatable="false">CurrencyActivity</string>
 
-    <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="title_activity_web_view" translatable="false">WebViewActivity</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="refund_policy">Refund Policy</string>
     <string name="terms_conditions">Terms &amp; Conditions</string>
-    <string name="privacy_policy_url">https://home.bluesnap.com/ecommerce/legal/privacy-policy/</string>
-    <string name="refund_policy_url">http://home.bluesnap.com/ecommerce/legal/refund-policy/</string>
-    <string name="terms_conditions_url">http://home.bluesnap.com/ecommerce/legal/terms-and-conditions/</string>
+    <string name="privacy_policy_url" translatable="false">https://home.bluesnap.com/ecommerce/legal/privacy-policy/</string>
+    <string name="refund_policy_url" translatable="false">http://home.bluesnap.com/ecommerce/legal/refund-policy/</string>
+    <string name="terms_conditions_url" translatable="false">http://home.bluesnap.com/ecommerce/legal/terms-and-conditions/</string>
     <!-- Language -->
-    <string name="LOCALE_LANGUAGE">localelanguage</string>
-    <string name="LOCALE_LANGUAGE_FULL">localelanguagefull</string>
-    <string name="DEFAULT_LANGUAGE">en</string>
-    <string name="DEFAULT_LANGUAGE_FULL">English</string>
+    <string name="LOCALE_LANGUAGE" translatable="false">localelanguage</string>
+    <string name="LOCALE_LANGUAGE_FULL" translatable="false">localelanguagefull</string>
+    <string name="DEFAULT_LANGUAGE" translatable="false">en</string>
+    <string name="DEFAULT_LANGUAGE_FULL" translatable="false">English</string>
     <!-- Currency -->
-    <string name="CURRENCY_STRING">CURRENCY_STRING</string>
-    <string name="LOCALE_CURRENCY">localeCurrency</string>
-    <string name="LOCALE_CURRENCY_FULL">localeCurrencyfull</string>
-    <string name="DEFAULT_CURRENCY">USD</string>
-    <string name="DEFAULT_CURRENCY_FULL">USD - United States Dollars</string>
+    <string name="CURRENCY_STRING" translatable="false">CURRENCY_STRING</string>
+    <string name="LOCALE_CURRENCY" translatable="false">localeCurrency</string>
+    <string name="LOCALE_CURRENCY_FULL" translatable="false">localeCurrencyfull</string>
+    <string name="DEFAULT_CURRENCY" translatable="false">USD</string>
+    <string name="DEFAULT_CURRENCY_FULL" translatable="false">USD - United States Dollars</string>
     <!-- Country -->
-    <string name="COUNTRY_STRING">COUNTRY_STRING</string>
-    <string name="title_activity_country">CountryActivity</string>
+    <string name="COUNTRY_STRING" translatable="false">COUNTRY_STRING</string>
+    <string name="title_activity_country" translatable="false">CountryActivity</string>
     <string name="select_country">Select Country</string>
     <!-- WebView Activity -->
-    <string name="WEBVIEW_STRING">WEBVIEW_STRING</string>
-    <string name="WEBVIEW_URL">WEBVIEW_URL</string>
-    <string name="SET_JAVA_SCRIPT_ENABLED">SET_JAVA_SCRIPT_ENABLED</string>
+    <string name="WEBVIEW_STRING" translatable="false">WEBVIEW_STRING</string>
+    <string name="WEBVIEW_URL" translatable="false">WEBVIEW_URL</string>
+    <string name="SET_JAVA_SCRIPT_ENABLED" translatable="false">SET_JAVA_SCRIPT_ENABLED</string>
     <string name="subtotal_label">Subtotal:</string>
     <string name="tax_label">Tax:</string>
 
@@ -84,15 +86,15 @@
 
     <!-- Hints-->
     <string name="name_hint">John Doe</string>
-    <string name="cc_hint">1234 5678 9012 3456</string>
-    <string name="cvv_hint">123</string>
-    <string name="email_hint">JohnDoe@Email.com</string>
+    <string name="cc_hint" translatable="false">1234 5678 9012 3456</string>
+    <string name="cvv_hint" translatable="false">123</string>
+    <string name="email_hint" translatable="false">JohnDoe@Email.com</string>
     <string name="street_hint">Street</string>
     <string name="postal_code_hint">Postal Code</string>
     <string name="mm_yy">MM/YY</string>
     <string name="coupon"> Coupon</string>
     <string name="merchant">Merchant</string>
-    <string name="_0">0</string>
+    <string name="_0" translatable="false">0</string>
     <string name="webview">WebView</string>
 
 </resources>

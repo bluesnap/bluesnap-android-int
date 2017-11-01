@@ -46,13 +46,13 @@ public class DemoTransactions {
         return token;
     }
 
-    public void createCreditCardTransaction(String firstName, String lastName, String token, String currency, Double amount, final BluesnapServiceCallback callback) {
-        createCreditCardTransaction(firstName, lastName, token, currency, amount, false, "", "", callback);
+    public void createCreditCardTransaction(String firstName, String lastName, String token, String currency, Double amount, final BluesnapServiceCallback callback, String fraudSessionId) {
+        createCreditCardTransaction(firstName, lastName, token, currency, amount, false, "", "", callback, fraudSessionId);
     }
 
-    public void createCreditCardTransaction(String firstName, String lastName, String token, String currency, Double amount, boolean isReturningShopper, String last4Digits, String cardType, final BluesnapServiceCallback callback) {
+    public void createCreditCardTransaction(String firstName, String lastName, String token, String currency, Double amount, boolean isReturningShopper, String last4Digits, String cardType, final BluesnapServiceCallback callback, String fraudSessionId) {
 
-
+        //TODO: I'm just a string but please don't make me look that bad..Use String.format
         String bodyStart = "<card-transaction xmlns=\"http://ws.plimus.com\">" +
                 "<card-transaction-type>AUTH_CAPTURE</card-transaction-type>" +
                 "<recurring-transaction>ECOMMERCE</recurring-transaction>" +
@@ -62,7 +62,11 @@ public class DemoTransactions {
         String bodyMiddle = "<card-holder-info>" +
                 "<first-name>" + firstName + "</first-name>" +
                 "<last-name>" + lastName + "</last-name>" +
-                "</card-holder-info>";
+                "</card-holder-info>" +
+                "<transaction-fraud-info>" +
+                "<fraud-session-id>" + fraudSessionId + "</fraud-session-id>" +
+                "</transaction-fraud-info>"
+                ;
         String bodyEnd = "</card-transaction>";
         String body = bodyStart;
 

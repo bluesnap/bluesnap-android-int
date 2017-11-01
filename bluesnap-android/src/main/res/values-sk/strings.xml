@@ -53,4 +53,6 @@
     <string name="mm_yy">Mesiac/rok</string>
     <string name="merchant">Predajca</string>
     <string name="webview">Webové zobrazenie</string>
+    <string name="billing_zip">PSČ fakturačnej adresy</string>
+    <string name="billing">fakturácia</string>
 </resources>

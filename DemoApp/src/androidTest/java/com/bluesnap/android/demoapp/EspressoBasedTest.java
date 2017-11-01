@@ -1,11 +1,24 @@
 package com.bluesnap.android.demoapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.RemoteException;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
+import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import android.support.test.runner.lifecycle.Stage;
+import android.support.test.uiautomator.UiDevice;
 import android.util.Base64;
+import android.util.Log;
+import android.view.WindowManager;
 
+import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
 
 import org.junit.Before;
@@ -26,6 +39,7 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.containsString;
 
+
 /**
  *
  */
@@ -34,25 +48,89 @@ public class EspressoBasedTest {
     protected RandomTestValuesGenerator randomTestValuesGeneretor;
     protected IdlingResource tokenProgressBarIR;
     protected IdlingResource transactionMessageIR;
-
+    private static final String TAG = EspressoBasedTest.class.getSimpleName();
     @Before
-    public void setup() throws IOException {
+    public void setup() throws InterruptedException {
+        try {
+            wakeUpDeviceScreen();
+        } catch (RemoteException e) {
+            fail("Could not wake up device");
+            e.printStackTrace();
+        }
         randomTestValuesGeneretor = new RandomTestValuesGenerator();
         IdlingPolicies.setMasterPolicyTimeout(400, TimeUnit.SECONDS);
         IdlingPolicies.setIdlingResourceTimeout(400, TimeUnit.SECONDS);
 
-        URL myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION);
-        HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
-        String userCredentials = SANDBOX_USER + ":" + SANDBOX_PASS;
-        String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), 0));
-        myURLConnection.setRequestProperty("Authorization", basicAuth);
-        myURLConnection.setRequestMethod("POST");
-        myURLConnection.connect();
-        int responseCode = myURLConnection.getResponseCode();
-        String locationHeader = myURLConnection.getHeaderField("Location");
-        merchantToken = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+
+        //Wake up device again in case token fetch took to much time
+        try {
+            wakeUpDeviceScreen();
+        } catch (RemoteException e) {
+            fail("Could not wake up device");
+            e.printStackTrace();
+        }
 
     }
+
+    public void setSDKToken() throws InterruptedException {
+        try {
+            URL myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION);
+            HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
+            String userCredentials = SANDBOX_USER + ":" + SANDBOX_PASS;
+            String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), 0));
+            myURLConnection.setRequestProperty("Authorization", basicAuth);
+            myURLConnection.setRequestMethod("POST");
+            myURLConnection.connect();
+            int responseCode = myURLConnection.getResponseCode();
+            String locationHeader = myURLConnection.getHeaderField("Location");
+            merchantToken = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+        } catch (IOException e) {
+            fail("Network error obtaining token:" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        new Handler(Looper.getMainLooper())
+                .post(new Runnable() {
+                    @Override
+                    public void run() {
+                        BlueSnapService.getInstance().setup(merchantToken);
+
+                    }
+                });
+
+        while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
+            Log.d(TAG, "Waiting for token setup");
+            Thread.sleep(2000);
+
+        }
+    }
+
+    public void setRates() throws InterruptedException {
+        new Handler(Looper.getMainLooper())
+                .post(new Runnable() {
+                    @Override
+                    public void run() {
+                        BlueSnapService.getInstance().updateRates(new BluesnapServiceCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d(TAG, "Service got rates");
+
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                fail("Service could not update rates");
+                            }
+                        });
+                    }
+                });
+
+        while (BlueSnapService.getInstance().getRatesArray() == null) {
+            Log.d(TAG, "Waiting for update rates");
+            Thread.sleep(2000);
+        }
+    }
+
 
     public void clearPrefs(Context context) {
         PrefsStorage prefsStorage = new PrefsStorage(context);
@@ -74,5 +152,19 @@ public class EspressoBasedTest {
         IdlingPolicies.setIdlingResourceTimeout(60, TimeUnit.SECONDS);
         checkToken();
 
+    }
+
+
+    public void wakeUpDeviceScreen() throws RemoteException {
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        uiDevice.wakeUp();
+        ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(new ActivityLifecycleCallback() {
+            @Override
+            public void onActivityLifecycleChanged(Activity activity, Stage stage) {
+                //if (stage == Stage.PRE_ON_CREATE) {
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                // }
+            }
+        });
     }
 }
