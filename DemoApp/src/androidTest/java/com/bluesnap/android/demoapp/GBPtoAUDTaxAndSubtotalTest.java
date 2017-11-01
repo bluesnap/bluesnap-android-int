@@ -67,6 +67,24 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
         Espresso.registerIdlingResources(tokenProgressBarIR);
         checkToken();
 
+        ViewInteraction spinner = onView(
+                allOf(withId(R.id.rateSpinner),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.TableLayout")),
+                                        1),
+                                3),
+                        isDisplayed()));
+        spinner.perform(click());
+
+
+        DataInteraction checkedTextView = onData(anything())
+                .inAdapterView(childAtPosition(
+                        withClassName(is("android.widget.PopupWindow$PopupBackgroundView")),
+                        0))
+                .atPosition(2);
+        checkedTextView.perform(click());
+
         ViewInteraction editText = onView(
                 allOf(withId(R.id.productPriceEditText),
                         childAtPosition(

@@ -11,9 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -101,8 +98,28 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
 
         blueSnapService.setPaymentRequest(paymentRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "USD");
-        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
+//        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
+        assertEquals("14.42", String.format("%.2f", convertedOncePrice));
     }
+
+    @Test
+    public void convert_EUR_to_ILS_to_USD() throws InterruptedException, BSPaymentRequestException {
+
+        PaymentRequest paymentRequest = new PaymentRequest();
+        Double amount = 10.7D;
+        paymentRequest.setAmount(amount);
+        paymentRequest.setCurrencyNameCode("EUR");
+
+
+        blueSnapService.setPaymentRequest(paymentRequest);
+        Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "ILS");
+        Double convertedTwicePrice = blueSnapService.convertPrice(amount, "ILS", "USD");
+//        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
+        assertEquals("14.42", String.format("%.2f", convertedTwicePrice));
+    }
+
+
+
     @Test
     public void non_existing_currency_code() throws InterruptedException {
 
