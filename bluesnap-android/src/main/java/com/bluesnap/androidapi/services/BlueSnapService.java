@@ -46,8 +46,10 @@ public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final String CARD_TOKENIZE = "payment-fields-tokens/";
     private static final String RATES_SERVICE = "tokenized-services/rates";
+    private static final String BASE_CURRENCY = "?base-currency=";
     private static final BlueSnapService INSTANCE = new BlueSnapService();
     private static final String SUPPORTED_PAYMENT_METHODS = "tokenized-services/supported-payment-methods";
+    private static final String SDK_INIT = "tokenized-services/sdk-init";
     private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
@@ -236,6 +238,82 @@ public class BlueSnapService {
                     callback.onSuccess();
                 } catch (JSONException e) {
                     Log.e(TAG, "json parsing exception", e);
+                    callback.onFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(TAG, "Rates convert service error", throwable);
+                // try to PUT empty {} to check if token is expired
+                try {
+                    checkTokenIsExpired(new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            callback.onFailure();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                            if (statusCode == 400 && null != tokenProvider) {
+                                try {
+                                    JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                                    JSONObject rs3 = (JSONObject) rs2.get(0);
+                                    if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                                        getTokenProvider().getNewToken(
+                                                new TokenServiceCallback() {
+                                                    @Override
+                                                    public void complete(String newToken) {
+                                                        setNewToken(newToken);
+                                                        updateRates(bluesnapServiceCallback);
+                                                    }
+                                                }
+                                        );
+                                } catch (JSONException e) {
+                                    Log.e(TAG, "json parsing exception", e);
+                                }
+                            } else {
+                                String errorMsg = String.format("Service Error %s, %s", statusCode);
+                                Log.e(TAG, errorMsg, throwable);
+                                callback.onFailure();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing exception", e);
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "Unsupported Encoding Exception", e);
+                }
+            }
+        });
+    }
+
+    /**
+     * SDK Init.
+     * @param callback A {@link BluesnapServiceCallback}
+     * baseCurrency = USD
+     */
+    public void sdkInit(final BluesnapServiceCallback callback) {
+        sdkInit("USD", callback);
+    }
+
+    /**
+     * SDK Init.
+     * @param callback A {@link BluesnapServiceCallback}
+     * @param baseCurrency All rates are derived from baseCurrency. baseCurrency * AnyRate = AnyCurrency
+     */
+    public void sdkInit(String baseCurrency, final BluesnapServiceCallback callback) {
+        this.bluesnapServiceCallback = callback;
+        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
+        httpClient.get(bluesnapToken.getUrl() + SDK_INIT + BASE_CURRENCY + baseCurrency, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+
+                    callback.onSuccess();
+                } catch (Exception e) {
+                    Log.e(TAG, "exception: ", e);
                     callback.onFailure();
                 }
             }
