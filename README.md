@@ -56,6 +56,14 @@ If you would like to collect shipping information, call the `setShippingRequired
 
     paymentRequest.setShippingRequired(true);
 
+If you would like to collect shipping information, call the `setBillingRequired` method in the `PaymentRequest`:
+
+    paymentRequest.setBillingRequired(true);
+    
+If you would like to collect shipping information, call the `setEmailRequired` method in the `PaymentRequest`:
+
+    paymentRequest.setEmailRequired(true);
+    
 ### Launch BluesnapCheckoutActivity
 To start the activity, create an Android Intent and pass the `PaymentRequest` as an Intent Extra.
 
