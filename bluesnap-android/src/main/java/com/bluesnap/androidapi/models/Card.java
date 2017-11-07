@@ -171,7 +171,7 @@ public class Card {
             return false;
         }
         if (cvc.length() >= 3 && cvc.length() < 5) {
-            if (CardType.AMERICAN_EXPRESS.equals(type)) {
+            if (CardType.AMEX.equals(type)) {
                 if (cvc.length() != 4)
                     return false;
             } else if (cvc.length() != 3)

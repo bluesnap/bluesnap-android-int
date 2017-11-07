@@ -36,7 +36,7 @@ public class CardTest extends TestCase {
             card.setNumber(num);
             assertTrue("AMEX luhn invalid", card.validateNumber());
             String type = CardType.getType(card.getNumber());
-            Assert.assertTrue("AMEX type mismatch: " + type + " " + num, CardType.AMERICAN_EXPRESS.equals(type));
+            Assert.assertTrue("AMEX type mismatch: " + type + " " + num, CardType.AMEX.equals(type));
         }
     }
 

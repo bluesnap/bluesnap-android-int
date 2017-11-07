@@ -6,8 +6,6 @@ import java.util.ArrayList;
  * Created by roy.biber on 08/06/2016.
  */
 public class Constants {
-    public static final String PAYPAL = "PAYPAL";
-    public static final String CC = "CC";
 
     public static final String RETURNING_SHOPPER = "shopperinfo";
     /* PayPal Process URL's */

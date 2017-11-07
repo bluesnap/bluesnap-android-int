@@ -3,7 +3,9 @@ package com.bluesnap.androidapi.services;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -220,5 +225,15 @@ public class AndroidUtil {
         else
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
+    }
+
+    @Nullable
+    public static Object getObjectFromJsonObject(JSONObject jsonObject, String key, String TAG) {
+        try {
+            return (jsonObject.isNull(key)) ? null : jsonObject.get(key);
+        } catch (JSONException e) {
+            Log.e(TAG, "json parsing exception", e);
+        }
+        return null;
     }
 }

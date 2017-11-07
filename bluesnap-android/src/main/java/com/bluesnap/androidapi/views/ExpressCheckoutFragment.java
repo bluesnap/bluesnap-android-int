@@ -18,6 +18,7 @@ import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
@@ -64,7 +65,7 @@ public class ExpressCheckoutFragment extends Fragment implements BluesnapPayment
         View inflate = inflater.inflate(R.layout.bluesnap_expresscheckout, container, false);
         progressBar = (ProgressBar) inflate.findViewById(R.id.progressBarExpressCheckout);
         totalAmount = (TextView) inflate.findViewById(R.id.express_co_total);
-        if (BlueSnapService.getInstance().isPaymentMethodActive(Constants.PAYPAL)) {
+        if (BlueSnapService.getInstance().getSdkInitData().getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
             ImageButton paypalBtn = (ImageButton) inflate.findViewById(R.id.express_co_btn_paypal);
             paypalBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

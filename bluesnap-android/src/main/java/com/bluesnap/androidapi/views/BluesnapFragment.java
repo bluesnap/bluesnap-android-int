@@ -548,7 +548,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         if (type == null)
             return;
 
-        if (CardType.AMERICAN_EXPRESS.equalsIgnoreCase(type))
+        if (CardType.AMEX.equalsIgnoreCase(type))
             cardDrawable = R.drawable.new_amex;
         else if (CardType.VISA.equalsIgnoreCase(type))
             cardDrawable = R.drawable.new_visa;

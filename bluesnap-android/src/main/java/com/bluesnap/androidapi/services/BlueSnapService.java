@@ -12,8 +12,7 @@ import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.ExchangeRate;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -27,8 +26,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -58,15 +55,19 @@ public class BlueSnapService {
     private static JSONObject errorDescription;
     private static String transactionStatus;
     private final AsyncHttpClient httpClient = new AsyncHttpClient();
-    private HashMap<String, ExchangeRate> ratesMap;
-    private ArrayList<ExchangeRate> ratesArray;
-    private JSONObject paymentMethodsObject = new JSONObject();
 
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
     private BluesnapToken bluesnapToken;
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
+
+    public SDKInitData getSdkInitData() {
+        return sdkInitData;
+    }
+
+    private SDKInitData sdkInitData;
+    private String baseCurrency;
     private TokenProvider tokenProvider;
 
     public static BlueSnapService getInstance() {
@@ -87,16 +88,7 @@ public class BlueSnapService {
 
 
     public boolean isexpressCheckoutActive() {
-        return isPaymentMethodActive(Constants.PAYPAL);
-    }
-
-    public boolean isPaymentMethodActive(String paymentMethod) {
-        try {
-            return (paymentMethodsObject.has(paymentMethod)) && paymentMethodsObject.getBoolean(paymentMethod);
-        } catch (JSONException e) {
-            Log.e(TAG, "json exception", e);
-            return false;
-        }
+        return sdkInitData.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL);
     }
 
     public TokenProvider getTokenProvider() {
@@ -111,8 +103,14 @@ public class BlueSnapService {
         return transactionStatus;
     }
 
+    /**
+     * Setup the service to talk to the server.
+     * This will reset the previous payment request
+     *
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     */
     public void setup(String merchantToken) {
-        setup(merchantToken, null);
+        setup(merchantToken, null, SupportedPaymentMethods.USD);
     }
 
     /**
@@ -123,6 +121,30 @@ public class BlueSnapService {
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
     public void setup(String merchantToken, TokenProvider tokenProvider) {
+        setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD);
+    }
+
+    /**
+     * Setup the service to talk to the server.
+     * This will reset the previous payment request
+     *
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * @param baseCurrency  A Merchant base currency, obtained from the merchant.
+     */
+    public void setup(String merchantToken, String baseCurrency) {
+        setup(merchantToken, null, baseCurrency);
+    }
+
+    /**
+     * Setup the service to talk to the server.
+     * This will reset the previous payment request
+     *
+     * @param tokenProvider A merchant function for requesting a new token if expired
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * @param baseCurrency  A Merchant base currency, obtained from the merchant.
+     */
+    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency) {
+        this.baseCurrency = baseCurrency;
         if (null != tokenProvider)
             this.tokenProvider = tokenProvider;
 
@@ -141,7 +163,9 @@ public class BlueSnapService {
 
         paymentResult = null;
         paymentRequest = null;
-        checkSupportedPaymentMethods();
+
+        sdkInit(baseCurrency);
+
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
@@ -211,122 +235,39 @@ public class BlueSnapService {
     }
 
     /**
-     * Update the Conversion rates map from the server.
-     * The rates are merchant specific, the merchantToken is used to identify the merchant.
-     *
-     * @param callback A {@link BluesnapServiceCallback}
-     */
-    public void updateRates(final BluesnapServiceCallback callback) {
-        this.bluesnapServiceCallback = callback;
-        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
-        httpClient.get(bluesnapToken.getUrl() + RATES_SERVICE, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    JSONArray exchangeRate = response.getJSONArray("exchangeRate");
-                    //TODO: this can be optimized to create the ratesMap directly from the response
-                    ratesArray = new Gson().fromJson(exchangeRate.toString(), new TypeToken<List<ExchangeRate>>() {
-                    }.getType());
-                    ratesMap = new HashMap<>(ratesArray.size() + 1);
-                    ExchangeRate usdExchangeRate = new ExchangeRate();
-                    usdExchangeRate.setConversionRate(1.0);
-                    usdExchangeRate.setQuoteCurrency("USD");
-                    ratesMap.put("USD", usdExchangeRate);
-                    for (ExchangeRate r : ratesArray) {
-                        ratesMap.put(r.getQuoteCurrency(), r);
-                    }
-                    callback.onSuccess();
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                    callback.onFailure();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, "Rates convert service error", throwable);
-                // try to PUT empty {} to check if token is expired
-                try {
-                    checkTokenIsExpired(new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            callback.onFailure();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400 && null != tokenProvider) {
-                                try {
-                                    JSONArray rs2 = (JSONArray) errorResponse.get("message");
-                                    JSONObject rs3 = (JSONObject) rs2.get(0);
-                                    if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
-                                        getTokenProvider().getNewToken(
-                                                new TokenServiceCallback() {
-                                                    @Override
-                                                    public void complete(String newToken) {
-                                                        setNewToken(newToken);
-                                                        updateRates(bluesnapServiceCallback);
-                                                    }
-                                                }
-                                        );
-                                } catch (JSONException e) {
-                                    Log.e(TAG, "json parsing exception", e);
-                                }
-                            } else {
-                                String errorMsg = String.format("Service Error %s, %s", statusCode);
-                                Log.e(TAG, errorMsg, throwable);
-                                callback.onFailure();
-                            }
-                        }
-                    });
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                } catch (UnsupportedEncodingException e) {
-                    Log.e(TAG, "Unsupported Encoding Exception", e);
-                }
-            }
-        });
-    }
-
-    /**
      * SDK Init.
-     * @param callback A {@link BluesnapServiceCallback}
      * baseCurrency = USD
      */
-    public void sdkInit(final BluesnapServiceCallback callback) {
-        sdkInit("USD", callback);
+    public void sdkInit() {
+        sdkInit(SupportedPaymentMethods.USD);
     }
 
     /**
      * SDK Init.
-     * @param callback A {@link BluesnapServiceCallback}
+     *
      * @param baseCurrency All rates are derived from baseCurrency. baseCurrency * AnyRate = AnyCurrency
      */
-    public void sdkInit(String baseCurrency, final BluesnapServiceCallback callback) {
-        this.bluesnapServiceCallback = callback;
+    public void sdkInit(final String baseCurrency) {
         httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
         httpClient.get(bluesnapToken.getUrl() + SDK_INIT + BASE_CURRENCY + baseCurrency, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-
-                    callback.onSuccess();
+                    sdkInitData = new SDKInitData(response);
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
-                    callback.onFailure();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, "Rates convert service error", throwable);
+                Log.e(TAG, "SDK Init service error", throwable);
                 // try to PUT empty {} to check if token is expired
                 try {
                     checkTokenIsExpired(new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            callback.onFailure();
+                            Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
                         }
 
                         @Override
@@ -342,7 +283,7 @@ public class BlueSnapService {
                                                     @Override
                                                     public void complete(String newToken) {
                                                         setNewToken(newToken);
-                                                        updateRates(bluesnapServiceCallback);
+                                                        sdkInit(baseCurrency);
                                                     }
                                                 }
                                         );
@@ -352,7 +293,6 @@ public class BlueSnapService {
                             } else {
                                 String errorMsg = String.format("Service Error %s, %s", statusCode);
                                 Log.e(TAG, errorMsg, throwable);
-                                callback.onFailure();
                             }
                         }
                     });
@@ -366,29 +306,7 @@ public class BlueSnapService {
     }
 
     public ArrayList<ExchangeRate> getRatesArray() {
-        return ratesArray;
-    }
-
-    private void checkSupportedPaymentMethods() {
-        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
-        httpClient.get(bluesnapToken.getUrl() + SUPPORTED_PAYMENT_METHODS, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    JSONArray paymentMethods = response.getJSONArray("paymentMethods");
-                    for (int i = 0; i < paymentMethods.length(); i++) {
-                        paymentMethodsObject.put(paymentMethods.getString(i), true);
-                    }
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, "Rates convert service error", throwable);
-            }
-        });
+        return sdkInitData.ratesArray;
     }
 
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
@@ -513,8 +431,8 @@ public class BlueSnapService {
      */
     @Nullable
     public Set<String> getSupportedRates() {
-        if (ratesMap != null)
-            return ratesMap.keySet();
+        if (sdkInitData.ratesMap != null)
+            return sdkInitData.ratesMap.keySet();
         else return null;
     }
 
@@ -530,7 +448,7 @@ public class BlueSnapService {
         if (usdPrice == null || usdPrice.isEmpty())
             return "0";
 
-        ExchangeRate rate = ratesMap.get(convertTo);
+        ExchangeRate rate = sdkInitData.ratesMap.get(convertTo);
         Double result = Double.valueOf(usdPrice) * rate.getConversionRate();
         return String.valueOf(AndroidUtil.getDecimalFormat().format(result));
     }
@@ -549,9 +467,9 @@ public class BlueSnapService {
         if (baseCurrency.equals(newCurrencyNameCode)) {
             return paymentRequest.getBaseAmount();
         }
-        Double baseConversionRate = ratesMap.get(baseCurrency).getConversionRate();
-        Double usdPRice = baseCurrency.equals("USD") ? basePrice * baseConversionRate : basePrice * (1/baseConversionRate);
-        Double newPrice = ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
+        Double baseConversionRate = sdkInitData.ratesMap.get(baseCurrency).getConversionRate();
+        Double usdPRice = baseCurrency.equals(SupportedPaymentMethods.USD) ? basePrice * baseConversionRate : basePrice * (1 / baseConversionRate);
+        Double newPrice = sdkInitData.ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
         return newPrice;
     }
 
@@ -603,10 +521,10 @@ public class BlueSnapService {
      */
     public void verifyPaymentRequest(PaymentRequest paymentRequest) throws BSPaymentRequestException {
         paymentRequest.verify();
-        if (ratesMap == null) {
+        if (sdkInitData.ratesMap == null) {
             throw new BSPaymentRequestException("rates map is not populated. did you forget to call updateRates?");
         }
-        if (ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
+        if (sdkInitData.ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
             throw new BSPaymentRequestException("Currency not found");
         }
     }

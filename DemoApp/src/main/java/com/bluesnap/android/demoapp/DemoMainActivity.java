@@ -342,22 +342,6 @@ public class DemoMainActivity extends Activity {
 
     private void initControlsAfterToken() {
         bluesnapService.setup(merchantToken, tokenProvider);
-        bluesnapService.updateRates(new BluesnapServiceCallback() {
-            @Override
-            public void onSuccess() {
-                Set<String> supportedRates = bluesnapService.getSupportedRates();
-                updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
-                progressBar.setVisibility(View.INVISIBLE);
-                linearLayoutForProgressBar.setVisibility(View.VISIBLE);
-                productPriceEditText.setVisibility(View.VISIBLE);
-                productPriceEditText.requestFocus();
-            }
-
-            @Override
-            public void onFailure() {
-                showDialog("unable to get rates quote from service");
-            }
-        });
     }
 
     @Override
