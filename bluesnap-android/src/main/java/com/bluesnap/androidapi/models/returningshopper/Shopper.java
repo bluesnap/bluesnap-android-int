@@ -40,13 +40,7 @@ public class Shopper {
             shippingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHIPPINGCONTACTINFO, TAG));
             shopperCurrency = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHOPPERCURRENCY, TAG);
             lastPaymentInfo = new LastPaymentInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTPAYMENTINFO, TAG));
-            try {
-                if (creditCardInfos != null)
-                    creditCardInfos.clear();
-                setCreditCardInfos(shopperRepresentation);
-            } catch (JSONException e) {
-                Log.e(TAG, "json parsing exception", e);
-            }
+            setCreditCardInfos(shopperRepresentation);
         }
     }
 
@@ -71,14 +65,21 @@ public class Shopper {
         return creditCardInfos;
     }
 
-    public void setCreditCardInfos(@Nullable JSONObject shopperRepresentation) throws JSONException {
-        if (null != shopperRepresentation && !shopperRepresentation.isNull(PAYMENTSOURCES) && !shopperRepresentation.getJSONObject(PAYMENTSOURCES).isNull(CREDITCARDINFO)) {
-            JSONArray creditCardInfo = (JSONArray) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, PAYMENTSOURCES, TAG), CREDITCARDINFO, TAG);
-            assert creditCardInfo != null;
-            for (int i = 0; i < creditCardInfo.length(); i++) {
-                assert creditCardInfos != null;
-                creditCardInfos.add(new CreditCardInfo(creditCardInfo.getJSONObject(i)));
+    public void setCreditCardInfos(@Nullable JSONObject shopperRepresentation) {
+        try {
+            if (null != shopperRepresentation && !shopperRepresentation.isNull(PAYMENTSOURCES) && !shopperRepresentation.getJSONObject(PAYMENTSOURCES).isNull(CREDITCARDINFO)) {
+                JSONArray creditCardInfo = (JSONArray) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, PAYMENTSOURCES, TAG), CREDITCARDINFO, TAG);
+                Log.d(TAG, String.valueOf(creditCardInfo));
+                assert creditCardInfo != null;
+                creditCardInfos = new ArrayList<>();
+                for (int i = 0; i < creditCardInfo.length(); i++) {
+                    CreditCardInfo creditCardInfoTemp = new CreditCardInfo(creditCardInfo.getJSONObject(i));
+                    Log.d(TAG, String.valueOf(creditCardInfoTemp));
+                    creditCardInfos.add(creditCardInfoTemp);
+                }
             }
+        } catch (JSONException e) {
+            Log.e(TAG, "json parsing exception", e);
         }
 
     }

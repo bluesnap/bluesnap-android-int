@@ -39,13 +39,17 @@ public class SDKInitData {
     protected Shopper shopper;
     protected SupportedPaymentMethods supportedPaymentMethods;
 
-    public SDKInitData(JSONObject sdkInitData) {
+    SDKInitData(JSONObject sdkInitData) {
         kountMerchantId = (int) AndroidUtil.getObjectFromJsonObject(sdkInitData, KOUNTMERCHANTID, TAG);
+        Log.d(TAG, String.valueOf(kountMerchantId));
         shopper = new Shopper((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, SHOPPER, TAG));
+        Log.d(TAG, String.valueOf(shopper));
         supportedPaymentMethods = new SupportedPaymentMethods((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, SUPPORTEDPAYMENTMETHODS, TAG));
+        Log.d(TAG, String.valueOf(supportedPaymentMethods));
 
         //TODO: change base currency payment request to this base but need to check change rate will do as needed
         baseCurrency = (String) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, RATES, TAG), BASECURRENCY, TAG);
+        Log.d(TAG, String.valueOf(baseCurrency));
         updateRates(sdkInitData);
 
     }

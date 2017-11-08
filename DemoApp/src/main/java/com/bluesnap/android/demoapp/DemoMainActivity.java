@@ -275,7 +275,8 @@ public class DemoMainActivity extends Activity {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        //httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + "?shopperId=22204247", new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
