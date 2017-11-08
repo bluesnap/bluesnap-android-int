@@ -37,7 +37,7 @@ android {
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '26.0.2'
 }
 configurations {
 
