@@ -33,20 +33,21 @@ public class Shopper {
     private LastPaymentInfo lastPaymentInfo;
     private String shopperCurrency;
 
-    public Shopper(JSONObject shopperRepresentation) {
-        vaultedShopperId = (int) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, VAULTEDSHOPPERID, TAG);
-        contactInfo = new ContactInfo(shopperRepresentation);
-        shippingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHIPPINGCONTACTINFO, TAG));
-        shopperCurrency = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHOPPERCURRENCY, TAG);
-        lastPaymentInfo = new LastPaymentInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTPAYMENTINFO, TAG));
-        try {
-            if (creditCardInfos != null)
-                creditCardInfos.clear();
-            setCreditCardInfos(shopperRepresentation);
-        } catch (JSONException e) {
-            Log.e(TAG, "json parsing exception", e);
+    public Shopper(@Nullable JSONObject shopperRepresentation) {
+        if (null != shopperRepresentation) {
+            vaultedShopperId = (int) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, VAULTEDSHOPPERID, TAG);
+            contactInfo = new ContactInfo(shopperRepresentation);
+            shippingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHIPPINGCONTACTINFO, TAG));
+            shopperCurrency = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHOPPERCURRENCY, TAG);
+            lastPaymentInfo = new LastPaymentInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTPAYMENTINFO, TAG));
+            try {
+                if (creditCardInfos != null)
+                    creditCardInfos.clear();
+                setCreditCardInfos(shopperRepresentation);
+            } catch (JSONException e) {
+                Log.e(TAG, "json parsing exception", e);
+            }
         }
-
     }
 
     public int getVaultedShopperId() {

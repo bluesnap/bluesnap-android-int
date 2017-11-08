@@ -109,8 +109,8 @@ public class BlueSnapService {
      *
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
-    public void setup(String merchantToken) {
-        setup(merchantToken, null, SupportedPaymentMethods.USD);
+    public void setup(String merchantToken, final BluesnapServiceCallback callback) {
+        setup(merchantToken, null, SupportedPaymentMethods.USD, callback);
     }
 
     /**
@@ -120,8 +120,8 @@ public class BlueSnapService {
      * @param tokenProvider A merchant function for requesting a new token if expired
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider) {
-        setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD);
+    public void setup(String merchantToken, TokenProvider tokenProvider, final BluesnapServiceCallback callback) {
+        setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD, callback);
     }
 
     /**
@@ -131,8 +131,8 @@ public class BlueSnapService {
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      * @param baseCurrency  A Merchant base currency, obtained from the merchant.
      */
-    public void setup(String merchantToken, String baseCurrency) {
-        setup(merchantToken, null, baseCurrency);
+    public void setup(String merchantToken, String baseCurrency, final BluesnapServiceCallback callback) {
+        setup(merchantToken, null, baseCurrency, callback);
     }
 
     /**
@@ -143,7 +143,8 @@ public class BlueSnapService {
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      * @param baseCurrency  A Merchant base currency, obtained from the merchant.
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency, final BluesnapServiceCallback callback) {
+        this.bluesnapServiceCallback = callback;
         this.baseCurrency = baseCurrency;
         if (null != tokenProvider)
             this.tokenProvider = tokenProvider;
@@ -164,7 +165,7 @@ public class BlueSnapService {
         paymentResult = null;
         paymentRequest = null;
 
-        sdkInit(baseCurrency);
+        sdkInit(baseCurrency, callback);
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
@@ -238,8 +239,8 @@ public class BlueSnapService {
      * SDK Init.
      * baseCurrency = USD
      */
-    public void sdkInit() {
-        sdkInit(SupportedPaymentMethods.USD);
+    public void sdkInit(final BluesnapServiceCallback callback) {
+        sdkInit(SupportedPaymentMethods.USD, callback);
     }
 
     /**
@@ -247,15 +248,17 @@ public class BlueSnapService {
      *
      * @param baseCurrency All rates are derived from baseCurrency. baseCurrency * AnyRate = AnyCurrency
      */
-    public void sdkInit(final String baseCurrency) {
+    protected void sdkInit(final String baseCurrency, final BluesnapServiceCallback callback) {
         httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
         httpClient.get(bluesnapToken.getUrl() + SDK_INIT + BASE_CURRENCY + baseCurrency, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     sdkInitData = new SDKInitData(response);
+                    callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
+                    callback.onFailure();
                 }
             }
 
@@ -268,6 +271,7 @@ public class BlueSnapService {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
+                            callback.onFailure();
                         }
 
                         @Override
@@ -283,7 +287,7 @@ public class BlueSnapService {
                                                     @Override
                                                     public void complete(String newToken) {
                                                         setNewToken(newToken);
-                                                        sdkInit(baseCurrency);
+                                                        sdkInit(baseCurrency, bluesnapServiceCallback);
                                                     }
                                                 }
                                         );
@@ -293,6 +297,7 @@ public class BlueSnapService {
                             } else {
                                 String errorMsg = String.format("Service Error %s, %s", statusCode);
                                 Log.e(TAG, errorMsg, throwable);
+                                callback.onFailure();
                             }
                         }
                     });

@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi.models.returningshopper;
 
+import android.support.annotation.Nullable;
+
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import org.json.JSONObject;
@@ -16,9 +18,11 @@ public class CreditCardInfo {
     private ContactInfo billingContactInfo;
     private CreditCard creditCard;
 
-    public CreditCardInfo(JSONObject creditCardInfoRepresentation) {
-        billingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfoRepresentation, BILLINGCONTACTINFO, TAG));
-        creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfoRepresentation, CREDITCARD, TAG));
+    public CreditCardInfo(@Nullable JSONObject creditCardInfoRepresentation) {
+        if (null != creditCardInfoRepresentation) {
+            billingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfoRepresentation, BILLINGCONTACTINFO, TAG));
+            creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfoRepresentation, CREDITCARD, TAG));
+        }
     }
 
     public ContactInfo getBillingContactInfo() {

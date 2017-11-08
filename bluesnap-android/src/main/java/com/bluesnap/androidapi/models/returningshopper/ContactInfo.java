@@ -37,16 +37,18 @@ public class ContactInfo {
     @Nullable
     private String email;
 
-    public ContactInfo(JSONObject shopperRepresentation) {
-        firstName = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, FIRSTNAME, TAG);
-        lastName = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTNAME, TAG);
-        address = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, ADDRESS, TAG);
-        city = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, CITY, TAG);
-        state = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, STATE, TAG);
-        zip = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, ZIP, TAG);
-        country = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, COUNTRY, TAG);
-        phone = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, PHONE, TAG);
-        email = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, EMAIL, TAG);
+    public ContactInfo(@Nullable JSONObject shopperRepresentation) {
+        if (null != shopperRepresentation) {
+            firstName = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, FIRSTNAME, TAG);
+            lastName = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTNAME, TAG);
+            address = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, ADDRESS, TAG);
+            city = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, CITY, TAG);
+            state = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, STATE, TAG);
+            zip = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, ZIP, TAG);
+            country = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, COUNTRY, TAG);
+            phone = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, PHONE, TAG);
+            email = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, EMAIL, TAG);
+        }
     }
 
     public String getFirstName() {

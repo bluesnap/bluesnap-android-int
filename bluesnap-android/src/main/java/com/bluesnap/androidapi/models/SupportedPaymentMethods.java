@@ -34,12 +34,14 @@ public class SupportedPaymentMethods {
     private JSONArray creditCardTypes;
     private JSONObject creditCardRegex;
 
-    public SupportedPaymentMethods(JSONObject supportedPaymentMethodsRepresentation) {
-        paymentMethods = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, PAYMENTMETHODS, TAG);
-        paypalCurrencies = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, PAYPALCURRENCIES, TAG);
-        creditCardBrands = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, CREDITCARDBRANDS, TAG);
-        creditCardTypes = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, CREDITCARDTYPES, TAG);
-        creditCardRegex = (JSONObject) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, CREDITCARDREGEX, TAG);
+    public SupportedPaymentMethods(@Nullable JSONObject supportedPaymentMethodsRepresentation) {
+        if (null != supportedPaymentMethodsRepresentation) {
+            paymentMethods = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, PAYMENTMETHODS, TAG);
+            paypalCurrencies = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, PAYPALCURRENCIES, TAG);
+            creditCardBrands = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, CREDITCARDBRANDS, TAG);
+            creditCardTypes = (JSONArray) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, CREDITCARDTYPES, TAG);
+            creditCardRegex = (JSONObject) AndroidUtil.getObjectFromJsonObject(supportedPaymentMethodsRepresentation, CREDITCARDREGEX, TAG);
+        }
     }
 
     public boolean isPaymentMethodActive(String paymentMethod) {

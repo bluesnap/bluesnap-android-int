@@ -21,7 +21,7 @@ import java.util.List;
 public class SDKInitData {
     private static final String TAG = SDKInitData.class.getSimpleName();
 
-    private static final String KOUNTMERCHANTID = "KountMerchantId";
+    private static final String KOUNTMERCHANTID = "kountMerchantId";
 
     private static final String RATES = "rates";
     private static final String BASECURRENCY = "baseCurrency";
@@ -30,9 +30,6 @@ public class SDKInitData {
     private static final String SHOPPER = "shopper";
 
     private static final String SUPPORTEDPAYMENTMETHODS = "supportedPaymentMethods";
-    private static final String PAYMENTMETHODS = "paymentMethods";
-    private static final String PAYPALCURRENCIES = "paypalCurrencies";
-    private static final String CREDITCARDREGEX = "creditCardRegex";
 
     protected int kountMerchantId;
     protected String baseCurrency;
@@ -44,11 +41,11 @@ public class SDKInitData {
 
     public SDKInitData(JSONObject sdkInitData) {
         kountMerchantId = (int) AndroidUtil.getObjectFromJsonObject(sdkInitData, KOUNTMERCHANTID, TAG);
-        shopper = new Shopper((JSONObject)  AndroidUtil.getObjectFromJsonObject(sdkInitData, SHOPPER, TAG));
-        supportedPaymentMethods = new SupportedPaymentMethods((JSONObject)  AndroidUtil.getObjectFromJsonObject(sdkInitData, SUPPORTEDPAYMENTMETHODS, TAG));
+        shopper = new Shopper((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, SHOPPER, TAG));
+        supportedPaymentMethods = new SupportedPaymentMethods((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, SUPPORTEDPAYMENTMETHODS, TAG));
 
         //TODO: change base currency payment request to this base but need to check change rate will do as needed
-        baseCurrency = (String)  AndroidUtil.getObjectFromJsonObject((JSONObject)  AndroidUtil.getObjectFromJsonObject(sdkInitData, RATES, TAG), BASECURRENCY, TAG);
+        baseCurrency = (String) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, RATES, TAG), BASECURRENCY, TAG);
         updateRates(sdkInitData);
 
     }
@@ -58,7 +55,7 @@ public class SDKInitData {
      * The rates are merchant specific, the merchantToken is used to identify the merchant.
      */
     private void updateRates(JSONObject sdkInitData) {
-        JSONArray exchangeRate = (JSONArray)  AndroidUtil.getObjectFromJsonObject((JSONObject)  AndroidUtil.getObjectFromJsonObject(sdkInitData, RATES, TAG), EXCHANGERATE, TAG);
+        JSONArray exchangeRate = (JSONArray) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, RATES, TAG), EXCHANGERATE, TAG);
         //TODO: this can be optimized to create the ratesMap directly from the response
         ratesArray = new Gson().fromJson(exchangeRate.toString(), new TypeToken<List<ExchangeRate>>() {
         }.getType());

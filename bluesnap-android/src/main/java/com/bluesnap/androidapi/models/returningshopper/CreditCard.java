@@ -27,12 +27,14 @@ public class CreditCard {
     @Nullable
     private String expirationYear;
 
-    public CreditCard(JSONObject creditCardRepresentation) {
-        cardLastFourDigits = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDLASTFOURDIGITS, TAG);
-        cardType = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDTYPE, TAG);
-        cardSubType = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDSUBTYPE, TAG);
-        expirationMonth = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, EXPIRATIONMONTH, TAG);
-        expirationYear = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, EXPIRATIONYEAR, TAG);
+    public CreditCard(@Nullable JSONObject creditCardRepresentation) {
+        if (null != creditCardRepresentation) {
+            cardLastFourDigits = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDLASTFOURDIGITS, TAG);
+            cardType = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDTYPE, TAG);
+            cardSubType = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDSUBTYPE, TAG);
+            expirationMonth = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, EXPIRATIONMONTH, TAG);
+            expirationYear = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, EXPIRATIONYEAR, TAG);
+        }
     }
 
     public String getCardLastFourDigits() {

@@ -201,6 +201,7 @@ public class AndroidUtil {
     public static void hideKeyboardOnLayoutOfEditText(final View baseView) {
         setFocusOnLayoutOfEditText(baseView, null);
     }
+
     public static void setFocusOnLayoutOfEditText(final View baseView, final View targetView) {
         baseView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,12 +214,12 @@ public class AndroidUtil {
         });
     }
 
-    public static void setFocusOnFirstErrorInput (final View view) {
+    public static void setFocusOnFirstErrorInput(final View view) {
         view.requestFocus();
         setKeyboardStatus(view, true);
     }
 
-    private static void setKeyboardStatus (final View view, final boolean showKey) {
+    private static void setKeyboardStatus(final View view, final boolean showKey) {
         final InputMethodManager inputMethodManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (showKey)
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
@@ -229,11 +230,13 @@ public class AndroidUtil {
 
     @Nullable
     public static Object getObjectFromJsonObject(JSONObject jsonObject, String key, String TAG) {
+        Object response = null;
         try {
-            return (jsonObject.isNull(key)) ? null : jsonObject.get(key);
+            if (!jsonObject.isNull(key))
+                response = jsonObject.get(key);
         } catch (JSONException e) {
             Log.e(TAG, "json parsing exception", e);
         }
-        return null;
+        return response;
     }
 }
