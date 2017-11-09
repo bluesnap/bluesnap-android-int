@@ -144,6 +144,21 @@ public class ContactInfo implements Parcelable {
         email = (String) AndroidUtil.getObjectFromJsonObject(shopper, EMAIL, TAG);
     }
 
+    public ContactInfo() {
+
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public void setFullName(String fullName) {
+        String[] nameFieldParts = fullName.trim().split(" ");
+        this.firstName = nameFieldParts[0];
+        if (nameFieldParts.length > 1)
+            this.lastName = nameFieldParts[1];
+    }
+
     public String getFirstName() {
         return firstName;
     }

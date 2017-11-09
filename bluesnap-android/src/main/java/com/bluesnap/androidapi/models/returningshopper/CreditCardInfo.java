@@ -23,6 +23,11 @@ public class CreditCardInfo {
         creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfo, CREDITCARD, TAG));
     }
 
+    public CreditCardInfo() {
+        billingContactInfo = new ContactInfo();
+        creditCard = new CreditCard();
+    }
+
     public ContactInfo getBillingContactInfo() {
         return billingContactInfo;
     }
