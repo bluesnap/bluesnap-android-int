@@ -20,7 +20,7 @@ import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -144,7 +144,6 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
 
         totalAmountTextView.setOnClickListener(new ShippingSubmitClickListener());
 
-        // ShippingInfo shippingInfo = (ShippingInfo) prefsStorage.getObject(Constants.SHIPPING_INFO, ShippingInfo.class);
         savedInstanceState = getArguments();
             shippingNameEditText.setText(savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME));
             shippingZipEditText.setText(savedInstanceState.getString(AUTO_POPULATE_ZIP));
@@ -306,10 +305,12 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                 setFocusOnShippingFragmentEditText(checkWhichFieldIsInValid);
 
             if (validInput) {
-                ShippingInfo shippingInfo = new ShippingInfo();
-                shippingInfo.setName(shippingNameEditText.getText().toString().trim());
-                shippingInfo.setAddressLine(shippingAddressLineEditText.getText().toString().trim());
-                shippingInfo.setShippingCity(shippingCityEditText.getText().toString().trim());
+                ContactInfo shippingInfo = new ContactInfo(null);
+                String fullName = shippingNameEditText.getText().toString().trim();
+                shippingInfo.setFirstName(fullName.substring(fullName.lastIndexOf(" ")+1));
+                shippingInfo.setFirstName(fullName.substring(0, fullName.lastIndexOf(' ')));
+                shippingInfo.setAddress(shippingAddressLineEditText.getText().toString().trim());
+                shippingInfo.setCity(shippingCityEditText.getText().toString().trim());
                 shippingInfo.setState(shippingStateEditText.getText().toString().trim());
                 shippingInfo.setCountry(getCountryText());
                 shippingInfo.setZip(shippingZipEditText.getText().toString().trim());

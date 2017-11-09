@@ -22,11 +22,10 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
@@ -74,8 +73,8 @@ public class BluesnapCheckoutActivity extends Activity {
     private PaymentRequest paymentRequest;
     private ExpressCheckoutFragment expressCheckoutFragment;
     private String sharedCurrency;
-    private ShippingInfo shippingInfo;
-    private BillingInfo billingInfo;
+    private ContactInfo shippingInfo;
+    private ContactInfo billingInfo;
     private Card card;
     private ShippingFragment shippingFragment;
     private String kountSessionId;
@@ -198,7 +197,7 @@ public class BluesnapCheckoutActivity extends Activity {
 
     // check currency received from merchant and verify it actually exists
     private void checkIfCurrencyExists(String currencyNameCode) {
-        if (blueSnapService.getSupportedRates() != null && blueSnapService.getSupportedRates().contains(currencyNameCode)) {
+        if (blueSnapService.checkCurrencyCompatibility(currencyNameCode)) {
             sharedCurrency = currencyNameCode;
         } else {
             String errorMsg = "Currency name code Error";
@@ -265,11 +264,11 @@ public class BluesnapCheckoutActivity extends Activity {
         return shippingFragment;
     }
 
-    public void setBillingInfo(BillingInfo billingInfo) {
+    public void setBillingInfo(ContactInfo billingInfo) {
         this.billingInfo = billingInfo;
     }
 
-    public void finishFromShippingFragment(ShippingInfo shippingInfo) {
+    public void finishFromShippingFragment(ContactInfo shippingInfo) {
         this.shippingInfo = shippingInfo;
         finishFromFragment();
     }

@@ -18,11 +18,9 @@ public class CreditCardInfo {
     private ContactInfo billingContactInfo;
     private CreditCard creditCard;
 
-    public CreditCardInfo(@Nullable JSONObject creditCardInfoRepresentation) {
-        if (null != creditCardInfoRepresentation) {
-            billingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfoRepresentation, BILLINGCONTACTINFO, TAG));
-            creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfoRepresentation, CREDITCARD, TAG));
-        }
+    public CreditCardInfo(@Nullable JSONObject creditCardInfo) {
+        billingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfo, BILLINGCONTACTINFO, TAG));
+        creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfo, CREDITCARD, TAG));
     }
 
     public ContactInfo getBillingContactInfo() {

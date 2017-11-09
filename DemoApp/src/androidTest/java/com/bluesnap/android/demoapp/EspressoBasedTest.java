@@ -20,6 +20,8 @@ import android.view.WindowManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
+import com.bluesnap.androidapi.services.TokenProvider;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 
 import org.junit.Before;
 
@@ -93,24 +95,24 @@ public class EspressoBasedTest {
                 .post(new Runnable() {
                     @Override
                     public void run() {
-                        BlueSnapService.getInstance().setup(merchantToken);
+                        final TokenProvider tokenProvider = new TokenProvider() {
+                            @Override
+                            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
+                                new TokenServiceInterface() {
+                                    @Override
+                                    public void onServiceSuccess() {
+                                        //change the expired token
+                                        tokenServiceCallback.complete(merchantToken);
+                                    }
 
-                    }
-                });
+                                    @Override
+                                    public void onServiceFailure() {
 
-        while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
-            Log.d(TAG, "Waiting for token setup");
-            Thread.sleep(2000);
-
-        }
-    }
-
-    public void setRates() throws InterruptedException {
-        new Handler(Looper.getMainLooper())
-                .post(new Runnable() {
-                    @Override
-                    public void run() {
-                        BlueSnapService.getInstance().updateRates(new BluesnapServiceCallback() {
+                                    }
+                                };
+                            }
+                        };
+                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service got rates");
@@ -122,15 +124,16 @@ public class EspressoBasedTest {
                                 fail("Service could not update rates");
                             }
                         });
+
                     }
                 });
 
-        while (BlueSnapService.getInstance().getRatesArray() == null) {
-            Log.d(TAG, "Waiting for update rates");
+        while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
+            Log.d(TAG, "Waiting for token setup");
             Thread.sleep(2000);
+
         }
     }
-
 
     public void clearPrefs(Context context) {
         PrefsStorage prefsStorage = new PrefsStorage(context);

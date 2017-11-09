@@ -39,7 +39,11 @@ public class BSAndroidTestsBase {
     BlueSnapService blueSnapService;
     private String merchantToken;
     private TokenProvider tokenProvider;
+    private String baseCurrency;
 
+    public BSAndroidTestsBase() {
+        this.baseCurrency = "USD";
+    }
 
     private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
 
@@ -107,8 +111,7 @@ public class BSAndroidTestsBase {
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
-                blueSnapService.setup(merchantToken);
-                blueSnapService.updateRates(new BluesnapServiceCallback() {
+                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, new BluesnapServiceCallback() {
                     @Override
                     public void onSuccess() {
                         Log.d(TAG, "Got rates callback");
@@ -125,7 +128,7 @@ public class BSAndroidTestsBase {
         }, 100);
 
 
-        while (blueSnapService.getRatesArray() == null) {
+        while (null == blueSnapService.getInitialData()) {
             Thread.sleep(20000);
             Log.i(TAG, "Waiting for rates");
 
@@ -145,5 +148,8 @@ public class BSAndroidTestsBase {
         return token;
     }
 
+    public void changeToken(String baseCurrency) {
+        this.baseCurrency = baseCurrency;
+    }
 
 }

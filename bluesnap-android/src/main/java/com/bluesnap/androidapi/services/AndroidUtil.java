@@ -232,7 +232,7 @@ public class AndroidUtil {
     public static Object getObjectFromJsonObject(JSONObject jsonObject, String key, String TAG) {
         Object response = null;
         try {
-            if (!jsonObject.isNull(key))
+            if (null != jsonObject && !jsonObject.isNull(key))
                 response = jsonObject.get(key);
         } catch (JSONException e) {
             Log.e(TAG, "json parsing exception", e);

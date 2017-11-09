@@ -19,11 +19,9 @@ public class LastPaymentInfo {
     @Nullable
     private CreditCard creditCard;
 
-    public LastPaymentInfo(@Nullable JSONObject lastPaymentInfoRepresentation) {
-        if (null != lastPaymentInfoRepresentation) {
-            paymentMethod = (String) AndroidUtil.getObjectFromJsonObject(lastPaymentInfoRepresentation, PAYMENTMETHOD, TAG);
-            creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(lastPaymentInfoRepresentation, CREDITCARD, TAG));
-        }
+    public LastPaymentInfo(@Nullable JSONObject lastPaymentInfo) {
+        paymentMethod = (String) AndroidUtil.getObjectFromJsonObject(lastPaymentInfo, PAYMENTMETHOD, TAG);
+        creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(lastPaymentInfo, CREDITCARD, TAG));
     }
 
     public String getPaymentMethod() {

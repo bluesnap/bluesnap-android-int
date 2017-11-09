@@ -19,10 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -275,8 +274,9 @@ public class DemoMainActivity extends Activity {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        //httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
-        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + "?shopperId=22204247", new TextHttpResponseHandler() {
+        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        //httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + "?shopperId=22061813", new TextHttpResponseHandler() {
+        //httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + "?shopperId=22204247", new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
@@ -384,16 +384,16 @@ public class DemoMainActivity extends Activity {
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
 
         // If shipping information is available show it, Here we simply log the shipping info.
-        ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+        ContactInfo shippingInfo = (ContactInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
-            Log.d(TAG, shippingInfo.toString());
+            Log.d(TAG, "ShippingInfo " + shippingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
         }
 
         // If billing information is available show it, Here we simply log the billing info.
-        BillingInfo billingInfo = (BillingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        ContactInfo billingInfo = (ContactInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         if (billingInfo != null) {
-            Log.d(TAG, billingInfo.toString());
+            Log.d(TAG, "BillingInfo " + billingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
         }
 

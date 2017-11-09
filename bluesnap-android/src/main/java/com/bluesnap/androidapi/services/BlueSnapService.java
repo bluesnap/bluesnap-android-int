@@ -62,11 +62,11 @@ public class BlueSnapService {
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
 
-    public SDKInitData getSdkInitData() {
-        return sdkInitData;
+    public InitialData getInitialData() {
+        return initialData;
     }
 
-    private SDKInitData sdkInitData;
+    private InitialData initialData;
     private String baseCurrency;
     private TokenProvider tokenProvider;
 
@@ -88,7 +88,7 @@ public class BlueSnapService {
 
 
     public boolean isexpressCheckoutActive() {
-        return sdkInitData.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL);
+        return initialData.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL);
     }
 
     public TokenProvider getTokenProvider() {
@@ -107,32 +107,12 @@ public class BlueSnapService {
      * Setup the service to talk to the server.
      * This will reset the previous payment request
      *
-     * @param merchantToken A Merchant SDK token, obtained from the merchant.
-     */
-    public void setup(String merchantToken, final BluesnapServiceCallback callback) {
-        setup(merchantToken, null, SupportedPaymentMethods.USD, callback);
-    }
-
-    /**
-     * Setup the service to talk to the server.
-     * This will reset the previous payment request
-     *
      * @param tokenProvider A merchant function for requesting a new token if expired
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * baseCurrency = USD
      */
     public void setup(String merchantToken, TokenProvider tokenProvider, final BluesnapServiceCallback callback) {
         setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD, callback);
-    }
-
-    /**
-     * Setup the service to talk to the server.
-     * This will reset the previous payment request
-     *
-     * @param merchantToken A Merchant SDK token, obtained from the merchant.
-     * @param baseCurrency  A Merchant base currency, obtained from the merchant.
-     */
-    public void setup(String merchantToken, String baseCurrency, final BluesnapServiceCallback callback) {
-        setup(merchantToken, null, baseCurrency, callback);
     }
 
     /**
@@ -254,7 +234,7 @@ public class BlueSnapService {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    sdkInitData = new SDKInitData(response);
+                    initialData = new InitialData(response);
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
@@ -311,7 +291,7 @@ public class BlueSnapService {
     }
 
     public ArrayList<ExchangeRate> getRatesArray() {
-        return sdkInitData.ratesArray;
+        return initialData.ratesArray;
     }
 
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
@@ -436,9 +416,19 @@ public class BlueSnapService {
      */
     @Nullable
     public Set<String> getSupportedRates() {
-        if (sdkInitData.ratesMap != null)
-            return sdkInitData.ratesMap.keySet();
+        if (initialData.ratesMap != null)
+            return initialData.ratesMap.keySet();
         else return null;
+    }
+
+    /**
+     * check currency received from merchant and verify it actually exists
+     *
+     * @param currencyNameCode ISO 4217 compatible  3 letter currency representation
+     * @return boolean
+     */
+    public boolean checkCurrencyCompatibility(String currencyNameCode) {
+        return (null != getSupportedRates() && getSupportedRates().contains(currencyNameCode));
     }
 
     /**
@@ -453,7 +443,7 @@ public class BlueSnapService {
         if (usdPrice == null || usdPrice.isEmpty())
             return "0";
 
-        ExchangeRate rate = sdkInitData.ratesMap.get(convertTo);
+        ExchangeRate rate = initialData.ratesMap.get(convertTo);
         Double result = Double.valueOf(usdPrice) * rate.getConversionRate();
         return String.valueOf(AndroidUtil.getDecimalFormat().format(result));
     }
@@ -467,14 +457,16 @@ public class BlueSnapService {
      * @return
      */
     public Double convertPrice(Double basePrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
+        if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
+            throw new IllegalArgumentException ("not an ISO 4217 compatible 3 letter currency representation");
 
         String baseCurrency = paymentRequest.getBaseCurrency();
         if (baseCurrency.equals(newCurrencyNameCode)) {
             return paymentRequest.getBaseAmount();
         }
-        Double baseConversionRate = sdkInitData.ratesMap.get(baseCurrency).getConversionRate();
+        Double baseConversionRate = initialData.ratesMap.get(baseCurrency).getConversionRate();
         Double usdPRice = baseCurrency.equals(SupportedPaymentMethods.USD) ? basePrice * baseConversionRate : basePrice * (1 / baseConversionRate);
-        Double newPrice = sdkInitData.ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
+        Double newPrice = initialData.ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
         return newPrice;
     }
 
@@ -526,10 +518,10 @@ public class BlueSnapService {
      */
     public void verifyPaymentRequest(PaymentRequest paymentRequest) throws BSPaymentRequestException {
         paymentRequest.verify();
-        if (sdkInitData.ratesMap == null) {
+        if (initialData.ratesMap == null) {
             throw new BSPaymentRequestException("rates map is not populated. did you forget to call updateRates?");
         }
-        if (sdkInitData.ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
+        if (initialData.ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
             throw new BSPaymentRequestException("Currency not found");
         }
     }

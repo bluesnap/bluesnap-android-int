@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi.models.returningshopper;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.bluesnap.androidapi.services.AndroidUtil;
@@ -10,7 +12,7 @@ import org.json.JSONObject;
  * Created by roy.biber on 07/11/2017.
  */
 
-public class ContactInfo {
+public class ContactInfo implements Parcelable {
     private static final String TAG = ContactInfo.class.getSimpleName();
     private static final String FIRSTNAME = "firstName";
     private static final String LASTNAME = "lastName";
@@ -22,33 +24,124 @@ public class ContactInfo {
     private static final String PHONE = "phone";
     private static final String EMAIL = "email";
 
-
     private String firstName;
     private String lastName;
+    @Nullable
     private String address;
+    @Nullable
     private String city;
     @Nullable
     private String state;
     @Nullable
     private String zip;
+    @Nullable
     private String country;
     @Nullable
     private String phone;
     @Nullable
     private String email;
 
-    public ContactInfo(@Nullable JSONObject shopperRepresentation) {
-        if (null != shopperRepresentation) {
-            firstName = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, FIRSTNAME, TAG);
-            lastName = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTNAME, TAG);
-            address = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, ADDRESS, TAG);
-            city = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, CITY, TAG);
-            state = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, STATE, TAG);
-            zip = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, ZIP, TAG);
-            country = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, COUNTRY, TAG);
-            phone = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, PHONE, TAG);
-            email = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, EMAIL, TAG);
+    public static final Creator<ContactInfo> CREATOR = new Creator<ContactInfo>() {
+        @Override
+        public ContactInfo createFromParcel(Parcel in) {
+            return new ContactInfo(in);
         }
+
+        @Override
+        public ContactInfo[] newArray(int size) {
+            return new ContactInfo[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(address);
+        parcel.writeString(city);
+        parcel.writeString(state);
+        parcel.writeString(zip);
+        parcel.writeString(country);
+        parcel.writeString(phone);
+        parcel.writeString(email);
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ContactInfo that = (ContactInfo) o;
+
+        return firstName.equals(that.firstName)
+                && (!lastName.equals(that.lastName))
+                /*&& (!address.equals(that.address))
+                && (!city.equals(that.city))
+                && (!state.equals(that.state))
+                && (!zip.equals(that.zip))
+                && (!country.equals(that.country))
+                && (!phone.equals(that.phone))
+                && (!email.equals(that.email))*/
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        /*result = 31 * result + address.hashCode();
+        result = 31 * result + city.hashCode();
+        result = 31 * result + state.hashCode();
+        result = 31 * result + zip.hashCode();
+        result = 31 * result + country.hashCode();
+        result = 31 * result + phone.hashCode();
+        result = 31 * result + email.hashCode();*/
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "firstName:'" + firstName + '\'' +
+                ", lastName:'" + lastName + '\'' +
+                ", address:'" + address + '\'' +
+                ", city:'" + city + '\'' +
+                ", state:'" + state + '\'' +
+                ", zip:'" + zip + '\'' +
+                ", country:'" + country + '\'' +
+                ", phone:'" + phone + '\'' +
+                ", email:'" + email + '\'' +
+                '}';
+    }
+
+    private ContactInfo(Parcel parcel) {
+        firstName = parcel.readString();
+        lastName = parcel.readString();
+        address = parcel.readString();
+        city = parcel.readString();
+        state = parcel.readString();
+        zip = parcel.readString();
+        country = parcel.readString();
+        phone = parcel.readString();
+        email = parcel.readString();
+    }
+
+    public ContactInfo(@Nullable JSONObject shopper) {
+        firstName = (String) AndroidUtil.getObjectFromJsonObject(shopper, FIRSTNAME, TAG);
+        lastName = (String) AndroidUtil.getObjectFromJsonObject(shopper, LASTNAME, TAG);
+        address = (String) AndroidUtil.getObjectFromJsonObject(shopper, ADDRESS, TAG);
+        city = (String) AndroidUtil.getObjectFromJsonObject(shopper, CITY, TAG);
+        state = (String) AndroidUtil.getObjectFromJsonObject(shopper, STATE, TAG);
+        zip = (String) AndroidUtil.getObjectFromJsonObject(shopper, ZIP, TAG);
+        country = (String) AndroidUtil.getObjectFromJsonObject(shopper, COUNTRY, TAG);
+        phone = (String) AndroidUtil.getObjectFromJsonObject(shopper, PHONE, TAG);
+        email = (String) AndroidUtil.getObjectFromJsonObject(shopper, EMAIL, TAG);
     }
 
     public String getFirstName() {
@@ -67,19 +160,21 @@ public class ContactInfo {
         this.lastName = lastName;
     }
 
+    @Nullable
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(@Nullable String address) {
         this.address = address;
     }
 
+    @Nullable
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(@Nullable String city) {
         this.city = city;
     }
 
@@ -101,11 +196,12 @@ public class ContactInfo {
         this.zip = zip;
     }
 
+    @Nullable
     public String getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(@Nullable String country) {
         this.country = country;
     }
 
@@ -126,4 +222,5 @@ public class ContactInfo {
     public void setEmail(@Nullable String email) {
         this.email = email;
     }
+
 }

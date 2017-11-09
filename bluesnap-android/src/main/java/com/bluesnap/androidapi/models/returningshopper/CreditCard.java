@@ -1,7 +1,11 @@
 package com.bluesnap.androidapi.models.returningshopper;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.bluesnap.androidapi.models.CardType;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import org.json.JSONObject;
@@ -18,27 +22,188 @@ public class CreditCard {
     private static final String EXPIRATIONMONTH = "expirationMonth";
     private static final String EXPIRATIONYEAR = "expirationYear";
 
+    private transient String number;
+    private String cvc;
+    private transient boolean modified = false;
+    private boolean tokenizedSuccess = false;
+
     private String cardLastFourDigits;
     private String cardType;
     @Nullable
     private String cardSubType;
-    @Nullable
-    private String expirationMonth;
-    @Nullable
-    private String expirationYear;
+    private Integer expirationMonth;
+    private Integer expirationYear;
 
-    public CreditCard(@Nullable JSONObject creditCardRepresentation) {
-        if (null != creditCardRepresentation) {
-            cardLastFourDigits = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDLASTFOURDIGITS, TAG);
-            cardType = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDTYPE, TAG);
-            cardSubType = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, CARDSUBTYPE, TAG);
-            expirationMonth = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, EXPIRATIONMONTH, TAG);
-            expirationYear = (String) AndroidUtil.getObjectFromJsonObject(creditCardRepresentation, EXPIRATIONYEAR, TAG);
+    public CreditCard(@Nullable JSONObject creditCard) {
+        cardLastFourDigits = (String) AndroidUtil.getObjectFromJsonObject(creditCard, CARDLASTFOURDIGITS, TAG);
+        cardType = (String) AndroidUtil.getObjectFromJsonObject(creditCard, CARDTYPE, TAG);
+        cardSubType = (String) AndroidUtil.getObjectFromJsonObject(creditCard, CARDSUBTYPE, TAG);
+        expirationMonth = (Integer) AndroidUtil.getObjectFromJsonObject(creditCard, EXPIRATIONMONTH, TAG);
+        expirationYear = (Integer) AndroidUtil.getObjectFromJsonObject(creditCard, EXPIRATIONYEAR, TAG);
+    }
+
+    public CreditCard() {
+    }
+
+    public static boolean validateExpiryDate(int expirationYear, int expirationMonth) {
+        return !(expirationMonth > 12 || expirationMonth < 1) && AndroidUtil.isDateInFuture(expirationMonth, expirationYear);
+    }
+
+    public static boolean validateExpiryDate(String expDateString) {
+        int mm, yy;
+        try {
+            String[] mmyy = expDateString.split("\\/");
+            mm = (Integer.valueOf(mmyy[0]));
+            yy = (Integer.valueOf(mmyy[1]));
+            return validateExpiryDate(yy, mm);
+        } catch (Exception e1) {
+            try {
+                String[] mmyy = expDateString.split("/");
+                if (mmyy.length < 2 || TextUtils.isEmpty(mmyy[0]) || TextUtils.isEmpty(mmyy[1]))
+                    return validateExpiryDate(Integer.valueOf(mmyy[1]), Integer.valueOf(mmyy[0]));
+            } catch (Exception e2) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isValidLuhnNumber(String number) {
+        boolean isOdd = true;
+        int sum = 0;
+
+        for (int index = number.length() - 1; index >= 0; index--) {
+            char c = number.charAt(index);
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+            int digitInteger = Integer.parseInt("" + c);
+            isOdd = !isOdd;
+
+            if (isOdd) {
+                digitInteger *= 2;
+            }
+
+            if (digitInteger > 9) {
+                digitInteger -= 9;
+            }
+
+            sum += digitInteger;
+        }
+
+        return sum % 10 == 0;
+    }
+
+    public void update(String creditCardNumberEditTextText, String expDateString, String cvvText) {
+        setExpDateFromString(expDateString);
+        this.cvc = cvvText;
+        modified = true;
+        tokenizedSuccess = false;
+        this.number = creditCardNumberEditTextText;
+        cardType = CardType.getType(number);
+    }
+
+    private void setLast4() {
+        this.cardLastFourDigits = number.substring(number.length() - 4, number.length());
+    }
+
+    private void setExpDateFromString(String expDateString) {
+        expirationMonth = 0;
+        expirationYear = 0;
+
+        try {
+            String[] mmyy = expDateString.split("\\/");
+            this.setExpirationMonth(Integer.valueOf(mmyy[0]));
+            this.setExpirationYear(Integer.valueOf(mmyy[1]));
+            return;
+        } catch (Exception e) {
+            Log.e("setEX", "setexp", e);
+        }
+        try {
+            String[] mmyy = expDateString.split("/");
+            if (mmyy.length < 2 || TextUtils.isEmpty(mmyy[0]) || TextUtils.isEmpty(mmyy[1]))
+                return;
+            this.setExpirationMonth(Integer.valueOf(mmyy[0]));
+            this.setExpirationYear(Integer.valueOf(mmyy[1]));
+            return;
+        } catch (Exception e) {
+            Log.e("setEX", "setexp", e);
         }
     }
 
+    public boolean validateAll() {
+        if (cvc == null) {
+            return validateNumber() && validateExpiryDate();
+        } else {
+            return validateNumber() && validateExpiryDate() && validateCVC();
+        }
+    }
+
+    public boolean validateNumber() {
+        if (AndroidUtil.isBlank(number)) {
+            return false;
+        }
+        String rawNumber = number.trim().replaceAll("\\s+|-", "");
+        if (AndroidUtil.isBlank(rawNumber)
+                || !isValidLuhnNumber(rawNumber)) {
+            return false;
+        }
+        cardType = CardType.getType(number);
+        setLast4();
+        return CardType.validateByType(cardType, rawNumber);
+
+    }
+
+    public boolean validateExpiryDate() {
+        return validateExpiryDate(this.expirationYear, this.expirationMonth);
+    }
+
+    public boolean validateCVC() {
+        if (AndroidUtil.isBlank(cvc)) {
+            return false;
+        }
+        if (cvc.length() >= 3 && cvc.length() < 5) {
+            if (CardType.AMEX.equals(cardType)) {
+                if (cvc.length() != 4)
+                    return false;
+            } else if (cvc.length() != 3)
+                return false;
+        } else return false;
+
+        return true;
+    }
+
+    private String normalizeCardNumber(String number) {
+        if (number == null) {
+            return null;
+        }
+        return number.trim().replaceAll("\\s+|-", "");
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getCvc() {
+        return cvc;
+    }
+
+    public void setCvc(String cvc) {
+        this.cvc = cvc;
+    }
+
     public String getCardLastFourDigits() {
-        return cardLastFourDigits;
+        if (!AndroidUtil.isBlank(cardLastFourDigits)) {
+            return cardLastFourDigits;
+        }
+        if (number != null && number.length() > 4) {
+            return number.substring(number.length() - 4, number.length());
+        }
+        return null;
     }
 
     public void setCardLastFourDigits(String cardLastFourDigits) {
@@ -62,21 +227,68 @@ public class CreditCard {
         this.cardSubType = cardSubType;
     }
 
-    @Nullable
-    public String getExpirationMonth() {
+    public Integer getExpirationMonth() {
         return expirationMonth;
     }
 
-    public void setExpirationMonth(@Nullable String expirationMonth) {
+    public void setExpirationMonth(Integer expirationMonth) {
         this.expirationMonth = expirationMonth;
     }
 
-    @Nullable
-    public String getExpirationYear() {
+    public Integer getExpirationYear() {
         return expirationYear;
     }
 
-    public void setExpirationYear(@Nullable String expirationYear) {
+    public void setExpirationYear(Integer expirationYear) {
+        if (expirationYear < 2000) {
+            expirationYear += 2000;
+        }
         this.expirationYear = expirationYear;
+    }
+
+    public String getExpirationDate() {
+        if (expirationYear < 2000) {
+            expirationYear += 2000;
+        }
+        return expirationMonth + "/" + expirationYear;
+    }
+
+    public String getExpirationDateForEditText() {
+        int m = expirationYear;
+        if (m > 2000) {
+            m -= 2000;
+        }
+        return expirationMonth + "/" + m;
+    }
+
+    public void setTokenizationSucess() {
+        tokenizedSuccess = true;
+    }
+
+    public void setModified() {
+        modified = true;
+        tokenizedSuccess = false;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public boolean validForReuse() {
+        return cardLastFourDigits != null && validateExpiryDate() && tokenizedSuccess;
+    }
+
+    public boolean requireValidation() {
+        return modified || cardLastFourDigits == null;
+    }
+
+    @Override
+    public String toString() {
+        return "Card {" +
+                "cardType:'" + cardType + '\'' +
+                ", tokenizedSuccess:" + tokenizedSuccess +
+                ", modified:" + modified +
+                ", cardLastFourDigits:'" + cardLastFourDigits + '\'' +
+                '}';
     }
 }

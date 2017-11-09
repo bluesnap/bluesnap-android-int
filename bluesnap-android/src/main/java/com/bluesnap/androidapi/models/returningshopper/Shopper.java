@@ -1,5 +1,6 @@
 package com.bluesnap.androidapi.models.returningshopper;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -19,29 +20,34 @@ public class Shopper {
     private static final String VAULTEDSHOPPERID = "vaultedShopperId";
     private static final String SHOPPERCURRENCY = "shopperCurrency";
     private static final String PAYMENTSOURCES = "paymentSources";
-    private static final String CREDITCARDINFO = "creditCardInfo";
     private static final String SHIPPINGCONTACTINFO = "shippingContactInfo";
     private static final String LASTPAYMENTINFO = "lastPaymentInfo";
 
     private int vaultedShopperId;
+    @Nullable
     private ContactInfo contactInfo;
     @Nullable
-    private ArrayList<CreditCardInfo> creditCardInfos;
+    private PaymentSources paymentSources;
     @Nullable
     private ContactInfo shippingContactInfo;
     @Nullable
     private LastPaymentInfo lastPaymentInfo;
     private String shopperCurrency;
 
-    public Shopper(@Nullable JSONObject shopperRepresentation) {
-        if (null != shopperRepresentation) {
-            vaultedShopperId = (int) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, VAULTEDSHOPPERID, TAG);
-            contactInfo = new ContactInfo(shopperRepresentation);
-            shippingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHIPPINGCONTACTINFO, TAG));
-            shopperCurrency = (String) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, SHOPPERCURRENCY, TAG);
-            lastPaymentInfo = new LastPaymentInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, LASTPAYMENTINFO, TAG));
-            setCreditCardInfos(shopperRepresentation);
+    public Shopper(@Nullable JSONObject shopper) {
+        if (null != shopper) {
+            try {
+                vaultedShopperId = (int) shopper.get(VAULTEDSHOPPERID);
+                shopperCurrency = (String) shopper.get(SHOPPERCURRENCY);
+            } catch (JSONException e) {
+                Log.e(TAG, "json parsing exception", e);
+            }
         }
+
+        contactInfo = new ContactInfo(shopper);
+        shippingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopper, SHIPPINGCONTACTINFO, TAG));
+        lastPaymentInfo = new LastPaymentInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopper, LASTPAYMENTINFO, TAG));
+        paymentSources = new PaymentSources((JSONObject) AndroidUtil.getObjectFromJsonObject(shopper, PAYMENTSOURCES, TAG));
     }
 
     public int getVaultedShopperId() {
@@ -52,36 +58,13 @@ public class Shopper {
         this.vaultedShopperId = vaultedShopperId;
     }
 
+    @Nullable
     public ContactInfo getContactInfo() {
         return contactInfo;
     }
 
-    public void setContactInfo(ContactInfo contactInfo) {
+    public void setContactInfo(@Nullable ContactInfo contactInfo) {
         this.contactInfo = contactInfo;
-    }
-
-    @Nullable
-    public ArrayList<CreditCardInfo> getCreditCardInfos() {
-        return creditCardInfos;
-    }
-
-    public void setCreditCardInfos(@Nullable JSONObject shopperRepresentation) {
-        try {
-            if (null != shopperRepresentation && !shopperRepresentation.isNull(PAYMENTSOURCES) && !shopperRepresentation.getJSONObject(PAYMENTSOURCES).isNull(CREDITCARDINFO)) {
-                JSONArray creditCardInfo = (JSONArray) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(shopperRepresentation, PAYMENTSOURCES, TAG), CREDITCARDINFO, TAG);
-                Log.d(TAG, String.valueOf(creditCardInfo));
-                assert creditCardInfo != null;
-                creditCardInfos = new ArrayList<>();
-                for (int i = 0; i < creditCardInfo.length(); i++) {
-                    CreditCardInfo creditCardInfoTemp = new CreditCardInfo(creditCardInfo.getJSONObject(i));
-                    Log.d(TAG, String.valueOf(creditCardInfoTemp));
-                    creditCardInfos.add(creditCardInfoTemp);
-                }
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "json parsing exception", e);
-        }
-
     }
 
     @Nullable
@@ -91,6 +74,15 @@ public class Shopper {
 
     public void setShippingContactInfo(@Nullable ContactInfo shippingContactInfo) {
         this.shippingContactInfo = shippingContactInfo;
+    }
+
+    @Nullable
+    public PaymentSources getPaymentSources() {
+        return paymentSources;
+    }
+
+    public void setPaymentSources(@Nullable PaymentSources paymentSources) {
+        this.paymentSources = paymentSources;
     }
 
     public String getShopperCurrency() {

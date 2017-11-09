@@ -51,7 +51,6 @@ public class CurrencyChangeTest extends EspressoBasedTest {
     public void setup() throws InterruptedException {
         super.setup();
         super.setSDKToken();
-        super.setRates();
 
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setAmount(AMOUNT);
@@ -72,18 +71,12 @@ public class CurrencyChangeTest extends EspressoBasedTest {
                 .post(new Runnable() {
                     @Override
                     public void run() {
-
-                        BlueSnapService.getInstance().updateRates(new BluesnapServiceCallback() {
-                            @Override
-                            public void onSuccess() {
-                                Log.d(TAG, "Service go rates");
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                fail("Service could not update rates");
-                            }
-                        });
+                        try {
+                            BlueSnapService.getInstance().getRatesArray();
+                            Log.d(TAG, "Service go rates");
+                        } catch (Exception e) {
+                            fail("Service could not update rates");
+                        }
                     }
                 });
 

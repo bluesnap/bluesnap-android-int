@@ -28,12 +28,12 @@ import android.widget.ToggleButton;
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.CardType;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -603,11 +603,11 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             paymentResult.setCardZipCode(card.getAddressZip());
             paymentResult.setEmail(emailEditText.getText().toString().trim());
             if (paymentRequest.isBillingRequired()) {
-                BillingInfo billingInfo = new BillingInfo();
-                billingInfo.setAddressLine(billingAddressLineEditText.getText().toString().trim());
-                billingInfo.setBillingCity(billingCityEditText.getText().toString().trim());
+                ContactInfo billingInfo = new ContactInfo(null);
+                billingInfo.setAddress(billingAddressLineEditText.getText().toString().trim());
+                billingInfo.setCity(billingCityEditText.getText().toString().trim());
                 billingInfo.setState(billingStateEditText.getText().toString().trim());
-                billingInfo.setZipCode(card.getAddressZip());
+                billingInfo.setZip(card.getAddressZip());
                 billingInfo.setCountry(getCountryText());
                 bluesnapCheckoutActivity.setBillingInfo(billingInfo);
             }

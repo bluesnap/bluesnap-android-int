@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.services;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.bluesnap.androidapi.models.ExchangeRate;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
@@ -10,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -18,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class SDKInitData {
-    private static final String TAG = SDKInitData.class.getSimpleName();
+public class InitialData {
+    private static final String TAG = InitialData.class.getSimpleName();
 
     private static final String KOUNTMERCHANTID = "kountMerchantId";
 
@@ -39,17 +37,14 @@ public class SDKInitData {
     protected Shopper shopper;
     protected SupportedPaymentMethods supportedPaymentMethods;
 
-    SDKInitData(JSONObject sdkInitData) {
+    InitialData(JSONObject sdkInitData) {
+        //TODO: change class to Gson with all classes (create payment method class)
         kountMerchantId = (int) AndroidUtil.getObjectFromJsonObject(sdkInitData, KOUNTMERCHANTID, TAG);
-        Log.d(TAG, String.valueOf(kountMerchantId));
         shopper = new Shopper((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, SHOPPER, TAG));
-        Log.d(TAG, String.valueOf(shopper));
         supportedPaymentMethods = new SupportedPaymentMethods((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, SUPPORTEDPAYMENTMETHODS, TAG));
-        Log.d(TAG, String.valueOf(supportedPaymentMethods));
 
         //TODO: change base currency payment request to this base but need to check change rate will do as needed
         baseCurrency = (String) AndroidUtil.getObjectFromJsonObject((JSONObject) AndroidUtil.getObjectFromJsonObject(sdkInitData, RATES, TAG), BASECURRENCY, TAG);
-        Log.d(TAG, String.valueOf(baseCurrency));
         updateRates(sdkInitData);
 
     }
