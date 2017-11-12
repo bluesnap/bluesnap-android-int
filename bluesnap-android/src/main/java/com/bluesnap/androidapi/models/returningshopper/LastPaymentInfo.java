@@ -2,33 +2,28 @@ package com.bluesnap.androidapi.models.returningshopper;
 
 import android.support.annotation.Nullable;
 
-import com.bluesnap.androidapi.services.AndroidUtil;
+import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONObject;
 
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
 public class LastPaymentInfo {
-    private static final String TAG = LastPaymentInfo.class.getSimpleName();
-    private static final String PAYMENTMETHOD = "paymentMethod";
-    private static final String CREDITCARD = "creditCard";
 
+    @Nullable
+    @SerializedName("paymentMethod")
     private String paymentMethod;
     @Nullable
+    @SerializedName("creditCard")
     private CreditCard creditCard;
 
-    public LastPaymentInfo(@Nullable JSONObject lastPaymentInfo) {
-        paymentMethod = (String) AndroidUtil.getObjectFromJsonObject(lastPaymentInfo, PAYMENTMETHOD, TAG);
-        creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(lastPaymentInfo, CREDITCARD, TAG));
-    }
-
+    @Nullable
     public String getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(@Nullable String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -40,5 +35,4 @@ public class LastPaymentInfo {
     public void setCreditCard(@Nullable CreditCard creditCard) {
         this.creditCard = creditCard;
     }
-
 }

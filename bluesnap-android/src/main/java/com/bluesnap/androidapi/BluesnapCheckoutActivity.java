@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -24,9 +25,11 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.returningshopper.BillingInfo;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.models.returningshopper.CreditCard;
 import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
+import com.bluesnap.androidapi.models.returningshopper.ShippingInfo;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
@@ -74,7 +77,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private PaymentRequest paymentRequest;
     private ExpressCheckoutFragment expressCheckoutFragment;
     private String sharedCurrency;
-    private ContactInfo shippingInfo;
+    private ShippingInfo shippingInfo;
     private CreditCardInfo creditCardInfo;
     private ShippingFragment shippingFragment;
     private String kountSessionId;
@@ -264,11 +267,11 @@ public class BluesnapCheckoutActivity extends Activity {
         return shippingFragment;
     }
 
-    public void setBillingInfo(ContactInfo billingInfo) {
+    public void setBillingInfo(BillingInfo billingInfo) {
         this.creditCardInfo.setBillingContactInfo(billingInfo);
     }
 
-    public void finishFromShippingFragment(ContactInfo shippingInfo) {
+    public void finishFromShippingFragment(ShippingInfo shippingInfo) {
         this.shippingInfo = shippingInfo;
         finishFromFragment();
     }

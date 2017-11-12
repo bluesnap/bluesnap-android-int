@@ -1,46 +1,35 @@
 package com.bluesnap.androidapi.models.returningshopper;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.bluesnap.androidapi.models.CardType;
 import com.bluesnap.androidapi.services.AndroidUtil;
-
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
 public class CreditCard {
-    private static final String TAG = CreditCard.class.getSimpleName();
-    private static final String CARDLASTFOURDIGITS = "cardLastFourDigits";
-    private static final String CARDTYPE = "cardType";
-    private static final String CARDSUBTYPE = "cardSubType";
-    private static final String EXPIRATIONMONTH = "expirationMonth";
-    private static final String EXPIRATIONYEAR = "expirationYear";
 
     private transient String number;
     private String cvc;
     private transient boolean modified = false;
     private boolean tokenizedSuccess = false;
 
+    @SerializedName("cardLastFourDigits")
     private String cardLastFourDigits;
+    @SerializedName("cardType")
     private String cardType;
     @Nullable
+    @SerializedName("cardSubType")
     private String cardSubType;
+    @SerializedName("expirationMonth")
     private Integer expirationMonth;
+    @SerializedName("expirationYear")
     private Integer expirationYear;
-
-    public CreditCard(@Nullable JSONObject creditCard) {
-        cardLastFourDigits = (String) AndroidUtil.getObjectFromJsonObject(creditCard, CARDLASTFOURDIGITS, TAG);
-        cardType = (String) AndroidUtil.getObjectFromJsonObject(creditCard, CARDTYPE, TAG);
-        cardSubType = (String) AndroidUtil.getObjectFromJsonObject(creditCard, CARDSUBTYPE, TAG);
-        expirationMonth = (Integer) AndroidUtil.getObjectFromJsonObject(creditCard, EXPIRATIONMONTH, TAG);
-        expirationYear = (Integer) AndroidUtil.getObjectFromJsonObject(creditCard, EXPIRATIONYEAR, TAG);
-    }
 
     public CreditCard() {
     }

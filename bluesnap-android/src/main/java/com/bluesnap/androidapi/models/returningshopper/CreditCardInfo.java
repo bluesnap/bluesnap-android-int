@@ -1,43 +1,25 @@
 package com.bluesnap.androidapi.models.returningshopper;
 
-import android.support.annotation.Nullable;
-
-import com.bluesnap.androidapi.services.AndroidUtil;
-
-import org.json.JSONObject;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
 public class CreditCardInfo {
-    private static final String TAG = CreditCardInfo.class.getSimpleName();
-    private static final String BILLINGCONTACTINFO = "billingContactInfo";
-    private static final String CREDITCARD = "creditCard";
 
-    private ContactInfo billingContactInfo;
+    @SerializedName("billingContactInfo")
+    private BillingInfo billingContactInfo;
+    @SerializedName("creditCard")
     private CreditCard creditCard;
+    @SerializedName("processingInfo")
+    private ProcessingInfo processingInfo;
 
-    public CreditCardInfo(@Nullable JSONObject creditCardInfo) {
-        billingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfo, BILLINGCONTACTINFO, TAG));
-        creditCard = new CreditCard((JSONObject) AndroidUtil.getObjectFromJsonObject(creditCardInfo, CREDITCARD, TAG));
-    }
-
-    public CreditCardInfo(ContactInfo billingContactInfo, CreditCard creditCard) {
-        this.billingContactInfo = billingContactInfo;
-        this.creditCard = creditCard;
-    }
-
-    public CreditCardInfo() {
-        billingContactInfo = new ContactInfo();
-        creditCard = new CreditCard();
-    }
-
-    public ContactInfo getBillingContactInfo() {
+    public BillingInfo getBillingContactInfo() {
         return billingContactInfo;
     }
 
-    public void setBillingContactInfo(ContactInfo billingContactInfo) {
+    public void setBillingContactInfo(BillingInfo billingContactInfo) {
         this.billingContactInfo = billingContactInfo;
     }
 
@@ -47,5 +29,13 @@ public class CreditCardInfo {
 
     public void setCreditCard(CreditCard creditCard) {
         this.creditCard = creditCard;
+    }
+
+    public ProcessingInfo getProcessingInfo() {
+        return processingInfo;
+    }
+
+    public void setProcessingInfo(ProcessingInfo processingInfo) {
+        this.processingInfo = processingInfo;
     }
 }

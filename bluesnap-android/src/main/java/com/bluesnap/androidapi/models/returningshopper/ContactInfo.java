@@ -4,148 +4,39 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import com.bluesnap.androidapi.services.AndroidUtil;
+import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONObject;
 
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
 public class ContactInfo implements Parcelable {
-    private static final String TAG = ContactInfo.class.getSimpleName();
-    private static final String FIRSTNAME = "firstName";
-    private static final String LASTNAME = "lastName";
-    private static final String ADDRESS = "address1";
-    private static final String CITY = "city";
-    private static final String STATE = "state";
-    private static final String ZIP = "zip";
-    private static final String COUNTRY = "country";
-    private static final String PHONE = "phone";
-    private static final String EMAIL = "email";
 
+    @SerializedName("firstName")
     private String firstName;
+    @SerializedName("lastName")
     private String lastName;
     @Nullable
+    @SerializedName("address1")
     private String address;
     @Nullable
+    @SerializedName("address2")
+    private String address2;
+    @Nullable
+    @SerializedName("city")
     private String city;
     @Nullable
+    @SerializedName("state")
     private String state;
     @Nullable
+    @SerializedName("zip")
     private String zip;
     @Nullable
+    @SerializedName("country")
     private String country;
-    @Nullable
-    private String phone;
-    @Nullable
-    private String email;
-
-    public static final Creator<ContactInfo> CREATOR = new Creator<ContactInfo>() {
-        @Override
-        public ContactInfo createFromParcel(Parcel in) {
-            return new ContactInfo(in);
-        }
-
-        @Override
-        public ContactInfo[] newArray(int size) {
-            return new ContactInfo[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(firstName);
-        parcel.writeString(lastName);
-        parcel.writeString(address);
-        parcel.writeString(city);
-        parcel.writeString(state);
-        parcel.writeString(zip);
-        parcel.writeString(country);
-        parcel.writeString(phone);
-        parcel.writeString(email);
-
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ContactInfo that = (ContactInfo) o;
-
-        return firstName.equals(that.firstName)
-                && (!lastName.equals(that.lastName))
-                /*&& (!address.equals(that.address))
-                && (!city.equals(that.city))
-                && (!state.equals(that.state))
-                && (!zip.equals(that.zip))
-                && (!country.equals(that.country))
-                && (!phone.equals(that.phone))
-                && (!email.equals(that.email))*/
-                ;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        /*result = 31 * result + address.hashCode();
-        result = 31 * result + city.hashCode();
-        result = 31 * result + state.hashCode();
-        result = 31 * result + zip.hashCode();
-        result = 31 * result + country.hashCode();
-        result = 31 * result + phone.hashCode();
-        result = 31 * result + email.hashCode();*/
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "firstName:'" + firstName + '\'' +
-                ", lastName:'" + lastName + '\'' +
-                ", address:'" + address + '\'' +
-                ", city:'" + city + '\'' +
-                ", state:'" + state + '\'' +
-                ", zip:'" + zip + '\'' +
-                ", country:'" + country + '\'' +
-                ", phone:'" + phone + '\'' +
-                ", email:'" + email + '\'' +
-                '}';
-    }
-
-    private ContactInfo(Parcel parcel) {
-        firstName = parcel.readString();
-        lastName = parcel.readString();
-        address = parcel.readString();
-        city = parcel.readString();
-        state = parcel.readString();
-        zip = parcel.readString();
-        country = parcel.readString();
-        phone = parcel.readString();
-        email = parcel.readString();
-    }
-
-    public ContactInfo(@Nullable JSONObject shopper) {
-        firstName = (String) AndroidUtil.getObjectFromJsonObject(shopper, FIRSTNAME, TAG);
-        lastName = (String) AndroidUtil.getObjectFromJsonObject(shopper, LASTNAME, TAG);
-        address = (String) AndroidUtil.getObjectFromJsonObject(shopper, ADDRESS, TAG);
-        city = (String) AndroidUtil.getObjectFromJsonObject(shopper, CITY, TAG);
-        state = (String) AndroidUtil.getObjectFromJsonObject(shopper, STATE, TAG);
-        zip = (String) AndroidUtil.getObjectFromJsonObject(shopper, ZIP, TAG);
-        country = (String) AndroidUtil.getObjectFromJsonObject(shopper, COUNTRY, TAG);
-        phone = (String) AndroidUtil.getObjectFromJsonObject(shopper, PHONE, TAG);
-        email = (String) AndroidUtil.getObjectFromJsonObject(shopper, EMAIL, TAG);
-    }
 
     public ContactInfo() {
-
     }
 
     public String getFullName() {
@@ -221,21 +112,80 @@ public class ContactInfo implements Parcelable {
     }
 
     @Nullable
-    public String getPhone() {
-        return phone;
+    public String getAddress2() {
+        return address2;
     }
 
-    public void setPhone(@Nullable String phone) {
-        this.phone = phone;
+    public void setAddress2(@Nullable String address2) {
+        this.address2 = address2;
     }
 
-    @Nullable
-    public String getEmail() {
-        return email;
+    public static final Creator<ContactInfo> CREATOR = new Creator<ContactInfo>() {
+        @Override
+        public ContactInfo createFromParcel(Parcel in) {
+            return new ContactInfo(in);
+        }
+
+        @Override
+        public ContactInfo[] newArray(int size) {
+            return new ContactInfo[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setEmail(@Nullable String email) {
-        this.email = email;
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(address);
+        parcel.writeString(city);
+        parcel.writeString(state);
+        parcel.writeString(zip);
+        parcel.writeString(country);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ContactInfo that = (ContactInfo) o;
+
+        return firstName.equals(that.firstName)
+                && (!lastName.equals(that.lastName));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zip='" + zip + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
+
+    protected ContactInfo(Parcel parcel) {
+        firstName = parcel.readString();
+        lastName = parcel.readString();
+        address = parcel.readString();
+        city = parcel.readString();
+        state = parcel.readString();
+        zip = parcel.readString();
+        country = parcel.readString();
+    }
 }

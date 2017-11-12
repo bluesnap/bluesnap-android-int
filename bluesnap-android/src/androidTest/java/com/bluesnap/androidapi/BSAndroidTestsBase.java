@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.bluesnap.androidapi.models.ExchangeRate;
+import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.TokenProvider;
@@ -115,7 +115,7 @@ public class BSAndroidTestsBase {
                     @Override
                     public void onSuccess() {
                         Log.d(TAG, "Got rates callback");
-                        ArrayList<ExchangeRate> ratesArray = blueSnapService.getRatesArray();
+                        ArrayList<Currency> ratesArray = blueSnapService.getRatesArray();
                         Assert.assertNotNull(ratesArray.get(0));
                     }
 
@@ -128,7 +128,7 @@ public class BSAndroidTestsBase {
         }, 100);
 
 
-        while (null == blueSnapService.getInitialData()) {
+        while (null == blueSnapService.getsDKConfiguration()) {
             Thread.sleep(20000);
             Log.i(TAG, "Waiting for rates");
 

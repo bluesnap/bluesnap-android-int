@@ -7,13 +7,14 @@ import android.util.Log;
 
 import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.ExchangeRate;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -85,11 +86,11 @@ public class BlueSnapService {
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
 
-    public InitialData getInitialData() {
-        return initialData;
+    public SDKConfiguration getsDKConfiguration() {
+        return sDKConfiguration;
     }
 
-    private InitialData initialData;
+    private SDKConfiguration sDKConfiguration;
     private String baseCurrency;
     private TokenProvider tokenProvider;
 
@@ -111,7 +112,7 @@ public class BlueSnapService {
 
 
     public boolean isexpressCheckoutActive() {
-        return initialData.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL);
+        return sDKConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL);
     }
 
     public TokenProvider getTokenProvider() {
@@ -302,7 +303,11 @@ public class BlueSnapService {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    initialData = new InitialData(response);
+                    Gson gson = new Gson();
+                    sDKConfiguration = gson.fromJson(String.valueOf(response), SDKConfiguration.class);
+                    sDKConfiguration.getRates().setInitialRates();
+
+
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
@@ -358,8 +363,8 @@ public class BlueSnapService {
         });
     }
 
-    public ArrayList<ExchangeRate> getRatesArray() {
-        return initialData.ratesArray;
+    public ArrayList<Currency> getRatesArray() {
+        return sDKConfiguration.getRates().getCurrencies();
     }
 
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
@@ -484,8 +489,8 @@ public class BlueSnapService {
      */
     @Nullable
     public Set<String> getSupportedRates() {
-        if (initialData.ratesMap != null)
-            return initialData.ratesMap.keySet();
+        if (sDKConfiguration.getRates().getRatesMap() != null)
+            return sDKConfiguration.getRates().getRatesMap().keySet();
         else return null;
     }
 
@@ -511,7 +516,7 @@ public class BlueSnapService {
         if (usdPrice == null || usdPrice.isEmpty())
             return "0";
 
-        ExchangeRate rate = initialData.ratesMap.get(convertTo);
+        Currency rate = sDKConfiguration.getRates().getRatesMap().get(convertTo);
         Double result = Double.valueOf(usdPrice) * rate.getConversionRate();
         return String.valueOf(AndroidUtil.getDecimalFormat().format(result));
     }
@@ -532,9 +537,9 @@ public class BlueSnapService {
         if (baseCurrency.equals(newCurrencyNameCode)) {
             return paymentRequest.getBaseAmount();
         }
-        Double baseConversionRate = initialData.ratesMap.get(baseCurrency).getConversionRate();
+        Double baseConversionRate = sDKConfiguration.getRates().getRatesMap().get(baseCurrency).getConversionRate();
         Double usdPRice = baseCurrency.equals(SupportedPaymentMethods.USD) ? basePrice * baseConversionRate : basePrice * (1 / baseConversionRate);
-        Double newPrice = initialData.ratesMap.get(newCurrencyNameCode).getConversionRate() * usdPRice;
+        Double newPrice = sDKConfiguration.getRates().getRatesMap().get(newCurrencyNameCode).getConversionRate() * usdPRice;
         return newPrice;
     }
 
@@ -586,10 +591,10 @@ public class BlueSnapService {
      */
     public void verifyPaymentRequest(PaymentRequest paymentRequest) throws BSPaymentRequestException {
         paymentRequest.verify();
-        if (initialData.ratesMap == null) {
+        if (sDKConfiguration.getRates().getRatesMap() == null) {
             throw new BSPaymentRequestException("rates map is not populated. did you forget to call updateRates?");
         }
-        if (initialData.ratesMap.get(paymentRequest.getCurrencyNameCode()) == null) {
+        if (sDKConfiguration.getRates().getRatesMap().get(paymentRequest.getCurrencyNameCode()) == null) {
             throw new BSPaymentRequestException("Currency not found");
         }
     }

@@ -32,6 +32,7 @@ import com.bluesnap.androidapi.models.CardType;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.returningshopper.BillingInfo;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.models.returningshopper.CreditCard;
 import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
@@ -605,7 +606,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             paymentResult.setCardZipCode(creditCardInfo.getBillingContactInfo().getZip());
             paymentResult.setEmail(emailEditText.getText().toString().trim());
             if (paymentRequest.isBillingRequired()) {
-                ContactInfo billingInfo = creditCardInfo.getBillingContactInfo();
+                BillingInfo billingInfo = creditCardInfo.getBillingContactInfo();
                 billingInfo.setAddress(billingAddressLineEditText.getText().toString().trim());
                 billingInfo.setCity(billingCityEditText.getText().toString().trim());
                 billingInfo.setState(billingStateEditText.getText().toString().trim());

@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,39 +17,44 @@ import java.util.ArrayList;
  * A representation of server exchange rate.
  */
 public class Shopper {
-    private static final String TAG = Shopper.class.getSimpleName();
-    private static final String VAULTEDSHOPPERID = "vaultedShopperId";
-    private static final String SHOPPERCURRENCY = "shopperCurrency";
-    private static final String PAYMENTSOURCES = "paymentSources";
-    private static final String SHIPPINGCONTACTINFO = "shippingContactInfo";
-    private static final String LASTPAYMENTINFO = "lastPaymentInfo";
 
+    @SerializedName("vaultedShopperId")
     private int vaultedShopperId;
     @Nullable
-    private ContactInfo contactInfo;
+    @SerializedName("firstName")
+    private ContactInfo firstName;
     @Nullable
+    @SerializedName("lastName")
+    private ContactInfo lastName;
+    @Nullable
+    @SerializedName("email")
+    private ContactInfo email;
+    @Nullable
+    @SerializedName("country")
+    private ContactInfo country;
+    @Nullable
+    @SerializedName("address")
+    private ContactInfo address;
+    @Nullable
+    @SerializedName("city")
+    private ContactInfo city;
+    @Nullable
+    @SerializedName("zip")
+    private ContactInfo zip;
+    @Nullable
+    @SerializedName("phone")
+    private ContactInfo phone;
+    @SerializedName("shopperCurrency")
+    private String shopperCurrency;
+    @Nullable
+    @SerializedName("paymentSources")
     private PaymentSources paymentSources;
     @Nullable
-    private ContactInfo shippingContactInfo;
+    @SerializedName("shippingContactInfo")
+    private ShippingInfo shippingContactInfo;
     @Nullable
+    @SerializedName("lastPaymentInfo")
     private LastPaymentInfo lastPaymentInfo;
-    private String shopperCurrency;
-
-    public Shopper(@Nullable JSONObject shopper) {
-        if (null != shopper) {
-            try {
-                vaultedShopperId = (int) shopper.get(VAULTEDSHOPPERID);
-                shopperCurrency = (String) shopper.get(SHOPPERCURRENCY);
-            } catch (JSONException e) {
-                Log.e(TAG, "json parsing exception", e);
-            }
-        }
-
-        contactInfo = new ContactInfo(shopper);
-        shippingContactInfo = new ContactInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopper, SHIPPINGCONTACTINFO, TAG));
-        lastPaymentInfo = new LastPaymentInfo((JSONObject) AndroidUtil.getObjectFromJsonObject(shopper, LASTPAYMENTINFO, TAG));
-        paymentSources = new PaymentSources((JSONObject) AndroidUtil.getObjectFromJsonObject(shopper, PAYMENTSOURCES, TAG));
-    }
 
     public int getVaultedShopperId() {
         return vaultedShopperId;
@@ -59,21 +65,83 @@ public class Shopper {
     }
 
     @Nullable
-    public ContactInfo getContactInfo() {
-        return contactInfo;
+    public ContactInfo getFirstName() {
+        return firstName;
     }
 
-    public void setContactInfo(@Nullable ContactInfo contactInfo) {
-        this.contactInfo = contactInfo;
+    public void setFirstName(@Nullable ContactInfo firstName) {
+        this.firstName = firstName;
     }
 
     @Nullable
-    public ContactInfo getShippingContactInfo() {
-        return shippingContactInfo;
+    public ContactInfo getLastName() {
+        return lastName;
     }
 
-    public void setShippingContactInfo(@Nullable ContactInfo shippingContactInfo) {
-        this.shippingContactInfo = shippingContactInfo;
+    public void setLastName(@Nullable ContactInfo lastName) {
+        this.lastName = lastName;
+    }
+
+    @Nullable
+    public ContactInfo getEmail() {
+        return email;
+    }
+
+    public void setEmail(@Nullable ContactInfo email) {
+        this.email = email;
+    }
+
+    @Nullable
+    public ContactInfo getCountry() {
+        return country;
+    }
+
+    public void setCountry(@Nullable ContactInfo country) {
+        this.country = country;
+    }
+
+    @Nullable
+    public ContactInfo getAddress() {
+        return address;
+    }
+
+    public void setAddress(@Nullable ContactInfo address) {
+        this.address = address;
+    }
+
+    @Nullable
+    public ContactInfo getCity() {
+        return city;
+    }
+
+    public void setCity(@Nullable ContactInfo city) {
+        this.city = city;
+    }
+
+    @Nullable
+    public ContactInfo getZip() {
+        return zip;
+    }
+
+    public void setZip(@Nullable ContactInfo zip) {
+        this.zip = zip;
+    }
+
+    @Nullable
+    public ContactInfo getPhone() {
+        return phone;
+    }
+
+    public void setPhone(@Nullable ContactInfo phone) {
+        this.phone = phone;
+    }
+
+    public String getShopperCurrency() {
+        return shopperCurrency;
+    }
+
+    public void setShopperCurrency(String shopperCurrency) {
+        this.shopperCurrency = shopperCurrency;
     }
 
     @Nullable
@@ -85,12 +153,13 @@ public class Shopper {
         this.paymentSources = paymentSources;
     }
 
-    public String getShopperCurrency() {
-        return shopperCurrency;
+    @Nullable
+    public ShippingInfo getShippingContactInfo() {
+        return shippingContactInfo;
     }
 
-    public void setShopperCurrency(String shopperCurrency) {
-        this.shopperCurrency = shopperCurrency;
+    public void setShippingContactInfo(@Nullable ShippingInfo shippingContactInfo) {
+        this.shippingContactInfo = shippingContactInfo;
     }
 
     @Nullable

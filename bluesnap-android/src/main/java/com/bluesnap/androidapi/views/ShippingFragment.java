@@ -21,6 +21,7 @@ import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
+import com.bluesnap.androidapi.models.returningshopper.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -305,7 +306,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                 setFocusOnShippingFragmentEditText(checkWhichFieldIsInValid);
 
             if (validInput) {
-                ContactInfo shippingInfo = new ContactInfo(null);
+                ShippingInfo shippingInfo = new ShippingInfo();
                 String fullName = shippingNameEditText.getText().toString().trim();
                 shippingInfo.setFirstName(fullName.substring(fullName.lastIndexOf(" ")+1));
                 shippingInfo.setFirstName(fullName.substring(0, fullName.lastIndexOf(' ')));
@@ -314,7 +315,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                 shippingInfo.setState(shippingStateEditText.getText().toString().trim());
                 shippingInfo.setCountry(getCountryText());
                 shippingInfo.setZip(shippingZipEditText.getText().toString().trim());
-                shippingInfo.setEmail(shippingEmailEditText.getText().toString().trim());
+                //shippingInfo.setEmail(shippingEmailEditText.getText().toString().trim());
                 BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
                 bluesnapCheckoutActivity.finishFromShippingFragment(shippingInfo);
             }
