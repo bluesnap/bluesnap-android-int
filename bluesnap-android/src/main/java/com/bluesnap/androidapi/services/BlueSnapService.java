@@ -7,12 +7,13 @@ import android.util.Log;
 
 import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.ExchangeRate;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
+import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -50,6 +51,28 @@ public class BlueSnapService {
     private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
+
+    private static final String CCNUMBER = "ccNumber";
+    private static final String CVV = "cvv";
+    private static final String EXPDATE = "expDate";
+    private static final String BILLINGFIRSTNAME = "billingFirstName";
+    private static final String BILLINGLASTNAME = "billingLastName";
+    private static final String BILLINGCOUNTRY = "billingCountry";
+    private static final String BILLINGSTATE = "billingState";
+    private static final String BILLINGCITY = "billingCity";
+    private static final String BILLINGADDRESS = "billingAddress";
+    private static final String BILLINGZIP = "billingZip";
+    private static final String SHIPPINGFIRSTNAME = "shippingFirstName";
+    private static final String SHIPPINGLASTNAME = "shippingLastName";
+    private static final String SHIPPINGCOUNTRY = "shippingCountry";
+    private static final String SHIPPINGSTATE = "shippingState";
+    private static final String SHIPPINGCITY = "shippingCity";
+    private static final String SHIPPINGADDRESS = "shippingAddress";
+    private static final String SHIPPINGZIP = "shippingZip";
+    private static final String EMAIL = "email";
+    private static final String PHONE = "phone";
+    private static final String FRAUDSESSIONID = "fraudSessionId";
+
     private static final EventBus busInstance = new EventBus();
     private static String paypalURL;
     private static JSONObject errorDescription;
@@ -109,7 +132,7 @@ public class BlueSnapService {
      *
      * @param tokenProvider A merchant function for requesting a new token if expired
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
-     * baseCurrency = USD
+     *                      baseCurrency = USD
      */
     public void setup(String merchantToken, TokenProvider tokenProvider, final BluesnapServiceCallback callback) {
         setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD, callback);
@@ -182,19 +205,64 @@ public class BlueSnapService {
     }
 
     /**
-     * Update the Credit {@link Card} details on the BlueSnap Server
+     * Update details on the BlueSnap Server
      *
-     * @param card            {@link Card}
+     * @param creditCardInfo  {@link CreditCardInfo}
      * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void tokenizeCard(Card card, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void tokenizeCard(CreditCardInfo creditCardInfo, String fraudSessionId, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        tokenizeCard(creditCardInfo, fraudSessionId, null, responseHandler);
+    }
+
+    /**
+     * Update details on the BlueSnap Server
+     *
+     * @param creditCardInfo  {@link CreditCardInfo}
+     * @param shippingInfo    {@link ContactInfo}
+     * @param responseHandler {@link AsyncHttpResponseHandler}
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
+    public void tokenizeCard(CreditCardInfo creditCardInfo, String fraudSessionId, ContactInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        //TODO: add full billing, email and optional shipping
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
-        postData.put("ccNumber", card.getNumber());
-        postData.put("cvv", card.getCVC());
-        postData.put("expDate", card.getExpDate());
+        postData.put(CCNUMBER, creditCardInfo.getCreditCard().getNumber());
+        postData.put(CVV, creditCardInfo.getCreditCard().getCvc());
+        postData.put(EXPDATE, creditCardInfo.getCreditCard().getExpirationDate());
+
+        postData.put(BILLINGFIRSTNAME, creditCardInfo.getBillingContactInfo().getFirstName());
+        postData.put(BILLINGLASTNAME, creditCardInfo.getBillingContactInfo().getLastName());
+        postData.put(BILLINGCOUNTRY, creditCardInfo.getBillingContactInfo().getCountry());
+
+        if (null != creditCardInfo.getBillingContactInfo().getZip() && "".equals(creditCardInfo.getBillingContactInfo().getZip()))
+            postData.put(BILLINGZIP, creditCardInfo.getBillingContactInfo().getZip());
+
+        if (paymentRequest.isBillingRequired()) {
+            postData.put(BILLINGSTATE, creditCardInfo.getBillingContactInfo().getState());
+            postData.put(BILLINGCITY, creditCardInfo.getBillingContactInfo().getCity());
+            postData.put(BILLINGADDRESS, creditCardInfo.getBillingContactInfo().getAddress());
+        }
+
+        postData.put(FRAUDSESSIONID, fraudSessionId);
+
+        if (paymentRequest.isEmailRequired())
+            postData.put(EMAIL, creditCardInfo.getBillingContactInfo().getEmail());
+
+        //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
+
+        if (paymentRequest.isShippingRequired()) {
+            postData.put(SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
+            postData.put(SHIPPINGLASTNAME, shippingInfo.getLastName());
+            postData.put(SHIPPINGCOUNTRY, shippingInfo.getCountry());
+            postData.put(SHIPPINGSTATE, shippingInfo.getState());
+            postData.put(SHIPPINGCITY, shippingInfo.getCity());
+            postData.put(SHIPPINGADDRESS, shippingInfo.getAddress());
+            postData.put(SHIPPINGZIP, shippingInfo.getZip());
+        }
+
         ByteArrayEntity entity = new ByteArrayEntity(postData.toString().getBytes("UTF-8"));
         entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
         httpClient.put(null, bluesnapToken.getUrl() + CARD_TOKENIZE + bluesnapToken.getMerchantToken(), entity, "application/json", responseHandler);
@@ -458,7 +526,7 @@ public class BlueSnapService {
      */
     public Double convertPrice(Double basePrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
-            throw new IllegalArgumentException ("not an ISO 4217 compatible 3 letter currency representation");
+            throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
         String baseCurrency = paymentRequest.getBaseCurrency();
         if (baseCurrency.equals(newCurrencyNameCode)) {

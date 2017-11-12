@@ -22,10 +22,11 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
+import com.bluesnap.androidapi.models.returningshopper.CreditCard;
+import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
@@ -74,8 +75,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private ExpressCheckoutFragment expressCheckoutFragment;
     private String sharedCurrency;
     private ContactInfo shippingInfo;
-    private ContactInfo billingInfo;
-    private Card card;
+    private CreditCardInfo creditCardInfo;
     private ShippingFragment shippingFragment;
     private String kountSessionId;
     private Intent resultIntent;
@@ -265,7 +265,7 @@ public class BluesnapCheckoutActivity extends Activity {
     }
 
     public void setBillingInfo(ContactInfo billingInfo) {
-        this.billingInfo = billingInfo;
+        this.creditCardInfo.setBillingContactInfo(billingInfo);
     }
 
     public void finishFromShippingFragment(ContactInfo shippingInfo) {
@@ -276,16 +276,16 @@ public class BluesnapCheckoutActivity extends Activity {
     public void finishFromFragment() {
         Intent resultIntent = new Intent();
         resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shippingInfo);
-        resultIntent.putExtra(EXTRA_BILLING_DETAILS, billingInfo);
+        resultIntent.putExtra(EXTRA_BILLING_DETAILS, creditCardInfo.getBillingContactInfo());
 
-        Log.d(TAG, "Testing if card requires server tokenization:" + card.toString());
-        if (!card.isModified()) {
+        Log.d(TAG, "Testing if card requires server tokenization:" + creditCardInfo.getCreditCard().toString());
+        if (!creditCardInfo.getCreditCard().isModified()) {
             PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
             paymentResult.setKountSessionId(kountSessionId);
-            paymentResult.setLast4Digits(card.getLast4());
-            paymentResult.setCardType(card.getType());
-            paymentResult.setExpDate(card.getExpDate());
-            paymentResult.setCardZipCode(card.getAddressZip());
+            paymentResult.setLast4Digits(creditCardInfo.getCreditCard().getCardLastFourDigits());
+            paymentResult.setCardType(creditCardInfo.getCreditCard().getCardType());
+            paymentResult.setExpDate(creditCardInfo.getCreditCard().getExpirationDate());
+            paymentResult.setCardZipCode(creditCardInfo.getBillingContactInfo().getZip());
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
             //prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
@@ -307,7 +307,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private void tokenizeCardOnServer(final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         this.resultIntent = resultIntent;
 
-        blueSnapService.tokenizeCard(card, new JsonHttpResponseHandler() {
+        blueSnapService.tokenizeCard(creditCardInfo, kountSessionId, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -322,7 +322,7 @@ public class BluesnapCheckoutActivity extends Activity {
                     resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
                     setResult(RESULT_OK, resultIntent);
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server
-                    card.setTokenizationSucess();
+                    creditCardInfo.getCreditCard().setTokenizationSucess();
                     Log.d(TAG, "tokenization finished");
                     finish();
                 } catch (NullPointerException | JSONException e) {
@@ -378,13 +378,20 @@ public class BluesnapCheckoutActivity extends Activity {
 
     }
 
-
-    public Card getCard() {
-        return card;
+    public CreditCardInfo getCreditCardInfo() {
+        return creditCardInfo;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setCreditCardInfo(CreditCardInfo creditCardInfo) {
+        this.creditCardInfo = creditCardInfo;
+    }
+
+    public CreditCard getCard() {
+        return creditCardInfo.getCreditCard();
+    }
+
+    public void setCard(CreditCard card) {
+        this.creditCardInfo.setCreditCard(card);
     }
 
     @Override

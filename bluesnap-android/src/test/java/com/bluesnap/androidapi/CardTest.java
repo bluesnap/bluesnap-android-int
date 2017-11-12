@@ -2,6 +2,9 @@ package com.bluesnap.androidapi;
 
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.CardType;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
+import com.bluesnap.androidapi.models.returningshopper.CreditCard;
+import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import junit.framework.Assert;
@@ -258,7 +261,7 @@ public class CardTest extends TestCase {
     public void validLuhnAndNoType() {
         Card card = new Card();
         card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/50", "123", "13MAAA", "Homer Ssn");
-        assertTrue("this should be a valid luhn", Card.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(card.validateNumber());
         assertTrue(card.validateAll());
         assertFalse(card.getType().isEmpty());
@@ -269,27 +272,30 @@ public class CardTest extends TestCase {
     public void testValidateAll() throws Exception {
         Card card = new Card();
         card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/50", "123", "13MAAA", "Homer Ssn");
-        assertTrue("this should be a valid luhn", Card.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(card.validateNumber());
         assertTrue(card.validateAll());
     }
 
     @Test
     public void cardToStringTest() {
-        Card card = new Card();
+        CreditCardInfo creditCardInfo = new CreditCardInfo();
+        CreditCard creditCard = creditCardInfo.getCreditCard();
+        ContactInfo billingInfo = creditCardInfo.getBillingContactInfo();
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
-        card.update(number, "11/50", "123", "13MAAA", "Homer Ssn");
-        assertTrue("this should be a valid luhn", Card.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
-        assertTrue(card.validateNumber());
-        assertTrue(card.validateAll());
-        assertFalse(card.getType().isEmpty());
+        creditCard.update(number, "11/50", "123");
+        billingInfo.setFullName("Homer Ssn");
+        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue(creditCard.validateNumber());
+        assertTrue(creditCard.validateAll());
+        assertFalse(creditCard.getCardType().isEmpty());
 
-        String cardToString = card.toString();
+        String cardToString = creditCard.toString();
         assertFalse("the tostring should not expose number", cardToString.contains(number));
         String last4 = number.substring(number.length() - 4, number.length());
-        assertEquals("Last 4 contains too many digits", card.getLast4().length(), 4);
+        assertEquals("Last 4 contains too many digits", creditCard.getCardLastFourDigits().length(), 4);
         assertEquals("Last 4 contains too many digits: " + last4, last4.length(), 4);
         assertTrue("the tostring should containg last4", cardToString.contains(last4));
-        assertFalse("card tostring should not expose name", cardToString.contains(card.getHolderName()));
+        assertFalse("card tostring should not expose name", cardToString.contains(billingInfo.getFullName()));
     }
 }

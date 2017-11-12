@@ -6,6 +6,7 @@ import com.bluesnap.androidapi.models.ExchangeRate;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.models.returningshopper.Shopper;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -29,6 +30,7 @@ public class InitialData {
 
     private static final String SUPPORTEDPAYMENTMETHODS = "supportedPaymentMethods";
 
+    @SerializedName("kountMerchantId")
     protected int kountMerchantId;
     protected String baseCurrency;
     protected HashMap<String, ExchangeRate> ratesMap;

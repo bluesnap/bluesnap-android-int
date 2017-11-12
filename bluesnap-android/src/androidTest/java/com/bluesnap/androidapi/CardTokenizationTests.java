@@ -5,6 +5,9 @@ import android.os.Looper;
 
 import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
+import com.bluesnap.androidapi.models.returningshopper.CreditCard;
+import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -38,17 +41,20 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         paymentRequest.setCurrencyNameCode("USD");
         blueSnapService.setPaymentRequest(paymentRequest);
 
-        final Card card = new Card();
+        final CreditCardInfo creditCardInfo = new CreditCardInfo();
+        final CreditCard card = creditCardInfo.getCreditCard();
+        final ContactInfo billingInfo = creditCardInfo.getBillingContactInfo();
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
-        card.update(number, "11/50", "123", "13MAAA", "Homer Ssn");
-        assertTrue("this should be a valid luhn", Card.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        card.update(number, "11/50", "123");
+        billingInfo.setFullName("John Doe");
+        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(card.validateNumber());
         assertTrue(card.validateAll());
-        assertFalse(card.getType().isEmpty());
+        assertFalse(card.getCardType().isEmpty());
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
                 try {
-                    blueSnapService.tokenizeCard(card, new JsonHttpResponseHandler() {
+                    blueSnapService.tokenizeCard(creditCardInfo, "ABCDEF", new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
