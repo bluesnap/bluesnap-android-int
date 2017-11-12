@@ -26,10 +26,10 @@ public class Rates {
      */
     public void setInitialRates() {
         ratesMap = new HashMap<>(currencies.size() + 1);
-        Currency usdCurrency = new Currency();
-        usdCurrency.setConversionRate(1.0);
-        usdCurrency.setQuoteCurrency(SupportedPaymentMethods.USD);
-        ratesMap.put(SupportedPaymentMethods.USD, usdCurrency);
+        Currency baseCurrency = new Currency();
+        baseCurrency.setConversionRate(1.0);
+        baseCurrency.setQuoteCurrency(this.baseCurrency);
+        ratesMap.put(this.baseCurrency, baseCurrency);
         for (Currency r : currencies) {
             ratesMap.put(r.getQuoteCurrency(), r);
         }
