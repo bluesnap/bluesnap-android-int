@@ -142,7 +142,7 @@ public class CardTest extends TestCase {
             card.setNumber(num);
             assertTrue("DINERS luhn invalid: " + num, card.validateNumber());
             String type = CardType.getType(card.getNumber());
-            Assert.assertTrue("DINERS type mismatch: " + type + " " + num, CardType.DINERS_CLUB.equals(type));
+            Assert.assertTrue("DINERS type mismatch: " + type + " " + num, CardType.DINERS.equals(type));
         }
     }
 

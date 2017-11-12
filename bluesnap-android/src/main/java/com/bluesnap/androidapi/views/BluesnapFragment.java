@@ -28,7 +28,6 @@ import android.widget.ToggleButton;
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.CardType;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
@@ -36,6 +35,7 @@ import com.bluesnap.androidapi.models.returningshopper.BillingInfo;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.models.returningshopper.CreditCard;
 import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
+import com.bluesnap.androidapi.models.returningshopper.CreditCardTypes;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -473,8 +473,8 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean zipFieldValidation() {
-        String cardType = CardType.getType(creditCardNumberEditText.getText().toString().trim());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText()) && (cardType.equals(CardType.VISA) || cardType.equals(CardType.DISCOVER))) {
+        String cardType = CreditCardTypes.getType(creditCardNumberEditText.getText().toString().trim());
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText()) && (cardType.equals(CreditCardTypes.VISA) || cardType.equals(CreditCardTypes.DISCOVER))) {
             return AndroidUtil.validateEditTextString(zipEditText, zipTextView, AndroidUtil.ZIP_FIELD);
         } else {
             zipTextView.setTextColor(Color.BLACK);
@@ -550,13 +550,13 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         if (type == null)
             return;
 
-        if (CardType.AMEX.equalsIgnoreCase(type))
+        if (CreditCardTypes.AMEX.equalsIgnoreCase(type))
             cardDrawable = R.drawable.new_amex;
-        else if (CardType.VISA.equalsIgnoreCase(type))
+        else if (CreditCardTypes.VISA.equalsIgnoreCase(type))
             cardDrawable = R.drawable.new_visa;
-        else if (CardType.MASTERCARD.equalsIgnoreCase(type))
+        else if (CreditCardTypes.MASTERCARD.equalsIgnoreCase(type))
             cardDrawable = R.drawable.new_mastercard;
-        else if (CardType.DISCOVER.equalsIgnoreCase(type))
+        else if (CreditCardTypes.DISCOVER.equalsIgnoreCase(type))
             cardDrawable = R.drawable.new_discover;
         // TODO: additional icons
         //else
@@ -577,7 +577,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         cvvLabelTextView.setVisibility(View.VISIBLE);
         creditCardNumberEditText.setHint("");
         if (creditCardNumberEditText.getText().length() == 0)
-            changeCardEditTextDrawable(CardType.UNKNOWN);
+            changeCardEditTextDrawable(CreditCardTypes.UNKNOWN);
     }
 
 
@@ -660,7 +660,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                 return;
 
             final String ccNum = s.toString();
-            changeCardEditTextDrawable(CardType.getType(ccNum));
+            changeCardEditTextDrawable(CreditCardTypes.getType(ccNum));
             creditCardLabelTextView.setTextColor(Color.BLACK);
             invaildCreditCardMessageTextView.setVisibility(View.GONE);
         }
@@ -691,7 +691,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                 creditCardLabelTextView.setTextColor(Color.BLACK);
             }
 
-            changeCardEditTextDrawable(CardType.getType(ccNum));
+            changeCardEditTextDrawable(CreditCardTypes.getType(ccNum));
 
             /*if (CardType.getType(ccNum).equals(CardType.VISA)) {
                 zipFieldLayout.setVisibility(View.VISIBLE);

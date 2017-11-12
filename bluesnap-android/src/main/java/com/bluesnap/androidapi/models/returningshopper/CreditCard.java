@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bluesnap.androidapi.models.CardType;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.google.gson.annotations.SerializedName;
 
@@ -89,7 +88,7 @@ public class CreditCard {
         modified = true;
         tokenizedSuccess = false;
         this.number = creditCardNumberEditTextText;
-        cardType = CardType.getType(number);
+        cardType = CreditCardTypes.getType(number);
     }
 
     private void setLast4() {
@@ -137,9 +136,9 @@ public class CreditCard {
                 || !isValidLuhnNumber(rawNumber)) {
             return false;
         }
-        cardType = CardType.getType(number);
+        cardType = CreditCardTypes.getType(number);
         setLast4();
-        return CardType.validateByType(cardType, rawNumber);
+        return CreditCardTypes.validateByType(cardType, rawNumber);
 
     }
 
@@ -152,7 +151,7 @@ public class CreditCard {
             return false;
         }
         if (cvc.length() >= 3 && cvc.length() < 5) {
-            if (CardType.AMEX.equals(cardType)) {
+            if (CreditCardTypes.AMEX.equals(cardType)) {
                 if (cvc.length() != 4)
                     return false;
             } else if (cvc.length() != 3)

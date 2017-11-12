@@ -14,6 +14,7 @@ import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
 import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
+import com.bluesnap.androidapi.models.returningshopper.CreditCardTypes;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -303,10 +304,10 @@ public class BlueSnapService {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
-                    Gson gson = new Gson();
-                    sDKConfiguration = gson.fromJson(String.valueOf(response), SDKConfiguration.class);
+                    sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
                     sDKConfiguration.getRates().setInitialRates();
-
+                    // activate the credit card type method finder
+                    new CreditCardTypes(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
 
                     callback.onSuccess();
                 } catch (Exception e) {

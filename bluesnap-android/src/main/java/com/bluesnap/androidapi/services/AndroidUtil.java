@@ -227,16 +227,4 @@ public class AndroidUtil {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
     }
-
-    @Nullable
-    public static Object getObjectFromJsonObject(JSONObject jsonObject, String key, String TAG) {
-        Object response = null;
-        try {
-            if (null != jsonObject && !jsonObject.isNull(key))
-                response = jsonObject.get(key);
-        } catch (JSONException e) {
-            Log.e(TAG, "json parsing exception", e);
-        }
-        return response;
-    }
 }
