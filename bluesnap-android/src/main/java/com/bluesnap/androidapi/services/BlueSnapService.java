@@ -234,7 +234,7 @@ public class BlueSnapService {
         postData.put(BILLINGLASTNAME, billingInfo.getLastName());
         postData.put(BILLINGCOUNTRY, billingInfo.getCountry());
 
-        if (null != billingInfo.getZip() && "".equals(billingInfo.getZip()))
+        if (null != billingInfo.getZip() && !"".equals(billingInfo.getZip()))
             postData.put(BILLINGZIP, billingInfo.getZip());
 
         if (paymentRequest.isBillingRequired()) {
