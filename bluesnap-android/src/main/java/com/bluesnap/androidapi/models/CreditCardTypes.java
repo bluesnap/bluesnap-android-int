@@ -1,12 +1,6 @@
 package com.bluesnap.androidapi.models;
 
-
-import com.bluesnap.androidapi.services.AndroidUtil;
-import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**

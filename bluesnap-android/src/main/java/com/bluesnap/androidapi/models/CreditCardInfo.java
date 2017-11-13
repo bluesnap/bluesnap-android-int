@@ -12,8 +12,6 @@ public class CreditCardInfo {
     private BillingInfo billingContactInfo;
     @SerializedName("creditCard")
     private CreditCard creditCard;
-    @SerializedName("processingInfo")
-    private ProcessingInfo processingInfo;
 
     public CreditCardInfo() {
         creditCard = new CreditCard();
@@ -36,11 +34,4 @@ public class CreditCardInfo {
         this.creditCard = creditCard;
     }
 
-    public ProcessingInfo getProcessingInfo() {
-        return processingInfo;
-    }
-
-    public void setProcessingInfo(ProcessingInfo processingInfo) {
-        this.processingInfo = processingInfo;
-    }
 }

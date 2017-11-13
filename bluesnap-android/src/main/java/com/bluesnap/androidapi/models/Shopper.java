@@ -7,34 +7,19 @@ import com.google.gson.annotations.SerializedName;
 /**
  * A representation of server exchange rate.
  */
-public class Shopper {
+public class Shopper extends ContactInfo{
 
     @SerializedName("vaultedShopperId")
     private int vaultedShopperId;
     @Nullable
-    @SerializedName("firstName")
-    private ContactInfo firstName;
-    @Nullable
-    @SerializedName("lastName")
-    private ContactInfo lastName;
-    @Nullable
     @SerializedName("email")
-    private ContactInfo email;
-    @Nullable
-    @SerializedName("country")
-    private ContactInfo country;
+    private String email;
     @Nullable
     @SerializedName("address")
-    private ContactInfo address;
-    @Nullable
-    @SerializedName("city")
-    private ContactInfo city;
-    @Nullable
-    @SerializedName("zip")
-    private ContactInfo zip;
+    private String address;
     @Nullable
     @SerializedName("phone")
-    private ContactInfo phone;
+    private String phone;
     @SerializedName("shopperCurrency")
     private String shopperCurrency;
     @Nullable
@@ -55,75 +40,31 @@ public class Shopper {
         this.vaultedShopperId = vaultedShopperId;
     }
 
-    @Nullable
-    public ContactInfo getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(@Nullable ContactInfo firstName) {
-        this.firstName = firstName;
-    }
 
     @Nullable
-    public ContactInfo getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(@Nullable ContactInfo lastName) {
-        this.lastName = lastName;
-    }
-
-    @Nullable
-    public ContactInfo getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(@Nullable ContactInfo email) {
+    public void setEmail(@Nullable String email) {
         this.email = email;
     }
 
     @Nullable
-    public ContactInfo getCountry() {
-        return country;
-    }
-
-    public void setCountry(@Nullable ContactInfo country) {
-        this.country = country;
-    }
-
-    @Nullable
-    public ContactInfo getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(@Nullable ContactInfo address) {
+    public void setAddress(@Nullable String address) {
         this.address = address;
     }
 
     @Nullable
-    public ContactInfo getCity() {
-        return city;
-    }
-
-    public void setCity(@Nullable ContactInfo city) {
-        this.city = city;
-    }
-
-    @Nullable
-    public ContactInfo getZip() {
-        return zip;
-    }
-
-    public void setZip(@Nullable ContactInfo zip) {
-        this.zip = zip;
-    }
-
-    @Nullable
-    public ContactInfo getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(@Nullable ContactInfo phone) {
+    public void setPhone(@Nullable String phone) {
         this.phone = phone;
     }
 

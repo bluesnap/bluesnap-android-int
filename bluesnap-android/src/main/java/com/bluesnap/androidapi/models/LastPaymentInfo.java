@@ -9,14 +9,11 @@ import com.google.gson.annotations.SerializedName;
  * Created by roy.biber on 07/11/2017.
  */
 
-public class LastPaymentInfo {
+public class LastPaymentInfo extends CreditCardInfo{
 
     @Nullable
     @SerializedName("paymentMethod")
     private String paymentMethod;
-    @Nullable
-    @SerializedName("creditCard")
-    private CreditCard creditCard;
 
     @Nullable
     public String getPaymentMethod() {
@@ -27,12 +24,4 @@ public class LastPaymentInfo {
         this.paymentMethod = paymentMethod;
     }
 
-    @Nullable
-    public CreditCard getCreditCard() {
-        return creditCard;
-    }
-
-    public void setCreditCard(@Nullable CreditCard creditCard) {
-        this.creditCard = creditCard;
-    }
 }
