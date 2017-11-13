@@ -24,10 +24,10 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.bluesnap.androidapi.models.returningshopper.BillingInfo;
-import com.bluesnap.androidapi.models.returningshopper.CreditCard;
-import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
-import com.bluesnap.androidapi.models.returningshopper.ShippingInfo;
+import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;

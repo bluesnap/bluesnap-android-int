@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
+import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 

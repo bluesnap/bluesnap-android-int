@@ -1,10 +1,10 @@
-package com.bluesnap.androidapi.services;
+package com.bluesnap.androidapi.models;
 
 import android.support.annotation.Nullable;
 
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.bluesnap.androidapi.models.returningshopper.Rates;
-import com.bluesnap.androidapi.models.returningshopper.Shopper;
+import com.bluesnap.androidapi.models.Rates;
+import com.bluesnap.androidapi.models.Shopper;
 import com.google.gson.annotations.SerializedName;
 
 public class SDKConfiguration {

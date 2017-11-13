@@ -31,11 +31,10 @@ import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.bluesnap.androidapi.models.returningshopper.BillingInfo;
-import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
-import com.bluesnap.androidapi.models.returningshopper.CreditCard;
-import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
-import com.bluesnap.androidapi.models.returningshopper.CreditCardTypes;
+import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -693,7 +692,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
             changeCardEditTextDrawable(CreditCardTypes.getType(ccNum));
 
-            /*if (CardType.getType(ccNum).equals(CardType.VISA)) {
+            /*if (CreditCardTypes.getType(ccNum).equals(CreditCardTypes.VISA)) {
                 zipFieldLayout.setVisibility(View.VISIBLE);
                 zipFieldBorderVanish.setVisibility(View.VISIBLE);
             }*/

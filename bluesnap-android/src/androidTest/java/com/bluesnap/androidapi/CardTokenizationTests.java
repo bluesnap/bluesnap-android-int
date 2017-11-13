@@ -3,11 +3,10 @@ package com.bluesnap.androidapi;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.bluesnap.androidapi.models.Card;
 import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.returningshopper.ContactInfo;
-import com.bluesnap.androidapi.models.returningshopper.CreditCard;
-import com.bluesnap.androidapi.models.returningshopper.CreditCardInfo;
+import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.loopj.android.http.JsonHttpResponseHandler;
 

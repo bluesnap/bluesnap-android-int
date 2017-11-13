@@ -20,7 +20,7 @@ import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.returningshopper.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 

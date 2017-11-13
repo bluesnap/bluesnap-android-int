@@ -1,17 +1,8 @@
-package com.bluesnap.androidapi.models.returningshopper;
+package com.bluesnap.androidapi.models;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.google.gson.annotations.SerializedName;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * A representation of server exchange rate.

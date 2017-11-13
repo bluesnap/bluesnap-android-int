@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.models.returningshopper;
+package com.bluesnap.androidapi.models;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,6 +14,11 @@ public class CreditCardInfo {
     private CreditCard creditCard;
     @SerializedName("processingInfo")
     private ProcessingInfo processingInfo;
+
+    public CreditCardInfo() {
+        creditCard = new CreditCard();
+        billingContactInfo = new BillingInfo();
+    }
 
     public BillingInfo getBillingContactInfo() {
         return billingContactInfo;

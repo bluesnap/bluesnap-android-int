@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.models.returningshopper;
+package com.bluesnap.androidapi.models;
 
 
 import com.bluesnap.androidapi.services.AndroidUtil;

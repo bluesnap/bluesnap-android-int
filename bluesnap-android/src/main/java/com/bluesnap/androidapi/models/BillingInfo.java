@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.models.returningshopper;
+package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
 import android.support.annotation.Nullable;
