@@ -35,6 +35,7 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.CreditCardTypes;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -61,7 +62,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private TextView invalidAddressMessageTextView, invaildCreditCardMessageTextView, invalidShopperName;
     private EditText creditCardNumberEditText, shopperFullNameEditText, cvvEditText, expDateEditText, zipEditText, emailEditText, billingAddressLineEditText, billingCityEditText, billingStateEditText;
     private ToggleButton couponButton;
-    private CreditCardInfo creditCardInfo;
+    private Shopper shopper;
     //private PrefsStorage prefsStorage;
     private PaymentRequest paymentRequest;
     private ViewGroup subtotalView;
@@ -352,23 +353,23 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
     private void initPrefs() {
         try {
-            if (creditCardInfo == null)
-                creditCardInfo = new CreditCardInfo();
+            if (shopper == null)
+                shopper = new Shopper();
 
         } catch (Exception e) {
-            Log.w(TAG, "failed to create new card");
+            Log.w(TAG, "failed to create new shopper");
             return;
         }
     }
 
     private void populateFromCard() {
 
-        shopperFullNameEditText.setText(creditCardInfo.getBillingContactInfo().getFullName());//"No name defined" is the default value.
+        shopperFullNameEditText.setText(shopper.getCreditCardInfo().getBillingContactInfo().getFullName());//"No name defined" is the default value.
         //String allDots = savedCardNumber.replaceAll("[0-9]", "•");
         //String rplace = allDots.substring(0, last4position) + lastreal4;
-        creditCardNumberEditText.setHint("•••• •••• •••• " + creditCardInfo.getCreditCard().getCardLastFourDigits());
-        changeCardEditTextDrawable(creditCardInfo.getCreditCard().getCardType());
-        expDateEditText.setText(creditCardInfo.getCreditCard().getExpirationDateForEditText());
+        creditCardNumberEditText.setHint("•••• •••• •••• " + shopper.getCreditCardInfo().getCreditCard().getCardLastFourDigits());
+        changeCardEditTextDrawable(shopper.getCreditCardInfo().getCreditCard().getCardType());
+        expDateEditText.setText(shopper.getCreditCardInfo().getCreditCard().getExpirationDateForEditText());
         cvvEditText.setVisibility(View.INVISIBLE);
         cvvLabelTextView.setVisibility(View.INVISIBLE);
     }
@@ -453,7 +454,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         if (!checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
             setFocusOnCCFragmentEditText(checkWhichFieldIsInValid);
 
-        if (creditCardInfo.getCreditCard().validateAll())
+        if (shopper.getCreditCardInfo().getCreditCard().validateAll())
             validInput &= true;
 
         return validInput;
@@ -487,7 +488,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean cvvValidation() {
-        if (!creditCardInfo.getCreditCard().validateCVC()) {
+        if (!shopper.getCreditCardInfo().getCreditCard().validateCVC()) {
             cvvLabelTextView.setTextColor(Color.RED);
             return false;
         } else {
@@ -514,21 +515,21 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             valid = false;
         }
 
-        if (!creditCardInfo.getCreditCard().requireValidation()) {
+        if (!shopper.getCreditCardInfo().getCreditCard().requireValidation()) {
             valid = true;
         }
-        if (!creditCardInfo.getCreditCard().isModified() && creditCardInfo.getCreditCard().validForReuse())
+        if (!shopper.getCreditCardInfo().getCreditCard().isModified() && shopper.getCreditCardInfo().getCreditCard().validForReuse())
             valid = true;
         else {
-            creditCardInfo.getBillingContactInfo().setZip(zipEditText.getText().toString().trim());
-            creditCardInfo.getBillingContactInfo().setFullName(formattedName);
-            creditCardInfo.getCreditCard().update(
+            shopper.getCreditCardInfo().getBillingContactInfo().setZip(zipEditText.getText().toString().trim());
+            shopper.getCreditCardInfo().getBillingContactInfo().setFullName(formattedName);
+            shopper.getCreditCardInfo().getCreditCard().update(
                     creditCardNumberEditText.getText().toString().trim(),
                     expDateEditText.getText().toString().trim(),
                     cvvEditText.getText().toString().trim()
             );
 
-            if (!creditCardInfo.getCreditCard().validateNumber()) {
+            if (!shopper.getCreditCardInfo().getCreditCard().validateNumber()) {
                 creditCardLabelTextView.setTextColor(Color.RED);
                 //creditCardNumberEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_invalid_cc, 0);
                 invaildCreditCardMessageTextView.setVisibility(View.VISIBLE);
@@ -540,7 +541,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
             }
         }
-        changeCardEditTextDrawable(creditCardInfo.getCreditCard().getCardType());
+        changeCardEditTextDrawable(shopper.getCreditCardInfo().getCreditCard().getCardType());
         return valid;
     }
 
@@ -571,7 +572,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private void cardModified() {
-        creditCardInfo.getCreditCard().setModified();
+        shopper.getCreditCardInfo().getCreditCard().setModified();
         cvvEditText.setVisibility(View.VISIBLE);
         cvvLabelTextView.setVisibility(View.VISIBLE);
         creditCardNumberEditText.setHint("");
@@ -597,25 +598,24 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             invaildCreditCardMessageTextView.setVisibility(View.GONE);
             invalidShopperName.setVisibility(View.GONE);
             BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
-            bluesnapCheckoutActivity.setCreditCardInfo(creditCardInfo);
-            bluesnapCheckoutActivity.setCard(creditCardInfo.getCreditCard());
+            bluesnapCheckoutActivity.setShopper(shopper);
 
             PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
 
-            paymentResult.setCardZipCode(creditCardInfo.getBillingContactInfo().getZip());
+            paymentResult.setCardZipCode(shopper.getCreditCardInfo().getBillingContactInfo().getZip());
             paymentResult.setEmail(emailEditText.getText().toString().trim());
             if (paymentRequest.isBillingRequired()) {
-                BillingInfo billingInfo = creditCardInfo.getBillingContactInfo();
+                BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
                 billingInfo.setAddress(billingAddressLineEditText.getText().toString().trim());
                 billingInfo.setCity(billingCityEditText.getText().toString().trim());
                 billingInfo.setState(billingStateEditText.getText().toString().trim());
-                billingInfo.setZip(creditCardInfo.getBillingContactInfo().getZip());
+                billingInfo.setZip(shopper.getCreditCardInfo().getBillingContactInfo().getZip());
                 billingInfo.setCountry(getCountryText());
-                bluesnapCheckoutActivity.setBillingInfo(billingInfo);
+                bluesnapCheckoutActivity.setBillingContactInfo(billingInfo);
             }
 
-            paymentResult.setLast4Digits(creditCardInfo.getCreditCard().getCardLastFourDigits());
-            paymentResult.setExpDate(creditCardInfo.getCreditCard().getExpirationDate());
+            paymentResult.setLast4Digits(shopper.getCreditCardInfo().getCreditCard().getCardLastFourDigits());
+            paymentResult.setExpDate(shopper.getCreditCardInfo().getCreditCard().getExpirationDate());
             String[] nameFieldParts = shopperFullNameEditText.getText().toString().trim().split(" ");
             paymentResult.setShopperFirstName(nameFieldParts[0]);
             if (nameFieldParts.length > 1)
@@ -652,8 +652,8 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (creditCardInfo.getCreditCard() != null)
-                creditCardInfo.getCreditCard().setModified();
+            if (shopper.getCreditCardInfo().getCreditCard() != null)
+                shopper.getCreditCardInfo().getCreditCard().setModified();
 
             if (s.length() <= 2)
                 return;

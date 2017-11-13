@@ -7,11 +7,15 @@ import android.util.Log;
 
 import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.SDKConfiguration;
+import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
@@ -210,53 +214,44 @@ public class BlueSnapService {
     /**
      * Update details on the BlueSnap Server
      *
-     * @param creditCardInfo  {@link CreditCardInfo}
+     * @param shopper  {@link Shopper}
+     * @param fraudSessionId    {@link String}
      * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void tokenizeCard(CreditCardInfo creditCardInfo, String fraudSessionId, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
-        tokenizeCard(creditCardInfo, fraudSessionId, null, responseHandler);
-    }
-
-    /**
-     * Update details on the BlueSnap Server
-     *
-     * @param creditCardInfo  {@link CreditCardInfo}
-     * @param shippingInfo    {@link ContactInfo}
-     * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException
-     * @throws UnsupportedEncodingException
-     */
-    public void tokenizeCard(CreditCardInfo creditCardInfo, String fraudSessionId, ContactInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void tokenizeCard(Shopper shopper, String fraudSessionId, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        CreditCard creditCard = shopper.getCreditCardInfo().getCreditCard();
+        BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
         //TODO: add full billing, email and optional shipping
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
-        postData.put(CCNUMBER, creditCardInfo.getCreditCard().getNumber());
-        postData.put(CVV, creditCardInfo.getCreditCard().getCvc());
-        postData.put(EXPDATE, creditCardInfo.getCreditCard().getExpirationDate());
+        postData.put(CCNUMBER, creditCard.getNumber());
+        postData.put(CVV, creditCard.getCvc());
+        postData.put(EXPDATE, creditCard.getExpirationDate());
 
-        postData.put(BILLINGFIRSTNAME, creditCardInfo.getBillingContactInfo().getFirstName());
-        postData.put(BILLINGLASTNAME, creditCardInfo.getBillingContactInfo().getLastName());
-        postData.put(BILLINGCOUNTRY, creditCardInfo.getBillingContactInfo().getCountry());
+        postData.put(BILLINGFIRSTNAME, billingInfo.getFirstName());
+        postData.put(BILLINGLASTNAME, billingInfo.getLastName());
+        postData.put(BILLINGCOUNTRY, billingInfo.getCountry());
 
-        if (null != creditCardInfo.getBillingContactInfo().getZip() && "".equals(creditCardInfo.getBillingContactInfo().getZip()))
-            postData.put(BILLINGZIP, creditCardInfo.getBillingContactInfo().getZip());
+        if (null != billingInfo.getZip() && "".equals(billingInfo.getZip()))
+            postData.put(BILLINGZIP, billingInfo.getZip());
 
         if (paymentRequest.isBillingRequired()) {
-            postData.put(BILLINGSTATE, creditCardInfo.getBillingContactInfo().getState());
-            postData.put(BILLINGCITY, creditCardInfo.getBillingContactInfo().getCity());
-            postData.put(BILLINGADDRESS, creditCardInfo.getBillingContactInfo().getAddress());
+            postData.put(BILLINGSTATE, billingInfo.getState());
+            postData.put(BILLINGCITY, billingInfo.getCity());
+            postData.put(BILLINGADDRESS, billingInfo.getAddress());
         }
 
         postData.put(FRAUDSESSIONID, fraudSessionId);
 
         if (paymentRequest.isEmailRequired())
-            postData.put(EMAIL, creditCardInfo.getBillingContactInfo().getEmail());
+            postData.put(EMAIL, billingInfo.getEmail());
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
         if (paymentRequest.isShippingRequired()) {
+            ShippingInfo shippingInfo= shopper.getShippingContactInfo();
             postData.put(SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
             postData.put(SHIPPINGLASTNAME, shippingInfo.getLastName());
             postData.put(SHIPPINGCOUNTRY, shippingInfo.getCountry());

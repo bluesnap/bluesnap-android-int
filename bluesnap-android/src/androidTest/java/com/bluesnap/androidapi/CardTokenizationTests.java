@@ -3,10 +3,12 @@ package com.bluesnap.androidapi;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -40,9 +42,10 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         paymentRequest.setCurrencyNameCode("USD");
         blueSnapService.setPaymentRequest(paymentRequest);
 
-        final CreditCardInfo creditCardInfo = new CreditCardInfo();
+        final Shopper shopper = new Shopper();
+        final CreditCardInfo creditCardInfo = shopper.getCreditCardInfo();
         final CreditCard card = creditCardInfo.getCreditCard();
-        final ContactInfo billingInfo = creditCardInfo.getBillingContactInfo();
+        final BillingInfo billingInfo = creditCardInfo.getBillingContactInfo();
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
         card.update(number, "11/50", "123");
         billingInfo.setFullName("John Doe");
@@ -53,7 +56,7 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
                 try {
-                    blueSnapService.tokenizeCard(creditCardInfo, "ABCDEF", new JsonHttpResponseHandler() {
+                    blueSnapService.tokenizeCard(shopper, "ABCDEF", new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 

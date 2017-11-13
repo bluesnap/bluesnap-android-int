@@ -21,7 +21,6 @@ public class ShippingInfo extends ContactInfo {
 
     public ShippingInfo() {
         super();
-
     }
 
     public void writeToParcel(Parcel parcel, int flags) {

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * A representation of server exchange rate.
  */
-public class Shopper extends ContactInfo{
+public class Shopper extends ContactInfo {
 
     @SerializedName("vaultedShopperId")
     private int vaultedShopperId;
@@ -32,6 +32,21 @@ public class Shopper extends ContactInfo{
     @SerializedName("lastPaymentInfo")
     private LastPaymentInfo lastPaymentInfo;
 
+    private CreditCardInfo creditCardInfo;
+
+    public CreditCardInfo getCreditCardInfo() {
+        return creditCardInfo;
+    }
+
+    public void setCreditCardInfo(CreditCardInfo creditCardInfo) {
+        this.creditCardInfo = creditCardInfo;
+    }
+
+    public Shopper() {
+        shippingContactInfo = new ShippingInfo();
+        creditCardInfo = new CreditCardInfo();
+    }
+
     public int getVaultedShopperId() {
         return vaultedShopperId;
     }
@@ -39,7 +54,6 @@ public class Shopper extends ContactInfo{
     public void setVaultedShopperId(int vaultedShopperId) {
         this.vaultedShopperId = vaultedShopperId;
     }
-
 
     @Nullable
     public String getEmail() {

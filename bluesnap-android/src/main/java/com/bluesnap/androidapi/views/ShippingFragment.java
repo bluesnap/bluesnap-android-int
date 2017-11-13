@@ -305,17 +305,15 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                 setFocusOnShippingFragmentEditText(checkWhichFieldIsInValid);
 
             if (validInput) {
-                ShippingInfo shippingInfo = new ShippingInfo();
-                String fullName = shippingNameEditText.getText().toString().trim();
-                shippingInfo.setFirstName(fullName.substring(fullName.lastIndexOf(" ")+1));
-                shippingInfo.setFirstName(fullName.substring(0, fullName.lastIndexOf(' ')));
+                BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
+                ShippingInfo shippingInfo = bluesnapCheckoutActivity.getShippingContactInfo();
+                shippingInfo.setFullName(shippingNameEditText.getText().toString().trim());
                 shippingInfo.setAddress(shippingAddressLineEditText.getText().toString().trim());
                 shippingInfo.setCity(shippingCityEditText.getText().toString().trim());
                 shippingInfo.setState(shippingStateEditText.getText().toString().trim());
                 shippingInfo.setCountry(getCountryText());
                 shippingInfo.setZip(shippingZipEditText.getText().toString().trim());
                 //shippingInfo.setEmail(shippingEmailEditText.getText().toString().trim());
-                BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
                 bluesnapCheckoutActivity.finishFromShippingFragment(shippingInfo);
             }
         }

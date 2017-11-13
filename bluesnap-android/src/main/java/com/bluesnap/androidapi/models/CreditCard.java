@@ -100,10 +100,12 @@ public class CreditCard {
         expirationYear = 0;
 
         try {
-            String[] mmyy = expDateString.split("\\/");
-            this.setExpirationMonth(Integer.valueOf(mmyy[0]));
-            this.setExpirationYear(Integer.valueOf(mmyy[1]));
-            return;
+            if (!"".equals(expDateString)) {
+                String[] mmyy = expDateString.split("\\/");
+                this.setExpirationMonth(Integer.valueOf(mmyy[0]));
+                this.setExpirationYear(Integer.valueOf(mmyy[1]));
+                return;
+            }
         } catch (Exception e) {
             Log.e("setEX", "setexp", e);
         }
