@@ -242,6 +242,54 @@ public class BlueSnapService {
         blueSnapAPI.tokenizeCard(new JSONObject(), responseHandler);
     }
 
+    private interface AfterNewTokenCreatedAction {
+        void complete();
+    }
+
+    private void tokenExpiredAction(final BluesnapServiceCallback callback, final AfterNewTokenCreatedAction afterNewTokenCreatedAction) {
+        // try to PUT empty {} to check if token is expired
+        try {
+            checkTokenIsExpired(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
+                    callback.onFailure();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                    if (statusCode == 400 && null != tokenProvider) {
+                        try {
+                            JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                            JSONObject rs3 = (JSONObject) rs2.get(0);
+                            if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                                getTokenProvider().getNewToken(
+                                        new TokenServiceCallback() {
+                                            @Override
+                                            public void complete(String newToken) {
+                                                setNewToken(newToken);
+                                                afterNewTokenCreatedAction.complete();
+                                            }
+                                        }
+                                );
+                        } catch (JSONException e) {
+                            Log.e(TAG, "json parsing exception", e);
+                        }
+                    } else {
+                        String errorMsg = String.format("Service Error %s, %s", statusCode);
+                        Log.e(TAG, errorMsg, throwable);
+                        callback.onFailure();
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            Log.e(TAG, "json parsing exception", e);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Unsupported Encoding Exception", e);
+        }
+    }
+
     /**
      * SDK Init.
      *
@@ -267,47 +315,12 @@ public class BlueSnapService {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, "SDK Init service error", throwable);
-                // try to PUT empty {} to check if token is expired
-                try {
-                    checkTokenIsExpired(new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
-                            callback.onFailure();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400 && null != tokenProvider) {
-                                try {
-                                    JSONArray rs2 = (JSONArray) errorResponse.get("message");
-                                    JSONObject rs3 = (JSONObject) rs2.get(0);
-                                    if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
-                                        getTokenProvider().getNewToken(
-                                                new TokenServiceCallback() {
-                                                    @Override
-                                                    public void complete(String newToken) {
-                                                        setNewToken(newToken);
-                                                        sdkInit(baseCurrency, bluesnapServiceCallback);
-                                                    }
-                                                }
-                                        );
-                                } catch (JSONException e) {
-                                    Log.e(TAG, "json parsing exception", e);
-                                }
-                            } else {
-                                String errorMsg = String.format("Service Error %s, %s", statusCode);
-                                Log.e(TAG, errorMsg, throwable);
-                                callback.onFailure();
-                            }
-                        }
-                    });
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                } catch (UnsupportedEncodingException e) {
-                    Log.e(TAG, "Unsupported Encoding Exception", e);
-                }
+                tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
+                    @Override
+                    public void complete() {
+                        sdkInit(baseCurrency, bluesnapServiceCallback);
+                    }
+                });
             }
         });
     }
@@ -357,46 +370,12 @@ public class BlueSnapService {
                     Log.e(TAG, "json parsing exception", e);
                 }
 
-                // try to PUT empty {} to check if token is expired
-                try {
-                    checkTokenIsExpired(new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            callback.onFailure();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                            if (statusCode == 400 && null != tokenProvider) {
-                                try {
-                                    JSONArray rs2 = (JSONArray) errorResponse.get("message");
-                                    JSONObject rs3 = (JSONObject) rs2.get(0);
-                                    if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
-                                        getTokenProvider().getNewToken(
-                                                new TokenServiceCallback() {
-                                                    @Override
-                                                    public void complete(String newToken) {
-                                                        setNewToken(newToken);
-                                                        createPayPalToken(amount, currency, callback);
-                                                    }
-                                                }
-                                        );
-                                } catch (JSONException e) {
-                                    Log.e(TAG, "json parsing exception", e);
-                                }
-                            } else {
-                                String errorMsg = String.format("Service Error %s, %s", statusCode);
-                                Log.e(TAG, errorMsg, throwable);
-                                callback.onFailure();
-                            }
-                        }
-                    });
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                } catch (UnsupportedEncodingException e) {
-                    Log.e(TAG, "Unsupported Encoding Exception", e);
-                }
+                tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
+                    @Override
+                    public void complete() {
+                        createPayPalToken(amount, currency, callback);
+                    }
+                });
             }
         });
     }
