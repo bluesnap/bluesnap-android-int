@@ -278,11 +278,11 @@ public class BluesnapCheckoutActivity extends Activity {
         Log.d(TAG, "Testing if card requires server tokenization:" + getCreditCard().toString());
         if (!getCreditCardInfo().getCreditCard().isModified()) {
             PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
-            paymentResult.setKountSessionId(kountSessionId);
             paymentResult.setLast4Digits(getCreditCard().getCardLastFourDigits());
             paymentResult.setCardType(getCreditCard().getCardType());
             paymentResult.setExpDate(getCreditCard().getExpirationDate());
-            paymentResult.setCardZipCode(getBillingContactInfo().getZip());
+            paymentResult.setBillingInfo(getBillingContactInfo());
+            paymentResult.setShippingInfo(getShippingContactInfo());
             paymentResult.setAmount(paymentRequest.getAmount());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
             //prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
@@ -311,7 +311,6 @@ public class BluesnapCheckoutActivity extends Activity {
                     String Last4 = response.getString("last4Digits");
                     String ccType = response.getString("ccType");
                     PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
-                    paymentResult.setKountSessionId(kountSessionId);
                     // update last4 from server result
                     paymentResult.setLast4Digits(Last4);
                     // update card type from server result
@@ -389,6 +388,7 @@ public class BluesnapCheckoutActivity extends Activity {
 
     public void setShippingContactInfo(ShippingInfo shippingInfo) {
         shopper.setShippingContactInfo(shippingInfo);
+        blueSnapService.getPaymentResult().setShippingInfo(shippingInfo);
     }
 
     public BillingInfo getBillingContactInfo() {
@@ -397,6 +397,7 @@ public class BluesnapCheckoutActivity extends Activity {
 
     public void setBillingContactInfo(BillingInfo billingInfo) {
         this.shopper.getCreditCardInfo().setBillingContactInfo(billingInfo);
+        blueSnapService.getPaymentResult().setBillingInfo(billingInfo);
     }
 
     public CreditCardInfo getCreditCardInfo() {

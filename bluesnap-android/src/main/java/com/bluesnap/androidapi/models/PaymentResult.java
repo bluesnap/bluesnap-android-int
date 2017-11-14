@@ -22,20 +22,21 @@ public class PaymentResult implements Parcelable {
         }
     };
 
-    private String last4Digits;
     private Double amount;
     private String currencyNameCode;
-    private String shopperID;
+
+    private String last4Digits;
     private String cardType;
     private String expDate;
-    private String shopperFirstName;
-    private String shopperLastName;
-    private String cardZipCode;
-    private String paypalInvoiceId;
-    private String token;
-    private String kountSessionId;
-    private String email;
 
+    private String paypalInvoiceId;
+
+    private String shopperID;
+
+    private BillingInfo billingInfo;
+    private ShippingInfo shippingInfo;
+
+    private String token;
 
     public PaymentResult() {
     }
@@ -47,12 +48,9 @@ public class PaymentResult implements Parcelable {
         setCurrencyNameCode(in.readString());
         setCardType(in.readString());
         setExpDate(in.readString());
-        setShopperFirstName(in.readString());
-        setShopperLastName(in.readString());
-        setCardZipCode(in.readString());
+        setBillingInfo((BillingInfo) in.readParcelable(BillingInfo.class.getClassLoader()));
+        setShippingInfo((ShippingInfo) in.readParcelable(ShippingInfo.class.getClassLoader()));
         setPaypalInvoiceId(in.readString());
-        setKountSessionId(in.readString());
-        setEmail(in.readString());
         setToken(in.readString());
     }
 
@@ -64,12 +62,9 @@ public class PaymentResult implements Parcelable {
         dest.writeString(getCurrencyNameCode());
         dest.writeString(getCardType());
         dest.writeString(getExpDate());
-        dest.writeString(getShopperFirstName());
-        dest.writeString(getShopperLastName());
-        dest.writeString(getCardZipCode());
+        dest.writeParcelable(billingInfo, flags);
+        dest.writeParcelable(shippingInfo, flags);
         dest.writeString(getPaypalInvoiceId());
-        dest.writeString(getKountSessionId());
-        dest.writeString(getEmail());
         dest.writeString(getToken());
     }
 
@@ -114,19 +109,16 @@ public class PaymentResult implements Parcelable {
     @Override
     public String toString() {
         return "PaymentResult{" +
-                "last4Digits='" + getLast4Digits() + '\'' +
-                ", amount=" + getAmount() +
+                "amount=" + getAmount() + '\'' +
                 ", currencyNameCode='" + getCurrencyNameCode() + '\'' +
-                ", shopperID='" + getShopperID() + '\'' +
+                ", last4Digits='" + getLast4Digits() + '\'' +
                 ", cardType='" + getCardType() + '\'' +
                 ", expDate='" + getExpDate() + '\'' +
-                ", shopperFirstName='" + getShopperFirstName() + '\'' +
-                ", shopperLastName='" + getShopperLastName() + '\'' +
-                ", email=" + email + '\'' +
-                ", cardZipCode='" + getCardZipCode() + '\'' +
-                ", paypalInvoiceId=" + paypalInvoiceId + '\'' +
-                ", kountSessionId=" + kountSessionId + '\'' +
+                ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' +
+                ", shopperID='" + getShopperID() + '\'' +
                 ", token=" + getToken() + '\'' +
+                ", billingInfo" + billingInfo + '\'' +
+                ", shippingInfo" + shippingInfo + '\'' +
                 '}';
     }
 
@@ -178,28 +170,20 @@ public class PaymentResult implements Parcelable {
         this.expDate = expDate;
     }
 
-    public String getShopperFirstName() {
-        return shopperFirstName;
+    public BillingInfo getBillingInfo() {
+        return billingInfo;
     }
 
-    public void setShopperFirstName(String shopperFirstName) {
-        this.shopperFirstName = shopperFirstName;
+    public void setBillingInfo(BillingInfo billingInfo) {
+        this.billingInfo = billingInfo;
     }
 
-    public String getShopperLastName() {
-        return shopperLastName;
+    public ShippingInfo getShippingInfo() {
+        return shippingInfo;
     }
 
-    public void setShopperLastName(String shopperLastName) {
-        this.shopperLastName = shopperLastName;
-    }
-
-    public String getCardZipCode() {
-        return cardZipCode;
-    }
-
-    public void setCardZipCode(String cardZipCode) {
-        this.cardZipCode = cardZipCode;
+    public void setShippingInfo(ShippingInfo shippingInfo) {
+        this.shippingInfo = shippingInfo;
     }
 
     /**
@@ -221,21 +205,5 @@ public class PaymentResult implements Parcelable {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getKountSessionId() {
-        return kountSessionId;
-    }
-
-    public void setKountSessionId(String kountSessionId) {
-        this.kountSessionId = kountSessionId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

@@ -46,49 +46,23 @@ public class DemoTransactions {
         return token;
     }
 
-    public void createCreditCardTransaction(String firstName, String lastName, String token, String currency, Double amount, final BluesnapServiceCallback callback, String fraudSessionId) {
-        createCreditCardTransaction(firstName, lastName, token, currency, amount, false, "", "", callback, fraudSessionId);
-    }
-
-    public void createCreditCardTransaction(String firstName, String lastName, String token, String currency, Double amount, boolean isReturningShopper, String last4Digits, String cardType, final BluesnapServiceCallback callback, String fraudSessionId) {
+    public void createCreditCardTransaction(String token, String currency, Double amount, final BluesnapServiceCallback callback) {
 
         //TODO: I'm just a string but please don't make me look that bad..Use String.format
-        String bodyStart = "<card-transaction xmlns=\"http://ws.plimus.com\">" +
+        String body = "<card-transaction xmlns=\"http://ws.plimus.com\">" +
                 "<card-transaction-type>AUTH_CAPTURE</card-transaction-type>" +
                 "<recurring-transaction>ECOMMERCE</recurring-transaction>" +
                 "<soft-descriptor>MobileSDK</soft-descriptor>" +
                 "<amount>" + amount + "</amount>" +
-                "<currency>" + currency + "</currency>";
-        String bodyMiddle = "<card-holder-info>" +
-                "<first-name>" + firstName + "</first-name>" +
-                "<last-name>" + lastName + "</last-name>" +
-                "</card-holder-info>" +
-                "<transaction-fraud-info>" +
-                "<fraud-session-id>" + fraudSessionId + "</fraud-session-id>" +
-                "</transaction-fraud-info>"
-                ;
-        String bodyEnd = "</card-transaction>";
-        String body = bodyStart;
-
-        if (!isReturningShopper) {
-            body += bodyMiddle +
-                    "<pf-token>" + token + "</pf-token>" +
-                    bodyEnd;
-        } else if (!"".equals(getShopperId())) {
-            body += "<vaulted-shopper-id>" + getShopperId() + "</vaulted-shopper-id>" +
-                    bodyMiddle +
-                    " <credit-card>" +
-                    "<card-last-four-digits>" + last4Digits + "</card-last-four-digits>" +
-                    "<card-type>" + cardType.toUpperCase() + "</card-type>" +
-                    "</credit-card>" +
-                    bodyEnd;
-        }
+                "<currency>" + currency + "</currency>" +
+                "<pf-token>" + token + "</pf-token>" +
+                "</card-transaction>";
 
         StringEntity entity = new StringEntity(body, "UTF-8");
         AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
         Log.d(TAG, "Create transaction body:\n" + body);
-        httpClient.post(getContext(), SANDBOX_URL+ SANDBOX_CREATE_TRANSACTION, entity, "application/xml", new TextHttpResponseHandler() {
+        httpClient.post(getContext(), SANDBOX_URL + SANDBOX_CREATE_TRANSACTION, entity, "application/xml", new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Log.e(TAG, responseString, throwable);

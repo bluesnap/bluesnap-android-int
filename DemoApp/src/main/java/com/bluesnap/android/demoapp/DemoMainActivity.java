@@ -377,7 +377,7 @@ public class DemoMainActivity extends Activity {
 
         // Here we can access the payment result
         Bundle extras = data.getExtras();
-        PaymentResult paymentResult = (PaymentResult) extras.get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+        PaymentResult paymentResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT); //TODO: why??? the change????? why???
 
         //Start a demo activity that shows purchase summary.
         Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);

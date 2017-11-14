@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
@@ -9,15 +10,27 @@ import com.google.gson.annotations.SerializedName;
  * Created by roy.biber on 12/11/2017.
  */
 
-public class BillingInfo extends ContactInfo {
+public class BillingInfo extends ContactInfo implements Parcelable{
     @Nullable
     @SerializedName("email")
     private String email;
 
-    private BillingInfo(Parcel parcel) {
+    protected BillingInfo(Parcel parcel) {
         super(parcel);
         email = parcel.readString();
     }
+
+    public static final Creator<BillingInfo> CREATOR = new Creator<BillingInfo>() {
+        @Override
+        public BillingInfo createFromParcel(Parcel in) {
+            return new BillingInfo(in);
+        }
+
+        @Override
+        public BillingInfo[] newArray(int size) {
+            return new BillingInfo[size];
+        }
+    };
 
     public BillingInfo() {
         super();

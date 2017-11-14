@@ -597,29 +597,29 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             shopperNameIconLabelTextView.setTextColor(Color.BLACK);
             invaildCreditCardMessageTextView.setVisibility(View.GONE);
             invalidShopperName.setVisibility(View.GONE);
+
             BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
             bluesnapCheckoutActivity.setShopper(shopper);
 
             PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
-
-            paymentResult.setCardZipCode(shopper.getCreditCardInfo().getBillingContactInfo().getZip());
-            paymentResult.setEmail(emailEditText.getText().toString().trim());
-            if (paymentRequest.isBillingRequired()) {
-                BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
-                billingInfo.setAddress(billingAddressLineEditText.getText().toString().trim());
-                billingInfo.setCity(billingCityEditText.getText().toString().trim());
-                billingInfo.setState(billingStateEditText.getText().toString().trim());
-                billingInfo.setZip(shopper.getCreditCardInfo().getBillingContactInfo().getZip());
-                billingInfo.setCountry(getCountryText());
-                bluesnapCheckoutActivity.setBillingContactInfo(billingInfo);
-            }
+            BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
 
             paymentResult.setLast4Digits(shopper.getCreditCardInfo().getCreditCard().getCardLastFourDigits());
             paymentResult.setExpDate(shopper.getCreditCardInfo().getCreditCard().getExpirationDate());
-            String[] nameFieldParts = shopperFullNameEditText.getText().toString().trim().split(" ");
-            paymentResult.setShopperFirstName(nameFieldParts[0]);
-            if (nameFieldParts.length > 1)
-                paymentResult.setShopperLastName(nameFieldParts[1]);
+
+            billingInfo.setFullName(shopperFullNameEditText.getText().toString().trim());
+            billingInfo.setZip(shopper.getCreditCardInfo().getBillingContactInfo().getZip());
+            billingInfo.setCountry(getCountryText());
+
+            if (paymentRequest.isEmailRequired())
+                billingInfo.setEmail(emailEditText.getText().toString().trim());
+
+            if (paymentRequest.isBillingRequired()) {
+                billingInfo.setAddress(billingAddressLineEditText.getText().toString().trim());
+                billingInfo.setCity(billingCityEditText.getText().toString().trim());
+                billingInfo.setState(billingStateEditText.getText().toString().trim());
+            }
+            bluesnapCheckoutActivity.setBillingContactInfo(billingInfo);
 
             if (paymentRequest.isShippingRequired()) {
                 fragmentManager = getFragmentManager();

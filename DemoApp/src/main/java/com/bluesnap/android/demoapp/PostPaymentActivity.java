@@ -12,8 +12,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 
@@ -32,8 +34,8 @@ public class PostPaymentActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_payment);
         PaymentResult paymentResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
-        ContactInfo shippingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
-        ContactInfo billingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        ShippingInfo shippingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+        BillingInfo billingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         TextView paymentResultTextView2
                 = (TextView) findViewById(R.id.paymentResultTextView2);
         continueShippingView = (TextView) findViewById(R.id.continueShippingButton);
@@ -55,7 +57,7 @@ public class PostPaymentActivity extends Activity {
                 //setDialog("Transaction success with id:" + paymentResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {
                 //setDialog(paymentResult.toString() + "\n" + shippingInfo + "\n" + billingInfo, "Payment Result");
-                transactions.createCreditCardTransaction(paymentResult.getShopperFirstName(), paymentResult.getShopperLastName(), merchantToken, paymentResult.getCurrencyNameCode(), paymentResult.getAmount(), new BluesnapServiceCallback() {
+                transactions.createCreditCardTransaction(merchantToken, paymentResult.getCurrencyNameCode(), paymentResult.getAmount(), new BluesnapServiceCallback() {
                     @Override
                     public void onSuccess() {
                         setContinueButton(transactions.getMessage(), transactions.getTitle());
@@ -65,7 +67,7 @@ public class PostPaymentActivity extends Activity {
                     public void onFailure() {
                         setContinueButton(transactions.getMessage(), transactions.getTitle());
                     }
-                }, paymentResult.getKountSessionId());
+                });
             }
         }
     }
