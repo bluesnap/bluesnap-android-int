@@ -1,22 +1,15 @@
 package com.bluesnap.androidapi.services;
 
-import android.util.Log;
-
 import com.bluesnap.androidapi.BuildConfig;
-import com.bluesnap.androidapi.models.CreditCardTypes;
-import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.ByteArrayEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.protocol.HTTP;

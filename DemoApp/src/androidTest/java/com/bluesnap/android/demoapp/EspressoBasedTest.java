@@ -112,7 +112,7 @@ public class EspressoBasedTest {
                                 };
                             }
                         };
-                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, new BluesnapServiceCallback() {
+                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, null, new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service got rates");

@@ -31,6 +31,7 @@ import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.BluesnapFragment;
 import com.bluesnap.androidapi.views.CurrencyActivity;
@@ -60,16 +61,11 @@ public class BluesnapCheckoutActivity extends Activity {
     public final static String MERCHANT_TOKEN = "com.bluesnap.intent.BSNAP_CLIENT_PRIVATE_KEY";
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
-    public static final String EXTRA_KOUNT_MERCHANT_ID = "com.bluesnap.intent.KOUNT_MERCHANT_ID";
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     public static final int REQUEST_CODE_DEFAULT = 1;
-    public static final int KOUNT_MERCHANT_ID = 700000;
     private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     private static final int RESULT_SDK_FAILED = -2;
-    private static final int KOUNT_REQUST_ID = 3;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
-    private Context context;
-    private DataCollector kount;
     private BluesnapFragment bluesnapFragment;
     //private PrefsStorage prefsStorage;
     private FragmentManager fragmentManager;
@@ -78,7 +74,6 @@ public class BluesnapCheckoutActivity extends Activity {
     private String sharedCurrency;
     private Shopper shopper;
     private ShippingFragment shippingFragment;
-    private String kountSessionId;
     private Intent resultIntent;
 
 
@@ -104,74 +99,6 @@ public class BluesnapCheckoutActivity extends Activity {
         if (blueSnapService.isexpressCheckoutActive())
             setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
-        Integer kountMerchantID = getIntent().getIntExtra(EXTRA_KOUNT_MERCHANT_ID, KOUNT_MERCHANT_ID);
-        context = getApplicationContext();
-        kount = DataCollector.getInstance();
-        try {
-            setupKount(kountMerchantID);
-        } catch (Exception e) {
-            Log.e(TAG, "Kount SDK initialization error");
-        }
-    }
-
-    private void setupKount(Integer kountMerchantID) {
-        if (kountMerchantID == null || kountMerchantID == 0) {
-            kount.setMerchantID(KOUNT_MERCHANT_ID);
-        } else {
-            kount.setMerchantID(kountMerchantID);
-        }
-
-
-        kount.setContext(context);
-        kount.setLocationCollectorConfig(DataCollector.LocationConfig.COLLECT);
-
-        if (blueSnapService.getBlueSnapToken().isProduction()) {
-            kount.setEnvironment(DataCollector.ENVIRONMENT_PRODUCTION);
-            kount.setDebug(false);
-
-        } else {
-            kount.setEnvironment(DataCollector.ENVIRONMENT_TEST);
-            kount.setDebug(true);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
-                    Log.d(TAG, "Cannot grant location permission for Kount ");
-                }
-                // This will prompt location access request.
-                //                else {
-                //                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, KOUNT_REQUST_ID);
-                //                }
-            }
-        }
-
-
-        //Run this inside it's on thread.
-        (new Handler(Looper.getMainLooper()))
-                .post(new Runnable() {
-                    public void run() {
-
-                        kountSessionId = UUID.randomUUID().toString();
-                        kountSessionId = kountSessionId.replace("-", "");
-
-                        kount.collectForSession(kountSessionId, new DataCollector.CompletionHandler() {
-                            /* Add handler code here if desired. The handler is optional. */
-                            @Override
-                            public void completed(String sessionID) {
-                                Log.d(TAG, "Kount DataCollector completed");
-                                Log.d(TAG, "Data context: " + context);
-                            }
-
-                            @Override
-                            public void failed(String sessionID, final DataCollector.Error error) {
-                                Log.e(TAG, "Kount DataCollector failed: " + error);
-                                Log.d(TAG, "Data context: " + context);
-                            }
-                        });
-                    }
-                });
     }
 
 
@@ -304,7 +231,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private void tokenizeCardOnServer(final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         this.resultIntent = resultIntent;
 
-        blueSnapService.tokenizeCard(getShopper(), kountSessionId, new JsonHttpResponseHandler() {
+        blueSnapService.tokenizeCard(getShopper(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {

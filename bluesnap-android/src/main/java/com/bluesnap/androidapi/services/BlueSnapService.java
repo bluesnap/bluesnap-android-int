@@ -106,23 +106,27 @@ public class BlueSnapService {
      * Setup the service to talk to the server.
      * This will reset the previous payment request
      *
-     * @param tokenProvider A merchant function for requesting a new token if expired
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * @param tokenProvider A merchant function for requesting a new token if expired
      *                      baseCurrency = USD
+     * @param context       A Merchant Application Context
+     * @param callback      A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, final BluesnapServiceCallback callback) {
-        setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD, callback);
+    public void setup(String merchantToken, TokenProvider tokenProvider, Context context, final BluesnapServiceCallback callback) {
+        setup(merchantToken, tokenProvider, SupportedPaymentMethods.USD, context, callback);
     }
 
     /**
      * Setup the service to talk to the server.
      * This will reset the previous payment request
      *
-     * @param tokenProvider A merchant function for requesting a new token if expired
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * @param tokenProvider A merchant function for requesting a new token if expired
      * @param baseCurrency  A Merchant base currency, obtained from the merchant.
+     * @param context       A Merchant Application Context
+     * @param callback      A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency, final BluesnapServiceCallback callback) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency, Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
         this.baseCurrency = baseCurrency;
         if (null != tokenProvider)
@@ -137,6 +141,13 @@ public class BlueSnapService {
         paymentRequest = null;
 
         sdkInit(baseCurrency, callback);
+
+        try {
+            if (null != context)
+                KountService.getInstance().setupKount(sDKConfiguration.getKountMerchantId(), context, getBlueSnapToken().isProduction());
+        } catch (Exception e) {
+            Log.e(TAG, "Kount SDK initialization error");
+        }
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
@@ -177,17 +188,16 @@ public class BlueSnapService {
      * Update details on the BlueSnap Server
      *
      * @param shopper         {@link Shopper}
-     * @param fraudSessionId  {@link String}
      * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void tokenizeCard(Shopper shopper, String fraudSessionId, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void tokenizeCard(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(createDataObject(shopper, fraudSessionId), responseHandler);
+        blueSnapAPI.tokenizeCard(createDataObject(shopper), responseHandler);
     }
 
-    private JSONObject createDataObject(Shopper shopper, String fraudSessionId) throws JSONException {
+    private JSONObject createDataObject(Shopper shopper) throws JSONException {
         CreditCard creditCard = shopper.getCreditCardInfo().getCreditCard();
         BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
         JSONObject postData = new JSONObject();
@@ -226,7 +236,8 @@ public class BlueSnapService {
             postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
         }
 
-        postData.put(FRAUDSESSIONID, fraudSessionId);
+        if (null != KountService.getInstance().getKountSessionId())
+            postData.put(FRAUDSESSIONID, KountService.getInstance().getKountSessionId());
         return postData;
     }
 

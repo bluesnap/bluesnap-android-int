@@ -1,5 +1,6 @@
 package com.bluesnap.androidapi;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -111,7 +112,7 @@ public class BSAndroidTestsBase {
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
-                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, new BluesnapServiceCallback() {
+                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, null, new BluesnapServiceCallback() {
                     @Override
                     public void onSuccess() {
                         Log.d(TAG, "Got rates callback");

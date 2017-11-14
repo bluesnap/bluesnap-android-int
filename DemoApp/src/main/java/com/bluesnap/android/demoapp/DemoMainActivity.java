@@ -343,7 +343,7 @@ public class DemoMainActivity extends Activity {
     }
 
     private void initControlsAfterToken() {
-        bluesnapService.setup(merchantToken, tokenProvider, new BluesnapServiceCallback() {
+        bluesnapService.setup(merchantToken, tokenProvider, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 Set<String> supportedRates = bluesnapService.getSupportedRates();

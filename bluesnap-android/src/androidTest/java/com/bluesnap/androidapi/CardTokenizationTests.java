@@ -56,7 +56,7 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
                 try {
-                    blueSnapService.tokenizeCard(shopper, "ABCDEF", new JsonHttpResponseHandler() {
+                    blueSnapService.tokenizeCard(shopper, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
