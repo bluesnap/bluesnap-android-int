@@ -11,6 +11,15 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class ShippingInfo extends ContactInfo implements Parcelable {
+    public static final String SHIPPINGFIRSTNAME = "shippingFirstName";
+    public static final String SHIPPINGLASTNAME = "shippingLastName";
+    public static final String SHIPPINGCOUNTRY = "shippingCountry";
+    public static final String SHIPPINGSTATE = "shippingState";
+    public static final String SHIPPINGCITY = "shippingCity";
+    public static final String SHIPPINGADDRESS = "shippingAddress";
+    public static final String SHIPPINGZIP = "shippingZip";
+    public static final String PHONE = "phone";
+
     @Nullable
     @SerializedName("phone")
     private String phone;

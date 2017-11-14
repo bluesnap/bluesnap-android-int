@@ -11,6 +11,15 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class BillingInfo extends ContactInfo implements Parcelable{
+    public static final String BILLINGFIRSTNAME = "billingFirstName";
+    public static final String BILLINGLASTNAME = "billingLastName";
+    public static final String BILLINGCOUNTRY = "billingCountry";
+    public static final String BILLINGSTATE = "billingState";
+    public static final String BILLINGCITY = "billingCity";
+    public static final String BILLINGADDRESS = "billingAddress";
+    public static final String BILLINGZIP = "billingZip";
+    public static final String EMAIL = "email";
+
     @Nullable
     @SerializedName("email")
     private String email;

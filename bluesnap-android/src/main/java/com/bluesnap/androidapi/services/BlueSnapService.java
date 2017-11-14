@@ -17,8 +17,6 @@ import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.bluesnap.androidapi.models.ContactInfo;
-import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
@@ -59,25 +57,6 @@ public class BlueSnapService {
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
 
-    private static final String CCNUMBER = "ccNumber";
-    private static final String CVV = "cvv";
-    private static final String EXPDATE = "expDate";
-    private static final String BILLINGFIRSTNAME = "billingFirstName";
-    private static final String BILLINGLASTNAME = "billingLastName";
-    private static final String BILLINGCOUNTRY = "billingCountry";
-    private static final String BILLINGSTATE = "billingState";
-    private static final String BILLINGCITY = "billingCity";
-    private static final String BILLINGADDRESS = "billingAddress";
-    private static final String BILLINGZIP = "billingZip";
-    private static final String SHIPPINGFIRSTNAME = "shippingFirstName";
-    private static final String SHIPPINGLASTNAME = "shippingLastName";
-    private static final String SHIPPINGCOUNTRY = "shippingCountry";
-    private static final String SHIPPINGSTATE = "shippingState";
-    private static final String SHIPPINGCITY = "shippingCity";
-    private static final String SHIPPINGADDRESS = "shippingAddress";
-    private static final String SHIPPINGZIP = "shippingZip";
-    private static final String EMAIL = "email";
-    private static final String PHONE = "phone";
     private static final String FRAUDSESSIONID = "fraudSessionId";
 
     private static final EventBus busInstance = new EventBus();
@@ -226,39 +205,39 @@ public class BlueSnapService {
         //TODO: add full billing, email and optional shipping
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
-        postData.put(CCNUMBER, creditCard.getNumber());
-        postData.put(CVV, creditCard.getCvc());
-        postData.put(EXPDATE, creditCard.getExpirationDate());
+        postData.put(CreditCard.CCNUMBER, creditCard.getNumber());
+        postData.put(CreditCard.CVV, creditCard.getCvc());
+        postData.put(CreditCard.EXPDATE, creditCard.getExpirationDate());
 
-        postData.put(BILLINGFIRSTNAME, billingInfo.getFirstName());
-        postData.put(BILLINGLASTNAME, billingInfo.getLastName());
-        postData.put(BILLINGCOUNTRY, billingInfo.getCountry());
+        postData.put(BillingInfo.BILLINGFIRSTNAME, billingInfo.getFirstName());
+        postData.put(BillingInfo.BILLINGLASTNAME, billingInfo.getLastName());
+        postData.put(BillingInfo.BILLINGCOUNTRY, billingInfo.getCountry());
 
         if (null != billingInfo.getZip() && !"".equals(billingInfo.getZip()))
-            postData.put(BILLINGZIP, billingInfo.getZip());
+            postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
 
         if (paymentRequest.isBillingRequired()) {
-            postData.put(BILLINGSTATE, billingInfo.getState());
-            postData.put(BILLINGCITY, billingInfo.getCity());
-            postData.put(BILLINGADDRESS, billingInfo.getAddress());
+            postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
+            postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
+            postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
 
         postData.put(FRAUDSESSIONID, fraudSessionId);
 
         if (paymentRequest.isEmailRequired())
-            postData.put(EMAIL, billingInfo.getEmail());
+            postData.put(BillingInfo.EMAIL, billingInfo.getEmail());
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
         if (paymentRequest.isShippingRequired()) {
             ShippingInfo shippingInfo= shopper.getShippingContactInfo();
-            postData.put(SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
-            postData.put(SHIPPINGLASTNAME, shippingInfo.getLastName());
-            postData.put(SHIPPINGCOUNTRY, shippingInfo.getCountry());
-            postData.put(SHIPPINGSTATE, shippingInfo.getState());
-            postData.put(SHIPPINGCITY, shippingInfo.getCity());
-            postData.put(SHIPPINGADDRESS, shippingInfo.getAddress());
-            postData.put(SHIPPINGZIP, shippingInfo.getZip());
+            postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
+            postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
+            postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
+            postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
+            postData.put(ShippingInfo.SHIPPINGCITY, shippingInfo.getCity());
+            postData.put(ShippingInfo.SHIPPINGADDRESS, shippingInfo.getAddress());
+            postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
         }
 
         ByteArrayEntity entity = new ByteArrayEntity(postData.toString().getBytes("UTF-8"));

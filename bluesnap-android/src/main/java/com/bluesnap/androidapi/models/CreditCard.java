@@ -12,6 +12,9 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class CreditCard {
+    public static final String CCNUMBER = "ccNumber";
+    public static final String CVV = "cvv";
+    public static final String EXPDATE = "expDate";
 
     private transient String number;
     private String cvc;
