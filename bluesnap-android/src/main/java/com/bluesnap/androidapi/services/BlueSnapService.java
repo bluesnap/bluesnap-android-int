@@ -44,18 +44,9 @@ import cz.msebera.android.httpclient.protocol.HTTP;
  * Core BlueSnap Service class that handles network and maintains {@link PaymentRequest}
  */
 public class BlueSnapService {
-    public static final String TOKEN_AUTHENTICATION = "Token-Authentication";
-    private static final double BLUESNAP_VERSION_HEADER = 2.0;
     private static final String TAG = BlueSnapService.class.getSimpleName();
-    private static final String CARD_TOKENIZE = "payment-fields-tokens/";
-    private static final String RATES_SERVICE = "tokenized-services/rates";
-    private static final String BASE_CURRENCY = "?base-currency=";
     private static final BlueSnapService INSTANCE = new BlueSnapService();
-    private static final String SUPPORTED_PAYMENT_METHODS = "tokenized-services/supported-payment-methods";
-    private static final String SDK_INIT = "tokenized-services/sdk-init";
-    private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
-    private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
-    private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
+    private final BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
 
     private static final String FRAUDSESSIONID = "fraudSessionId";
 
@@ -63,7 +54,6 @@ public class BlueSnapService {
     private static String paypalURL;
     private static JSONObject errorDescription;
     private static String transactionStatus;
-    private final AsyncHttpClient httpClient = new AsyncHttpClient();
 
     private PaymentResult paymentResult;
     private PaymentRequest paymentRequest;
@@ -140,16 +130,8 @@ public class BlueSnapService {
 
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
-        // check if paypal url is same as before
-        if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && null != getPayPalToken() && !"".equals(getPayPalToken())) {
-            Log.d(TAG, "clearPayPalToken");
-            clearPayPalToken();
-        } else {
-            Log.d(TAG, "PayPal token reuse");
-        }
-
-        clearPayPalToken();
-        setupHttpClient();
+        initPayPal(merchantToken);
+        blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
 
         paymentResult = null;
         paymentRequest = null;
@@ -160,6 +142,16 @@ public class BlueSnapService {
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
 
+    private void initPayPal(String merchantToken) {
+        // check if paypal url is same as before
+        if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && null != getPayPalToken() && !"".equals(getPayPalToken())) {
+            Log.d(TAG, "clearPayPalToken");
+            clearPayPalToken();
+        } else {
+            Log.d(TAG, "PayPal token reuse");
+        }
+    }
+
     /**
      * Change the token after expiration occurred.
      *
@@ -168,7 +160,8 @@ public class BlueSnapService {
     protected void changeExpiredToken(String merchantToken) {
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
         bluesnapToken.setToken(merchantToken);
-        clearPayPalToken();
+        initPayPal(merchantToken);
+        blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
         // after expired token is replaced - placing new token in payment result
         if (null != paymentResult)
             paymentResult.setToken(merchantToken);
@@ -180,31 +173,25 @@ public class BlueSnapService {
         changeExpiredToken(newToken);
     }
 
-
-    private void setupHttpClient() {
-        httpClient.setMaxRetriesAndTimeout(2, 2000);
-        httpClient.setResponseTimeout(60000);
-        httpClient.setConnectTimeout(20000);
-        httpClient.addHeader("ANDROID_SDK_VERSION_NAME", BuildConfig.VERSION_NAME);
-        httpClient.addHeader("ANDROID_SDK_VERSION_CODE", String.valueOf(BuildConfig.VERSION_CODE));
-        httpClient.addHeader("BLUESNAP_VERSION_HEADER", String.valueOf(BLUESNAP_VERSION_HEADER));
-    }
-
     /**
      * Update details on the BlueSnap Server
      *
-     * @param shopper  {@link Shopper}
-     * @param fraudSessionId    {@link String}
+     * @param shopper         {@link Shopper}
+     * @param fraudSessionId  {@link String}
      * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
     public void tokenizeCard(Shopper shopper, String fraudSessionId, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
+        blueSnapAPI.tokenizeCard(createDataObject(shopper, fraudSessionId), responseHandler);
+    }
+
+    private JSONObject createDataObject(Shopper shopper, String fraudSessionId) throws JSONException {
         CreditCard creditCard = shopper.getCreditCardInfo().getCreditCard();
         BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
-        //TODO: add full billing, email and optional shipping
-        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
+
         postData.put(CreditCard.CCNUMBER, creditCard.getNumber());
         postData.put(CreditCard.CVV, creditCard.getCvc());
         postData.put(CreditCard.EXPDATE, creditCard.getExpirationDate());
@@ -222,15 +209,14 @@ public class BlueSnapService {
             postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
 
-        postData.put(FRAUDSESSIONID, fraudSessionId);
-
         if (paymentRequest.isEmailRequired())
             postData.put(BillingInfo.EMAIL, billingInfo.getEmail());
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
         if (paymentRequest.isShippingRequired()) {
-            ShippingInfo shippingInfo= shopper.getShippingContactInfo();
+            ShippingInfo shippingInfo = shopper.getShippingContactInfo();
+            assert shippingInfo != null;
             postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
             postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
             postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
@@ -240,9 +226,8 @@ public class BlueSnapService {
             postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
         }
 
-        ByteArrayEntity entity = new ByteArrayEntity(postData.toString().getBytes("UTF-8"));
-        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-        httpClient.put(null, bluesnapToken.getUrl() + CARD_TOKENIZE + bluesnapToken.getMerchantToken(), entity, "application/json", responseHandler);
+        postData.put(FRAUDSESSIONID, fraudSessionId);
+        return postData;
     }
 
     /**
@@ -254,18 +239,7 @@ public class BlueSnapService {
      */
     private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
-        JSONObject postData = new JSONObject();
-        ByteArrayEntity entity = new ByteArrayEntity(postData.toString().getBytes("UTF-8"));
-        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-        httpClient.put(null, bluesnapToken.getUrl() + CARD_TOKENIZE + bluesnapToken.getMerchantToken(), entity, "application/json", responseHandler);
-    }
-
-    /**
-     * SDK Init.
-     * baseCurrency = USD
-     */
-    public void sdkInit(final BluesnapServiceCallback callback) {
-        sdkInit(SupportedPaymentMethods.USD, callback);
+        blueSnapAPI.tokenizeCard(new JSONObject(), responseHandler);
     }
 
     /**
@@ -273,9 +247,8 @@ public class BlueSnapService {
      *
      * @param baseCurrency All rates are derived from baseCurrency. baseCurrency * AnyRate = AnyCurrency
      */
-    protected void sdkInit(final String baseCurrency, final BluesnapServiceCallback callback) {
-        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
-        httpClient.get(bluesnapToken.getUrl() + SDK_INIT + BASE_CURRENCY + baseCurrency, new JsonHttpResponseHandler() {
+    private void sdkInit(final String baseCurrency, final BluesnapServiceCallback callback) {
+        blueSnapAPI.sdkInit(baseCurrency, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -344,13 +317,7 @@ public class BlueSnapService {
     }
 
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
-        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
-        httpClient.addHeader("Accept", "application/json");
-        String url = bluesnapToken.getUrl() + PAYPAL_SERVICE + amount + "&currency=" + currency;
-        if (paymentRequest.isShippingRequired())
-            url += PAYPAL_SHIPPING;
-
-        httpClient.get(url, new JsonHttpResponseHandler() {
+        blueSnapAPI.createPayPalToken(amount, currency, paymentRequest.isShippingRequired(), new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -435,9 +402,7 @@ public class BlueSnapService {
     }
 
     public void retrieveTransactionStatus(final BluesnapServiceCallback callback) {
-        httpClient.addHeader("Accept", "application/json");
-        httpClient.addHeader(TOKEN_AUTHENTICATION, bluesnapToken.getMerchantToken());
-        httpClient.get(bluesnapToken.getUrl() + RETRIEVE_TRANSACTION_SERVICE, new JsonHttpResponseHandler() {
+        blueSnapAPI.retrieveTransactionStatus(new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
