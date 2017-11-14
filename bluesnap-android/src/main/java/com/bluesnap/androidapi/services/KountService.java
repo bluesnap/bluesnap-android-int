@@ -21,7 +21,7 @@ public class KountService {
     private static final int KOUNT_REQUST_ID = 3;
     private DataCollector kount;
 
-    private String kountSessionId;
+    private static String kountSessionId;
 
     String getKountSessionId() {
         return kountSessionId;
@@ -31,7 +31,7 @@ public class KountService {
         return INSTANCE;
     }
 
-    public void setupKount(Integer kountMerchantID, final Context context, boolean isProduction) {
+    void setupKount(Integer kountMerchantID, final Context context, boolean isProduction) {
         kount = DataCollector.getInstance();
         kount.setMerchantID(kountMerchantID);
         kount.setContext(context);

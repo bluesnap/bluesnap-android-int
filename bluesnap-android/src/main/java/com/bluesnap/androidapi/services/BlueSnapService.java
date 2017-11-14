@@ -47,6 +47,7 @@ public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final BlueSnapService INSTANCE = new BlueSnapService();
     private final BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
+    private final KountService kountService = KountService.getInstance();
 
     private static final String FRAUDSESSIONID = "fraudSessionId";
 
@@ -126,7 +127,7 @@ public class BlueSnapService {
      * @param context       A Merchant Application Context
      * @param callback      A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency, Context context, final BluesnapServiceCallback callback) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency, final Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
         this.baseCurrency = baseCurrency;
         if (null != tokenProvider)
@@ -140,14 +141,7 @@ public class BlueSnapService {
         paymentResult = null;
         paymentRequest = null;
 
-        sdkInit(baseCurrency, callback);
-
-        try {
-            if (null != context)
-                KountService.getInstance().setupKount(sDKConfiguration.getKountMerchantId(), context, getBlueSnapToken().isProduction());
-        } catch (Exception e) {
-            Log.e(TAG, "Kount SDK initialization error");
-        }
+        sdkInit(baseCurrency, context, callback);
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
@@ -236,8 +230,11 @@ public class BlueSnapService {
             postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
         }
 
-        if (null != KountService.getInstance().getKountSessionId())
-            postData.put(FRAUDSESSIONID, KountService.getInstance().getKountSessionId());
+        if (null != kountService.getKountSessionId()) {
+            String fraudSessionId = kountService.getKountSessionId();
+            postData.put(FRAUDSESSIONID, fraudSessionId);
+        }
+
         return postData;
     }
 
@@ -306,7 +303,7 @@ public class BlueSnapService {
      *
      * @param baseCurrency All rates are derived from baseCurrency. baseCurrency * AnyRate = AnyCurrency
      */
-    private void sdkInit(final String baseCurrency, final BluesnapServiceCallback callback) {
+    private void sdkInit(final String baseCurrency, final Context context, final BluesnapServiceCallback callback) {
         blueSnapAPI.sdkInit(baseCurrency, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -315,6 +312,13 @@ public class BlueSnapService {
                     sDKConfiguration.getRates().setInitialRates();
                     // activate the credit card type method finder
                     new CreditCardTypes(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
+
+                    try {
+                        if (null != context)
+                            kountService.setupKount(sDKConfiguration.getKountMerchantId(), context, getBlueSnapToken().isProduction());
+                    } catch (Exception e) {
+                        Log.e(TAG, "Kount SDK initialization error");
+                    }
 
                     callback.onSuccess();
                 } catch (Exception e) {
@@ -329,7 +333,7 @@ public class BlueSnapService {
                 tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
                     @Override
                     public void complete() {
-                        sdkInit(baseCurrency, bluesnapServiceCallback);
+                        sdkInit(baseCurrency, context, bluesnapServiceCallback);
                     }
                 });
             }
