@@ -23,7 +23,7 @@ public class KountService {
 
     private static String kountSessionId;
 
-    String getKountSessionId() {
+    public String getKountSessionId() {
         return kountSessionId;
     }
 

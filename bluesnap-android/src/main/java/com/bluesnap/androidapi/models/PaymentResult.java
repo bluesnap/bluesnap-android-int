@@ -37,6 +37,7 @@ public class PaymentResult implements Parcelable {
     private ShippingInfo shippingInfo;
 
     private String token;
+    private String kountSessionId;
 
     public PaymentResult() {
     }
@@ -51,6 +52,7 @@ public class PaymentResult implements Parcelable {
         setBillingInfo((BillingInfo) in.readParcelable(BillingInfo.class.getClassLoader()));
         setShippingInfo((ShippingInfo) in.readParcelable(ShippingInfo.class.getClassLoader()));
         setPaypalInvoiceId(in.readString());
+        setKountSessionId(in.readString());
         setToken(in.readString());
     }
 
@@ -65,6 +67,7 @@ public class PaymentResult implements Parcelable {
         dest.writeParcelable(billingInfo, flags);
         dest.writeParcelable(shippingInfo, flags);
         dest.writeString(getPaypalInvoiceId());
+        dest.writeString(getKountSessionId());
         dest.writeString(getToken());
     }
 
@@ -119,6 +122,7 @@ public class PaymentResult implements Parcelable {
                 ", token=" + getToken() + '\'' +
                 ", billingInfo" + billingInfo + '\'' +
                 ", shippingInfo" + shippingInfo + '\'' +
+                ", kountSessionId=" + kountSessionId + '\'' +
                 '}';
     }
 
@@ -206,4 +210,14 @@ public class PaymentResult implements Parcelable {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public String getKountSessionId() {
+        return kountSessionId;
+    }
+
+    public void setKountSessionId(String kountSessionId) {
+        this.kountSessionId = kountSessionId;
+    }
+
+
 }

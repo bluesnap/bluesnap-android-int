@@ -1,17 +1,10 @@
 package com.bluesnap.androidapi;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -22,11 +15,11 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -38,7 +31,6 @@ import com.bluesnap.androidapi.views.CurrencyActivity;
 import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
 import com.bluesnap.androidapi.views.ShippingFragment;
 import com.bluesnap.androidapi.views.WebViewActivity;
-import com.kount.api.DataCollector;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -46,7 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -211,6 +202,7 @@ public class BluesnapCheckoutActivity extends Activity {
             paymentResult.setBillingInfo(getBillingContactInfo());
             paymentResult.setShippingInfo(getShippingContactInfo());
             paymentResult.setAmount(paymentRequest.getAmount());
+            paymentResult.setKountSessionId(KountService.getInstance().getKountSessionId());
             paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
             //prefsStorage.putObject(Constants.RETURNING_SHOPPER, card);
             resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
@@ -238,6 +230,7 @@ public class BluesnapCheckoutActivity extends Activity {
                     String Last4 = response.getString("last4Digits");
                     String ccType = response.getString("ccType");
                     PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
+                    paymentResult.setKountSessionId(KountService.getInstance().getKountSessionId());
                     // update last4 from server result
                     paymentResult.setLast4Digits(Last4);
                     // update card type from server result

@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentResult;
-import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
@@ -46,7 +45,7 @@ public class PostPaymentActivity extends Activity {
         paymentResultTextView2.setText("Your payment of  " + paymentResult.getCurrencyNameCode() + " " + decimalFormat.format(paymentResult.getAmount()) + " has been sent.");
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String merchantToken = extras.getString("MERCHANT_TOKEN");
+            // String merchantToken = extras.getString("MERCHANT_TOKEN");
             Log.d(TAG, "Payment Result:\n " + paymentResult.toString());
 
             transactions = DemoTransactions.getInstance();
@@ -57,7 +56,7 @@ public class PostPaymentActivity extends Activity {
                 //setDialog("Transaction success with id:" + paymentResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {
                 //setDialog(paymentResult.toString() + "\n" + shippingInfo + "\n" + billingInfo, "Payment Result");
-                transactions.createCreditCardTransaction(merchantToken, paymentResult.getCurrencyNameCode(), paymentResult.getAmount(), new BluesnapServiceCallback() {
+                transactions.createCreditCardTransaction(paymentResult, new BluesnapServiceCallback() {
                     @Override
                     public void onSuccess() {
                         setContinueButton(transactions.getMessage(), transactions.getTitle());

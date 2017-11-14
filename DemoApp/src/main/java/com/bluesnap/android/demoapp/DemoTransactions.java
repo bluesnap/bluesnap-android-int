@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.util.Log;
 
+import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
 import com.loopj.android.http.AsyncHttpClient;
@@ -46,16 +47,19 @@ public class DemoTransactions {
         return token;
     }
 
-    public void createCreditCardTransaction(String token, String currency, Double amount, final BluesnapServiceCallback callback) {
+    public void createCreditCardTransaction(final PaymentResult paymentResult, final BluesnapServiceCallback callback) {
 
         //TODO: I'm just a string but please don't make me look that bad..Use String.format
         String body = "<card-transaction xmlns=\"http://ws.plimus.com\">" +
                 "<card-transaction-type>AUTH_CAPTURE</card-transaction-type>" +
                 "<recurring-transaction>ECOMMERCE</recurring-transaction>" +
                 "<soft-descriptor>MobileSDK</soft-descriptor>" +
-                "<amount>" + amount + "</amount>" +
-                "<currency>" + currency + "</currency>" +
-                "<pf-token>" + token + "</pf-token>" +
+                "<amount>" + paymentResult.getAmount() + "</amount>" +
+                "<currency>" + paymentResult.getCurrencyNameCode() + "</currency>" +
+                "<transaction-fraud-info>" +
+                "<fraud-session-id>" + paymentResult.getKountSessionId() + "</fraud-session-id>" +
+                "</transaction-fraud-info>" +
+                "<pf-token>" + paymentResult.getToken() + "</pf-token>" +
                 "</card-transaction>";
 
         StringEntity entity = new StringEntity(body, "UTF-8");
