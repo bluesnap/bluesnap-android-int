@@ -55,6 +55,8 @@ public class DemoMainActivity extends Activity {
     protected BlueSnapService bluesnapService;
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
+    private Spinner returningShopperSpinner;
+    private String returningOrNewShopper;
     private EditText productPriceEditText;
     private Currency currency;
     private TextView currencySym;
@@ -104,7 +106,32 @@ public class DemoMainActivity extends Activity {
 
         context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
-        generateMerchantToken();
+
+        //get the spinner from the xml.
+        returningShopperSpinner = (Spinner) findViewById(R.id.returningShopperSpinner);
+        //create a list of items for the spinner.
+        String[] items = new String[]{"new", "22204247", "22061813", "22208663", "22208673", "22208681"};
+        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+        //There are multiple variations of this, but this is the basic variant.
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        //set the spinners adapter to the previously created one.
+        returningShopperSpinner.setAdapter(adapter);
+        returningShopperSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = returningShopperSpinner.getSelectedItem().toString();
+                if ("new".equals(selected))
+                    returningOrNewShopper = "";
+                else
+                    returningOrNewShopper = "?shopperId=" + selected;
+                generateMerchantToken();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                returningOrNewShopper = "";
+            }
+        });
     }
 
     private void showDemoAppVersion() {
@@ -275,9 +302,7 @@ public class DemoMainActivity extends Activity {
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
-        //httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + "?shopperId=22061813", new TextHttpResponseHandler() {
-        //httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + "?shopperId=22204247", new TextHttpResponseHandler() {
+        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper, new TextHttpResponseHandler() {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {

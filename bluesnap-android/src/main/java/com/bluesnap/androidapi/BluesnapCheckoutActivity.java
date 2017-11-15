@@ -312,28 +312,28 @@ public class BluesnapCheckoutActivity extends Activity {
     }
 
     public BillingInfo getBillingContactInfo() {
-        return shopper.getCreditCardInfo().getBillingContactInfo();
+        return shopper.getNewCreditCardInfo().getBillingContactInfo();
     }
 
     public void setBillingContactInfo(BillingInfo billingInfo) {
-        this.shopper.getCreditCardInfo().setBillingContactInfo(billingInfo);
+        this.shopper.getNewCreditCardInfo().setBillingContactInfo(billingInfo);
         blueSnapService.getPaymentResult().setBillingInfo(billingInfo);
     }
 
     public CreditCardInfo getCreditCardInfo() {
-        return shopper.getCreditCardInfo();
+        return shopper.getNewCreditCardInfo();
     }
 
     public void setCreditCardInfo(CreditCardInfo creditCardInfo) {
-        shopper.setCreditCardInfo(creditCardInfo);
+        shopper.setNewCreditCardInfo(creditCardInfo);
     }
 
     public CreditCard getCreditCard() {
-        return shopper.getCreditCardInfo().getCreditCard();
+        return shopper.getNewCreditCardInfo().getCreditCard();
     }
 
     public void setCreditCard(CreditCard card) {
-        shopper.getCreditCardInfo().setCreditCard(card);
+        shopper.getNewCreditCardInfo().setCreditCard(card);
     }
 
     @Override

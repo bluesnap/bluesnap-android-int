@@ -13,14 +13,14 @@ public class PaymentSources {
 
     @Nullable
     @SerializedName("creditCardInfo")
-    private ArrayList<CreditCardInfo> creditCardInfos;
+    private ArrayList<CreditCardInfo> previousCreditCardInfos;
 
     @Nullable
-    public ArrayList<CreditCardInfo> getCreditCardInfos() {
-        return creditCardInfos;
+    public ArrayList<CreditCardInfo> getPreviousCreditCardInfos() {
+        return previousCreditCardInfos;
     }
 
-    public void setCreditCardInfos(@Nullable ArrayList<CreditCardInfo> creditCardInfos) {
-        this.creditCardInfos = creditCardInfos;
+    public void setPreviousCreditCardInfos(@Nullable ArrayList<CreditCardInfo> previousCreditCardInfos) {
+        this.previousCreditCardInfos = previousCreditCardInfos;
     }
 }

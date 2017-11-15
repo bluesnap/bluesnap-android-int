@@ -70,9 +70,17 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <LinearLayout
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/border">
+                    android:layout_width="11dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/currencyText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:hint="Currency"
+                        android:background="@android:color/transparent"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 </LinearLayout>
 
@@ -110,7 +118,7 @@
 
                 <EditText
                     android:id="@+id/demoTaxEditText"
-                    android:layout_width="50dp"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:background="@android:color/transparent"
@@ -118,6 +126,25 @@
                     android:inputType="numberDecimal"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
+                <LinearLayout
+                    android:layout_width="11dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/shopperText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:hint="Shopper"
+                        android:background="@android:color/transparent"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                </LinearLayout>
+
+                <Spinner
+                    android:id="@+id/returningShopperSpinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
 
             </TableRow>
 

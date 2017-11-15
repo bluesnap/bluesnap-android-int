@@ -24,7 +24,7 @@ public class Shopper extends ContactInfo {
     private String shopperCurrency;
     @Nullable
     @SerializedName("paymentSources")
-    private PaymentSources paymentSources;
+    private PaymentSources previousPaymentSources;
     @Nullable
     @SerializedName("shippingContactInfo")
     private ShippingInfo shippingContactInfo;
@@ -32,19 +32,19 @@ public class Shopper extends ContactInfo {
     @SerializedName("lastPaymentInfo")
     private LastPaymentInfo lastPaymentInfo;
 
-    private CreditCardInfo creditCardInfo;
+    private CreditCardInfo newCreditCardInfo;
 
-    public CreditCardInfo getCreditCardInfo() {
-        return creditCardInfo;
+    public CreditCardInfo getNewCreditCardInfo() {
+        return newCreditCardInfo;
     }
 
-    public void setCreditCardInfo(CreditCardInfo creditCardInfo) {
-        this.creditCardInfo = creditCardInfo;
+    public void setNewCreditCardInfo(CreditCardInfo newCreditCardInfo) {
+        this.newCreditCardInfo = newCreditCardInfo;
     }
 
     public Shopper() {
         shippingContactInfo = new ShippingInfo();
-        creditCardInfo = new CreditCardInfo();
+        newCreditCardInfo = new CreditCardInfo();
     }
 
     public int getVaultedShopperId() {
@@ -91,12 +91,12 @@ public class Shopper extends ContactInfo {
     }
 
     @Nullable
-    public PaymentSources getPaymentSources() {
-        return paymentSources;
+    public PaymentSources getPreviousPaymentSources() {
+        return previousPaymentSources;
     }
 
-    public void setPaymentSources(@Nullable PaymentSources paymentSources) {
-        this.paymentSources = paymentSources;
+    public void setPreviousPaymentSources(@Nullable PaymentSources previousPaymentSources) {
+        this.previousPaymentSources = previousPaymentSources;
     }
 
     @Nullable

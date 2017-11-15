@@ -5,7 +5,6 @@ import android.os.Looper;
 
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.Shopper;
@@ -43,7 +42,7 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         blueSnapService.setPaymentRequest(paymentRequest);
 
         final Shopper shopper = new Shopper();
-        final CreditCardInfo creditCardInfo = shopper.getCreditCardInfo();
+        final CreditCardInfo creditCardInfo = shopper.getNewCreditCardInfo();
         final CreditCard card = creditCardInfo.getCreditCard();
         final BillingInfo billingInfo = creditCardInfo.getBillingContactInfo();
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;

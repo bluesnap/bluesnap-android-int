@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
@@ -19,7 +18,6 @@ import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.google.gson.Gson;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -36,9 +34,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.ByteArrayEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 
 /**
  * Core BlueSnap Service class that handles network and maintains {@link PaymentRequest}
@@ -192,8 +187,8 @@ public class BlueSnapService {
     }
 
     private JSONObject createDataObject(Shopper shopper) throws JSONException {
-        CreditCard creditCard = shopper.getCreditCardInfo().getCreditCard();
-        BillingInfo billingInfo = shopper.getCreditCardInfo().getBillingContactInfo();
+        CreditCard creditCard = shopper.getNewCreditCardInfo().getCreditCard();
+        BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
         JSONObject postData = new JSONObject();
 
         postData.put(CreditCard.CCNUMBER, creditCard.getNumber());
