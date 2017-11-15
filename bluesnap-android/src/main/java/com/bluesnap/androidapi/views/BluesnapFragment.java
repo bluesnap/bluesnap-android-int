@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -17,9 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -28,7 +31,9 @@ import android.widget.ToggleButton;
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.models.LastPaymentInfo;
 import com.bluesnap.androidapi.models.PaymentRequest;
 import com.bluesnap.androidapi.models.PaymentResult;
 import com.bluesnap.androidapi.models.BillingInfo;
@@ -41,6 +46,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -52,7 +58,8 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     static int invalidNumberInputFlag = 0;
     private static FragmentManager fragmentManager;
     private final TextWatcher creditCardEditorWatcher = new creditCardNumberWatcher(), mExpDateTextWatcher = new CardExpDateTextWatcher(), nameEditorWatcher = new NameEditorWatcher();
-    private LinearLayout zipFieldLayout, emailFieldLayout, couponLayout;
+    private LinearLayout zipFieldLayout, emailFieldLayout, couponLayout, creditCardNumberLayoutSpinner;
+    private Spinner creditCardNumberSpinner;
     private TableRow emailBorderVanish, tableRowLineSeparator, stateAndCityTableRow;
     private TableLayout addressLineTableLayout;
     private Button buyNowButton, addressCountryButton;
@@ -146,8 +153,6 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         }
         buyNowButton.setOnClickListener(new buyButtonClickListener());
         buyNowButton.setVisibility(View.VISIBLE);
-
-        initPrefs();
 
         if (savedInstanceState != null) {
             shopperFullNameEditText.setText(savedInstanceState.getString("shopperFullNameEditText"));
@@ -245,6 +250,8 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
         subtotalView = (ViewGroup) inflate.findViewById(R.id.subtotal_tax_table);
         creditCardLabelTextView = (TextView) inflate.findViewById(R.id.creditCardLabelTextView);
+        creditCardNumberLayoutSpinner = (LinearLayout) inflate.findViewById(R.id.creditCardNumberLayoutSpinner);
+        creditCardNumberSpinner = (Spinner) inflate.findViewById(R.id.creditCardNumberSpinner);
         shopperNameIconLabelTextView = (TextView) inflate.findViewById(R.id.carHolderNameLabelTextView);
         cvvLabelTextView = (TextView) inflate.findViewById(R.id.cvvLabelTextView);
         expDateLabelTextView = (TextView) inflate.findViewById(R.id.expDateLabelTextView);
@@ -293,6 +300,9 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         LinearLayout cardFieldsLinearLayout = (LinearLayout) inflate.findViewById(R.id.cardFieldsLinearLayout);
         AndroidUtil.hideKeyboardOnLayoutOfEditText(cardFieldsLinearLayout);
         //couponButton.setOnClickListener(new couponBtnClickListener()); //TODO: coupon
+
+        initPrefs(inflate.getContext());
+
         return inflate;
     }
 
@@ -350,29 +360,55 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         }
     }
 
-    private void initPrefs() {
+    private void initPrefs(Context context) {
         try {
-            if (null != blueSnapService.getsDKConfiguration().getShopper())
-                shopper = blueSnapService.getsDKConfiguration().getShopper();
-            else if (null == shopper)
-                shopper = new Shopper();
+            Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
+            if (null != shopper && null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
+                this.shopper = shopper;
+                populateFromCard(context);
+            } else if (null == shopper)
+                this.shopper = new Shopper();
 
-        } catch (Exception e) {
-            Log.w(TAG, "failed to create new shopper");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "NullPointerException", e);
             return;
+        } catch (Exception e) {
+            Log.e(TAG, "Exception", e);
         }
     }
 
-    private void populateFromCard() {
-
-        shopperFullNameEditText.setText(shopper.getNewCreditCardInfo().getBillingContactInfo().getFullName());//"No name defined" is the default value.
-        //String allDots = savedCardNumber.replaceAll("[0-9]", "•");
-        //String rplace = allDots.substring(0, last4position) + lastreal4;
-        creditCardNumberEditText.setHint("•••• •••• •••• " + shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits());
-        changeCardEditTextDrawable(shopper.getNewCreditCardInfo().getCreditCard().getCardType());
-        expDateEditText.setText(shopper.getNewCreditCardInfo().getCreditCard().getExpirationDateForEditText());
+    private void populateFromCard(Context context) throws NullPointerException {
+        creditCardNumberEditText.setVisibility(View.GONE);
+        creditCardNumberLayoutSpinner.setVisibility(View.VISIBLE);
         cvvEditText.setVisibility(View.INVISIBLE);
         cvvLabelTextView.setVisibility(View.INVISIBLE);
+
+        assert shopper.getPreviousPaymentSources() != null;
+        ArrayList<CreditCardInfo> previousCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
+        LastPaymentInfo lastPaymentInfo = shopper.getLastPaymentInfo();
+
+        //create a ArrayList<CreditCardInfo> for the spinner.
+        ArrayList<CreditCardInfo> filteredCreditCardInfosArray = new ArrayList<>();
+
+        assert lastPaymentInfo != null;
+        assert previousCreditCardInfoArray != null;
+        for (CreditCardInfo previousCreditCardInfo : previousCreditCardInfoArray) {
+            if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
+                    && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
+                filteredCreditCardInfosArray.add(previousCreditCardInfo);
+            } else {
+                //add last payment as first in line
+                filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
+            }
+        }
+
+        //create an adapter to describe how the items are displayed.
+        CustomCreditCardSpinnerAdapter adapter = new CustomCreditCardSpinnerAdapter(this.getActivity(), filteredCreditCardInfosArray);
+        //set the spinners adapter to the previously created one.
+        creditCardNumberSpinner.setAdapter(adapter);
+
+        //creditCardNumberEditText.setHint("•••• •••• •••• " + shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits());
+        //changeCardEditTextDrawable(shopper.getNewCreditCardInfo().getCreditCard().getCardType());
     }
 
 
@@ -547,22 +583,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private void changeCardEditTextDrawable(String type) {
-        int cardDrawable = 0;
-        if (type == null)
-            return;
-
-        if (CreditCardTypes.AMEX.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_amex;
-        else if (CreditCardTypes.VISA.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_visa;
-        else if (CreditCardTypes.MASTERCARD.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_mastercard;
-        else if (CreditCardTypes.DISCOVER.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_discover;
-        // TODO: additional icons
-        //else
-        //    cardDrawable = R.drawable.ico_field_card;
-        creditCardNumberEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, cardDrawable, 0);
+        creditCardNumberEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, CreditCardTypes.getCardTypeDrawable(type), 0);
 
     }
 

@@ -15,6 +15,8 @@ public class CreditCard {
     public static final String CCNUMBER = "ccNumber";
     public static final String CVV = "cvv";
     public static final String EXPDATE = "expDate";
+    public static final String LAST4DIGITS = "lastFourDigits";
+    public static final String CARDTYPE = "ccType";
 
     private transient String number;
     private String cvc;

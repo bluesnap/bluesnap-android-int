@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi.models;
 
+import com.bluesnap.androidapi.R;
+
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -21,7 +23,7 @@ public class CreditCardTypes {
     public static final String TARJETASHOPPING = "Tarjeta Shopping";
     public static final String NARANJA = "Naranja";
     public static final String CENCOSUD = "Cencosud";
-    public static final String IPERCARD = "Hipercard";
+    public static final String HIPERCARD = "Hipercard";
     public static final String ELO = "Elo";
     public static final String UNKNOWN = "Unknown";
 
@@ -46,5 +48,44 @@ public class CreditCardTypes {
 
     public static boolean validateByType(String type, String number) {
         return number.length() > 11 && number.length() < 20;
+    }
+
+    public static int getCardTypeDrawable(final String type) {
+        int cardDrawable = 0;
+        if (type == null)
+            return cardDrawable;
+
+        if (AMEX.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_amex;
+        else if (VISA.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_visa;
+        else if (MASTERCARD.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_mastercard;
+        else if (DISCOVER.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_discover;
+        else if (DINERS.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (JCB.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (CHINA_UNION_PAY.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (CARTE_BLEUE.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (CABAL.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (ARGENCARD.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (TARJETASHOPPING.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (NARANJA.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (CENCOSUD.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (HIPERCARD.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+        else if (ELO.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.new_card;
+
+        return cardDrawable;
     }
 }

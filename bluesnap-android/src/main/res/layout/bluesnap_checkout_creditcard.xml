@@ -168,8 +168,9 @@
                 android:layout_marginTop="1dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical">
 
 
@@ -202,6 +203,34 @@
                             android:nextFocusDown="@+id/expDateEditText"
                             android:padding="6sp"/>
 
+                        <LinearLayout
+                            android:id="@+id/creditCardNumberLayoutSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:orientation="horizontal"
+                            android:paddingBottom="6sp"
+                            android:paddingLeft="2sp"
+                            android:paddingRight="2sp"
+                            android:paddingTop="6sp"
+                            android:visibility="gone">
+
+                            <Spinner
+                                android:id="@+id/creditCardNumberSpinner"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:background="@android:color/transparent"
+                                android:nextFocusDown="@+id/expDateEditText" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/new_drop" />
+
+                        </LinearLayout>
                     </LinearLayout>
 
                     <TextView
@@ -661,8 +690,6 @@
 
             </LinearLayout>
         </TableRow>
-
-
 
 
     </LinearLayout>
