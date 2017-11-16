@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,7 +60,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     static int invalidNumberInputFlag = 0;
     private static FragmentManager fragmentManager;
     private final TextWatcher creditCardEditorWatcher = new creditCardNumberWatcher(), mExpDateTextWatcher = new CardExpDateTextWatcher(), nameEditorWatcher = new NameEditorWatcher();
-    private LinearLayout zipFieldLayout, emailFieldLayout, couponLayout, creditCardNumberLayoutNewCard;
+    private LinearLayout zipFieldLayout, emailFieldLayout, couponLayout;
     private ImageView creditCardNumberSpinnerImageView, creditCardNumberImageView;
     private Spinner creditCardNumberSpinner;
     private TableRow emailBorderVanish, tableRowLineSeparator, stateAndCityTableRow, expCvvTableRow;
@@ -71,6 +72,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private EditText creditCardNumberEditText, shopperFullNameEditText, cvvEditText, expDateEditText, zipEditText, emailEditText, billingAddressLineEditText, billingCityEditText, billingStateEditText;
     private ToggleButton couponButton;
     private Shopper shopper;
+    private CreditCardInfo selectedPaymentInfoForReturningShopper;
     //private PrefsStorage prefsStorage;
     private PaymentRequest paymentRequest;
     private ViewGroup subtotalView;
@@ -252,7 +254,6 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
         subtotalView = (ViewGroup) inflate.findViewById(R.id.subtotal_tax_table);
         creditCardLabelTextView = (TextView) inflate.findViewById(R.id.creditCardLabelTextView);
-        creditCardNumberLayoutNewCard = (LinearLayout) inflate.findViewById(R.id.creditCardNumberLayoutNewCard);
         creditCardNumberSpinner = (Spinner) inflate.findViewById(R.id.creditCardNumberSpinner);
         creditCardNumberSpinnerImageView = (ImageView) inflate.findViewById(R.id.creditCardNumberSpinnerImageView);
         expCvvTableRow = (TableRow) inflate.findViewById(R.id.expCvvTableRow);
@@ -306,7 +307,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         AndroidUtil.hideKeyboardOnLayoutOfEditText(cardFieldsLinearLayout);
         //couponButton.setOnClickListener(new couponBtnClickListener()); //TODO: coupon
 
-        initPrefs(inflate.getContext());
+        initPrefs();
 
         return inflate;
     }
@@ -365,12 +366,12 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         }
     }
 
-    private void initPrefs(Context context) {
+    private void initPrefs() {
         try {
             Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
             if (null != shopper && null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
                 this.shopper = shopper;
-                populateFromCard(context);
+                populateFromCard();
             } else if (null == shopper)
                 this.shopper = new Shopper();
 
@@ -382,11 +383,16 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         }
     }
 
-    private void populateFromCard(Context context) throws NullPointerException {
-        creditCardNumberLayoutNewCard.setVisibility(View.GONE);
-        expCvvTableRow.setVisibility(View.GONE);
-        creditCardNumberSpinner.setVisibility(View.VISIBLE);
+    private void newCardLayerVisibilityChange(int changeViewTo) {
+        creditCardNumberEditText.setVisibility(changeViewTo);
+        creditCardNumberImageView.setVisibility(changeViewTo);
+        expCvvTableRow.setVisibility(changeViewTo);
+    }
+
+    private void populateFromCard() throws NullPointerException {
         creditCardNumberSpinnerImageView.setVisibility(View.VISIBLE);
+        newCardLayerVisibilityChange(View.GONE);
+        creditCardNumberSpinner.setVisibility(View.VISIBLE);
 
         assert shopper.getPreviousPaymentSources() != null;
         ArrayList<CreditCardInfo> previousCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
@@ -400,6 +406,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         for (CreditCardInfo previousCreditCardInfo : previousCreditCardInfoArray) {
             if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
                     && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
+                selectedPaymentInfoForReturningShopper = previousCreditCardInfo;
                 filteredCreditCardInfosArray.add(previousCreditCardInfo);
             } else {
                 //add last payment as first in line
@@ -417,6 +424,22 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         CustomCreditCardSpinnerAdapter adapter = new CustomCreditCardSpinnerAdapter(this.getActivity(), filteredCreditCardInfosArray);
         //set the spinners adapter to the previously created one.
         creditCardNumberSpinner.setAdapter(adapter);
+
+
+        creditCardNumberSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedPaymentInfoForReturningShopper = (CreditCardInfo) creditCardNumberSpinner.getSelectedItem();
+                if (CreditCardTypes.NEWCARD.equals(selectedPaymentInfoForReturningShopper.getCreditCard().getCardType())) {
+                    newCardLayerVisibilityChange(View.VISIBLE);
+                    creditCardNumberSpinner.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         //creditCardNumberEditText.setHint("•••• •••• •••• " + shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits());
         //changeCardEditTextDrawable(shopper.getNewCreditCardInfo().getCreditCard().getCardType());
