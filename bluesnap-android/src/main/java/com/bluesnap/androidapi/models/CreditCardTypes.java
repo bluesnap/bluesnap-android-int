@@ -56,35 +56,35 @@ public class CreditCardTypes {
             return cardDrawable;
 
         if (AMEX.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_amex;
+            cardDrawable = R.drawable.amex_dark;
         else if (VISA.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_visa;
+            cardDrawable = R.drawable.visa_dark;
         else if (MASTERCARD.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_mastercard;
+            cardDrawable = R.drawable.mastercard_dark;
         else if (DISCOVER.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_discover;
+            cardDrawable = R.drawable.discover_dark;
         else if (DINERS.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.dinersclub_dark;
         else if (JCB.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.jcb_dark;
         else if (CHINA_UNION_PAY.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.unionpay_dark;
         else if (CARTE_BLEUE.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (CABAL.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (ARGENCARD.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (TARJETASHOPPING.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (NARANJA.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (CENCOSUD.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (HIPERCARD.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
         else if (ELO.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.new_card;
+            cardDrawable = R.drawable.default_dark;
 
         return cardDrawable;
     }
