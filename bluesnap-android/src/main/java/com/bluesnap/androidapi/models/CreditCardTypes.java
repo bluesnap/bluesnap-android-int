@@ -26,6 +26,7 @@ public class CreditCardTypes {
     public static final String HIPERCARD = "Hipercard";
     public static final String ELO = "Elo";
     public static final String UNKNOWN = "Unknown";
+    public static final String NEWCARD = "NewCard";
 
     public static HashMap<String, String> creditCardTypes;
 
@@ -85,6 +86,8 @@ public class CreditCardTypes {
             cardDrawable = R.drawable.default_dark;
         else if (ELO.equalsIgnoreCase(type))
             cardDrawable = R.drawable.default_dark;*/
+        else if (NEWCARD.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.add_new_card_dark;
         else
             cardDrawable = R.drawable.default_dark;
 

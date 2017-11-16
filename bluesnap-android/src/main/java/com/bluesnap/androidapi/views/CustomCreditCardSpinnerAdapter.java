@@ -61,7 +61,7 @@ public class CustomCreditCardSpinnerAdapter extends BaseAdapter {
 
         spinnerCardTypeImageView.setImageResource(CreditCardTypes.getCardTypeDrawable(creditCard.getCardType()));
 
-        if (!CreditCardTypes.UNKNOWN.equals(creditCard.getCardType())) {
+        if (!CreditCardTypes.NEWCARD.equals(creditCard.getCardType())) {
             spinnerLastFourDigitsTextView.setVisibility(View.VISIBLE);
             spinnerLastFourDigitsTextView.setText(creditCard.getCardLastFourDigits());
             spinnerExpDateTextView.setText(creditCard.getExpirationDateForEditTextAndSpinner());

@@ -410,7 +410,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         //add new card possibility
         CreditCardInfo newCardPossibilityCreditCardInfo = new CreditCardInfo();
         newCardPossibilityCreditCardInfo.setCreditCard(new CreditCard());
-        newCardPossibilityCreditCardInfo.getCreditCard().setCardType(CreditCardTypes.UNKNOWN);
+        newCardPossibilityCreditCardInfo.getCreditCard().setCardType(CreditCardTypes.NEWCARD);
         filteredCreditCardInfosArray.add(newCardPossibilityCreditCardInfo);
 
         //create an adapter to describe how the items are displayed.
