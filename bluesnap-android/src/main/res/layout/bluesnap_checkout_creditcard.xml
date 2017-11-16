@@ -184,53 +184,61 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:drawableLeft="@drawable/new_card"
+                            android:drawableLeft="@drawable/default_dark"
                             android:drawablePadding="5dp"
                             android:padding="6sp"
                             android:text="@string/card" />
 
-                        <EditText
-                            android:id="@+id/creditCardNumberEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:background="@android:color/white"
-                            android:digits="0123456789 "
-                            android:hint="@string/cc_hint"
-                            android:imeOptions="actionNext"
-                            android:inputType="numberDecimal"
-                            android:maxLength="19"
-                            android:nextFocusDown="@+id/expDateEditText"
-                            android:padding="6sp"/>
-
                         <LinearLayout
-                            android:id="@+id/creditCardNumberLayoutSpinner"
-                            android:layout_width="match_parent"
+                            android:id="@+id/creditCardNumberLayoutNewCard"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:background="@android:color/transparent"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
                             android:orientation="horizontal"
-                            android:paddingBottom="6sp"
-                            android:paddingLeft="2sp"
-                            android:paddingRight="2sp"
-                            android:paddingTop="6sp"
-                            android:visibility="gone">
+                            android:padding="6sp">
 
-                            <Spinner
-                                android:id="@+id/creditCardNumberSpinner"
+                            <EditText
+                                android:id="@+id/creditCardNumberEditText"
                                 android:layout_width="0dp"
-                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
-                                android:background="@android:color/transparent"
+                                android:layout_weight="1"
+                                android:background="@android:color/white"
+                                android:digits="0123456789 "
+                                android:hint="@string/cc_hint"
+                                android:imeOptions="actionNext"
+                                android:inputType="numberDecimal"
+                                android:maxLength="19"
                                 android:nextFocusDown="@+id/expDateEditText" />
 
                             <ImageView
+                                android:id="@+id/creditCardNumberImageView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:src="@drawable/new_drop" />
+                                android:layout_gravity="center" />
 
                         </LinearLayout>
+
+                        <Spinner
+                            android:id="@+id/creditCardNumberSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:nextFocusDown="@+id/expDateEditText"
+                            android:padding="2sp"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:id="@+id/creditCardNumberSpinnerImageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/new_drop"
+                            android:visibility="gone" />
+
                     </LinearLayout>
 
                     <TextView
@@ -249,6 +257,7 @@
             </TableRow>
 
             <TableRow
+                android:id="@+id/expCvvTableRow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="1dp"

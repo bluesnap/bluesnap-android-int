@@ -29,12 +29,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="20sp"
+                    android:layout_marginStart="20sp"
                     android:background="@android:color/white"
+                    android:contentDescription="@string/cardTypeImageText"
                     android:drawablePadding="5dp"
                     android:padding="6sp"
-                    android:src="@drawable/default_dark"
-                    android:layout_marginStart="20sp"
-                    android:contentDescription="@string/cardTypeImageText" />
+                    android:src="@drawable/default_dark" />
 
                 <TextView
                     android:id="@+id/spinnerLastFourDigitsTextView"
@@ -42,29 +42,25 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="20sp"
+                    android:layout_marginStart="20sp"
                     android:background="@android:color/white"
-                    android:text="@string/lastFourDigitsHint"
-                    android:maxLength="4"
                     android:nextFocusDown="@+id/expDateEditText"
                     android:padding="6sp"
-                    android:layout_marginStart="20sp" />
+                    android:text="@string/lastFourDigitsHint" />
 
                 <TextView
                     android:id="@+id/spinnerExpDateTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="2sp"
                     android:layout_marginLeft="60sp"
                     android:layout_marginRight="2sp"
+                    android:layout_marginStart="60sp"
                     android:layout_weight="1"
                     android:background="@android:color/white"
                     android:hint="@string/mm_yy"
-                    android:paddingBottom="5sp"
-                    android:paddingLeft="1sp"
-                    android:paddingTop="5sp"
-                    android:layout_marginStart="60sp"
-                    android:layout_marginEnd="2sp"
-                    android:paddingStart="1sp" />
+                    android:padding="6sp"/>
             </LinearLayout>
         </TableRow>
     </TableLayout>

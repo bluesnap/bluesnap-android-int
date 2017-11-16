@@ -248,12 +248,10 @@ public class CreditCard {
         return expirationMonth + "/" + expirationYear;
     }
 
-    public String getExpirationDateForEditText() {
-        int m = expirationYear;
-        if (m > 2000) {
-            m -= 2000;
-        }
-        return expirationMonth + "/" + m;
+    public String getExpirationDateForEditTextAndSpinner() {
+        return ((expirationMonth < 10) ? "0" + expirationMonth : expirationMonth)
+                + "/"
+                + ((expirationYear > 2000) ? expirationYear - 2000 : expirationYear);
     }
 
     public void setTokenizationSucess() {

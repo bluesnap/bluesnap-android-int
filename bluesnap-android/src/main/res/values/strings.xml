@@ -98,5 +98,6 @@
     <string name="webview">WebView</string>
     <string name="lastFourDigitsHint">1234</string>
     <string name="cardTypeImageText">CardTypeImage</string>
+    <string name="newCardText">New Card</string>
 
 </resources>

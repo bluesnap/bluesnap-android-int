@@ -68,7 +68,7 @@ public class CreditCardTypes {
         else if (JCB.equalsIgnoreCase(type))
             cardDrawable = R.drawable.jcb_dark;
         else if (CHINA_UNION_PAY.equalsIgnoreCase(type))
-            cardDrawable = R.drawable.unionpay_dark;
+            cardDrawable = R.drawable.unionpay_dark;/*
         else if (CARTE_BLEUE.equalsIgnoreCase(type))
             cardDrawable = R.drawable.default_dark;
         else if (CABAL.equalsIgnoreCase(type))
@@ -84,6 +84,8 @@ public class CreditCardTypes {
         else if (HIPERCARD.equalsIgnoreCase(type))
             cardDrawable = R.drawable.default_dark;
         else if (ELO.equalsIgnoreCase(type))
+            cardDrawable = R.drawable.default_dark;*/
+        else
             cardDrawable = R.drawable.default_dark;
 
         return cardDrawable;
