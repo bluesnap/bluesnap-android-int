@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi.services;
 
+import android.util.Log;
+
 import com.bluesnap.androidapi.BuildConfig;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;

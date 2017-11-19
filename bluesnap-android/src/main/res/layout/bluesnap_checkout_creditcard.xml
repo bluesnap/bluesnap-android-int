@@ -318,8 +318,10 @@
                         android:background="@android:color/white"
                         android:digits="0123456789/"
                         android:hint="@string/mm_yy"
+                        android:imeOptions="actionNext"
                         android:inputType="numberDecimal"
                         android:maxLength="5"
+                        android:nextFocusDown="@+id/cvvEditText"
                         android:paddingBottom="5sp"
                         android:paddingLeft="1sp"
                         android:paddingTop="5sp" />

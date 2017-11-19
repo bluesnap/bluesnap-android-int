@@ -20,8 +20,8 @@ public class CreditCard {
 
     private transient String number;
     private String cvc;
-    private transient boolean modified = false;
     private boolean tokenizedSuccess = false;
+    private boolean newCreditCard = true;
 
     @SerializedName("cardLastFourDigits")
     private String cardLastFourDigits;
@@ -90,7 +90,6 @@ public class CreditCard {
     public void update(String creditCardNumberEditTextText, String expDateString, String cvvText) {
         setExpDateFromString(expDateString);
         this.cvc = cvvText;
-        modified = true;
         tokenizedSuccess = false;
         this.number = creditCardNumberEditTextText;
         cardType = CreditCardTypes.getType(number);
@@ -154,6 +153,10 @@ public class CreditCard {
     }
 
     public boolean validateCVC() {
+        return validateCVC(cvc);
+    }
+
+    public boolean validateCVC(String cvc) {
         if (AndroidUtil.isBlank(cvc)) {
             return false;
         }
@@ -258,21 +261,12 @@ public class CreditCard {
         tokenizedSuccess = true;
     }
 
-    public void setModified() {
-        modified = true;
-        tokenizedSuccess = false;
+    public boolean getIsNewCreditCard() {
+        return newCreditCard;
     }
 
-    public boolean isModified() {
-        return modified;
-    }
-
-    public boolean validForReuse() {
-        return cardLastFourDigits != null && validateExpiryDate() && tokenizedSuccess;
-    }
-
-    public boolean requireValidation() {
-        return modified || cardLastFourDigits == null;
+    public void setIsNewCreditCard(boolean newCreditCard) {
+        this.newCreditCard = newCreditCard;
     }
 
     @Override
@@ -280,7 +274,6 @@ public class CreditCard {
         return "Card {" +
                 "cardType:'" + cardType + '\'' +
                 ", tokenizedSuccess:" + tokenizedSuccess +
-                ", modified:" + modified +
                 ", cardLastFourDigits:'" + cardLastFourDigits + '\'' +
                 '}';
     }

@@ -191,9 +191,15 @@ public class BlueSnapService {
         BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
         JSONObject postData = new JSONObject();
 
-        postData.put(CreditCard.CCNUMBER, creditCard.getNumber());
-        postData.put(CreditCard.CVV, creditCard.getCvc());
-        postData.put(CreditCard.EXPDATE, creditCard.getExpirationDate());
+        if (creditCard.getIsNewCreditCard()) {
+            postData.put(CreditCard.CCNUMBER, creditCard.getNumber());
+            postData.put(CreditCard.CVV, creditCard.getCvc());
+            postData.put(CreditCard.EXPDATE, creditCard.getExpirationDate());
+        } else {
+            postData.put(CreditCard.CARDTYPE, creditCard.getCardType());
+            postData.put(CreditCard.LAST4DIGITS, creditCard.getCardLastFourDigits());
+
+        }
 
         postData.put(BillingInfo.BILLINGFIRSTNAME, billingInfo.getFirstName());
         postData.put(BillingInfo.BILLINGLASTNAME, billingInfo.getLastName());
@@ -306,7 +312,7 @@ public class BlueSnapService {
                     sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
                     sDKConfiguration.getRates().setInitialRates();
                     // activate the credit card type method finder
-                    new CreditCardTypes(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
+                    CreditCardTypes.getInstance().setCreditCardTypesRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
 
                     try {
                         if (null != context)

@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
  */
 
 public class CreditCardTypes {
+    private static final String TAG = CreditCardTypes.class.getSimpleName();
+    private static final CreditCardTypes INSTANCE = new CreditCardTypes();
     public static final String AMEX = "American Express";
     public static final String DISCOVER = "Discover";
     public static final String JCB = "JCB";
@@ -28,15 +30,17 @@ public class CreditCardTypes {
     public static final String UNKNOWN = "Unknown";
     public static final String NEWCARD = "NewCard";
 
-    public static HashMap<String, String> creditCardTypes;
+    static HashMap<String, String> creditCardTypes;
 
+    public static CreditCardTypes getInstance() {
+        return INSTANCE;
+    }
 
-    public CreditCardTypes(HashMap<String, String> creditCardRegex) {
+    public void setCreditCardTypesRegex(HashMap<String, String> creditCardRegex) {
         creditCardTypes = new HashMap<>();
         for (HashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
             creditCardTypes.put(entry.getValue(), entry.getKey());
         }
-
     }
 
     public static String getType(String number) {
@@ -47,7 +51,7 @@ public class CreditCardTypes {
         return UNKNOWN;
     }
 
-    public static boolean validateByType(String type, String number) {
+    static boolean validateByType(String type, String number) {
         return number.length() > 11 && number.length() < 20;
     }
 
