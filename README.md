@@ -11,7 +11,7 @@ This SDK supports Android SDK 23 and above for development. The minimum Android 
 ## Android Studio (Gradle) instructions
 To get started, add the following line in your `build.gradle` file in the dependencies section:
 
-    compile 'com.bluesnap:bluesnap-android:1.0.+'
+    compile 'com.bluesnap:bluesnap-android:1.1.+'
 
 # Usage
 
@@ -23,24 +23,40 @@ To do this, initiate a server to server POST request with your credentials and s
 * **Sandbox:** `https://sandbox.bluesnap.com/services/2/payment-fields-tokens`
 * **Production:** `https://ws.bluesnap.com/services/2/payment-fields-tokens`
 
+**Important!** for returning shopper flow, add a query string parameter to the URL: ?shopperId=123456
+
 The token is returned in the Location header in the response. For more information, see [Create Hosted Payment Fields Token](http://developers.bluesnap.com/v4.0/docs/create-hosted-payment-fields-token)
 
 ## Initialize the SDK with the token
 Initialize the SDK by passing the token to the setup method of the `BlueSnapService` class:
 
-    BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING");
+    BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "baseCurrency", getApplicationContext(), new BluesnapServiceCallback() {
+        @Override
+        public void onSuccess() {
+            // Do onSuccess
+        }        
+                                                                                                                                  
+        @Override
+        public void onFailure() {
+            // Do onFailure
+        }
+    });
 
 The `setup()` method will initiate the SDK, prepare it for rate conversion, and initialize the required objects for the user interface. No UI interaction will happen at this stage.
+`tokenProvider()` is a call back function in order to create a new token in case the previous one has already expired.
+`baseCurrency` merchant base currency (if ignored set to USD)
+`getApplicationContext()` is needed for fraud purposes.
+`new BluesnapServiceCallback() {...}` is a callback function to do after setup success or failure since setup is an Async function.
 
 **Note:** Since the token is valid for 60 minutes, only initialize the SDK with the token close to the purchase time.
 
 ## Launch the checkout page and collect shopper payment info
-The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to deal with validation of the card number or expiration date, or the storage of sensitive information, as this is all handled for you. To launch this form, you need to create a `PaymentRequest` with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `PaymentRequest` as an Intent Extra.
+The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to deal with validation of the card number or expiration date, or the storage of sensitive information, as this is all handled for you. To launch this form, you need to create a `SdkRequest` with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` as an Intent Extra.
 
-### Create a PaymentRequest
-A `PaymentRequest` is required to pass information about the purchase to the SDK. The request must include the purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code):
+### Create a SdkRequest
+A `SdkRequest` is required to pass information about the purchase to the SDK. The request must include the purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code):
 
-    PaymentRequest sdkRequest = new PaymentRequest();
+    SdkRequest sdkRequest = new SdkRequest();
     sdkRequest.setAmount("20.5"D);
     sdkRequest.setCurrencyNameCode("USD");
 
@@ -52,35 +68,35 @@ You can also pass a title or a custom title to be displayed to the shopper:
 
     sdkRequest.setCustomTitle("custom text");
 
-If you would like to collect shipping information, call the `setShippingRequired` method in the `PaymentRequest`:
+If you would like to collect shipping information, call the `setShippingRequired` method in the `SdkRequest`:
 
     sdkRequest.setShippingRequired(true);
 
-If you would like to collect shipping information, call the `setBillingRequired` method in the `PaymentRequest`:
+If you would like to collect shipping information, call the `setBillingRequired` method in the `SdkRequest`:
 
     sdkRequest.setBillingRequired(true);
     
-If you would like to collect shipping information, call the `setEmailRequired` method in the `PaymentRequest`:
+If you would like to collect shipping information, call the `setEmailRequired` method in the `SdkRequest`:
 
     sdkRequest.setEmailRequired(true);
     
 ### Launch BluesnapCheckoutActivity
-To start the activity, create an Android Intent and pass the `PaymentRequest` as an Intent Extra.
+To start the activity, create an Android Intent and pass the `SdkRequest` as an Intent Extra.
 
     Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
     intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
     startActivityForResult(intent);
 
-This will launch the activity, display the checkout form with the details you provided in the `PaymentRequest`, and handle the interaction with the shopper.
+This will launch the activity, display the checkout form with the details you provided in the `SdkRequest`, and handle the interaction with the shopper.
 
 As part of the checkout process, the shopper's card details will be transmitted securely to BlueSnap's servers. You will not need to store the card number in your application.
 
-When the shopper completes checkout, you'll get an Android Activity Result with a `PaymentResult` object.
+When the shopper completes checkout, you'll get an Android Activity Result with a `SdkResult` object.
 
-## Get the PaymentResult
-A `PaymentResult` instance provides the transaction information. For credit card transactions, this includes the last 4 digits of the card, the card type, and the shopper name. For PayPal transactions, it includes the PayPal transaction ID.
+## Get the SdkResult
+A `SdkResult` instance provides the transaction information. For credit card transactions, this includes the last 4 digits of the card, the card type, and the shopper name. For PayPal transactions, it includes the PayPal transaction ID.
 
-The `PaymentResult` is passed back to your activity as an activityResult Extra. To get an activity result from `BluesnapCheckoutActivity`, you need to implement [onActivityResult](https://developer.android.com/training/basics/intents/result.html) ();
+The `SdkResult` is passed back to your activity as an activityResult Extra. To get an activity result from `BluesnapCheckoutActivity`, you need to implement [onActivityResult](https://developer.android.com/training/basics/intents/result.html) ();
 
 
         @Override
@@ -89,11 +105,11 @@ The `PaymentResult` is passed back to your activity as an activityResult Extra. 
                 // User aborted the checkout process
                 return;
 
-            PaymentResult sdkResult = (PaymentResult) data.getExtras().get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+            SdkResult sdkResult = (SdkResult) data.getExtras().get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
             ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         }
 
-A `PaymentResult` instance holds information about the transaction, such as the purchase amount, currency, and also indicates if this was a returning shopper transaction or a purchase that was completed via PayPal.
+A `SdkResult` instance holds information about the transaction, such as the purchase amount, currency, and also indicates if this was a returning shopper transaction or a purchase that was completed via PayPal.
 
     sdkResult.getCurrencyNameCode(); //e.g USD
     sdkResult.getAmount(); //20.5
@@ -120,13 +136,7 @@ curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
 	"softDescriptor": "Mobile SDK test",
 	"amount": 25.00,
 	"currency": "USD",
-	"pfToken": "812f6ee706e463d3276e3abeb21fa94072e40695ed423ddac244409b3b652eff_",
-	"transactionFraudInfo": {"fraudSessionId": "B04C4B2B6BED427284ECE2F1F870466C"},
-	"cardHolderInfo": {
-        "firstName": "Jane",
-        "lastName": "Shopper",
-        "zip": "02451"
-	}
+	"pfToken": "812f6ee706e463d3276e3abeb21fa94072e40695ed423ddac244409b3b652eff_"
 }'
 ```
 If successful, the response HTTP status code is 200 OK. Visit our [API Reference](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) for more details.
@@ -138,24 +148,16 @@ The SDK provides a currency conversion rates service. To provide the best user e
 
 The SDK provides the following methods for your convenience:
 
-    updateRates()
     getSupportedRates()
     convertUSD()
     convertPrice()
 
 ## PayPal
-If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passed as part of the `PaymentResult`.
+If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passed as part of the `SdkResult`.
 All the other fields that are relevant to a credit card transaction will be empty.
 
 ## Kount
-The SDK includes an integrated Kount SDK, a `kountSessionId` will be passed as part of the `PaymentResult`.
-This `kountSessionId` is needed for creating a successful transaction (see Auth Capture example - Credit card payments).
-
-If you have the Enterprise fraud prevention service level, pass your Kount MID In the intent you pass to `BluesnapCheckoutActivity`
-
-    intent.putExtra(BluesnapCheckoutActivity.EXTRA_KOUNT_MERCHANT_ID, KountMerchantId);
-
-
+The SDK includes an integrated Kount SDK, a `kountSessionId` will be passed as part of the `SdkResult`.
 
 ## Customization and UI Overrides
 It is possible to customize the checkout experience, change colors, icons and basic layouts.
