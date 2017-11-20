@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -46,9 +47,9 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
     private EditText shippingNameEditText;
     private TextView invalidNameMessageTextView;
     private TextView shippingNameLabelTextView;
-    private EditText shippingEmailEditText;
-    private TextView invalidEmailMessageTextView;
-    private TextView shippingEmailLabelTextView;
+    //private EditText shippingEmailEditText;
+    //private TextView invalidEmailMessageTextView;
+    //private TextView shippingEmailLabelTextView;
     private EditText shippingAddressLineEditText;
     private TextView invalidAddressMessageTextView;
     private TextView shippingAdressLabelTextView;
@@ -72,9 +73,9 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         shippingNameEditText = (EditText) inflate.findViewById(R.id.shippingNameEditText);
         shippingNameLabelTextView = (TextView) inflate.findViewById(R.id.shippingNameLabelTextView);
         invalidNameMessageTextView = (TextView) inflate.findViewById(R.id.invalidNameMessageTextView);
-        shippingEmailEditText = (EditText) inflate.findViewById(R.id.shippingEmailEditText);
-        shippingEmailLabelTextView = (TextView) inflate.findViewById(R.id.shippingEmailLabelTextView);
-        invalidEmailMessageTextView = (TextView) inflate.findViewById(R.id.invalidShopperNameMessageTextView);
+        //shippingEmailEditText = (EditText) inflate.findViewById(R.id.shippingEmailEditText);
+        //shippingEmailLabelTextView = (TextView) inflate.findViewById(R.id.shippingEmailLabelTextView);
+        //invalidEmailMessageTextView = (TextView) inflate.findViewById(R.id.invalidShopperNameMessageTextView);
         shippingAddressLineEditText = (EditText) inflate.findViewById(R.id.shippingAddressLine);
         shippingAdressLabelTextView = (TextView) inflate.findViewById(R.id.addressLineLabelTextView);
         invalidAddressMessageTextView = (TextView) inflate.findViewById(R.id.invaildAddressMessageTextView);
@@ -117,7 +118,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         } else {
             shippingStateEditText.setOnFocusChangeListener(null);
         }
-        changeZipTextAccordingToCountry();
+        changeZipTextAndStateLengthAccordingToCountry();
     }
 
     @Subscribe
@@ -135,36 +136,38 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        final PaymentRequest paymentRequest = BlueSnapService.getInstance().getPaymentRequest();
-        Events.CurrencyUpdatedEvent currencyUpdatedEvent = new Events.CurrencyUpdatedEvent(paymentRequest.getAmount(), paymentRequest.getCurrencyNameCode(), paymentRequest.getTaxAmount(), paymentRequest.getSubtotalAmount());
+        final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        Events.CurrencyUpdatedEvent currencyUpdatedEvent = new Events.CurrencyUpdatedEvent(sdkRequest.getAmount(), sdkRequest.getCurrencyNameCode(), sdkRequest.getTaxAmount(), sdkRequest.getSubtotalAmount());
         onCurrencyUpdated(currencyUpdatedEvent);
 
-        boolean notax = (paymentRequest.getSubtotalAmount() == 0D || paymentRequest.getTaxAmount() == 0D);
+        boolean notax = (sdkRequest.getSubtotalAmount() == 0D || sdkRequest.getTaxAmount() == 0D);
         subtotalView.setVisibility(notax ? View.INVISIBLE : View.VISIBLE);
 
         totalAmountTextView.setOnClickListener(new ShippingSubmitClickListener());
 
         savedInstanceState = getArguments();
-            shippingNameEditText.setText(savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME));
-            shippingZipEditText.setText(savedInstanceState.getString(AUTO_POPULATE_ZIP));
-            shippingEmailEditText.setText(savedInstanceState.getString(AUTO_POPULATE_EMAIL));
-            shippingAddressLineEditText.setText(savedInstanceState.getString(AUTO_POPULATE_ADDRESS));
-            shippingCityEditText.setText(savedInstanceState.getString(AUTO_POPULATE_CITY));
-            shippingStateEditText.setText(savedInstanceState.getString(AUTO_POPULATE_STATE));
-            addressCountryButton.setText(
-                    null != savedInstanceState.getString(AUTO_POPULATE_COUNTRY)
-                            && !"".equals(savedInstanceState.getString(AUTO_POPULATE_COUNTRY))
-                            ? savedInstanceState.getString(AUTO_POPULATE_COUNTRY)
-                            : blueSnapService.getUserCountry(getActivity().getApplicationContext())
-            );
-            changeZipTextAccordingToCountry();
+        ShippingInfo shippingInfo = (null != blueSnapService.getsDKConfiguration().getShopper() && null != blueSnapService.getsDKConfiguration().getShopper().getShippingContactInfo())
+                ? blueSnapService.getsDKConfiguration().getShopper().getShippingContactInfo()
+                : new ShippingInfo();
+        shippingNameEditText.setText(AndroidUtil.stringify(shippingInfo.getFullName(), savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME)));
+        shippingZipEditText.setText(AndroidUtil.stringify(shippingInfo.getZip(), savedInstanceState.getString(AUTO_POPULATE_ZIP)));
+        //shippingEmailEditText.setText(savedInstanceState.getString(AUTO_POPULATE_EMAIL));
+        shippingAddressLineEditText.setText(AndroidUtil.stringify(shippingInfo.getAddress(), savedInstanceState.getString(AUTO_POPULATE_ADDRESS)));
+        shippingCityEditText.setText(AndroidUtil.stringify(shippingInfo.getCity(), savedInstanceState.getString(AUTO_POPULATE_CITY)));
+        shippingStateEditText.setText(AndroidUtil.stringify(shippingInfo.getState(), savedInstanceState.getString(AUTO_POPULATE_STATE)));
+        addressCountryButton.setText(AndroidUtil.stringify(shippingInfo.getCountry(), (
+                null != savedInstanceState.getString(AUTO_POPULATE_COUNTRY) && !"".equals(savedInstanceState.getString(AUTO_POPULATE_COUNTRY))
+                        ? savedInstanceState.getString(AUTO_POPULATE_COUNTRY)
+                        : blueSnapService.getUserCountry(getActivity().getApplicationContext())
+        )));
+        changeZipTextAndStateLengthAccordingToCountry();
 
         ActivateOnFocusValidation(shippingNameEditText);
         ActivateOnFocusValidation(shippingAddressLineEditText);
         ActivateOnFocusValidation(shippingCityEditText);
         ActivateOnEditorActionListener(shippingCityEditText);
         ActivateOnFocusValidation(shippingZipEditText);
-        ActivateOnFocusValidation(shippingEmailEditText);
+        //ActivateOnFocusValidation(shippingEmailEditText);
         if (AndroidUtil.checkCountryForState(getCountryText())) {
             ActivateOnFocusValidation(shippingStateEditText);
             ActivateOnEditorActionListener(shippingStateEditText);
@@ -173,7 +176,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         }
 
         AndroidUtil.setFocusOnLayoutOfEditText(shippingNameLabelTextView, shippingNameEditText);
-        AndroidUtil.setFocusOnLayoutOfEditText(shippingEmailLabelTextView, shippingEmailEditText);
+        //AndroidUtil.setFocusOnLayoutOfEditText(shippingEmailLabelTextView, shippingEmailEditText);
         AndroidUtil.setFocusOnLayoutOfEditText(shippingAdressLabelTextView, shippingAddressLineEditText);
         AndroidUtil.setFocusOnLayoutOfEditText(shippingZipLabelTextView, shippingZipEditText);
         AndroidUtil.setFocusOnLayoutOfEditText(shippingCityLabelTextView, shippingCityEditText);
@@ -192,9 +195,9 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                     || AndroidUtil.validateEditTextString(shippingZipEditText, shippingZipLabelTextView, AndroidUtil.ZIP_FIELD);
         } else if (editText.equals(shippingNameEditText)) {
             return AndroidUtil.validateEditTextString(shippingNameEditText, shippingNameLabelTextView, invalidNameMessageTextView, AndroidUtil.NAME_FIELD);
-        } else if (editText.equals(shippingEmailEditText)) {
+        } /*else if (editText.equals(shippingEmailEditText)) {
             return AndroidUtil.validateEditTextString(shippingEmailEditText, shippingEmailLabelTextView, invalidEmailMessageTextView, AndroidUtil.EMAIL_FIELD);
-        }
+        }*/
         return false;
     }
 
@@ -233,7 +236,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         return AndroidUtil.stringify(addressCountryButton.getText()).trim();
     }
 
-    private void changeZipTextAccordingToCountry() {
+    private void changeZipTextAndStateLengthAccordingToCountry() {
         // check if usa if so change zip text to postal code otherwise billing zip
         if (Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())) {
             shippingZipLinearLayout.setVisibility(View.INVISIBLE);
@@ -246,6 +249,11 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                             : R.string.zip
             );
         }
+
+        int maxLength = 50;
+        if (AndroidUtil.checkCountryForState(getCountryText()))
+            maxLength = 2;
+        shippingStateEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
     }
 
     private void setFocusOnShippingFragmentEditText(final CreditCardFields checkWhichFieldIsInValid) {
@@ -254,7 +262,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                 AndroidUtil.setFocusOnFirstErrorInput(shippingNameEditText);
                 break;
             case SHIPPINGEMAILEDITTEXT:
-                AndroidUtil.setFocusOnFirstErrorInput(shippingEmailEditText);
+                //AndroidUtil.setFocusOnFirstErrorInput(shippingEmailEditText);
                 break;
             case SHIPPINGADDRESSLINEEDITTEXT:
                 AndroidUtil.setFocusOnFirstErrorInput(shippingAddressLineEditText);
@@ -285,9 +293,9 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
 
             boolean validInput = Validation(shippingNameEditText);
             if (!validInput) checkWhichFieldIsInValid = CreditCardFields.SHIPPINGNAMEEDITTEXT;
-            validInput &= Validation(shippingEmailEditText);
+            /*validInput &= Validation(shippingEmailEditText);
             if (!validInput && checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
-                checkWhichFieldIsInValid = CreditCardFields.SHIPPINGEMAILEDITTEXT;
+                checkWhichFieldIsInValid = CreditCardFields.SHIPPINGEMAILEDITTEXT;*/
             validInput &= Validation(shippingAddressLineEditText);
             if (!validInput && checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
                 checkWhichFieldIsInValid = CreditCardFields.SHIPPINGADDRESSLINEEDITTEXT;

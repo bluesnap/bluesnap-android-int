@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -33,7 +33,7 @@ import java.text.DecimalFormat;
  */
 public class ExpressCheckoutFragment extends Fragment implements BluesnapPaymentFragment {
     public static final String TAG = ExpressCheckoutFragment.class.getSimpleName();
-    private static PaymentRequest paymentRequest;
+    private static SdkRequest sdkRequest;
     private static FragmentManager fragmentManager;
     private Double paypalPurchaseAmount;
     private String paypalCurrencyNumCode;
@@ -97,12 +97,12 @@ public class ExpressCheckoutFragment extends Fragment implements BluesnapPayment
     }
 
     private void updateFromPaymentRequest() {
-        paymentRequest = BlueSnapService.getInstance().getPaymentRequest();
-        if (paymentRequest == null)
+        sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        if (sdkRequest == null)
             return;
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
-        paypalPurchaseAmount = paymentRequest.getAmount();
-        paypalCurrencyNumCode = paymentRequest.getCurrencyNameCode();
+        paypalPurchaseAmount = sdkRequest.getAmount();
+        paypalCurrencyNumCode = sdkRequest.getCurrencyNameCode();
         totalAmount.setText(getResources().getString(R.string.total) + " " + AndroidUtil.getCurrencySymbol(paypalCurrencyNumCode) + " " + decimalFormat.format(paypalPurchaseAmount));
     }
 
@@ -119,7 +119,7 @@ public class ExpressCheckoutFragment extends Fragment implements BluesnapPayment
 
     private void startPayPal() {
         progressBar.setVisibility(View.VISIBLE);
-        BlueSnapService.getInstance().createPayPalToken(paymentRequest.getAmount(), paymentRequest.getCurrencyNameCode(), new BluesnapServiceCallback() {
+        BlueSnapService.getInstance().createPayPalToken(sdkRequest.getAmount(), sdkRequest.getCurrencyNameCode(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 try {
@@ -142,7 +142,7 @@ public class ExpressCheckoutFragment extends Fragment implements BluesnapPayment
                         //message = errorDescription.getString("description") + " please change to a PayPal supported Currency or contact Support for additional assistance";
                         message = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_1)
                                 + " "
-                                + paymentRequest.getCurrencyNameCode()
+                                + sdkRequest.getCurrencyNameCode()
                                 + " "
                                 + getString(R.string.CURRENCY_NOT_SUPPORTED_PART_2)
                                 + " "

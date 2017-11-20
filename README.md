@@ -40,9 +40,9 @@ The SDK includes a pre-built checkout form, enabling you to easily collect the s
 ### Create a PaymentRequest
 A `PaymentRequest` is required to pass information about the purchase to the SDK. The request must include the purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code):
 
-    PaymentRequest paymentRequest = new PaymentRequest();
-    paymentRequest.setAmount("20.5"D);
-    paymentRequest.setCurrencyNameCode("USD");
+    PaymentRequest sdkRequest = new PaymentRequest();
+    sdkRequest.setAmount("20.5"D);
+    sdkRequest.setCurrencyNameCode("USD");
 
 Optionally, you may pass a tax amount and a subtotal price. The tax amount will be added to the subtotal.
 
@@ -50,25 +50,25 @@ Optionally, you may pass a tax amount and a subtotal price. The tax amount will 
 
 You can also pass a title or a custom title to be displayed to the shopper:
 
-    paymentRequest.setCustomTitle("custom text");
+    sdkRequest.setCustomTitle("custom text");
 
 If you would like to collect shipping information, call the `setShippingRequired` method in the `PaymentRequest`:
 
-    paymentRequest.setShippingRequired(true);
+    sdkRequest.setShippingRequired(true);
 
 If you would like to collect shipping information, call the `setBillingRequired` method in the `PaymentRequest`:
 
-    paymentRequest.setBillingRequired(true);
+    sdkRequest.setBillingRequired(true);
     
 If you would like to collect shipping information, call the `setEmailRequired` method in the `PaymentRequest`:
 
-    paymentRequest.setEmailRequired(true);
+    sdkRequest.setEmailRequired(true);
     
 ### Launch BluesnapCheckoutActivity
 To start the activity, create an Android Intent and pass the `PaymentRequest` as an Intent Extra.
 
     Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
-    intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
+    intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
     startActivityForResult(intent);
 
 This will launch the activity, display the checkout form with the details you provided in the `PaymentRequest`, and handle the interaction with the shopper.
@@ -89,15 +89,15 @@ The `PaymentResult` is passed back to your activity as an activityResult Extra. 
                 // User aborted the checkout process
                 return;
 
-            PaymentResult paymentResult = (PaymentResult) data.getExtras().get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+            PaymentResult sdkResult = (PaymentResult) data.getExtras().get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
             ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         }
 
 A `PaymentResult` instance holds information about the transaction, such as the purchase amount, currency, and also indicates if this was a returning shopper transaction or a purchase that was completed via PayPal.
 
-    paymentResult.getCurrencyNameCode(); //e.g USD
-    paymentResult.getAmount(); //20.5
-    paymentResult.getPaypalInvoiceId(); // A string with the invoice Id.
+    sdkResult.getCurrencyNameCode(); //e.g USD
+    sdkResult.getAmount(); //20.5
+    sdkResult.getPaypalInvoiceId(); // A string with the invoice Id.
 
 ## Complete the transaction
 If the shopper purchased via PayPal, then the transaction has successfully been submitted and no further action is required.

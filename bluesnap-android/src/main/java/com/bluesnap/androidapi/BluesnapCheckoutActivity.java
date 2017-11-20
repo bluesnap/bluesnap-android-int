@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -31,7 +31,6 @@ import com.bluesnap.androidapi.views.CurrencyActivity;
 import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
 import com.bluesnap.androidapi.views.ShippingFragment;
 import com.bluesnap.androidapi.views.WebViewActivity;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -45,7 +44,7 @@ import cz.msebera.android.httpclient.Header;
 
 /**
  * A user Activity to carry out a purchase.
- * A {@link PaymentRequest} must be provided as a parcelableExtra with the name BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST;
+ * A {@link SdkRequest} must be provided as a parcelableExtra with the name BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST;
  */
 public class BluesnapCheckoutActivity extends Activity {
     public final static String EXTRA_PAYMENT_REQUEST = "com.bluesnap.intent.BSNAP_PAYMENT_REQUEST";
@@ -61,7 +60,7 @@ public class BluesnapCheckoutActivity extends Activity {
     private BluesnapFragment bluesnapFragment;
     //private PrefsStorage prefsStorage;
     private FragmentManager fragmentManager;
-    private PaymentRequest paymentRequest;
+    private SdkRequest sdkRequest;
     private ExpressCheckoutFragment expressCheckoutFragment;
     private String sharedCurrency;
     private Shopper shopper;
@@ -72,9 +71,9 @@ public class BluesnapCheckoutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_default_ui);
-        paymentRequest = getIntent().getParcelableExtra(EXTRA_PAYMENT_REQUEST);
+        sdkRequest = getIntent().getParcelableExtra(EXTRA_PAYMENT_REQUEST);
         try {
-            BlueSnapService.getInstance().setPaymentRequest(paymentRequest);
+            BlueSnapService.getInstance().setSdkRequest(sdkRequest);
         } catch (BSPaymentRequestException e) {
             String errorMsg = "payment request not validated:" + e.getMessage();
             Log.d(TAG, e.getMessage());
@@ -87,7 +86,7 @@ public class BluesnapCheckoutActivity extends Activity {
         expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
         //prefsStorage = new PrefsStorage(this);
         final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        checkIfCurrencyExists(paymentRequest.getCurrencyNameCode());
+        checkIfCurrencyExists(sdkRequest.getCurrencyNameCode());
         if (blueSnapService.isexpressCheckoutActive())
             setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
@@ -98,7 +97,7 @@ public class BluesnapCheckoutActivity extends Activity {
     protected void onStart() {
         super.onStart();
         try {
-            paymentRequest.verify();
+            sdkRequest.verify();
         } catch (BSPaymentRequestException e) {
             String errorMsg = "payment request not validated:" + e.getMessage();
             e.printStackTrace();
@@ -133,7 +132,7 @@ public class BluesnapCheckoutActivity extends Activity {
         final Button creditCardButton = (Button) findViewById(R.id.creditCardButton);
         creditCardButton.setVisibility(View.VISIBLE);
         final Bundle fragmentBundle = new Bundle();
-        fragmentBundle.putParcelable(EXTRA_PAYMENT_REQUEST, paymentRequest);
+        fragmentBundle.putParcelable(EXTRA_PAYMENT_REQUEST, sdkRequest);
         expressCheckoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +170,7 @@ public class BluesnapCheckoutActivity extends Activity {
 
     private void setMerchantCustomText() {
         TextView title = (TextView) findViewById(R.id.merchant_title);
-        title.setText(paymentRequest.getCustomTitle());
+        title.setText(sdkRequest.getCustomTitle());
     }
 
     public ShippingFragment createShippingFragment(Bundle bundle) {
@@ -225,13 +224,13 @@ public class BluesnapCheckoutActivity extends Activity {
                         Log.d(TAG, "tokenization of previous used credit card");
                     }
 
-                    PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
-                    paymentResult.setKountSessionId(KountService.getInstance().getKountSessionId());
+                    SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+                    sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
                     // update last4 from server result
-                    paymentResult.setLast4Digits(Last4);
+                    sdkResult.setLast4Digits(Last4);
                     // update card type from server result
-                    paymentResult.setCardType(ccType);
-                    resultIntent.putExtra(EXTRA_PAYMENT_RESULT, paymentResult);
+                    sdkResult.setCardType(ccType);
+                    resultIntent.putExtra(EXTRA_PAYMENT_RESULT, sdkResult);
                     setResult(RESULT_OK, resultIntent);
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server
                     getCreditCard().setTokenizationSucess();
@@ -294,12 +293,12 @@ public class BluesnapCheckoutActivity extends Activity {
 
     public void setShippingContactInfo(ShippingInfo shippingInfo) {
         getShopper().setShippingContactInfo(shippingInfo);
-        blueSnapService.getPaymentResult().setShippingInfo(shippingInfo);
+        blueSnapService.getSdkResult().setShippingInfo(shippingInfo);
     }
 
     public void setBillingContactInfo(BillingInfo billingInfo) {
         getShopper().getNewCreditCardInfo().setBillingContactInfo(billingInfo);
-        blueSnapService.getPaymentResult().setBillingInfo(billingInfo);
+        blueSnapService.getSdkResult().setBillingInfo(billingInfo);
     }
 
     public Shopper getShopper() {
@@ -367,7 +366,7 @@ public class BluesnapCheckoutActivity extends Activity {
         }
 
         public void onClick(final View v) {
-            sharedCurrency = paymentRequest.getCurrencyNameCode();
+            sharedCurrency = sdkRequest.getCurrencyNameCode();
             invalidateOptionsMenu();
             hamburgerMenuButton.setImageResource(R.drawable.ic_close_white_36dp);
             PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);

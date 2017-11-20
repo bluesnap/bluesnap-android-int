@@ -4,22 +4,20 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -29,7 +27,6 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
@@ -37,12 +34,11 @@ import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.LastPaymentInfo;
-import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypes;
-import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -76,7 +72,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private Shopper shopper;
     private CreditCardInfo selectedPaymentInfoForReturningShopper;
     //private PrefsStorage prefsStorage;
-    private PaymentRequest paymentRequest;
+    private SdkRequest sdkRequest;
     private ViewGroup subtotalView;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
@@ -125,23 +121,23 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        paymentRequest = BlueSnapService.getInstance().getPaymentRequest();
-        Events.CurrencyUpdatedEvent currencyUpdatedEvent = new Events.CurrencyUpdatedEvent(paymentRequest.getAmount(), paymentRequest.getCurrencyNameCode(), paymentRequest.getTaxAmount(), paymentRequest.getSubtotalAmount());
+        sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        Events.CurrencyUpdatedEvent currencyUpdatedEvent = new Events.CurrencyUpdatedEvent(sdkRequest.getAmount(), sdkRequest.getCurrencyNameCode(), sdkRequest.getTaxAmount(), sdkRequest.getSubtotalAmount());
         onCurrencyUpdated(currencyUpdatedEvent);
-        boolean notax = (paymentRequest.getSubtotalAmount() == 0D || paymentRequest.getTaxAmount() == 0D);
+        boolean notax = (sdkRequest.getSubtotalAmount() == 0D || sdkRequest.getTaxAmount() == 0D);
         subtotalView.setVisibility(notax ? View.INVISIBLE : View.VISIBLE);
 
-        if (paymentRequest.isEmailRequired()) {
+        if (sdkRequest.isEmailRequired()) {
             emailFieldLayout.setVisibility(View.VISIBLE);
             emailBorderVanish.setVisibility(View.VISIBLE);
         }
 
-        if (paymentRequest.isBillingRequired()) {
+        if (sdkRequest.isBillingRequired()) {
             addressLineTableLayout.setVisibility(View.VISIBLE);
             stateAndCityTableRow.setVisibility(View.VISIBLE);
         }
 
-        if (paymentRequest.isShippingRequired()) {
+        if (sdkRequest.isShippingRequired()) {
             buyNowButton.setText(getResources().getString(R.string.shipping));
 
             Drawable drawable;
@@ -222,7 +218,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         });
 
         addressCountryButton.setText(blueSnapService.getUserCountry(getActivity().getApplicationContext()));
-        changeZipTextAccordingToCountry();
+        changeZipTextAndStateLengthAccordingToCountry();
 
         AndroidUtil.setFocusOnLayoutOfEditText(cvvLabelTextView, cvvEditText);
         AndroidUtil.setFocusOnLayoutOfEditText(expDateLabelTextView, expDateEditText);
@@ -326,14 +322,14 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         } else {
             billingStateEditText.setOnFocusChangeListener(null);
         }
-        changeZipTextAccordingToCountry();
+        changeZipTextAndStateLengthAccordingToCountry();
     }
 
     @Subscribe
     public void onCurrencyUpdated(Events.CurrencyUpdatedEvent currencyUpdatedEvent) {
         String currencySymbol = AndroidUtil.getCurrencySymbol(currencyUpdatedEvent.newCurrencyNameCode);
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
-        if (!BlueSnapService.getInstance().getPaymentRequest().isShippingRequired()) {
+        if (!BlueSnapService.getInstance().getSdkRequest().isShippingRequired()) {
             buyNowButton.setText(getResources().getString(R.string.pay)
                     + " " + currencySymbol + " " + decimalFormat.format(currencyUpdatedEvent.updatedPrice));
         }
@@ -347,7 +343,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         return AndroidUtil.stringify(addressCountryButton.getText()).trim();
     }
 
-    private void changeZipTextAccordingToCountry() {
+    private void changeZipTextAndStateLengthAccordingToCountry() {
         // check if usa if so change zip text to postal code otherwise billing zip
         if (Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText())) {
             zipFieldLayout.setVisibility(View.INVISIBLE);
@@ -360,6 +356,13 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                             : R.string.billing_zip
             );
         }
+
+        int maxLength = 50;
+        if (AndroidUtil.checkCountryForState(getCountryText()))
+            maxLength = 2;
+        billingStateEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
+        billingAddressLabelTextView.setTextColor(Color.BLACK);
+
     }
 
     private void initPrefs() {
@@ -398,17 +401,20 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         shopper.getNewCreditCardInfo().setCreditCard(selectedPaymentInfoForReturningShopper.getCreditCard());
         shopper.getNewCreditCardInfo().getCreditCard().setIsNewCreditCard(false);
         BillingInfo selectedBillingInfo = selectedPaymentInfoForReturningShopper.getBillingContactInfo();
-        shopperFullNameEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getFullName()));
-        addressCountryButton.setText(AndroidUtil.stringify(selectedBillingInfo.getCountry()));
-        zipEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getZip()));
 
-        if (paymentRequest.isEmailRequired())
-            emailEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getEmail()));
+        shopperFullNameEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getFullName(), shopper.getFullName()));
+        addressCountryButton.setText(AndroidUtil.stringify(selectedBillingInfo.getCountry(), shopper.getCountry()).toUpperCase());
+        changeZipTextAndStateLengthAccordingToCountry();
+        zipEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getZip(), shopper.getZip()));
 
-        if (paymentRequest.isBillingRequired()) {
-            billingAddressLineEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getAddress()));
-            billingCityEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getCity()));
-            billingStateEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getState()));
+        if (sdkRequest.isEmailRequired())
+            emailEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getEmail(), shopper.getEmail()));
+
+        if (sdkRequest.isBillingRequired()) {
+            addressLineTableLayout.setBackgroundResource(R.drawable.border);
+            billingAddressLineEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getAddress(), shopper.getAddress()));
+            billingCityEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getCity(), shopper.getCity()));
+            billingStateEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getState(), shopper.getState()));
         }
     }
 
@@ -464,6 +470,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                     creditCardNumberSpinnerVisibilityChange(View.INVISIBLE, 0);
                     newCardLayerVisibilityChange(View.VISIBLE);
                     shopper.getNewCreditCardInfo().getCreditCard().setIsNewCreditCard(true);
+                    addressLineTableLayout.setBackgroundResource(0);
                 } else {
                     updatePreviousDetailsFromShopper();
                     newCardLayerVisibilityChange(View.GONE);
@@ -564,7 +571,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean billingValidation(String inputType) {
-        if (!paymentRequest.isBillingRequired())
+        if (!sdkRequest.isBillingRequired())
             return true;
         else if (AndroidUtil.ADDRESS_FIELD.equals(inputType))
             return AndroidUtil.validateEditTextString(billingAddressLineEditText, billingAddressLabelTextView, AndroidUtil.ADDRESS_FIELD);
@@ -586,7 +593,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean emailFieldValidation() {
-        return !paymentRequest.isEmailRequired()
+        return !sdkRequest.isEmailRequired()
                 || AndroidUtil.validateEditTextString(emailEditText, emailTextView, AndroidUtil.EMAIL_FIELD);
     }
 
@@ -671,27 +678,27 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             BluesnapCheckoutActivity bluesnapCheckoutActivity = (BluesnapCheckoutActivity) getActivity();
             bluesnapCheckoutActivity.setShopper(shopper);
 
-            PaymentResult paymentResult = BlueSnapService.getInstance().getPaymentResult();
+            SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
             BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
 
-            paymentResult.setLast4Digits(shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits());
-            paymentResult.setExpDate(shopper.getNewCreditCardInfo().getCreditCard().getExpirationDate());
+            sdkResult.setLast4Digits(shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits());
+            sdkResult.setExpDate(shopper.getNewCreditCardInfo().getCreditCard().getExpirationDate());
 
             billingInfo.setFullName(shopperFullNameEditText.getText().toString().trim());
             billingInfo.setZip(shopper.getNewCreditCardInfo().getBillingContactInfo().getZip());
             billingInfo.setCountry(getCountryText());
 
-            if (paymentRequest.isEmailRequired())
+            if (sdkRequest.isEmailRequired())
                 billingInfo.setEmail(emailEditText.getText().toString().trim());
 
-            if (paymentRequest.isBillingRequired()) {
+            if (sdkRequest.isBillingRequired()) {
                 billingInfo.setAddress(billingAddressLineEditText.getText().toString().trim());
                 billingInfo.setCity(billingCityEditText.getText().toString().trim());
                 billingInfo.setState(billingStateEditText.getText().toString().trim());
             }
             bluesnapCheckoutActivity.setBillingContactInfo(billingInfo);
 
-            if (paymentRequest.isShippingRequired()) {
+            if (sdkRequest.isShippingRequired()) {
                 fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();

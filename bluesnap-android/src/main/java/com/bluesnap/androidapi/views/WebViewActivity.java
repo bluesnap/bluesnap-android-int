@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
@@ -82,17 +82,17 @@ public class WebViewActivity extends Activity {
                     UrlQuerySanitizer sanitizer = new UrlQuerySanitizer();
                     sanitizer.setAllowUnregisteredParamaters(true);
                     sanitizer.parseUrl(procceedURL);
-                    PaymentResult paymentResult = null;
+                    SdkResult sdkResult = null;
                     try {
-                        paymentResult = BlueSnapService.getInstance().getPaymentResult();
-                        paymentResult.setPaypalInvoiceId(sanitizer.getValue("INVOICE_ID"));
+                        sdkResult = BlueSnapService.getInstance().getSdkResult();
+                        sdkResult.setPaypalInvoiceId(sanitizer.getValue("INVOICE_ID"));
                     } catch (Exception e) {
                         Log.e(TAG, "paypal state error", e);
                         finishWithAlertDialog("paypal service error", "paypal");
                     }
-                    Log.d(TAG, "Payment result from paypal:" + paymentResult);
+                    Log.d(TAG, "Payment result from paypal:" + sdkResult);
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
+                    resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
                     setResult(RESULT_OK, resultIntent);
                     Log.d(TAG, "finishing webview activity");
                     finish();

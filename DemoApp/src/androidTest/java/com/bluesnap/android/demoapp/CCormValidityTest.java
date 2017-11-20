@@ -9,7 +9,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.SdkRequest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,12 +50,12 @@ public class CCormValidityTest extends EspressoBasedTest {
     public void setup() throws InterruptedException {
         super.setup();
         super.setSDKToken();
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setAmount(23.4);
+        SdkRequest sdkRequest = new SdkRequest();
+        sdkRequest.setAmount(23.4);
         Intent intent = new Intent();
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
-        paymentRequest.setCurrencyNameCode("USD");
-        paymentRequest.setShippingRequired(false);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
+        sdkRequest.setCurrencyNameCode("USD");
+        sdkRequest.setShippingRequired(false);
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());

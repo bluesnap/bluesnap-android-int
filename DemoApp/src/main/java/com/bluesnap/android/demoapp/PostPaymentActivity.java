@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
@@ -32,7 +32,7 @@ public class PostPaymentActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_payment);
-        PaymentResult paymentResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+        SdkResult sdkResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
         ShippingInfo shippingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         BillingInfo billingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         TextView paymentResultTextView2
@@ -42,21 +42,21 @@ public class PostPaymentActivity extends Activity {
         transactionResultTextView = (TextView) findViewById(R.id.transactionResult);
         transactionResultTextView.setVisibility(View.INVISIBLE);
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
-        paymentResultTextView2.setText("Your payment of  " + paymentResult.getCurrencyNameCode() + " " + decimalFormat.format(paymentResult.getAmount()) + " has been sent.");
+        paymentResultTextView2.setText("Your payment of  " + sdkResult.getCurrencyNameCode() + " " + decimalFormat.format(sdkResult.getAmount()) + " has been sent.");
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             // String merchantToken = extras.getString("MERCHANT_TOKEN");
-            Log.d(TAG, "Payment Result:\n " + paymentResult.toString());
+            Log.d(TAG, "Payment Result:\n " + sdkResult.toString());
 
             transactions = DemoTransactions.getInstance();
             transactions.setContext(this);
 
-            if (!AndroidUtil.isBlank(paymentResult.getPaypalInvoiceId())) {
+            if (!AndroidUtil.isBlank(sdkResult.getPaypalInvoiceId())) {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
-                //setDialog("Transaction success with id:" + paymentResult.getPaypalInvoiceId(), "Paypal transaction");
+                //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {
-                //setDialog(paymentResult.toString() + "\n" + shippingInfo + "\n" + billingInfo, "Payment Result");
-                transactions.createCreditCardTransaction(paymentResult, new BluesnapServiceCallback() {
+                //setDialog(sdkResult.toString() + "\n" + shippingInfo + "\n" + billingInfo, "Payment Result");
+                transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
                     @Override
                     public void onSuccess() {
                         setContinueButton(transactions.getMessage(), transactions.getTitle());

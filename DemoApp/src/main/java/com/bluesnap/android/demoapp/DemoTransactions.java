@@ -3,7 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.util.Log;
 
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
 import com.loopj.android.http.AsyncHttpClient;
@@ -47,19 +47,19 @@ public class DemoTransactions {
         return token;
     }
 
-    public void createCreditCardTransaction(final PaymentResult paymentResult, final BluesnapServiceCallback callback) {
+    public void createCreditCardTransaction(final SdkResult sdkResult, final BluesnapServiceCallback callback) {
 
         //TODO: I'm just a string but please don't make me look that bad..Use String.format
         String body = "<card-transaction xmlns=\"http://ws.plimus.com\">" +
                 "<card-transaction-type>AUTH_CAPTURE</card-transaction-type>" +
                 "<recurring-transaction>ECOMMERCE</recurring-transaction>" +
                 "<soft-descriptor>MobileSDK</soft-descriptor>" +
-                "<amount>" + paymentResult.getAmount() + "</amount>" +
-                "<currency>" + paymentResult.getCurrencyNameCode() + "</currency>" +
+                "<amount>" + sdkResult.getAmount() + "</amount>" +
+                "<currency>" + sdkResult.getCurrencyNameCode() + "</currency>" +
                 "<transaction-fraud-info>" +
-                "<fraud-session-id>" + paymentResult.getKountSessionId() + "</fraud-session-id>" +
+                "<fraud-session-id>" + sdkResult.getKountSessionId() + "</fraud-session-id>" +
                 "</transaction-fraud-info>" +
-                "<pf-token>" + paymentResult.getToken() + "</pf-token>" +
+                "<pf-token>" + sdkResult.getToken() + "</pf-token>" +
                 "</card-transaction>";
 
         StringEntity entity = new StringEntity(body, "UTF-8");

@@ -6,7 +6,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.SdkRequest;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,12 +42,12 @@ public class ShippingFlowTest {
 
     @Before
     public void setup() {
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setAmount(23.4);
+        SdkRequest sdkRequest = new SdkRequest();
+        sdkRequest.setAmount(23.4);
         Intent intent = new Intent();
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
-        paymentRequest.setCurrencyNameCode("USD");
-        paymentRequest.setShippingRequired(true);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
+        sdkRequest.setCurrencyNameCode("USD");
+        sdkRequest.setShippingRequired(true);
         mActivityRule.launchActivity(intent);
     }
 

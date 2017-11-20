@@ -101,6 +101,11 @@ public class AndroidUtil {
         return decimalFormat;
     }
 
+    public static String stringify(Object main, Object secondary) {
+        String mainString = stringify(main);
+        return (!"".equals(mainString) ? mainString : stringify(secondary));
+    }
+
     public static String stringify(Object s) {
         if (s == null || s.toString().isEmpty())
             return "";
@@ -155,6 +160,12 @@ public class AndroidUtil {
                     textInValidChanges(textView);
                 return false;
             } else if ((EMAIL_FIELD.equals(validationType)) && (!Patterns.EMAIL_ADDRESS.matcher(target).matches())) {
+                if (optionalInvalidStatement != null)
+                    textInValidChanges(textView, optionalInvalidStatement);
+                else
+                    textInValidChanges(textView);
+                return false;
+            } else if ((STATE_FIELD.equals(validationType)) && (target.length() != 2)) {
                 if (optionalInvalidStatement != null)
                     textInValidChanges(textView, optionalInvalidStatement);
                 else

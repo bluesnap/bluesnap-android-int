@@ -7,18 +7,18 @@ import android.os.Parcelable;
  * Returns the result of the payment process to the Caller.
  * This will be passed as an activityResult back to the calling activity.
  */
-public class PaymentResult implements Parcelable {
+public class SdkResult implements Parcelable {
 
 
-    public static final Creator<PaymentResult> CREATOR = new Creator<PaymentResult>() {
+    public static final Creator<SdkResult> CREATOR = new Creator<SdkResult>() {
         @Override
-        public PaymentResult createFromParcel(Parcel in) {
-            return new PaymentResult(in);
+        public SdkResult createFromParcel(Parcel in) {
+            return new SdkResult(in);
         }
 
         @Override
-        public PaymentResult[] newArray(int size) {
-            return new PaymentResult[size];
+        public SdkResult[] newArray(int size) {
+            return new SdkResult[size];
         }
     };
 
@@ -39,10 +39,10 @@ public class PaymentResult implements Parcelable {
     private String token;
     private String kountSessionId;
 
-    public PaymentResult() {
+    public SdkResult() {
     }
 
-    protected PaymentResult(Parcel in) {
+    protected SdkResult(Parcel in) {
         setShopperID(in.readString());
         setLast4Digits(in.readString());
         setAmount(in.readDouble());
@@ -82,7 +82,7 @@ public class PaymentResult implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PaymentResult that = (PaymentResult) o;
+        SdkResult that = (SdkResult) o;
 
         if (!getLast4Digits().equals(that.getLast4Digits())) return false;
         if (!getAmount().equals(that.getAmount())) return false;
@@ -111,7 +111,7 @@ public class PaymentResult implements Parcelable {
 
     @Override
     public String toString() {
-        return "PaymentResult{" +
+        return "SdkResult{" +
                 "amount=" + getAmount() + '\'' +
                 ", currencyNameCode='" + getCurrencyNameCode() + '\'' +
                 ", last4Digits='" + getLast4Digits() + '\'' +

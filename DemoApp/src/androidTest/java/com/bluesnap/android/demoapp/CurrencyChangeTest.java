@@ -8,10 +8,9 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.PaymentRequest;
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 
 import org.junit.After;
 import org.junit.Before;
@@ -52,12 +51,12 @@ public class CurrencyChangeTest extends EspressoBasedTest {
         super.setup();
         super.setSDKToken();
 
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setAmount(AMOUNT);
+        SdkRequest sdkRequest = new SdkRequest();
+        sdkRequest.setAmount(AMOUNT);
         Intent intent = new Intent();
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
-        paymentRequest.setCurrencyNameCode("USD");
-        paymentRequest.setShippingRequired(false);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
+        sdkRequest.setCurrencyNameCode("USD");
+        sdkRequest.setShippingRequired(false);
         mActivityRule.launchActivity(intent);
         clearPrefs(mActivityRule.getActivity().getBaseContext());
     }

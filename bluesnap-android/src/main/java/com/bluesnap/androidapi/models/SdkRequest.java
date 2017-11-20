@@ -7,15 +7,15 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 /**
  * A Request for payment process in the SDK.
- * A new PaymentRequest should be used for each purchase.
+ * A new SdkRequest should be used for each purchase.
  */
-public class PaymentRequest implements Parcelable {
+public class SdkRequest implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
 
         @Override
         public Object createFromParcel(Parcel parcel) {
-            PaymentRequest pr = new PaymentRequest(parcel);
+            SdkRequest pr = new SdkRequest(parcel);
             return pr;
         }
 
@@ -39,7 +39,7 @@ public class PaymentRequest implements Parcelable {
     private Double baseTaxAmount;
     private Double baseSubtotalAmount;
 
-    public PaymentRequest(Parcel parcel) {
+    public SdkRequest(Parcel parcel) {
         currencyNameCode = parcel.readString();
         amount = parcel.readDouble();
         customTitle = parcel.readString();
@@ -53,11 +53,11 @@ public class PaymentRequest implements Parcelable {
         setBase();
     }
 
-    public PaymentRequest() {
+    public SdkRequest() {
 
     }
 
-    public PaymentRequest(String currencyNameCode) {
+    public SdkRequest(String currencyNameCode) {
         setCurrencyNameCode(currencyNameCode);
     }
 
@@ -212,7 +212,7 @@ public class PaymentRequest implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PaymentRequest that = (PaymentRequest) o;
+        SdkRequest that = (SdkRequest) o;
 
         if (shippingRequired != that.shippingRequired) return false;
         if (billingRequired != that.billingRequired) return false;

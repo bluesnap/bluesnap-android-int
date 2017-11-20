@@ -10,8 +10,8 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
@@ -20,6 +20,7 @@ import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,7 +37,7 @@ import java.util.Set;
 import cz.msebera.android.httpclient.Header;
 
 /**
- * Core BlueSnap Service class that handles network and maintains {@link PaymentRequest}
+ * Core BlueSnap Service class that handles network and maintains {@link SdkRequest}
  */
 public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
@@ -51,8 +52,8 @@ public class BlueSnapService {
     private static JSONObject errorDescription;
     private static String transactionStatus;
 
-    private PaymentResult paymentResult;
-    private PaymentRequest paymentRequest;
+    private SdkResult sdkResult;
+    private SdkRequest sdkRequest;
     private BluesnapToken bluesnapToken;
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
@@ -133,8 +134,8 @@ public class BlueSnapService {
         initPayPal(merchantToken);
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
 
-        paymentResult = null;
-        paymentRequest = null;
+        sdkResult = null;
+        sdkRequest = null;
 
         sdkInit(baseCurrency, context, callback);
 
@@ -163,8 +164,8 @@ public class BlueSnapService {
         initPayPal(merchantToken);
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
         // after expired token is replaced - placing new token in payment result
-        if (null != paymentResult)
-            paymentResult.setToken(merchantToken);
+        if (null != sdkResult)
+            sdkResult.setToken(merchantToken);
         Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
 
     }
@@ -208,18 +209,18 @@ public class BlueSnapService {
         if (null != billingInfo.getZip() && !"".equals(billingInfo.getZip()))
             postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
 
-        if (paymentRequest.isBillingRequired()) {
+        if (sdkRequest.isBillingRequired()) {
             postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
             postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
             postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
 
-        if (paymentRequest.isEmailRequired())
+        if (sdkRequest.isEmailRequired())
             postData.put(BillingInfo.EMAIL, billingInfo.getEmail());
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
-        if (paymentRequest.isShippingRequired()) {
+        if (sdkRequest.isShippingRequired()) {
             ShippingInfo shippingInfo = shopper.getShippingContactInfo();
             assert shippingInfo != null;
             postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
@@ -258,18 +259,19 @@ public class BlueSnapService {
     private void tokenExpiredAction(final BluesnapServiceCallback callback, final AfterNewTokenCreatedAction afterNewTokenCreatedAction) {
         // try to PUT empty {} to check if token is expired
         try {
-            checkTokenIsExpired(new JsonHttpResponseHandler() {
+            checkTokenIsExpired(new TextHttpResponseHandler() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
                     Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
                     callback.onFailure();
                 }
 
                 @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                    if (statusCode == 400 && null != tokenProvider) {
+                    if (statusCode == 400 && null != getTokenProvider() && !"".equals(responseString)) {
                         try {
+                            JSONObject errorResponse = new JSONObject(responseString);
                             JSONArray rs2 = (JSONArray) errorResponse.get("message");
                             JSONObject rs3 = (JSONObject) rs2.get(0);
                             if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
@@ -286,7 +288,7 @@ public class BlueSnapService {
                             Log.e(TAG, "json parsing exception", e);
                         }
                     } else {
-                        String errorMsg = String.format("Service Error %s, %s", statusCode);
+                        String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
                         Log.e(TAG, errorMsg, throwable);
                         callback.onFailure();
                     }
@@ -346,7 +348,7 @@ public class BlueSnapService {
     }
 
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
-        blueSnapAPI.createPayPalToken(amount, currency, paymentRequest.isShippingRequired(), new JsonHttpResponseHandler() {
+        blueSnapAPI.createPayPalToken(amount, currency, sdkRequest.isShippingRequired(), new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -469,9 +471,9 @@ public class BlueSnapService {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
-        String baseCurrency = paymentRequest.getBaseCurrency();
+        String baseCurrency = sdkRequest.getBaseCurrency();
         if (baseCurrency.equals(newCurrencyNameCode)) {
-            return paymentRequest.getBaseAmount();
+            return sdkRequest.getBaseAmount();
         }
         Double baseConversionRate = sDKConfiguration.getRates().getRatesMap().get(baseCurrency).getConversionRate();
         Double usdPRice = baseCurrency.equals(SupportedPaymentMethods.USD) ? basePrice * baseConversionRate : basePrice * (1 / baseConversionRate);
@@ -479,42 +481,42 @@ public class BlueSnapService {
         return newPrice;
     }
 
-    public synchronized PaymentResult getPaymentResult() {
-        if (paymentResult == null) {
-            paymentResult = new PaymentResult();
+    public synchronized SdkResult getSdkResult() {
+        if (sdkResult == null) {
+            sdkResult = new SdkResult();
 
             try {
-                paymentResult.setToken(bluesnapToken.getMerchantToken());
+                sdkResult.setToken(bluesnapToken.getMerchantToken());
                 // Copy values from request
-                paymentResult.setAmount(paymentRequest.getAmount());
-                paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
-                paymentResult.setShopperID(paymentRequest.getShopperID());
+                sdkResult.setAmount(sdkRequest.getAmount());
+                sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+                sdkResult.setShopperID(sdkRequest.getShopperID());
             } catch (Exception e) {
-                Log.e(TAG, "paymentResult set Token, Amount, Currency or ShopperId resulted in an error");
+                Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
             }
         }
-        return paymentResult;
+        return sdkResult;
     }
 
-    public PaymentRequest getPaymentRequest() {
-        return paymentRequest;
+    public SdkRequest getSdkRequest() {
+        return sdkRequest;
     }
 
     /**
-     * Set a paymentRequest and call {@link #verifyPaymentRequest} on  it.
+     * Set a sdkRequest and call {@link #verifyPaymentRequest} on  it.
      *
-     * @param newPaymentRequest
+     * @param newSdkRequest
      * @throws BSPaymentRequestException
      */
-    public void setPaymentRequest(PaymentRequest newPaymentRequest) throws BSPaymentRequestException {
-        if (newPaymentRequest == null)
-            throw new NullPointerException("null paymentRequest");
+    public void setSdkRequest(SdkRequest newSdkRequest) throws BSPaymentRequestException {
+        if (newSdkRequest == null)
+            throw new NullPointerException("null sdkRequest");
 
-        if (paymentRequest != null) {
+        if (sdkRequest != null) {
             Log.w(TAG, "paymentrequest override");
         }
-        verifyPaymentRequest(newPaymentRequest);
-        paymentRequest = newPaymentRequest;
+        verifyPaymentRequest(newSdkRequest);
+        sdkRequest = newSdkRequest;
     }
 
 
@@ -522,50 +524,50 @@ public class BlueSnapService {
      * Check that a payment request is valid, meaning amount is positive and currency exist in the SDL rates map
      * see {@link #getSupportedRates()} or {@link #getRatesArray()} for a list of supported rates
      *
-     * @param paymentRequest a {@link #paymentRequest}
+     * @param sdkRequest a {@link #sdkRequest}
      * @throws BSPaymentRequestException
      */
-    public void verifyPaymentRequest(PaymentRequest paymentRequest) throws BSPaymentRequestException {
-        paymentRequest.verify();
+    public void verifyPaymentRequest(SdkRequest sdkRequest) throws BSPaymentRequestException {
+        sdkRequest.verify();
         if (sDKConfiguration.getRates().getRatesMap() == null) {
             throw new BSPaymentRequestException("rates map is not populated. did you forget to call updateRates?");
         }
-        if (sDKConfiguration.getRates().getRatesMap().get(paymentRequest.getCurrencyNameCode()) == null) {
+        if (sDKConfiguration.getRates().getRatesMap().get(sdkRequest.getCurrencyNameCode()) == null) {
             throw new BSPaymentRequestException("Currency not found");
         }
     }
 
     @Subscribe
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
-        String baseCurrency = paymentRequest.getBaseCurrency();
+        String baseCurrency = sdkRequest.getBaseCurrency();
         if (currencySelectionEvent.newCurrencyNameCode.equals(baseCurrency)) {
-            paymentRequest.setAmount(paymentRequest.getBaseAmount());
-            paymentRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
-            paymentRequest.setSubtotalAmount(paymentRequest.getBaseSubtotalAmount());
-            paymentRequest.setTaxAmount(paymentRequest.getBaseTaxAmount());
-            busInstance.post(new Events.CurrencyUpdatedEvent(paymentRequest.getBaseAmount(),
+            sdkRequest.setAmount(sdkRequest.getBaseAmount());
+            sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
+            sdkRequest.setSubtotalAmount(sdkRequest.getBaseSubtotalAmount());
+            sdkRequest.setTaxAmount(sdkRequest.getBaseTaxAmount());
+            busInstance.post(new Events.CurrencyUpdatedEvent(sdkRequest.getBaseAmount(),
                     currencySelectionEvent.newCurrencyNameCode,
-                    paymentRequest.getBaseTaxAmount(),
-                    paymentRequest.getBaseSubtotalAmount()));
+                    sdkRequest.getBaseTaxAmount(),
+                    sdkRequest.getBaseSubtotalAmount()));
         } else {
-            Double newPrice = convertPrice(paymentRequest.getBaseAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
+            Double newPrice = convertPrice(sdkRequest.getBaseAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
 
-            paymentRequest.setAmount(newPrice);
-            paymentRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
-            getPaymentResult().setAmount(newPrice);
-            getPaymentResult().setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
+            sdkRequest.setAmount(newPrice);
+            sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
+            getSdkResult().setAmount(newPrice);
+            getSdkResult().setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
 
-            Double newTaxValue = convertPrice(paymentRequest.getBaseTaxAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
-            Double newSubtotal = convertPrice(paymentRequest.getBaseSubtotalAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
-            if (paymentRequest.isSubtotalTaxSet()) {
-                paymentRequest.setSubtotalAmount(newSubtotal);
-                paymentRequest.setTaxAmount(newTaxValue);
+            Double newTaxValue = convertPrice(sdkRequest.getBaseTaxAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
+            Double newSubtotal = convertPrice(sdkRequest.getBaseSubtotalAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
+            if (sdkRequest.isSubtotalTaxSet()) {
+                sdkRequest.setSubtotalAmount(newSubtotal);
+                sdkRequest.setTaxAmount(newTaxValue);
             }
             busInstance.post(new Events.CurrencyUpdatedEvent(newPrice, currencySelectionEvent.newCurrencyNameCode, newTaxValue, newSubtotal));
         }
-        paymentResult.setAmount(paymentRequest.getAmount());
-        paymentResult.setCurrencyNameCode(paymentRequest.getCurrencyNameCode());
-        paymentResult.setShopperID(paymentRequest.getShopperID());
+        sdkResult.setAmount(sdkRequest.getAmount());
+        sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        sdkResult.setShopperID(sdkRequest.getShopperID());
 
 
     }

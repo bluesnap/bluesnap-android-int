@@ -19,8 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.PaymentRequest;
-import com.bluesnap.androidapi.models.PaymentResult;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
@@ -64,7 +64,7 @@ public class DemoMainActivity extends Activity {
     private String initialPrice;
     private String displayedCurrency;
     private String currencyName;
-    private PaymentRequest paymentRequest;
+    private SdkRequest sdkRequest;
     private String merchantToken;
     private Currency currencyByLocale;
     private ProgressBar progressBar;
@@ -258,38 +258,38 @@ public class DemoMainActivity extends Activity {
         if (!taxString.isEmpty()) {
             taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
         }
-        paymentRequest = new PaymentRequest();
+        sdkRequest = new SdkRequest();
         // You can set the Amout solely
-        paymentRequest.setAmount(productPrice);
+        sdkRequest.setAmount(productPrice);
 
         // Or you can set the Amount with tax, this will override setAmount()
         // The total purchase amount will be the sum of both numbers
         if (taxAmountPrecentage > 0D) {
-            paymentRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
+            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
         } else {
-            paymentRequest.setAmount(productPrice);
+            sdkRequest.setAmount(productPrice);
         }
 
-        paymentRequest.setCurrencyNameCode(currencyName);
-        paymentRequest.setCustomTitle("Demo Merchant");
+        sdkRequest.setCurrencyNameCode(currencyName);
+        sdkRequest.setCustomTitle("Demo Merchant");
 
         if (shippingSwitch.isChecked()) {
-            paymentRequest.setShippingRequired(true);
+            sdkRequest.setShippingRequired(true);
         }
         if (billingSwitch.isChecked()) {
-            paymentRequest.setBillingRequired(true);
+            sdkRequest.setBillingRequired(true);
         }
         if (emailSwitch.isChecked()) {
-            paymentRequest.setEmailRequired(true);
+            sdkRequest.setEmailRequired(true);
         }
         try {
-            paymentRequest.verify();
+            sdkRequest.verify();
         } catch (BSPaymentRequestException e) {
-            showDialog("PaymentRequest error:" + e.getMessage());
-            Log.d(TAG, paymentRequest.toString());
+            showDialog("SdkRequest error:" + e.getMessage());
+            Log.d(TAG, sdkRequest.toString());
             finish();
         }
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, paymentRequest);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
 
         // Put KOUNT merchant ID
         //intent.putExtra(BluesnapCheckoutActivity.EXTRA_KOUNT_MERCHANT_ID, 123);
@@ -401,12 +401,12 @@ public class DemoMainActivity extends Activity {
 
         // Here we can access the payment result
         Bundle extras = data.getExtras();
-        PaymentResult paymentResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT); //TODO: why??? the change????? why???
+        SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT); //TODO: why??? the change????? why???
 
         //Start a demo activity that shows purchase summary.
         Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
         intent.putExtra("MERCHANT_TOKEN", merchantToken);
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, paymentResult);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
 
         // If shipping information is available show it, Here we simply log the shipping info.
         ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
