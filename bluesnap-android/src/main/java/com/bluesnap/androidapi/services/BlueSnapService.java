@@ -10,6 +10,8 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.models.PaymentSources;
+import com.bluesnap.androidapi.models.Rates;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.SDKConfiguration;
@@ -63,7 +65,7 @@ public class BlueSnapService {
     }
 
     private SDKConfiguration sDKConfiguration;
-    private String baseCurrency;
+    private String merchantStoreCurrency;
     private TokenProvider tokenProvider;
 
     public static BlueSnapService getInstance() {
@@ -105,7 +107,7 @@ public class BlueSnapService {
      *
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      * @param tokenProvider A merchant function for requesting a new token if expired
-     *                      baseCurrency = USD
+     *                      merchantStoreCurrency = USD
      * @param context       A Merchant Application Context
      * @param callback      A {@link BluesnapServiceCallback}
      */
@@ -117,15 +119,15 @@ public class BlueSnapService {
      * Setup the service to talk to the server.
      * This will reset the previous payment request
      *
-     * @param merchantToken A Merchant SDK token, obtained from the merchant.
-     * @param tokenProvider A merchant function for requesting a new token if expired
-     * @param baseCurrency  A Merchant base currency, obtained from the merchant.
-     * @param context       A Merchant Application Context
-     * @param callback      A {@link BluesnapServiceCallback}
+     * @param merchantToken         A Merchant SDK token, obtained from the merchant.
+     * @param tokenProvider         A merchant function for requesting a new token if expired
+     * @param merchantStoreCurrency A Merchant base currency, obtained from the merchant.
+     * @param context               A Merchant Application Context
+     * @param callback              A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String baseCurrency, final Context context, final BluesnapServiceCallback callback) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, final Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
-        this.baseCurrency = baseCurrency;
+        this.merchantStoreCurrency = merchantStoreCurrency;
         if (null != tokenProvider)
             this.tokenProvider = tokenProvider;
 
@@ -137,7 +139,7 @@ public class BlueSnapService {
         sdkResult = null;
         sdkRequest = null;
 
-        sdkInit(baseCurrency, context, callback);
+        sdkInit(merchantStoreCurrency, context, callback);
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
@@ -304,10 +306,10 @@ public class BlueSnapService {
     /**
      * SDK Init.
      *
-     * @param baseCurrency All rates are derived from baseCurrency. baseCurrency * AnyRate = AnyCurrency
+     * @param merchantStoreCurrency All rates are derived from merchantStoreCurrency. merchantStoreCurrency * AnyRate = AnyCurrency
      */
-    private void sdkInit(final String baseCurrency, final Context context, final BluesnapServiceCallback callback) {
-        blueSnapAPI.sdkInit(baseCurrency, new JsonHttpResponseHandler() {
+    private void sdkInit(final String merchantStoreCurrency, final Context context, final BluesnapServiceCallback callback) {
+        blueSnapAPI.sdkInit(merchantStoreCurrency, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
@@ -336,7 +338,7 @@ public class BlueSnapService {
                 tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
                     @Override
                     public void complete() {
-                        sdkInit(baseCurrency, context, bluesnapServiceCallback);
+                        sdkInit(merchantStoreCurrency, context, bluesnapServiceCallback);
                     }
                 });
             }
@@ -454,31 +456,37 @@ public class BlueSnapService {
         if (usdPrice == null || usdPrice.isEmpty())
             return "0";
 
-        Currency rate = sDKConfiguration.getRates().getRatesMap().get(convertTo);
-        Double result = Double.valueOf(usdPrice) * rate.getConversionRate();
+        Double result = convertPrice(Double.valueOf(usdPrice), SupportedPaymentMethods.USD, convertTo);
         return String.valueOf(AndroidUtil.getDecimalFormat().format(result));
     }
 
     /**
      * Convert a price in currentCurrencyNameCode to newCurrencyNameCode
      *
-     * @param basePrice               the requested price
+     * @param currentPrice            the requested price
      * @param currentCurrencyNameCode The currency of basePrice
      * @param newCurrencyNameCode     The ISO 4217 currency name
      * @return
      */
-    public Double convertPrice(Double basePrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
+    public Double convertPrice(Double currentPrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
         String baseCurrency = sdkRequest.getBaseCurrency();
-        if (baseCurrency.equals(newCurrencyNameCode)) {
-            return sdkRequest.getBaseAmount();
+        Double baseAmount = sdkRequest.getBaseAmount();
+        if (baseCurrency.equals(newCurrencyNameCode))
+            return baseAmount;
+
+        Rates rates = sDKConfiguration.getRates();
+        if (null == rates.getMerchantStoreAmount() || rates.getMerchantStoreAmount().isNaN() || 0 == rates.getMerchantStoreAmount()) {
+            if (rates.getMerchantStoreCurrency().equals(currentCurrencyNameCode))
+                rates.setMerchantStoreAmount(currentPrice);
+            else if (rates.getMerchantStoreCurrency().equals(baseCurrency))
+                rates.setMerchantStoreAmount(baseAmount);
+            else
+                rates.setMerchantStoreAmount((1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice);
         }
-        Double baseConversionRate = sDKConfiguration.getRates().getRatesMap().get(baseCurrency).getConversionRate();
-        Double usdPRice = baseCurrency.equals(SupportedPaymentMethods.USD) ? basePrice * baseConversionRate : basePrice * (1 / baseConversionRate);
-        Double newPrice = sDKConfiguration.getRates().getRatesMap().get(newCurrencyNameCode).getConversionRate() * usdPRice;
-        return newPrice;
+        return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * rates.getMerchantStoreAmount();
     }
 
     public synchronized SdkResult getSdkResult() {

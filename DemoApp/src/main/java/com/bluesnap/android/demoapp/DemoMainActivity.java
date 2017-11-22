@@ -173,6 +173,7 @@ public class DemoMainActivity extends Activity {
                             }
                             productPriceEditText.setText(convertedPrice);
                         }
+                        initControlsAfterToken();
                     }
 
                     @Override
@@ -367,11 +368,13 @@ public class DemoMainActivity extends Activity {
     }
 
     private void initControlsAfterToken() {
-        bluesnapService.setup(merchantToken, tokenProvider, getApplicationContext(), new BluesnapServiceCallback() {
+        final String merchantStoreCurrency = (null == currency || null == currency.getCurrencyCode()) ? "USD" : currency.getCurrencyCode();
+        bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 Set<String> supportedRates = bluesnapService.getSupportedRates();
-                updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                if (null == currency || null == currency.getCurrencyCode())
+                    updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
                 progressBar.setVisibility(View.INVISIBLE);
                 linearLayoutForProgressBar.setVisibility(View.VISIBLE);
                 productPriceEditText.setVisibility(View.VISIBLE);

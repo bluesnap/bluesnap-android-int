@@ -1,7 +1,5 @@
 package com.bluesnap.androidapi.models;
 
-import com.bluesnap.androidapi.models.Currency;
-import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -13,12 +11,13 @@ import java.util.HashMap;
 
 public class Rates {
     @SerializedName("baseCurrency")
-    private String baseCurrency;
+    private String merchantStoreCurrency;
     @SerializedName("baseCurrencyName")
-    private String baseCurrencyName;
+    private String merchantStoreCurrencyName;
     @SerializedName("exchangeRate")
     private ArrayList<Currency> currencies;
     private HashMap<String, Currency> ratesMap;
+    private Double merchantStoreAmount;
 
     /**
      * Update the Conversion rates map from the server response data.
@@ -28,8 +27,8 @@ public class Rates {
         ratesMap = new HashMap<>(currencies.size() + 1);
         Currency baseCurrency = new Currency();
         baseCurrency.setConversionRate(1.0);
-        baseCurrency.setQuoteCurrency(this.baseCurrency);
-        ratesMap.put(this.baseCurrency, baseCurrency);
+        baseCurrency.setQuoteCurrency(this.merchantStoreCurrency);
+        ratesMap.put(this.merchantStoreCurrency, baseCurrency);
         for (Currency r : currencies) {
             ratesMap.put(r.getQuoteCurrency(), r);
         }
@@ -39,27 +38,23 @@ public class Rates {
         return ratesMap;
     }
 
-    public String getBaseCurrency() {
-        return baseCurrency;
+    public String getMerchantStoreCurrency() {
+        return merchantStoreCurrency;
     }
 
-    public void setBaseCurrency(String baseCurrency) {
-        this.baseCurrency = baseCurrency;
-    }
-
-    public String getBaseCurrencyName() {
-        return baseCurrencyName;
-    }
-
-    public void setBaseCurrencyName(String baseCurrencyName) {
-        this.baseCurrencyName = baseCurrencyName;
+    public String getMerchantStoreCurrencyName() {
+        return merchantStoreCurrencyName;
     }
 
     public ArrayList<Currency> getCurrencies() {
         return currencies;
     }
 
-    public void setCurrencies(ArrayList<Currency> currencies) {
-        this.currencies = currencies;
+    public Double getMerchantStoreAmount() {
+        return merchantStoreAmount;
+    }
+
+    public void setMerchantStoreAmount(Double merchantStoreAmount) {
+        this.merchantStoreAmount = merchantStoreAmount;
     }
 }
