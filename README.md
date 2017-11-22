@@ -30,7 +30,7 @@ The token is returned in the Location header in the response. For more informati
 ## Initialize the SDK with the token
 Initialize the SDK by passing the token to the setup method of the `BlueSnapService` class:
 
-    BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "baseCurrency", getApplicationContext(), new BluesnapServiceCallback() {
+    BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "merchantStoreCurrency", getApplicationContext(), new BluesnapServiceCallback() {
         @Override
         public void onSuccess() {
             // Do onSuccess
@@ -44,7 +44,7 @@ Initialize the SDK by passing the token to the setup method of the `BlueSnapServ
 
 The `setup()` method will initiate the SDK, prepare it for rate conversion, and initialize the required objects for the user interface. No UI interaction will happen at this stage.
 `tokenProvider()` is a call back function in order to create a new token in case the previous one has already expired.
-`baseCurrency` merchant base currency (if ignored set to USD)
+`merchantStoreCurrency` merchant base currency (if ignored set to USD)
 `getApplicationContext()` is needed for fraud purposes.
 `new BluesnapServiceCallback() {...}` is a callback function to do after setup success or failure since setup is an Async function.
 
@@ -54,7 +54,7 @@ The `setup()` method will initiate the SDK, prepare it for rate conversion, and 
 The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to deal with validation of the card number or expiration date, or the storage of sensitive information, as this is all handled for you. To launch this form, you need to create a `SdkRequest` with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` as an Intent Extra.
 
 ### Create a SdkRequest
-A `SdkRequest` is required to pass information about the purchase to the SDK. The request must include the purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code):
+A `SdkRequest` is required to pass information about the purchase to the SDK. The request must include the purchase current amount and current currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code):
 
     SdkRequest sdkRequest = new SdkRequest();
     sdkRequest.setAmount("20.5"D);
