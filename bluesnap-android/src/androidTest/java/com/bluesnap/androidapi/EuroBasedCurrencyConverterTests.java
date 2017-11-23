@@ -24,6 +24,10 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
     private static final String ILS = "ILS";
     private static final String USD = "USD";
 
+    public EuroBasedCurrencyConverterTests() {
+        super(EUR);
+    }
+
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -37,7 +41,6 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
 
     @Before
     public void setup() throws InterruptedException {
-        changeToken(EUR);
         super.getToken();
         Log.i(TAG, "=============== Starting rates service tests ==================");
     }
@@ -65,14 +68,13 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
         sdkRequest.setAmount(amount);
         sdkRequest.setCurrencyNameCode(EUR);
 
-
+        sdkRequest.setBase();
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, EUR, ILS);
-        Double convertedTwicePrice = blueSnapService.convertPrice(amount, ILS, USD);
+        Double convertedTwicePrice = blueSnapService.convertPrice(convertedOncePrice, ILS, USD);
 //        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
-        assertEquals("14.42", String.format("%.2f", convertedTwicePrice));
+        assertEquals("15.43", String.format("%.2f", convertedTwicePrice));
     }
-
 
 
     @Test

@@ -1,6 +1,5 @@
 package com.bluesnap.androidapi;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -42,7 +41,11 @@ public class BSAndroidTestsBase {
     private TokenProvider tokenProvider;
     private String baseCurrency;
 
-    public BSAndroidTestsBase() {
+    BSAndroidTestsBase(String baseCurrency) {
+        this.baseCurrency = baseCurrency;
+    }
+
+    BSAndroidTestsBase() {
         this.baseCurrency = "USD";
     }
 
@@ -147,10 +150,6 @@ public class BSAndroidTestsBase {
             }
         }
         return token;
-    }
-
-    public void changeToken(String baseCurrency) {
-        this.baseCurrency = baseCurrency;
     }
 
 }
