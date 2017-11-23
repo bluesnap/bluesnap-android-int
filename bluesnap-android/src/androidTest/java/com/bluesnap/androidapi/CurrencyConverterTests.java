@@ -79,7 +79,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         sdkRequest.setAmount(amount);
         sdkRequest.setCurrencyNameCode("ILS");
 
-
+        sdkRequest.setBase();
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "ILS", "EUR");
         Double convertedTwicePrice = blueSnapService.convertPrice(convertedOncePrice, "EUR", "GBP");
@@ -95,11 +95,11 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         sdkRequest.setAmount(amount);
         sdkRequest.setCurrencyNameCode("EUR");
 
-
+        sdkRequest.setBase();
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "USD");
 //        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
-        assertEquals("14.42", String.format("%.2f", convertedOncePrice));
+        assertEquals("12.88", String.format("%.2f", convertedOncePrice));
     }
 
     @Test
@@ -110,12 +110,11 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         sdkRequest.setAmount(amount);
         sdkRequest.setCurrencyNameCode("EUR");
 
-
+        sdkRequest.setBase();
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "ILS");
-        Double convertedTwicePrice = blueSnapService.convertPrice(amount, "ILS", "USD");
-//        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
-        assertEquals("14.42", String.format("%.2f", convertedTwicePrice));
+        Double convertedTwicePrice = blueSnapService.convertPrice(convertedOncePrice, "ILS", "USD");
+        assertEquals("13.78", String.format("%.2f", convertedTwicePrice));
     }
 
 
