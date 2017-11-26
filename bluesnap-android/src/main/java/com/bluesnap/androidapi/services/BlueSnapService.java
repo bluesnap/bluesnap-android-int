@@ -315,8 +315,6 @@ public class BlueSnapService {
                 try {
                     sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
                     sDKConfiguration.getRates().setInitialRates();
-                    // activate the credit card type method finder
-                    CreditCardTypes.getInstance().setCreditCardTypesRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
 
                     try {
                         if (null != context)
@@ -472,18 +470,15 @@ public class BlueSnapService {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
-        String baseCurrency = sdkRequest.getBaseCurrency();
-        Double baseAmount = sdkRequest.getBaseAmount();
-        if (baseCurrency.equals(newCurrencyNameCode))
-            return baseAmount;
-
         Rates rates = sDKConfiguration.getRates();
         if (null == rates.getMerchantStoreAmount() || rates.getMerchantStoreAmount().isNaN() || 0 == rates.getMerchantStoreAmount()) {
             if (rates.getMerchantStoreCurrency().equals(currentCurrencyNameCode))
                 rates.setMerchantStoreAmount(currentPrice);
-            else if (rates.getMerchantStoreCurrency().equals(baseCurrency))
-                rates.setMerchantStoreAmount(baseAmount);
-            else
+            else if (null != sdkRequest && null != sdkRequest.getBaseCurrency() && rates.getMerchantStoreCurrency().equals(sdkRequest.getBaseCurrency())) {
+                rates.setMerchantStoreAmount(sdkRequest.getBaseAmount());
+                if (sdkRequest.getBaseCurrency().equals(newCurrencyNameCode))
+                    return sdkRequest.getBaseAmount();
+            } else
                 rates.setMerchantStoreAmount((1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice);
         }
         return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * rates.getMerchantStoreAmount();

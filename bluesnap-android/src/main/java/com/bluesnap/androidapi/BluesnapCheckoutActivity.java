@@ -71,6 +71,8 @@ public class BluesnapCheckoutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_default_ui);
+
+        //TODO: move to bluesnapservice
         sdkRequest = getIntent().getParcelableExtra(EXTRA_PAYMENT_REQUEST);
         try {
             BlueSnapService.getInstance().setSdkRequest(sdkRequest);

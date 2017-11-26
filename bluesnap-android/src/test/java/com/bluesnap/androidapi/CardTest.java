@@ -167,7 +167,7 @@ public class CardTest extends TestCase {
             card.setNumber(num);
             assertTrue("CARTE_BLEUE luhn invalid: " + num, card.validateNumber());
             String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("CARTE_BLEUE type mismatch: " + type + " " + num, CreditCardTypes.UNKNOWN.equals(type));
+            Assert.assertTrue("CARTE_BLEUE type mismatch: " + type + " " + num, CreditCardTypes.CARTE_BLEUE.equals(type));
         }
     }
 
