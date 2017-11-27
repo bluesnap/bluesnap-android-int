@@ -55,6 +55,7 @@ public class DemoMainActivity extends Activity {
     protected BlueSnapService bluesnapService;
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
+    private Spinner merchantStoreCurrencySpinner;
     private Spinner returningShopperSpinner;
     private String returningOrNewShopper;
     private EditText productPriceEditText;
@@ -96,6 +97,7 @@ public class DemoMainActivity extends Activity {
         taxAmountEditText = (EditText) findViewById(R.id.demoTaxEditText);
         currencySym = (TextView) findViewById(R.id.currencySym);
         ratesSpinner = (Spinner) findViewById(R.id.rateSpinner);
+        merchantStoreCurrencySpinner = (Spinner) findViewById(R.id.merchantStoreCurrencySpinner);
         showDemoAppVersion();
         try {
             Locale current = getResources().getConfiguration().locale;
@@ -112,7 +114,7 @@ public class DemoMainActivity extends Activity {
         //create a list of items for the spinner.
         String[] items = new String[]{"new", "22204247", "22061813", "22208663", "22208673", "22208681"};
         //create an adapter to describe how the items are displayed.
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_view, items);
         //set the spinners adapter to the previously created one.
         returningShopperSpinner.setAdapter(adapter);
         returningShopperSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -145,17 +147,18 @@ public class DemoMainActivity extends Activity {
     }
 
     private void ratesAdapterSelectionListener() {
-        ratesSpinner.post(new Runnable() {
+        merchantStoreCurrencySpinner.post(new Runnable() {
             @Override
             public void run() {
-                ratesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                merchantStoreCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        progressBar.setVisibility(View.VISIBLE);
                         if (initialPrice == null && position != 0) {
                             initialPrice = productPriceEditText.getText().toString();
                         }
-                        String selectedRateName = ratesSpinner.getSelectedItem().toString();
+                        String selectedRateName = merchantStoreCurrencySpinner.getSelectedItem().toString();
                         String convertedPrice = readCurencyFromSpinner(selectedRateName);
                         if (convertedPrice == null) return;
                         //Avoid Rotation renew
@@ -225,8 +228,9 @@ public class DemoMainActivity extends Activity {
     private void updateSpinnerAdapterFromRates(final Set<String> supportedRates) {
         String[] quotesArray = new String[supportedRates.size()];
         supportedRates.toArray(quotesArray);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner_view, quotesArray);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray);
         ratesSpinner.setAdapter(adapter);
+        merchantStoreCurrencySpinner.setAdapter(adapter);
         int currentposition = 0;
         for (String rate : quotesArray) {
             if (rate.equals(currencyByLocale.getCurrencyCode())) {
@@ -235,6 +239,7 @@ public class DemoMainActivity extends Activity {
             currentposition++;
         }
         ratesSpinner.setSelection(currentposition);
+        merchantStoreCurrencySpinner.setSelection(currentposition);
         ratesAdapterSelectionListener();
     }
 
@@ -271,7 +276,7 @@ public class DemoMainActivity extends Activity {
             sdkRequest.setAmount(productPrice);
         }
 
-        sdkRequest.setCurrencyNameCode(currencyName);
+        sdkRequest.setCurrencyNameCode(ratesSpinner.getSelectedItem().toString());
         sdkRequest.setCustomTitle("Demo Merchant");
 
         if (shippingSwitch.isChecked()) {
@@ -291,9 +296,6 @@ public class DemoMainActivity extends Activity {
             finish();
         }
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
-
-        // Put KOUNT merchant ID
-        //intent.putExtra(BluesnapCheckoutActivity.EXTRA_KOUNT_MERCHANT_ID, 123);
 
         startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
     }
