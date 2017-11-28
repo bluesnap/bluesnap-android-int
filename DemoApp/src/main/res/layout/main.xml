@@ -160,7 +160,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.5"
                     android:background="@android:color/transparent"
                     android:hint="0"
                     android:inputType="numberDecimal"
@@ -177,10 +177,10 @@
 
                 <EditText
                     android:id="@+id/returningShopperEditText"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.4"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="12345678"
+                    android:inputType="numberDecimal"
                     android:layout_marginRight="10dp" />
 
             </TableRow>

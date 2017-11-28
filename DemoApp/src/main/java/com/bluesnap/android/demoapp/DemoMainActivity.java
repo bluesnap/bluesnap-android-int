@@ -126,7 +126,7 @@ public class DemoMainActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() > 7) {
+                if (s.length() == 8) {
                     returningOrNewShopper = "?shopperId=" + s;
                     generateMerchantToken(); // 22232799
                 }

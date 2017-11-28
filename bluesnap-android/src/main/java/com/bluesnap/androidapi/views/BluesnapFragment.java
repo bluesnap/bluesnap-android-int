@@ -404,8 +404,17 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         BillingInfo selectedBillingInfo = selectedPaymentInfoForReturningShopper.getBillingContactInfo();
 
         shopperFullNameEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getFullName(), shopper.getFullName()));
-        addressCountryButton.setText(AndroidUtil.stringify(selectedBillingInfo.getCountry(), shopper.getCountry()).toUpperCase());
-        changeZipTextAndStateLengthAccordingToCountry();
+
+        String shopperCountry = AndroidUtil.stringify(selectedBillingInfo.getCountry(), shopper.getCountry()).toUpperCase();
+        if (!"".equals(shopperCountry))
+            for (String key : getResources().getStringArray(R.array.country_key_array)) {
+                if (key.equals(shopperCountry)) {
+                    addressCountryButton.setText(shopperCountry);
+                    changeZipTextAndStateLengthAccordingToCountry();
+                    break;
+                }
+            }
+
         zipEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getZip(), shopper.getZip()));
 
         if (sdkRequest.isEmailRequired())
