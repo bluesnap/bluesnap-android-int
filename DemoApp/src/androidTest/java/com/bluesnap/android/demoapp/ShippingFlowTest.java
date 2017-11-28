@@ -42,11 +42,9 @@ public class ShippingFlowTest {
 
     @Before
     public void setup() {
-        SdkRequest sdkRequest = new SdkRequest();
-        sdkRequest.setAmount(23.4);
         Intent intent = new Intent();
+        SdkRequest sdkRequest = new SdkRequest(23.4, "USD");
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
-        sdkRequest.setCurrencyNameCode("USD");
         sdkRequest.setShippingRequired(true);
         mActivityRule.launchActivity(intent);
     }

@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -52,7 +54,7 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
 
 
     @Override
-    public void setup() throws InterruptedException {
+    public void setup() throws InterruptedException, BSPaymentRequestException {
         super.setup();
         clearPrefs(mActivityTestRule.getActivity().getApplicationContext());
 

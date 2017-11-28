@@ -27,10 +27,11 @@ public class SdkRequestTests {
     private static final double MINIMUM_AMOUNT = 0.00001D;
     private static final double MAXIMUM_AMOUNT = Double.MAX_VALUE / 2;
     private Random random = new Random();
+    private Double amount = 11D;
 
     @Test
     public void testPaymentRequestParcel() {
-        SdkRequest sdkRequest = new SdkRequest();
+        SdkRequest sdkRequest = new SdkRequest(0D, "USD");
         sdkRequest.setShippingRequired(true);
         sdkRequest.setAmount(random.nextDouble());
         sdkRequest.setUserEmail("user@host.com");
@@ -51,11 +52,11 @@ public class SdkRequestTests {
 
     @Test
     public void testOriginalPaymentRequest() {
-        SdkRequest sdkRequest = new SdkRequest();
+        SdkRequest sdkRequest = new SdkRequest(35.4D, "USD");
         sdkRequest.setShippingRequired(false);
-        sdkRequest.setAmount(35.4D);
+//        sdkRequest.setAmount(35.4D);
         sdkRequest.setUserEmail("user@host.com");
-        sdkRequest.setCurrencyNameCode("USD");
+//        sdkRequest.setCurrencyNameCode("USD");
         SdkRequest parceledRequest = parcelizePaymentRequset(sdkRequest);
         assertEquals(sdkRequest.getAmount(), parceledRequest.getBaseAmount());
 //        assertEquals(sdkRequest, parceledRequest);
@@ -77,7 +78,7 @@ public class SdkRequestTests {
 
     @Test
     public void testPaymentRequest_ZeroPayment() {
-        SdkRequest sdkRequest = new SdkRequest("USD");
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD");
         sdkRequest.setAmount(0D);
         SdkRequest parceled = parcelizePaymentRequset(sdkRequest);
 
@@ -94,7 +95,7 @@ public class SdkRequestTests {
 
     @Test
     public void testPaymentRequest_Tax() {
-        SdkRequest sdkRequest = new SdkRequest("USD");
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD");
         sdkRequest.setAmount(randomAmount());
         sdkRequest.setTaxAmount(randomAmount());
         SdkRequest parceled = parcelizePaymentRequset(sdkRequest);
@@ -105,7 +106,7 @@ public class SdkRequestTests {
 
     @Test
     public void testPaymentRequest_TaxAndSubtotal() {
-        SdkRequest sdkRequest = new SdkRequest("USD");
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD");
         double subtotal = randomAmount();
         double randomTax = randomAmount();
         sdkRequest.setAmountWithTax(subtotal, randomTax);

@@ -78,7 +78,7 @@ public class BluesnapCheckoutActivity extends Activity {
         expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
         //prefsStorage = new PrefsStorage(this);
         final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        checkIfCurrencyExists(sdkRequest.getCurrencyNameCode());
+        //checkIfCurrencyExists(sdkRequest.getCurrencyNameCode());
         if (blueSnapService.isexpressCheckoutActive())
             setFragmentButtonsListeners();
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
@@ -218,6 +218,7 @@ public class BluesnapCheckoutActivity extends Activity {
 
                     SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
                     sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
+                    sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
                     // update last4 from server result
                     sdkResult.setLast4Digits(Last4);
                     // update card type from server result

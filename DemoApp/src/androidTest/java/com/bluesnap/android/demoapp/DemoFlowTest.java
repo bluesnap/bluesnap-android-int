@@ -8,6 +8,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.junit.After;
 import org.junit.Rule;
@@ -50,7 +51,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
 
     @Override
-    public void setup() throws InterruptedException {
+    public void setup() throws InterruptedException, BSPaymentRequestException {
         super.setup();
         clearPrefs(mActivityRule.getActivity().getApplicationContext());
     }

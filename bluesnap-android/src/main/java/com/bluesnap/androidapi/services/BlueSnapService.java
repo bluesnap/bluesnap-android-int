@@ -10,15 +10,13 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.PaymentSources;
 import com.bluesnap.androidapi.models.Rates;
+import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -135,10 +133,6 @@ public class BlueSnapService {
 
         initPayPal(merchantToken);
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
-
-        sdkResult = null;
-        sdkRequest = null;
-
         sdkInit(merchantStoreCurrency, context, callback);
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
@@ -322,7 +316,8 @@ public class BlueSnapService {
                     } catch (Exception e) {
                         Log.e(TAG, "Kount SDK initialization error");
                     }
-
+                    sdkRequest = null;
+                    sdkResult = null;
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
@@ -484,20 +479,7 @@ public class BlueSnapService {
         return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * currentPrice;
     }
 
-    public synchronized SdkResult getSdkResult() {
-        if (sdkResult == null) {
-            sdkResult = new SdkResult();
-
-            try {
-                sdkResult.setToken(bluesnapToken.getMerchantToken());
-                // Copy values from request
-                sdkResult.setAmount(sdkRequest.getAmount());
-                sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
-                sdkResult.setShopperID(sdkRequest.getShopperID());
-            } catch (Exception e) {
-                Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
-            }
-        }
+    public SdkResult getSdkResult() {
         return sdkResult;
     }
 
@@ -506,7 +488,7 @@ public class BlueSnapService {
     }
 
     /**
-     * Set a sdkRequest and call {@link #verifyPaymentRequest} on  it.
+     * Set a sdkRequest
      *
      * @param newSdkRequest
      * @throws BSPaymentRequestException
@@ -516,29 +498,16 @@ public class BlueSnapService {
             throw new NullPointerException("null sdkRequest");
 
         if (sdkRequest != null) {
-            Log.w(TAG, "paymentrequest override");
+            Log.w(TAG, "sdkRequest override");
         }
-        verifyPaymentRequest(newSdkRequest);
         sdkRequest = newSdkRequest;
+        sdkResult = new SdkResult();
+        // Copy values from request
+        sdkResult.setAmount(sdkRequest.getAmount());
+        sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        sdkResult.setShopperID(sdkRequest.getShopperID());
     }
 
-
-    /**
-     * Check that a payment request is valid, meaning amount is positive and currency exist in the SDL rates map
-     * see {@link #getSupportedRates()} or {@link #getRatesArray()} for a list of supported rates
-     *
-     * @param sdkRequest a {@link #sdkRequest}
-     * @throws BSPaymentRequestException
-     */
-    public void verifyPaymentRequest(SdkRequest sdkRequest) throws BSPaymentRequestException {
-        sdkRequest.verify();
-        if (sDKConfiguration.getRates().getRatesMap() == null) {
-            throw new BSPaymentRequestException("rates map is not populated. did you forget to call updateRates?");
-        }
-        if (sDKConfiguration.getRates().getRatesMap().get(sdkRequest.getCurrencyNameCode()) == null) {
-            throw new BSPaymentRequestException("Currency not found");
-        }
-    }
 
     @Subscribe
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {

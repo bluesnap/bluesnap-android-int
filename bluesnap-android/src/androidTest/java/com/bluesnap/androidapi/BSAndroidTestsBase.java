@@ -97,7 +97,7 @@ public class BSAndroidTestsBase {
                 });
             }
         };
-//
+
 
         while (merchantToken == null) {
             Thread.sleep(2000);
@@ -134,7 +134,7 @@ public class BSAndroidTestsBase {
 
         while (null == blueSnapService.getsDKConfiguration()) {
             Thread.sleep(20000);
-            Log.i(TAG, "Waiting for rates");
+            Log.i(TAG, "Waiting for SDK configuration to finish");
 
         }
 

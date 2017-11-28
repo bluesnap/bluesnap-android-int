@@ -17,6 +17,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
@@ -52,7 +53,7 @@ public class EspressoBasedTest {
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
     @Before
-    public void setup() throws InterruptedException {
+    public void setup() throws InterruptedException, BSPaymentRequestException {
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {
@@ -115,21 +116,26 @@ public class EspressoBasedTest {
                         BlueSnapService.getInstance().setup(merchantToken, tokenProvider, null, new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
-                                Log.d(TAG, "Service got rates");
+                                Log.d(TAG, "Service finish setup");
 
                             }
 
                             @Override
                             public void onFailure() {
-                                fail("Service could not update rates");
+                                fail("Service could not finish setup");
                             }
                         });
 
                     }
                 });
-
         while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
             Log.d(TAG, "Waiting for token setup");
+            Thread.sleep(2000);
+
+        }
+
+        while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
+            Log.d(TAG, "Waiting for SDK configuration to finish");
             Thread.sleep(2000);
 
         }

@@ -4,9 +4,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -35,10 +35,10 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         final String CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE = "1234123412341238";
         final String CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED = "5568111111111116";
 
-        SdkRequest sdkRequest = new SdkRequest();
         Double amount = 30.5D;
-        sdkRequest.setAmount(amount);
-        sdkRequest.setCurrencyNameCode("USD");
+
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD");
+
         blueSnapService.setSdkRequest(sdkRequest);
 
         final Shopper shopper = new Shopper();

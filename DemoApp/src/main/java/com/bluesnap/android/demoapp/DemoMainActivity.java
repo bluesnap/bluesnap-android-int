@@ -21,9 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -262,9 +262,8 @@ public class DemoMainActivity extends Activity {
         if (!taxString.isEmpty()) {
             taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
         }
-        sdkRequest = new SdkRequest();
         // You can set the Amout solely
-        sdkRequest.setAmount(productPrice);
+        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString());
 
         // Or you can set the Amount with tax, this will override setAmount()
         // The total purchase amount will be the sum of both numbers
@@ -274,7 +273,7 @@ public class DemoMainActivity extends Activity {
             sdkRequest.setAmount(productPrice);
         }
 
-        sdkRequest.setCurrencyNameCode(ratesSpinner.getSelectedItem().toString());
+
         sdkRequest.setCustomTitle("Demo Merchant");
 
         if (shippingSwitch.isChecked()) {
