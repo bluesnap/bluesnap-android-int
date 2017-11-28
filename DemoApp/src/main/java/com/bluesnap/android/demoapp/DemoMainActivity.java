@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,8 +58,8 @@ public class DemoMainActivity extends Activity {
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private Spinner merchantStoreCurrencySpinner;
-    private Spinner returningShopperSpinner;
-    private String returningOrNewShopper;
+    private EditText returningShopperEditText;
+    private String returningOrNewShopper = "";
     private EditText productPriceEditText;
     private Currency currency;
     private TextView currencySym;
@@ -109,28 +111,25 @@ public class DemoMainActivity extends Activity {
         context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
 
-        //get the spinner from the xml.
-        returningShopperSpinner = (Spinner) findViewById(R.id.returningShopperSpinner);
-        //create a list of items for the spinner.
-        String[] items = new String[]{"new", "22204247", "22061813", "22208663", "22208673", "22208681"};
-        //create an adapter to describe how the items are displayed.
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_view, items);
-        //set the spinners adapter to the previously created one.
-        returningShopperSpinner.setAdapter(adapter);
-        returningShopperSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        generateMerchantToken();
+        returningShopperEditText = (EditText) findViewById(R.id.returningShopperEditText);
+        returningShopperEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selected = returningShopperSpinner.getSelectedItem().toString();
-                if ("new".equals(selected))
-                    returningOrNewShopper = "";
-                else
-                    returningOrNewShopper = "?shopperId=" + selected;
-                generateMerchantToken();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                returningOrNewShopper = "";
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 7) {
+                    returningOrNewShopper = "?shopperId=" + s;
+                    generateMerchantToken(); // 22232799
+                }
             }
         });
     }

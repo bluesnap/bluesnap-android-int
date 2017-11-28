@@ -59,7 +59,7 @@ public class CustomCreditCardSpinnerAdapter extends BaseAdapter {
         ImageView spinnerCardTypeImageView = (ImageView) convertView.findViewById(R.id.spinnerCardTypeImageView);
         CreditCard creditCard = creditCardInfos.get(position).getCreditCard();
 
-        spinnerCardTypeImageView.setImageResource(CreditCardTypes.getCardTypeDrawable(creditCard.getCardType()));
+        spinnerCardTypeImageView.setImageResource(CreditCardTypes.getCardTypeDrawable(CreditCardTypes.getCardTypeResource(creditCard.getCardType())));
 
         if (!CreditCardTypes.NEWCARD.equals(creditCard.getCardType())) {
             spinnerLastFourDigitsTextView.setVisibility(View.VISIBLE);

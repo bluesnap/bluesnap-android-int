@@ -31,7 +31,7 @@ public class CreditCardTypes {
     public static final String HIPERCARD = "Hipercard";
     public static final String ELO = "Elo";
     public static final String UNKNOWN = "Unknown";
-    public static final String NEWCARD = "NewCard";
+    public static final String NEWCARD = "NEWCARD";
 
     public static CreditCardTypes getInstance() {
         return INSTANCE;
@@ -111,7 +111,7 @@ public class CreditCardTypes {
         return creditCardRegex;
     }
 
-    private static String getCardTypeResource(String cardTypeResourceName) {
+    public static String getCardTypeResource(String cardTypeResourceName) {
         try {
             return (String) CreditCardTypes.class.getDeclaredField(cardTypeResourceName).get(null);
         } catch (IllegalAccessException e) {

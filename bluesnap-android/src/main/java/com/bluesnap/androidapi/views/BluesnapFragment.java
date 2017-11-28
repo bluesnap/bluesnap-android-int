@@ -368,10 +368,11 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     private void initPrefs() {
         try {
             Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
-            if (null != shopper && null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
+            if (null != shopper) {
                 this.shopper = shopper;
-                populateFromCard();
-            } else if (null == shopper)
+                if (null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos())
+                    populateFromCard();
+            } else
                 this.shopper = new Shopper();
 
         } catch (NullPointerException e) {
@@ -440,13 +441,14 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         assert lastPaymentInfo != null;
         assert previousCreditCardInfoArray != null;
         for (CreditCardInfo previousCreditCardInfo : previousCreditCardInfoArray) {
-            if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
-                    && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
-                filteredCreditCardInfosArray.add(previousCreditCardInfo);
-            } else {
-                //add last payment as first in line
-                filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
-                selectedPaymentInfoForReturningShopper = previousCreditCardInfo;
+            if (previousCreditCardInfo.getCreditCard().validateExpiryDate()) {
+                if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
+                        && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
+                    filteredCreditCardInfosArray.add(previousCreditCardInfo);
+                } else {
+                    //add last payment as first in line
+                    filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
+                }
             }
         }
 
@@ -454,6 +456,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         CreditCardInfo newCardPossibilityCreditCardInfo = new CreditCardInfo();
         newCardPossibilityCreditCardInfo.getCreditCard().setCardType(CreditCardTypes.NEWCARD);
         filteredCreditCardInfosArray.add(newCardPossibilityCreditCardInfo);
+        selectedPaymentInfoForReturningShopper = filteredCreditCardInfosArray.get(0);
 
         //create an adapter to describe how the items are displayed.
         CustomCreditCardSpinnerAdapter adapter = new CustomCreditCardSpinnerAdapter(this.getActivity(), filteredCreditCardInfosArray);

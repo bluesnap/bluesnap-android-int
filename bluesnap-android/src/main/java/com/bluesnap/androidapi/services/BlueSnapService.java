@@ -481,7 +481,7 @@ public class BlueSnapService {
             } else
                 rates.setMerchantStoreAmount((1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice);
         }
-        return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * rates.getMerchantStoreAmount();
+        return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * currentPrice;
     }
 
     public synchronized SdkResult getSdkResult() {
