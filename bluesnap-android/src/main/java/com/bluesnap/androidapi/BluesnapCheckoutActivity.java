@@ -71,17 +71,7 @@ public class BluesnapCheckoutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_default_ui);
-
-        //TODO: move to bluesnapservice
-        sdkRequest = getIntent().getParcelableExtra(EXTRA_PAYMENT_REQUEST);
-        try {
-            BlueSnapService.getInstance().setSdkRequest(sdkRequest);
-        } catch (BSPaymentRequestException e) {
-            String errorMsg = "payment request not validated:" + e.getMessage();
-            Log.d(TAG, e.getMessage());
-            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
-            finish();
-        }
+        sdkRequest = blueSnapService.getSdkRequest();
         setMerchantCustomText();
         fragmentManager = getFragmentManager();
         bluesnapFragment = (BluesnapFragment) fragmentManager.findFragmentById(R.id.fraglyout);

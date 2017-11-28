@@ -53,7 +53,9 @@ public class SdkRequest implements Parcelable {
         setBase();
     }
 
-    public SdkRequest() {
+    public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
+        taxAmount = 0D;
+        subtotalAmount = 0D;
 
     }
 

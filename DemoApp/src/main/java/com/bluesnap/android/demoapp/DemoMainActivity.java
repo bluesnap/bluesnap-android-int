@@ -244,7 +244,6 @@ public class DemoMainActivity extends Activity {
     }
 
     public void onPaySubmit(View view) {
-        Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
 
         String productPriceStr = AndroidUtil.stringify(productPriceEditText.getText());
         if (TextUtils.isEmpty(productPriceStr)) {
@@ -295,9 +294,15 @@ public class DemoMainActivity extends Activity {
             Log.d(TAG, sdkRequest.toString());
             finish();
         }
-        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
 
-        startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
+        try {
+            bluesnapService.setSdkRequest(sdkRequest);
+            Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
+            startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
+        } catch (BSPaymentRequestException e) {
+            Log.e(TAG, "payment request not validated: ", e);
+            finish();
+        }
     }
 
     private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
