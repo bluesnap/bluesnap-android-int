@@ -23,6 +23,7 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 
@@ -113,7 +114,8 @@ public class ExpressCheckoutFragment extends Fragment implements BluesnapPayment
         paypalCurrencyNumCode = currencyUpdatedEvent.newCurrencyNameCode;
         paypalPurchaseAmount = currencyUpdatedEvent.updatedPrice;
 
-        totalAmount.setText(getResources().getString(R.string.total) + " " + AndroidUtil.getCurrencySymbol(currencyUpdatedEvent.newCurrencyNameCode) + " " + decimalFormat.format(currencyUpdatedEvent.updatedPrice));
+        if (isAdded())
+            totalAmount.setText(getResources().getString(R.string.total) + " " + AndroidUtil.getCurrencySymbol(currencyUpdatedEvent.newCurrencyNameCode) + " " + decimalFormat.format(currencyUpdatedEvent.updatedPrice));
 
     }
 
