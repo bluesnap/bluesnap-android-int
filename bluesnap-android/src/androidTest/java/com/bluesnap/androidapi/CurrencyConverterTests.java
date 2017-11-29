@@ -53,7 +53,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "USD", "ILS");
         Double reconvertedPrice = blueSnapService.convertPrice(convertedOncePrice, "ILS", "USD");
-        assertEquals(amount, reconvertedPrice);
+        assertEquals(String.format("%.2f", amount), String.format("%.2f", reconvertedPrice));
 
     }
 
