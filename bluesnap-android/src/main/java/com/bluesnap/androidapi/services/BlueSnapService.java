@@ -133,12 +133,12 @@ public class BlueSnapService {
 
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
-        initPayPal(merchantToken);
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
 
         sdkResult = null;
         sdkRequest = null;
 
+        clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
@@ -147,7 +147,7 @@ public class BlueSnapService {
 
     private void initPayPal(String merchantToken) {
         // check if paypal url is same as before
-        if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && null != getPayPalToken() && !"".equals(getPayPalToken())) {
+        if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && !"".equals(getPayPalToken())) {
             Log.d(TAG, "clearPayPalToken");
             clearPayPalToken();
         } else {
@@ -470,16 +470,12 @@ public class BlueSnapService {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
+        // get Rates
         Rates rates = sDKConfiguration.getRates();
-        if (null == rates.getMerchantStoreAmount() || rates.getMerchantStoreAmount().isNaN() || 0 == rates.getMerchantStoreAmount()) {
-            if (rates.getMerchantStoreCurrency().equals(currentCurrencyNameCode))
-                rates.setMerchantStoreAmount(currentPrice);
-            else if (null != sdkRequest && null != sdkRequest.getBaseCurrency() && rates.getMerchantStoreCurrency().equals(sdkRequest.getBaseCurrency())) {
-                rates.setMerchantStoreAmount(sdkRequest.getBaseAmount());
-                if (sdkRequest.getBaseCurrency().equals(newCurrencyNameCode))
-                    return sdkRequest.getBaseAmount();
-            } else
-                rates.setMerchantStoreAmount((1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice);
+        // check if currentCurrencyNameCode is MerchantStoreCurrency
+        if (!currentCurrencyNameCode.equals(rates.getMerchantStoreCurrency())) {
+            currentPrice = (1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice;
+            currentCurrencyNameCode = rates.getMerchantStoreCurrency();
         }
         return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * currentPrice;
     }
@@ -487,16 +483,15 @@ public class BlueSnapService {
     public synchronized SdkResult getSdkResult() {
         if (sdkResult == null) {
             sdkResult = new SdkResult();
+        }
 
-            try {
-                sdkResult.setToken(bluesnapToken.getMerchantToken());
-                // Copy values from request
-                sdkResult.setAmount(sdkRequest.getAmount());
-                sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
-                sdkResult.setShopperID(sdkRequest.getShopperID());
-            } catch (Exception e) {
-                Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
-            }
+        try {
+            sdkResult.setToken(bluesnapToken.getMerchantToken());
+            // Copy values from request
+            sdkResult.setAmount(sdkRequest.getAmount());
+            sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        } catch (Exception e) {
+            Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
         }
         return sdkResult;
     }

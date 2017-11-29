@@ -149,17 +149,22 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         ShippingInfo shippingInfo = (null != blueSnapService.getsDKConfiguration().getShopper() && null != blueSnapService.getsDKConfiguration().getShopper().getShippingContactInfo())
                 ? blueSnapService.getsDKConfiguration().getShopper().getShippingContactInfo()
                 : new ShippingInfo();
-        shippingNameEditText.setText(AndroidUtil.stringify(shippingInfo.getFullName(), savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME)));
+
+        String fullName = (null == shippingInfo.getFirstName() || null == shippingInfo.getLastName()) ? null : shippingInfo.getFirstName() + " " + shippingInfo.getLastName();
+        shippingNameEditText.setText(AndroidUtil.stringify(fullName, savedInstanceState.getString(AUTO_POPULATE_SHOPPER_NAME)));
+
         shippingZipEditText.setText(AndroidUtil.stringify(shippingInfo.getZip(), savedInstanceState.getString(AUTO_POPULATE_ZIP)));
         //shippingEmailEditText.setText(savedInstanceState.getString(AUTO_POPULATE_EMAIL));
+
         shippingAddressLineEditText.setText(AndroidUtil.stringify(shippingInfo.getAddress(), savedInstanceState.getString(AUTO_POPULATE_ADDRESS)));
         shippingCityEditText.setText(AndroidUtil.stringify(shippingInfo.getCity(), savedInstanceState.getString(AUTO_POPULATE_CITY)));
         shippingStateEditText.setText(AndroidUtil.stringify(shippingInfo.getState(), savedInstanceState.getString(AUTO_POPULATE_STATE)));
+
         addressCountryButton.setText(AndroidUtil.stringify(shippingInfo.getCountry(), (
                 null != savedInstanceState.getString(AUTO_POPULATE_COUNTRY) && !"".equals(savedInstanceState.getString(AUTO_POPULATE_COUNTRY))
                         ? savedInstanceState.getString(AUTO_POPULATE_COUNTRY)
                         : blueSnapService.getUserCountry(getActivity().getApplicationContext())
-        )));
+        )).toUpperCase()); 
         changeZipTextAndStateLengthAccordingToCountry();
 
         ActivateOnFocusValidation(shippingNameEditText);

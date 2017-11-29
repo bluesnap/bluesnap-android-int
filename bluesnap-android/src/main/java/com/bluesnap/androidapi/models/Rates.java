@@ -17,7 +17,6 @@ public class Rates {
     @SerializedName("exchangeRate")
     private ArrayList<Currency> currencies;
     private HashMap<String, Currency> ratesMap;
-    private Double merchantStoreAmount;
 
     /**
      * Update the Conversion rates map from the server response data.
@@ -48,13 +47,5 @@ public class Rates {
 
     public ArrayList<Currency> getCurrencies() {
         return currencies;
-    }
-
-    public Double getMerchantStoreAmount() {
-        return merchantStoreAmount;
-    }
-
-    public void setMerchantStoreAmount(Double merchantStoreAmount) {
-        this.merchantStoreAmount = merchantStoreAmount;
     }
 }
