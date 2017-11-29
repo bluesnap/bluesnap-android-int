@@ -449,14 +449,19 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
         assert lastPaymentInfo != null;
         assert previousCreditCardInfoArray != null;
+
         for (CreditCardInfo previousCreditCardInfo : previousCreditCardInfoArray) {
             if (previousCreditCardInfo.getCreditCard().validateExpiryDate()) {
-                if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
-                        && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
-                    filteredCreditCardInfosArray.add(previousCreditCardInfo);
+                if (LastPaymentInfo.CC_PAYMENT_METHOD.equals(lastPaymentInfo.getPaymentMethod())) {
+                    if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
+                            && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
+                        filteredCreditCardInfosArray.add(previousCreditCardInfo);
+                    } else {
+                        //add last payment as first in line
+                        filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
+                    }
                 } else {
-                    //add last payment as first in line
-                    filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
+                    filteredCreditCardInfosArray.add(previousCreditCardInfo);
                 }
             }
         }

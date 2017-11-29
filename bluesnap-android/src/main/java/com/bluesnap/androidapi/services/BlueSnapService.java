@@ -473,11 +473,14 @@ public class BlueSnapService {
         // get Rates
         Rates rates = sDKConfiguration.getRates();
         // check if currentCurrencyNameCode is MerchantStoreCurrency
+        Double currentRate = rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate();
+        Double newRate = rates.getRatesMap().get(newCurrencyNameCode).getConversionRate();
+
         if (!currentCurrencyNameCode.equals(rates.getMerchantStoreCurrency())) {
-            currentPrice = (1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice;
+            currentPrice = (1 / currentRate) * currentPrice;
             currentCurrencyNameCode = rates.getMerchantStoreCurrency();
         }
-        return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * currentPrice;
+        return (newRate) * currentPrice;
     }
 
     public synchronized SdkResult getSdkResult() {

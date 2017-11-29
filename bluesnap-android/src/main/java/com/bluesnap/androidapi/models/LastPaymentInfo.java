@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class LastPaymentInfo extends CreditCardInfo{
+    public static String CC_PAYMENT_METHOD = "CC";
 
     @Nullable
     @SerializedName("paymentMethod")
