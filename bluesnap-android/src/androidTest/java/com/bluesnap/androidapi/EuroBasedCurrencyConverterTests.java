@@ -58,10 +58,11 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
 
         Double amount = 10.7D;
         SdkRequest sdkRequest = new SdkRequest(amount, EUR);
+
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, EUR, ILS);
         Double convertedTwicePrice = blueSnapService.convertPrice(convertedOncePrice, ILS, USD);
-//        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
+        //assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
         assertEquals("15.43", String.format("%.2f", convertedTwicePrice));
     }
 

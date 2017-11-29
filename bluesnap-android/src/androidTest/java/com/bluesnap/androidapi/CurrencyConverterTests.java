@@ -87,7 +87,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         Double amount = 10D;
         SdkRequest sdkRequest = new SdkRequest(amount, "EUR");
 
-        sdkRequest.setBase();
+        //sdkRequest.setBase();
         blueSnapService.setSdkRequest(sdkRequest);
         Double convertedOncePrice = blueSnapService.convertPrice(amount, "EUR", "USD");
 //        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());

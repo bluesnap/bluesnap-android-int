@@ -307,6 +307,8 @@ public class BlueSnapService {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
+                    sdkRequest = null;
+                    sdkResult = null;
                     sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
                     sDKConfiguration.getRates().setInitialRates();
 
@@ -316,8 +318,6 @@ public class BlueSnapService {
                     } catch (Exception e) {
                         Log.e(TAG, "Kount SDK initialization error");
                     }
-                    sdkRequest = null;
-                    sdkResult = null;
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
@@ -469,7 +469,8 @@ public class BlueSnapService {
         if (null == rates.getMerchantStoreAmount() || rates.getMerchantStoreAmount().isNaN() || 0 == rates.getMerchantStoreAmount()) {
             if (rates.getMerchantStoreCurrency().equals(currentCurrencyNameCode))
                 rates.setMerchantStoreAmount(currentPrice);
-            else if (null != sdkRequest && null != sdkRequest.getBaseCurrency() && rates.getMerchantStoreCurrency().equals(sdkRequest.getBaseCurrency())) {
+            else if (null != sdkRequest && null != sdkRequest.getBaseCurrency()
+                    && rates.getMerchantStoreCurrency().equals(sdkRequest.getBaseCurrency())) {
                 rates.setMerchantStoreAmount(sdkRequest.getBaseAmount());
                 if (sdkRequest.getBaseCurrency().equals(newCurrencyNameCode))
                     return sdkRequest.getBaseAmount();

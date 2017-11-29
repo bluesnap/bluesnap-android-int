@@ -18,6 +18,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BufferedHeader;
@@ -77,6 +78,9 @@ public class BSAndroidTestsBase {
     @Before
     public void getToken() throws InterruptedException {
 
+
+        final Semaphore semaphore = new Semaphore(1);
+        semaphore.acquire();
         tokenProvider = new TokenProvider() {
             @Override
             public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
@@ -116,11 +120,13 @@ public class BSAndroidTestsBase {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
                 blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, null, new BluesnapServiceCallback() {
+
                     @Override
                     public void onSuccess() {
                         Log.d(TAG, "Got rates callback");
                         ArrayList<Currency> ratesArray = blueSnapService.getRatesArray();
                         Assert.assertNotNull(ratesArray.get(0));
+                        semaphore.release();
                     }
 
                     @Override
@@ -132,7 +138,7 @@ public class BSAndroidTestsBase {
         }, 100);
 
 
-        while (null == blueSnapService.getsDKConfiguration()) {
+        while (!semaphore.tryAcquire()) {
             Thread.sleep(20000);
             Log.i(TAG, "Waiting for SDK configuration to finish");
 
