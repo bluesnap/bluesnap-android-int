@@ -470,16 +470,12 @@ public class BlueSnapService {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
+        // get Rates
         Rates rates = sDKConfiguration.getRates();
-        if (null == rates.getMerchantStoreAmount() || rates.getMerchantStoreAmount().isNaN() || 0 == rates.getMerchantStoreAmount()) {
-            if (rates.getMerchantStoreCurrency().equals(currentCurrencyNameCode))
-                rates.setMerchantStoreAmount(currentPrice);
-            else if (null != sdkRequest && null != sdkRequest.getBaseCurrency() && rates.getMerchantStoreCurrency().equals(sdkRequest.getBaseCurrency())) {
-                rates.setMerchantStoreAmount(sdkRequest.getBaseAmount());
-                if (sdkRequest.getBaseCurrency().equals(newCurrencyNameCode))
-                    return sdkRequest.getBaseAmount();
-            } else
-                rates.setMerchantStoreAmount((1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice);
+        // check if currentCurrencyNameCode is MerchantStoreCurrency
+        if (!currentCurrencyNameCode.equals(rates.getMerchantStoreCurrency())) {
+            currentPrice = (1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice;
+            currentCurrencyNameCode = rates.getMerchantStoreCurrency();
         }
         return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * currentPrice;
     }
