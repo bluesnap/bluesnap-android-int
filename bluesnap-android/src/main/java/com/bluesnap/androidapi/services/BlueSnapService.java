@@ -487,16 +487,15 @@ public class BlueSnapService {
     public synchronized SdkResult getSdkResult() {
         if (sdkResult == null) {
             sdkResult = new SdkResult();
+        }
 
-            try {
-                sdkResult.setToken(bluesnapToken.getMerchantToken());
-                // Copy values from request
-                sdkResult.setAmount(sdkRequest.getAmount());
-                sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
-                sdkResult.setShopperID(sdkRequest.getShopperID());
-            } catch (Exception e) {
-                Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
-            }
+        try {
+            sdkResult.setToken(bluesnapToken.getMerchantToken());
+            // Copy values from request
+            sdkResult.setAmount(sdkRequest.getAmount());
+            sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        } catch (Exception e) {
+            Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
         }
         return sdkResult;
     }

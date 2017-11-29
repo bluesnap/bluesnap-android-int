@@ -218,11 +218,13 @@ public class BluesnapCheckoutActivity extends Activity {
                     SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
                     if (getShopper().getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
+                        // New Card
                         JSONObject response = new JSONObject(responseString);
                         Last4 = response.getString("last4Digits");
                         ccType = response.getString("ccType");
                         Log.d(TAG, "tokenization of new credit card");
                     } else {
+                        // Reused Card
                         sdkResult.setShopperID(String.valueOf(getShopper().getVaultedShopperId()));
                         Last4 = getShopper().getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
                         ccType = getShopper().getNewCreditCardInfo().getCreditCard().getCardType();
