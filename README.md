@@ -71,13 +71,6 @@ You can pass a tax amount and a subtotal price (the tax amount will be added to 
 ```
 setAmountWithTax(Double subtotalAmount, Double taxAmount);
 ```
-#### Pass custom titles
-You can also pass a title or a custom title to be displayed to the shopper.
-
-```
-sdkRequest.setCustomTitle("custom text");
-```
-
 #### Specify required information 
 To collect shipping information, call the `setShippingRequired` method of the `SdkRequest` class:
 
@@ -150,7 +143,7 @@ For example:
 curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
--H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+-H 'Authorization: Basic Auth' \
 -d '
 {
 	"cardTransactionType": "AUTH_CAPTURE",
@@ -158,7 +151,7 @@ curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
 	"softDescriptor": "Mobile SDK test",
 	"amount": 25.00,
 	"currency": "USD",
-	"pfToken": "812f6ee706e463d3276e3abeb21fa94072e40695ed423ddac244409b3b652eff_"
+	"pfToken": "TOKEN_STRING"
 }'
 ```
 If successful, the response HTTP status code is 200 OK. Visit our [API Reference](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) for more details.
