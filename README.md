@@ -4,7 +4,7 @@
 BlueSnap's Android SDK enables you to easily accept credit card and PayPal payments directly from your Android app, and then process payments from your server using the Payment API. When you use this library, BlueSnap handles most of the PCI compliance burden for you, as the shopper's payment data is tokenized and sent directly to BlueSnap's servers.
 
 # Versions
-This SDK supports Android SDK 23 and above for development. The minimum Android API version for applications is 15, which covers more than 98% of the [Android devices](https://developer.android.com/about/dashboards/index.html).
+This SDK supports Android SDK 25 and above for development. The minimum Android API version for applications is 18, which covers more than 98% of the [Android devices](https://developer.android.com/about/dashboards/index.html).
 
 # Installation
 
