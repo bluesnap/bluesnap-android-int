@@ -10,15 +10,13 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
-import com.bluesnap.androidapi.models.PaymentSources;
 import com.bluesnap.androidapi.models.Rates;
+import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -511,7 +509,7 @@ public class BlueSnapService {
      */
     public void setSdkRequest(SdkRequest newSdkRequest) throws BSPaymentRequestException {
         if (newSdkRequest == null)
-            throw new NullPointerException("null sdkRequest");
+            throw new BSPaymentRequestException("null sdkRequest");
 
         if (sdkRequest != null) {
             Log.w(TAG, "paymentrequest override");

@@ -50,6 +50,7 @@ public class CCormValidityTest extends EspressoBasedTest {
     public void setup() throws InterruptedException {
         super.setup();
         super.setSDKToken();
+
         SdkRequest sdkRequest = new SdkRequest();
         sdkRequest.setAmount(23.4);
         Intent intent = new Intent();
@@ -59,6 +60,7 @@ public class CCormValidityTest extends EspressoBasedTest {
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());
+
     }
 
     @Test

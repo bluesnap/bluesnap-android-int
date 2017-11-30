@@ -133,6 +133,9 @@ public class EspressoBasedTest {
             Thread.sleep(2000);
 
         }
+        while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
+            Thread.sleep(1000);
+        }
     }
 
     public void clearPrefs(Context context) {
