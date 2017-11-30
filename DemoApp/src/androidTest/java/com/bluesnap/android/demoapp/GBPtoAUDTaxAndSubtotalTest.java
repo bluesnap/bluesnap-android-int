@@ -14,7 +14,6 @@ import android.view.ViewParent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,29 +67,41 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
         checkToken();
 
         ViewInteraction spinner = onView(
-                allOf(withId(R.id.rateSpinner),
+                allOf(withId(R.id.merchantStoreCurrencySpinner),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.TableLayout")),
                                         1),
-                                3),
+                                1),
                         isDisplayed()));
         spinner.perform(click());
 
-
         DataInteraction checkedTextView = onData(anything())
-                .inAdapterView(childAtPosition(
-                        withClassName(is("android.widget.PopupWindow$PopupBackgroundView")),
-                        0))
+                .inAdapterView(withClassName(is("android.widget.ListPopupWindow$DropDownListView")))
                 .atPosition(2);
         checkedTextView.perform(click());
+
+        ViewInteraction spinner2 = onView(
+                allOf(withId(R.id.rateSpinner),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("android.widget.TableLayout")),
+                                        3),
+                                3),
+                        isDisplayed()));
+        spinner2.perform(click());
+
+        DataInteraction checkedTextView2 = onData(anything())
+                .inAdapterView(withClassName(is("android.widget.ListPopupWindow$DropDownListView")))
+                .atPosition(2);
+        checkedTextView2.perform(click());
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.productPriceEditText),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.TableLayout")),
-                                        1),
+                                        3),
                                 1),
                         isDisplayed()));
         editText.perform(click());
@@ -100,30 +111,20 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.TableLayout")),
-                                        1),
+                                        3),
                                 1),
                         isDisplayed()));
-        editText2.perform(click());
+        editText2.perform(replaceText("300"), closeSoftKeyboard());
 
         ViewInteraction editText3 = onView(
-                allOf(withId(R.id.productPriceEditText),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.TableLayout")),
-                                        1),
-                                1),
-                        isDisplayed()));
-        editText3.perform(replaceText(bgpAmonut.toString()), closeSoftKeyboard());
-
-        ViewInteraction editText4 = onView(
                 allOf(withId(R.id.demoTaxEditText),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.TableLayout")),
-                                        3),
+                                        5),
                                 1),
                         isDisplayed()));
-        editText4.perform(replaceText("2"), closeSoftKeyboard());
+        editText3.perform(replaceText("2"), closeSoftKeyboard());
 
         ViewInteraction zoomButton = onView(
                 allOf(withId(R.id.merchantAppSubmitButton),
@@ -138,12 +139,7 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
 
         ViewInteraction button = onView(
                 allOf(withId(R.id.buyNowButton), withContentDescription("BuyNowbutton"),
-                        childAtPosition(
-                                allOf(withId(R.id.fraglyout),
-                                        childAtPosition(
-                                                IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class),
-                                                0)),
-                                2),
+
                         isDisplayed()));
         button.check(matches(isDisplayed()));
 
