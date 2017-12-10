@@ -53,10 +53,11 @@ public class AndroidUtil {
 
     public static boolean isDateInFuture(int month, int year) {
         Calendar now = getCalendarInstance();
+        int currentYear = now.get(Calendar.YEAR);
         if (year < 2000) {
             year += 2000;
         }
-        return (year > now.get(Calendar.YEAR)) || (year == now.get(Calendar.YEAR) && month >= (now.get(Calendar.MONTH) + 1));
+        return (year > currentYear && year < (11 + currentYear)) || (year == currentYear && month >= (now.get(Calendar.MONTH) + 1));
     }
 
     public static AndroidUtil getInstance() {
