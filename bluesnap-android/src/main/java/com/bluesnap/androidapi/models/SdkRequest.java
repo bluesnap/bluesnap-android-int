@@ -40,8 +40,11 @@ public class SdkRequest {
     private void initSdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
         if (taxAmount > 0D)
             setAmountWithTax(amount, taxAmount);
-        else
+        else {
+            setTaxAmount(0D);
+            setSubtotalAmount(0D);
             setAmount(amount);
+        }
 
         setCurrencyNameCode(currencyNameCode);
         setBase();
