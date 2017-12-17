@@ -131,8 +131,12 @@ public class BlueSnapService {
 
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
-        initPayPal(merchantToken);
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
+
+        sdkResult = null;
+        sdkRequest = null;
+
+        clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
 
         if (!busInstance.isRegistered(this)) busInstance.register(this);
@@ -141,7 +145,7 @@ public class BlueSnapService {
 
     private void initPayPal(String merchantToken) {
         // check if paypal url is same as before
-        if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && null != getPayPalToken() && !"".equals(getPayPalToken())) {
+        if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && !"".equals(getPayPalToken())) {
             Log.d(TAG, "clearPayPalToken");
             clearPayPalToken();
         } else {
@@ -316,8 +320,7 @@ public class BlueSnapService {
                     } catch (Exception e) {
                         Log.e(TAG, "Kount SDK initialization error");
                     }
-                    sdkRequest = null;
-                    sdkResult = null;
+
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
@@ -465,21 +468,32 @@ public class BlueSnapService {
         if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
+        // get Rates
         Rates rates = sDKConfiguration.getRates();
-        if (null == rates.getMerchantStoreAmount() || rates.getMerchantStoreAmount().isNaN() || 0 == rates.getMerchantStoreAmount()) {
-            if (rates.getMerchantStoreCurrency().equals(currentCurrencyNameCode))
-                rates.setMerchantStoreAmount(currentPrice);
-            else if (null != sdkRequest && null != sdkRequest.getBaseCurrency() && rates.getMerchantStoreCurrency().equals(sdkRequest.getBaseCurrency())) {
-                rates.setMerchantStoreAmount(sdkRequest.getBaseAmount());
-                if (sdkRequest.getBaseCurrency().equals(newCurrencyNameCode))
-                    return sdkRequest.getBaseAmount();
-            } else
-                rates.setMerchantStoreAmount((1 / rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate()) * currentPrice);
+        // check if currentCurrencyNameCode is MerchantStoreCurrency
+        Double currentRate = rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate();
+        Double newRate = rates.getRatesMap().get(newCurrencyNameCode).getConversionRate();
+
+        if (!currentCurrencyNameCode.equals(rates.getMerchantStoreCurrency())) {
+            currentPrice = (1 / currentRate) * currentPrice;
+            currentCurrencyNameCode = rates.getMerchantStoreCurrency();
         }
-        return (rates.getRatesMap().get(newCurrencyNameCode).getConversionRate()) * currentPrice;
+        return (newRate) * currentPrice;
     }
 
-    public SdkResult getSdkResult() {
+    public synchronized SdkResult getSdkResult() {
+        if (sdkResult == null) {
+            sdkResult = new SdkResult();
+        }
+
+        try {
+            sdkResult.setToken(bluesnapToken.getMerchantToken());
+            // Copy values from request
+            sdkResult.setAmount(sdkRequest.getAmount());
+            sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        } catch (Exception e) {
+            Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
+        }
         return sdkResult;
     }
 
@@ -488,14 +502,14 @@ public class BlueSnapService {
     }
 
     /**
-     * Set a sdkRequest
+     * Set a sdkRequest and call {@link #verifyPaymentRequest} on  it.
      *
      * @param newSdkRequest
      * @throws BSPaymentRequestException
      */
     public void setSdkRequest(SdkRequest newSdkRequest) throws BSPaymentRequestException {
         if (newSdkRequest == null)
-            throw new NullPointerException("null sdkRequest");
+            throw new BSPaymentRequestException("null sdkRequest");
 
         if (sdkRequest != null) {
             Log.w(TAG, "sdkRequest override");

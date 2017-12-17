@@ -205,18 +205,22 @@ public class BluesnapCheckoutActivity extends Activity {
                 try {
                     String Last4;
                     String ccType;
+                    SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+
                     if (getShopper().getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
+                        // New Card
                         JSONObject response = new JSONObject(responseString);
                         Last4 = response.getString("last4Digits");
                         ccType = response.getString("ccType");
                         Log.d(TAG, "tokenization of new credit card");
                     } else {
+                        // Reused Card
+                        sdkResult.setShopperID(String.valueOf(getShopper().getVaultedShopperId()));
                         Last4 = getShopper().getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
                         ccType = getShopper().getNewCreditCardInfo().getCreditCard().getCardType();
                         Log.d(TAG, "tokenization of previous used credit card");
                     }
 
-                    SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
                     sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
                     sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
                     // update last4 from server result
