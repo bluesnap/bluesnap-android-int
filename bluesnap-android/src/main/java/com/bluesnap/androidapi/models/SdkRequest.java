@@ -9,21 +9,7 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
  * A Request for payment process in the SDK.
  * A new SdkRequest should be used for each purchase.
  */
-public class SdkRequest implements Parcelable {
-
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-
-        @Override
-        public Object createFromParcel(Parcel parcel) {
-            SdkRequest pr = new SdkRequest(parcel);
-            return pr;
-        }
-
-        @Override
-        public Object[] newArray(int i) {
-            return new Object[0];
-        }
-    };
+public class SdkRequest {
     private String currencyNameCode;
     private Double amount;
     private String customTitle;
@@ -39,58 +25,33 @@ public class SdkRequest implements Parcelable {
     private Double baseTaxAmount;
     private Double baseSubtotalAmount;
 
-    public SdkRequest(Parcel parcel) {
-        currencyNameCode = parcel.readString();
-        amount = parcel.readDouble();
-        customTitle = parcel.readString();
-        userEmail = parcel.readString();
-        shippingRequired = parcel.readInt() != 0;
-        billingRequired = parcel.readInt() != 0;
-        emailRequired = parcel.readInt() != 0;
-        shopperID = parcel.readString();
-        subtotalAmount = parcel.readDouble();
-        taxAmount = parcel.readDouble();
-        setBase();
-    }
-
-    SdkRequest() {
-
-    }
-
     public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
-        taxAmount = 0D;
-        subtotalAmount = 0D;
+        setSubtotalAmount(amount);
+        setCurrencyNameCode(currencyNameCode);
+        setTaxAmount(taxAmount);
+        setAmount(amount + taxAmount);
+        setBase();
 
+        setBillingRequired(billingRequired);
+        setEmailRequired(emailRequired);
+        setShippingRequired(shippingRequired);
+    }
+
+    public SdkRequest(Double amount, String currencyNameCode, Double taxAmount) {
+        setSubtotalAmount(amount);
+        setCurrencyNameCode(currencyNameCode);
+        setTaxAmount(taxAmount);
+        setAmount(amount + taxAmount);
+        setBase();
     }
 
     public SdkRequest(Double amount, String currencyNameCode) {
-        setAmount(amount);
+        setSubtotalAmount(0D);
         setCurrencyNameCode(currencyNameCode);
         setTaxAmount(0D);
-        setSubtotalAmount(0D);
+        setAmount(amount);
         setBase();
-
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(currencyNameCode);
-        parcel.writeDouble(amount);
-        parcel.writeString(customTitle);
-        parcel.writeString(userEmail);
-        parcel.writeInt(shippingRequired ? 1 : 0);
-        parcel.writeInt(billingRequired ? 1 : 0);
-        parcel.writeInt(emailRequired ? 1 : 0);
-        parcel.writeString(shopperID);
-        parcel.writeDouble(subtotalAmount != null ? subtotalAmount : 0D);
-        parcel.writeDouble(taxAmount != null ? taxAmount : 0D);
-    }
-
 
     public String getCurrencyNameCode() {
         return currencyNameCode;
@@ -215,56 +176,6 @@ public class SdkRequest implements Parcelable {
 
     public boolean isSubtotalTaxSet() {
         return (baseSubtotalAmount != 0D && baseTaxAmount != 0D);
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SdkRequest that = (SdkRequest) o;
-
-        if (shippingRequired != that.shippingRequired) return false;
-        if (billingRequired != that.billingRequired) return false;
-        if (emailRequired != that.emailRequired) return false;
-        if (!currencyNameCode.equals(that.currencyNameCode)) return false;
-        if (!amount.equals(that.amount)) return false;
-        if (customTitle != null ? !customTitle.equals(that.customTitle) : that.customTitle != null)
-            return false;
-        if (userEmail != null ? !userEmail.equals(that.userEmail) : that.userEmail != null)
-            return false;
-        if (shopperID != null ? !shopperID.equals(that.shopperID) : that.shopperID != null)
-            return false;
-        if (subtotalAmount != null ? !subtotalAmount.equals(that.subtotalAmount) : that.subtotalAmount != null)
-            return false;
-        if (taxAmount != null ? !taxAmount.equals(that.taxAmount) : that.taxAmount != null)
-            return false;
-        if (baseCurrency != null ? !baseCurrency.equals(that.baseCurrency) : that.baseCurrency != null)
-            return false;
-        if (baseAmount != null ? !baseAmount.equals(that.baseAmount) : that.baseAmount != null)
-            return false;
-        return baseTaxAmount != null ? baseTaxAmount.equals(that.baseTaxAmount) : that.baseTaxAmount == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = currencyNameCode != null ? currencyNameCode.hashCode() : 0;
-        result = 31 * result + amount.hashCode();
-        result = 31 * result + (customTitle != null ? customTitle.hashCode() : 0);
-        result = 31 * result + (userEmail != null ? userEmail.hashCode() : 0);
-        result = 31 * result + (shippingRequired ? 1 : 0);
-        result = 31 * result + (billingRequired ? 1 : 0);
-        result = 31 * result + (emailRequired ? 1 : 0);
-        result = 31 * result + (shopperID != null ? shopperID.hashCode() : 0);
-        result = 31 * result + (subtotalAmount != null ? subtotalAmount.hashCode() : 0);
-        result = 31 * result + (taxAmount != null ? taxAmount.hashCode() : 0);
-        result = 31 * result + (baseCurrency != null ? baseCurrency.hashCode() : 0);
-        result = 31 * result + (baseAmount != null ? baseAmount.hashCode() : 0);
-        result = 31 * result + (baseTaxAmount != null ? baseTaxAmount.hashCode() : 0);
-        result = 31 * result + (baseSubtotalAmount != null ? baseSubtotalAmount.hashCode() : 0);
-        return result;
     }
 
     public void setBase() {

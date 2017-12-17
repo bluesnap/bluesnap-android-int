@@ -124,7 +124,6 @@ public class BluesnapCheckoutActivity extends Activity {
         final Button creditCardButton = (Button) findViewById(R.id.creditCardButton);
         creditCardButton.setVisibility(View.VISIBLE);
         final Bundle fragmentBundle = new Bundle();
-        fragmentBundle.putParcelable(EXTRA_PAYMENT_REQUEST, sdkRequest);
         expressCheckoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
