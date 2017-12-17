@@ -502,7 +502,7 @@ public class BlueSnapService {
     }
 
     /**
-     * Set a sdkRequest and call {@link #verifyPaymentRequest} on  it.
+     * Set a sdkRequest and call on  it.
      *
      * @param newSdkRequest
      * @throws BSPaymentRequestException

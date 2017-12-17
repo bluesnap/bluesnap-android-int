@@ -26,31 +26,29 @@ public class SdkRequest {
     private Double baseSubtotalAmount;
 
     public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
-        setSubtotalAmount(amount);
+        initSdkRequest(amount, currencyNameCode, taxAmount, billingRequired, emailRequired, shippingRequired);
+    }
+
+    public SdkRequest(Double amount, String currencyNameCode, Double taxAmount) {
+        initSdkRequest(amount, currencyNameCode, taxAmount, false, false, false);
+    }
+
+    public SdkRequest(Double amount, String currencyNameCode) {
+        initSdkRequest(amount, currencyNameCode, 0D, false, false, false);
+    }
+
+    private void initSdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
+        if (taxAmount > 0D)
+            setAmountWithTax(amount, taxAmount);
+        else
+            setAmount(amount);
+
         setCurrencyNameCode(currencyNameCode);
-        setTaxAmount(taxAmount);
-        setAmount(amount + taxAmount);
         setBase();
 
         setBillingRequired(billingRequired);
         setEmailRequired(emailRequired);
         setShippingRequired(shippingRequired);
-    }
-
-    public SdkRequest(Double amount, String currencyNameCode, Double taxAmount) {
-        setSubtotalAmount(amount);
-        setCurrencyNameCode(currencyNameCode);
-        setTaxAmount(taxAmount);
-        setAmount(amount + taxAmount);
-        setBase();
-    }
-
-    public SdkRequest(Double amount, String currencyNameCode) {
-        setSubtotalAmount(0D);
-        setCurrencyNameCode(currencyNameCode);
-        setTaxAmount(0D);
-        setAmount(amount);
-        setBase();
     }
 
     public String getCurrencyNameCode() {
@@ -141,7 +139,7 @@ public class SdkRequest {
     }
 
     public void setAmountWithTax(Double subtotalAmount, Double taxAmount) {
-        this.taxAmount = taxAmount;
+        setTaxAmount(taxAmount);
         setSubtotalAmount(subtotalAmount);
         setAmount(subtotalAmount + taxAmount);
     }
