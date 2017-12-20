@@ -449,14 +449,19 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
         assert lastPaymentInfo != null;
         assert previousCreditCardInfoArray != null;
+
         for (CreditCardInfo previousCreditCardInfo : previousCreditCardInfoArray) {
             if (previousCreditCardInfo.getCreditCard().validateExpiryDate()) {
-                if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
-                        && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
-                    filteredCreditCardInfosArray.add(previousCreditCardInfo);
+                if (LastPaymentInfo.CC_PAYMENT_METHOD.equals(lastPaymentInfo.getPaymentMethod())) {
+                    if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
+                            && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
+                        filteredCreditCardInfosArray.add(previousCreditCardInfo);
+                    } else {
+                        //add last payment as first in line
+                        filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
+                    }
                 } else {
-                    //add last payment as first in line
-                    filteredCreditCardInfosArray.add(0, previousCreditCardInfo);
+                    filteredCreditCardInfosArray.add(previousCreditCardInfo);
                 }
             }
         }
@@ -714,12 +719,13 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                 fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 Bundle bundle = new Bundle();
-                bundle.putString(ShippingFragment.AUTO_POPULATE_SHOPPER_NAME, AndroidUtil.stringify(shopper.getShippingContactInfo().getFullName()));
-                bundle.putString(ShippingFragment.AUTO_POPULATE_ZIP, AndroidUtil.stringify(shopper.getShippingContactInfo().getZip()));
-                bundle.putString(ShippingFragment.AUTO_POPULATE_ADDRESS, AndroidUtil.stringify(shopper.getShippingContactInfo().getAddress()));
-                bundle.putString(ShippingFragment.AUTO_POPULATE_CITY, AndroidUtil.stringify(shopper.getShippingContactInfo().getCity()));
-                bundle.putString(ShippingFragment.AUTO_POPULATE_STATE, AndroidUtil.stringify(shopper.getShippingContactInfo().getState()));
-                bundle.putString(ShippingFragment.AUTO_POPULATE_COUNTRY, AndroidUtil.stringify(shopper.getShippingContactInfo().getCountry()));
+                bundle.putString(ShippingFragment.AUTO_POPULATE_SHOPPER_NAME, AndroidUtil.stringify(billingInfo.getFullName()));
+                bundle.putString(ShippingFragment.AUTO_POPULATE_ZIP, AndroidUtil.stringify(billingInfo.getZip()));
+                bundle.putString(ShippingFragment.AUTO_POPULATE_COUNTRY, AndroidUtil.stringify(billingInfo.getCountry()));
+
+                bundle.putString(ShippingFragment.AUTO_POPULATE_ADDRESS, AndroidUtil.stringify(billingInfo.getAddress()));
+                bundle.putString(ShippingFragment.AUTO_POPULATE_CITY, AndroidUtil.stringify(billingInfo.getCity()));
+                bundle.putString(ShippingFragment.AUTO_POPULATE_STATE, AndroidUtil.stringify(billingInfo.getState()));
 
                 ShippingFragment shippingFragment = bluesnapCheckoutActivity.createShippingFragment(bundle);
                 fragmentTransaction.replace(R.id.fraglyout, shippingFragment);
