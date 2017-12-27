@@ -32,6 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.containsString;
@@ -78,10 +79,12 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
                         isDisplayed()));
         spinner.perform(click());
 
-        DataInteraction checkedTextView = onData(anything())
+        /*DataInteraction checkedTextView = onData(anything())
                 .inAdapterView(withClassName(is("android.widget.ListPopupWindow$DropDownListView")))
                 .atPosition(2);
-        checkedTextView.perform(click());
+        checkedTextView.perform(click());*/
+
+        ViewInteraction checkedTextView = onData(allOf(is(instanceOf(String.class)), is("GBP"))).perform(click());
 
         ViewInteraction spinner2 = onView(
                 allOf(withId(R.id.rateSpinner),
@@ -93,10 +96,12 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
                         isDisplayed()));
         spinner2.perform(click());
 
-        DataInteraction checkedTextView2 = onData(anything())
+        /*DataInteraction checkedTextView2 = onData(anything())
                 .inAdapterView(withClassName(is("android.widget.ListPopupWindow$DropDownListView")))
                 .atPosition(2);
-        checkedTextView2.perform(click());
+        checkedTextView2.perform(click());*/
+
+        ViewInteraction checkedTextView2 = onData(allOf(is(instanceOf(String.class)), is("GBP"))).perform(click());
 
         ViewInteraction editText = onView(
                 allOf(withId(R.id.productPriceEditText),
@@ -212,7 +217,7 @@ public class GBPtoAUDTaxAndSubtotalTest extends EspressoBasedTest {
                                 1),
                         isDisplayed()));
         //Verify that subtotal contains AU currency
-        textView5.check(matches(withText(containsString("AU$"))));
+        textView5.check(matches(withText(containsString("A$"))));
 
 
     }

@@ -9,6 +9,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.rule.UiThreadTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
@@ -52,6 +53,8 @@ public class EspressoBasedTest {
     protected IdlingResource tokenProgressBarIR;
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
+    private boolean aBoolean = false;
+
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         try {
@@ -108,7 +111,6 @@ public class EspressoBasedTest {
 
                                     @Override
                                     public void onServiceFailure() {
-
                                     }
                                 };
                             }
@@ -117,12 +119,13 @@ public class EspressoBasedTest {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");
-
+                                aBoolean = true;
                             }
 
                             @Override
                             public void onFailure() {
                                 fail("Service could not finish setup");
+                                aBoolean = true;
                             }
                         });
 
@@ -137,6 +140,12 @@ public class EspressoBasedTest {
         while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
             Log.d(TAG, "Waiting for SDK configuration to finish");
             Thread.sleep(2000);
+
+        }
+
+        while (!aBoolean) {
+            Log.d(TAG, "Waiting for SDK configuration to finish");
+            Thread.sleep(500);
 
         }
     }
