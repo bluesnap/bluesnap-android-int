@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.util.Log;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -44,15 +43,10 @@ public class ShippingFlowTest {
     }
 
     @Before
-    public void setup() {
+    public void setup() throws BSPaymentRequestException {
         Intent intent = new Intent();
         SdkRequest sdkRequest = new SdkRequest(23.4, "USD");
-        sdkRequest.setShippingRequired(true);
-        try {
-            BlueSnapService.getInstance().setSdkRequest(sdkRequest);
-        } catch (BSPaymentRequestException e) {
-            Log.e("ShippingFlowTest", "payment request not validated: ", e);
-        }
+        BlueSnapService.getInstance().setSdkRequest(sdkRequest);
         mActivityRule.launchActivity(intent);
     }
 
