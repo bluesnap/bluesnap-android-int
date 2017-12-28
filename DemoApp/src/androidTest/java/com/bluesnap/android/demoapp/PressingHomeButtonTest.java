@@ -3,22 +3,19 @@ package com.bluesnap.android.demoapp;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.test.espresso.ViewAssertion;
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.PrefsStorage;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -29,13 +26,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.InstrumentationRegistry.getContext;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.pressKey;
-import static android.support.test.espresso.action.ViewActions.pressMenuKey;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -45,10 +40,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -65,7 +58,6 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
         Thread.sleep(1000);
     }
 
-
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         /*super.setup();
@@ -79,7 +71,20 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());
-        threadSleep();
+
+
+        while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
+            Log.d(TAG, "Waiting for token setup");
+            Thread.sleep(2000);
+
+        }
+
+        while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
+            Log.d(TAG, "Waiting for SDK configuration to finish");
+            Thread.sleep(2000);
+
+        }
+
     }
 
     @Test
@@ -383,6 +388,13 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
 
         goHome(mActivity);
 
+        PrefsStorage prefsStorage = new PrefsStorage(getContext());
+
+        while (prefsStorage.getString("SHOPPER_ID", "") == null || prefsStorage.getString("SHOPPER_ID", "").equals("")) {
+            Log.d(TAG, "Waiting for SDK configuration to finish");
+            threadSleep(2000);
+        }
+
         onView(withId(R.id.transactionResult))
                 .check(matches(withText(containsString("Transaction Success"))));
 
@@ -396,7 +408,7 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         activity.startActivity(intent);
-        threadSleep();
+        threadSleep(6000);
         bringToForeground(mActivity, aClass);
     }
 
@@ -404,12 +416,11 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
         Intent intent = new Intent(activity, (aClass == null ? activity.getClass() : BluesnapCheckoutActivity.class));
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         activity.startActivity(intent);
-        threadSleep();
     }
 
-    private void threadSleep() {
+    private void threadSleep(int millis) {
         try {
-            Thread.sleep(6000);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
             fail("Thread.sleep failed " + e.getMessage());
