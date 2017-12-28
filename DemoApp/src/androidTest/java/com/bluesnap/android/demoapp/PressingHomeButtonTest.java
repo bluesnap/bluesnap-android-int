@@ -60,31 +60,16 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        /*super.setup();
-        super.setSDKToken();
-        SdkRequest sdkRequest = new SdkRequest(23.4, "USD");
-        //Thread.sleep(500);
-        BlueSnapService.getInstance().setSdkRequest(sdkRequest);*/
         Intent intent = new Intent();
-        /*sdkRequest.setShippingRequired(false);*/
-
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());
 
 
-        while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
-            Log.d(TAG, "Waiting for token setup");
+        while (BlueSnapService.getInstance().getBlueSnapToken() == null || BlueSnapService.getInstance().getsDKConfiguration() == null || BlueSnapService.getInstance().getSupportedRates() == null) {
+            Log.d(TAG, "Waiting for setup to complete");
             Thread.sleep(2000);
-
         }
-
-        while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
-            Log.d(TAG, "Waiting for SDK configuration to finish");
-            Thread.sleep(2000);
-
-        }
-
     }
 
     @Test
