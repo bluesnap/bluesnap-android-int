@@ -98,7 +98,7 @@ public class CCormValidityTest extends EspressoBasedTest {
 
         //Now enter a valid month
         onView(withId(R.id.expDateEditText))
-                .perform(typeText("12 36"), ViewActions.closeSoftKeyboard());
+                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
 
         onView(withId(R.id.buyNowButton)).perform(click());
         onView(withId(R.id.expDateLabelTextView)).check(matches(not(TestUtils.withCurrentTextColor(Color.RED))));
@@ -116,7 +116,7 @@ public class CCormValidityTest extends EspressoBasedTest {
 
         //Now enter a valid month
         onView(withId(R.id.expDateEditText))
-                .perform(typeText("12 30"), ViewActions.closeSoftKeyboard());
+                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
 
         onView(withId(R.id.buyNowButton)).perform(click());
         onView(withId(R.id.expDateLabelTextView)).check(matches(not(TestUtils.withCurrentTextColor(Color.RED))));
