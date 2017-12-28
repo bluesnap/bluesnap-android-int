@@ -194,7 +194,7 @@ public class CardTest extends TestCase {
 
     @Test
     public void testValidateExpiryDate() throws Exception {
-        assertTrue("this date should be in the futre", AndroidUtil.isDateInFuture(11, 99));
+        assertTrue("this date should be in the futre", AndroidUtil.isDateInFuture(11, 25));
         CreditCard card = new CreditCard();
         card.setExpirationMonth(13);
         card.setExpirationYear(33);
@@ -246,20 +246,20 @@ public class CardTest extends TestCase {
         assertFalse(AndroidUtil.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
         assertFalse(card.validateExpiryDate());
         card.setExpirationMonth(11);
-        card.setExpirationYear(30);
+        card.setExpirationYear(25);
         assertTrue(AndroidUtil.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
         card.setExpirationMonth(12);
-        card.setExpirationYear(30);
+        card.setExpirationYear(25);
         assertTrue(card.validateExpiryDate());
         card.setExpirationMonth(1);
-        card.setExpirationYear(30);
+        card.setExpirationYear(25);
         assertTrue(card.validateExpiryDate());
     }
 
     @Test
     public void validLuhnAndNoType() {
         CreditCard card = new CreditCard();
-        card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/50", "123");
+        card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/25", "123");
         assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(card.validateNumber());
         assertTrue(card.validateAll());
@@ -270,7 +270,7 @@ public class CardTest extends TestCase {
     @Test
     public void testValidateAll() throws Exception {
         CreditCard card = new CreditCard();
-        card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/50", "123");
+        card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/25", "123");
         assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(card.validateNumber());
         assertTrue(card.validateAll());
@@ -282,7 +282,7 @@ public class CardTest extends TestCase {
         CreditCard creditCard = creditCardInfo.getCreditCard();
         ContactInfo billingInfo = creditCardInfo.getBillingContactInfo();
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
-        creditCard.update(number, "11/50", "123");
+        creditCard.update(number, "11/25", "123");
         billingInfo.setFullName("Homer Ssn");
         assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(creditCard.validateNumber());

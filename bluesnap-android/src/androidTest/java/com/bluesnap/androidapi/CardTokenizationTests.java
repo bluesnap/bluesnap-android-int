@@ -46,7 +46,7 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         final CreditCard card = creditCardInfo.getCreditCard();
         final BillingInfo billingInfo = creditCardInfo.getBillingContactInfo();
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
-        card.update(number, "11/50", "123");
+        card.update(number, "11/25", "123");
         billingInfo.setFullName("John Doe");
         assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(card.validateNumber());
