@@ -54,6 +54,7 @@ public class CCormValidityTest extends EspressoBasedTest {
         super.setup();
         super.setSDKToken();
         SdkRequest sdkRequest = new SdkRequest(23.4, "USD");
+        //Thread.sleep(500);
         BlueSnapService.getInstance().setSdkRequest(sdkRequest);
         Intent intent = new Intent();
         sdkRequest.setShippingRequired(false);

@@ -52,6 +52,8 @@ public class EspressoBasedTest {
     protected IdlingResource tokenProgressBarIR;
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
+    private boolean isSdkRequestIsNull = false;
+
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         try {
@@ -108,7 +110,6 @@ public class EspressoBasedTest {
 
                                     @Override
                                     public void onServiceFailure() {
-
                                     }
                                 };
                             }
@@ -117,12 +118,13 @@ public class EspressoBasedTest {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");
-
+                                isSdkRequestIsNull = true;
                             }
 
                             @Override
                             public void onFailure() {
                                 fail("Service could not finish setup");
+                                isSdkRequestIsNull = true;
                             }
                         });
 
@@ -137,6 +139,12 @@ public class EspressoBasedTest {
         while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
             Log.d(TAG, "Waiting for SDK configuration to finish");
             Thread.sleep(2000);
+
+        }
+
+        while (!isSdkRequestIsNull) {
+            Log.d(TAG, "Waiting for SDK configuration to finish");
+            Thread.sleep(500);
 
         }
     }

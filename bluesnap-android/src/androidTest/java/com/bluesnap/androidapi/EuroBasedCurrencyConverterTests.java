@@ -78,7 +78,9 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
             Double ILSPrice = blueSnapService.convertPrice(amount, "SOMETHING_BAD", ILS);
             fail("Should have trown exception");
         } catch (BSPaymentRequestException e) {
-            assertEquals("Currency not found", e.getMessage());
+            assertEquals("null sdkRequest", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("not an ISO 4217 compatible 3 letter currency representation", e.getMessage());
         }
 
     }
@@ -95,7 +97,9 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
             Double ILSPrice = blueSnapService.convertPrice(amount, "SOMETHING_BAD", ILS);
             fail("Should have trown exception");
         } catch (BSPaymentRequestException e) {
-            assertEquals("Invalid currency", e.getMessage());
+            assertEquals("null sdkRequest", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            assertEquals("not an ISO 4217 compatible 3 letter currency representation", e.getMessage());
         }
 
     }

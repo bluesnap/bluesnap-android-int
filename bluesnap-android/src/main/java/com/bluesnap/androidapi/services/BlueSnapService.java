@@ -465,7 +465,7 @@ public class BlueSnapService {
      * @return
      */
     public Double convertPrice(Double currentPrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
-        if (!checkCurrencyCompatibility(currentCurrencyNameCode) && !checkCurrencyCompatibility(newCurrencyNameCode))
+        if (!checkCurrencyCompatibility(currentCurrencyNameCode) || !checkCurrencyCompatibility(newCurrencyNameCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
         // get Rates

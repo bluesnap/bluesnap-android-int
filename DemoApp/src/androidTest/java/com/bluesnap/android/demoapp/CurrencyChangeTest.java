@@ -51,8 +51,8 @@ public class CurrencyChangeTest extends EspressoBasedTest {
     public void setup() throws InterruptedException, BSPaymentRequestException {
         super.setup();
         super.setSDKToken();
-
         SdkRequest sdkRequest = new SdkRequest(AMOUNT, "USD");
+        //Thread.sleep(500);
         Intent intent = new Intent();
         BlueSnapService.getInstance().setSdkRequest(sdkRequest);
         sdkRequest.setShippingRequired(false);
