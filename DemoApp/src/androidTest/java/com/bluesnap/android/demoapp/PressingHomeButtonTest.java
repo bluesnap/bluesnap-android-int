@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.PrefsStorage;
@@ -60,13 +61,21 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
+        BlueSnapService blueSnapService = BlueSnapService.getInstance();
+        SdkRequest sdkRequest = new SdkRequest(-99.99, "USD");
+        blueSnapService.setSdkRequest(sdkRequest);
+
         Intent intent = new Intent();
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         clearPrefs(mActivity.getApplicationContext());
 
+        while (blueSnapService.getSdkRequest() != null && blueSnapService.getSdkRequest().getBaseAmount() == -99.99) {
+            Log.d(TAG, "Waiting for setup to complete");
+            Thread.sleep(6000);
+        }
 
-        while (BlueSnapService.getInstance().getBlueSnapToken() == null || BlueSnapService.getInstance().getsDKConfiguration() == null || BlueSnapService.getInstance().getSupportedRates() == null) {
+        while (blueSnapService.getBlueSnapToken() == null || blueSnapService.getsDKConfiguration() == null || blueSnapService.getSupportedRates() == null) {
             Log.d(TAG, "Waiting for setup to complete");
             Thread.sleep(2000);
         }
