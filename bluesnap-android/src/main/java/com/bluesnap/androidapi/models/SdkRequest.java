@@ -69,6 +69,8 @@ public class SdkRequest {
     void setAmount(Double amount) {
         if (baseAmount == null)
             baseAmount = amount;
+        if (isSubtotalTaxSet() && (baseAmount != baseTaxAmount + baseSubtotalAmount))
+            baseAmount = baseTaxAmount + baseSubtotalAmount;
         this.amount = amount;
     }
 
@@ -122,7 +124,7 @@ public class SdkRequest {
     }
 
     void setSubtotalAmount(Double subtotalAmount) {
-        if (baseSubtotalAmount == null)
+        if (baseSubtotalAmount == null || (baseSubtotalAmount == 0D && baseSubtotalAmount != subtotalAmount))
             baseSubtotalAmount = subtotalAmount;
 
         this.subtotalAmount = subtotalAmount;
@@ -133,7 +135,7 @@ public class SdkRequest {
     }
 
     void setTaxAmount(Double taxAmount) {
-        if (baseTaxAmount == null)
+        if (baseTaxAmount == null || (baseTaxAmount == 0D && baseTaxAmount != taxAmount))
             baseTaxAmount = taxAmount;
 
         this.taxAmount = taxAmount;
