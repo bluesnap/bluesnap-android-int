@@ -61,40 +61,47 @@ To launch the checkout flow, you'll create an `SdkRequest` instance with the pur
 An `SdkRequest` instance is required to pass information about the purchase to the SDK. At a minimum, the instance must include the current purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code), as shown in the code below: 
 
 ```
-SdkRequest sdkRequest = new SdkRequest();
-sdkRequest.setAmount("20.5"D);
-sdkRequest.setCurrencyNameCode("USD");
+SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode)
+SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount)
+SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
 #### Specify tax amounts and subtotals
-You can pass a tax amount and a subtotal price (the tax amount will be added to the subtotal).
+Even if after constructor was created you can still pass a tax amount and a subtotal price (the tax amount will be added to the subtotal).
 
 ```
 setAmountWithTax(Double subtotalAmount, Double taxAmount);
 ```
 #### Specify required information 
-To collect shipping information, call the `setShippingRequired` method of the `SdkRequest` class:
+Even if after constructor was created You can still collect additional information:
+
+For shipping information, call the `setShippingRequired` method of the `SdkRequest` class:
 
 ```
 sdkRequest.setShippingRequired(true);
 ```
 
-To collect billing information, call the `setBillingRequired` method of the `SdkRequest` class:
+For billing information, call the `setBillingRequired` method of the `SdkRequest` class:
 
 ```
 sdkRequest.setBillingRequired(true);
 ```
-To collect email, call the `setEmailRequired` method of the `SdkRequest` class:
+For email, call the `setEmailRequired` method of the `SdkRequest` class:
 
 ```
 sdkRequest.setEmailRequired(true);
 ```
 
+### Set Sdk Request
+before launching the activity set the `SdkRequest` in `BlueSnapService`.
+```
+BlueSnapService.getInstance().setSdkRequest(sdkRequest);
+```
+
 ### Launch BluesnapCheckoutActivity
-To launch the checkout activity, create an Android Intent and pass `sdkRequest` as an Intent Extra.
+Launch the checkout activity.
 
 ```
 Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
-intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST, sdkRequest);
 startActivityForResult(intent);
 ```
 This function will launch the checkout activity, display the checkout form with the details you provided in `sdkRequest`, and handle the interaction with the shopper.
@@ -102,6 +109,8 @@ This function will launch the checkout activity, display the checkout form with 
 > **Reminder:** As part of the checkout process, the shopper's card details will be sent directly and securely to BlueSnap's servers, so you won't have to touch the sensitive data yourself.
 
 When the shopper completes checkout, you'll get an Android Activity Result with an `SdkResult` instance.
+
+**Note:** For every time you launch the activity you need to activate the `BlueSnapService.getInstance().setup(...)` before and set a new SdkRequest `BlueSnapService.getInstance().setSdkRequest(sdkRequest);`.
 
 ## Get the SdkResult
 The `SdkResult` instance will provide information about the transaction, and is passed back to your activity as an activityResult Extra. To get an activity result from `BluesnapCheckoutActivity`, you need to implement `onActivityResult()` (see [Android's documentation](https://developer.android.com/training/basics/intents/result.html) for more details on `onActivityResult`). 
