@@ -527,10 +527,12 @@ public class BlueSnapService {
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
         String baseCurrency = sdkRequest.getBaseCurrency();
         if (currencySelectionEvent.newCurrencyNameCode.equals(baseCurrency)) {
-            sdkRequest.setAmount(sdkRequest.getBaseAmount());
             sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
-            sdkRequest.setSubtotalAmount(sdkRequest.getBaseSubtotalAmount());
-            sdkRequest.setTaxAmount(sdkRequest.getBaseTaxAmount());
+            if (sdkRequest.isSubtotalTaxSet()) {
+                sdkRequest.setAmountWithTax(sdkRequest.getBaseSubtotalAmount(), sdkRequest.getBaseTaxAmount());
+            } else {
+                sdkRequest.setAmountNoTax(sdkRequest.getBaseAmount());
+            }
             busInstance.post(new Events.CurrencyUpdatedEvent(sdkRequest.getBaseAmount(),
                     currencySelectionEvent.newCurrencyNameCode,
                     sdkRequest.getBaseTaxAmount(),
@@ -538,7 +540,6 @@ public class BlueSnapService {
         } else {
             Double newPrice = convertPrice(sdkRequest.getBaseAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
 
-            sdkRequest.setAmount(newPrice);
             sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
             getSdkResult().setAmount(newPrice);
             getSdkResult().setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
@@ -546,8 +547,9 @@ public class BlueSnapService {
             Double newTaxValue = convertPrice(sdkRequest.getBaseTaxAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
             Double newSubtotal = convertPrice(sdkRequest.getBaseSubtotalAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
             if (sdkRequest.isSubtotalTaxSet()) {
-                sdkRequest.setSubtotalAmount(newSubtotal);
-                sdkRequest.setTaxAmount(newTaxValue);
+                sdkRequest.setAmountWithTax(newSubtotal, newTaxValue);
+            } else {
+                sdkRequest.setAmountNoTax(newPrice);
             }
             busInstance.post(new Events.CurrencyUpdatedEvent(newPrice, currencySelectionEvent.newCurrencyNameCode, newTaxValue, newSubtotal));
         }

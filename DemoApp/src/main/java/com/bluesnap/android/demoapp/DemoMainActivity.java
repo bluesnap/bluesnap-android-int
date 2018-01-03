@@ -270,7 +270,7 @@ public class DemoMainActivity extends Activity {
         if (taxAmountPrecentage > 0D) {
             sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
         } else {
-            sdkRequest.setAmount(productPrice);
+            sdkRequest.setAmountNoTax(productPrice);
         }
 
 

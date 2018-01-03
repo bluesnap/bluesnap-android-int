@@ -41,9 +41,7 @@ public class SdkRequest {
         if (taxAmount > 0D)
             setAmountWithTax(amount, taxAmount);
         else {
-            setTaxAmount(0D);
-            setSubtotalAmount(0D);
-            setAmount(amount);
+            setAmountNoTax(amount);
         }
 
         setCurrencyNameCode(currencyNameCode);
@@ -68,7 +66,7 @@ public class SdkRequest {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    void setAmount(Double amount) {
         if (baseAmount == null)
             baseAmount = amount;
         this.amount = amount;
@@ -123,7 +121,7 @@ public class SdkRequest {
         return subtotalAmount;
     }
 
-    public void setSubtotalAmount(Double subtotalAmount) {
+    void setSubtotalAmount(Double subtotalAmount) {
         if (baseSubtotalAmount == null)
             baseSubtotalAmount = subtotalAmount;
 
@@ -134,11 +132,17 @@ public class SdkRequest {
         return taxAmount;
     }
 
-    public void setTaxAmount(Double taxAmount) {
+    void setTaxAmount(Double taxAmount) {
         if (baseTaxAmount == null)
             baseTaxAmount = taxAmount;
 
         this.taxAmount = taxAmount;
+    }
+
+    public void setAmountNoTax(Double amount) {
+        setTaxAmount(0D);
+        setSubtotalAmount(0D);
+        setAmount(amount);
     }
 
     public void setAmountWithTax(Double subtotalAmount, Double taxAmount) {
