@@ -137,17 +137,6 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
                         isDisplayed()));
         switch_2.perform(click());
 
-        ViewInteraction switch_3 = onView(
-                allOf(withId(R.id.emailSwitch), withText("Email"),
-                        childAtPosition(
-                                allOf(withId(R.id.mainLinearLayout),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.RelativeLayout")),
-                                                0)),
-                                4),
-                        isDisplayed()));
-        switch_3.perform(click());
-
         ViewInteraction zoomButton = onView(
                 allOf(withId(R.id.merchantAppSubmitButton),
                         childAtPosition(
@@ -188,16 +177,6 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
                                 1),
                         isDisplayed()));
         editText6.perform(pressImeActionButton());
-
-        ViewInteraction editText7 = onView(
-                allOf(withId(R.id.emailEditText),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.emailLinearLayout),
-                                        0),
-                                1),
-                        isDisplayed()));
-        editText7.perform(replaceText("rrr@ttt."), closeSoftKeyboard());
 
         ViewInteraction editText8 = onView(
                 allOf(withId(R.id.creditCardNumberEditText),
@@ -338,26 +317,6 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
                         isDisplayed()));
         editText20.perform(replaceText("rrr"), closeSoftKeyboard());
 
-        ViewInteraction editText21 = onView(
-                allOf(withId(R.id.emailEditText), withText("rrr@ttt."),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.emailLinearLayout),
-                                        0),
-                                1),
-                        isDisplayed()));
-        editText21.perform(replaceText("rrr@ttt.com"));
-
-        ViewInteraction editText22 = onView(
-                allOf(withId(R.id.emailEditText), withText("rrr@ttt.com"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.emailLinearLayout),
-                                        0),
-                                1),
-                        isDisplayed()));
-        editText22.perform(closeSoftKeyboard());
-
         ViewInteraction button = onView(
                 allOf(withId(R.id.buyNowButton), withText("Shipping"), withContentDescription("BuyNowbutton"),
                         childAtPosition(
@@ -402,8 +361,9 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         activity.startActivity(intent);
-        threadSleep(6000);
+        threadSleep(4000);
         bringToForeground(mActivity, aClass);
+        threadSleep(2000);
     }
 
     private void bringToForeground(Activity activity, Class aClass) {
