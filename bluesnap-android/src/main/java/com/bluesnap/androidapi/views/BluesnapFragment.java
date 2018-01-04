@@ -31,14 +31,14 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.LastPaymentInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.CreditCard;
-import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -122,6 +122,9 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        if (sdkRequest == null) {
+            return;
+        }
         Events.CurrencyUpdatedEvent currencyUpdatedEvent = new Events.CurrencyUpdatedEvent(sdkRequest.getAmount(), sdkRequest.getCurrencyNameCode(), sdkRequest.getTaxAmount(), sdkRequest.getSubtotalAmount());
         onCurrencyUpdated(currencyUpdatedEvent);
         boolean notax = (sdkRequest.getSubtotalAmount() == 0D || sdkRequest.getTaxAmount() == 0D);
