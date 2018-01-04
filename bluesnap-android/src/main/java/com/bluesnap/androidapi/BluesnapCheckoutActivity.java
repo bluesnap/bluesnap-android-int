@@ -71,52 +71,48 @@ public class BluesnapCheckoutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_default_ui);
-        sdkRequest = blueSnapService.getSdkRequest();
-        setMerchantCustomText();
-        fragmentManager = getFragmentManager();
-        bluesnapFragment = (BluesnapFragment) fragmentManager.findFragmentById(R.id.fraglyout);
-        expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
-        //prefsStorage = new PrefsStorage(this);
-        final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        //checkIfCurrencyExists(sdkRequest.getCurrencyNameCode());
-        if (blueSnapService.isexpressCheckoutActive())
-            setFragmentButtonsListeners();
-        hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        if (verifySDKRequest()) {
+            setMerchantCustomText();
+            fragmentManager = getFragmentManager();
+            bluesnapFragment = (BluesnapFragment) fragmentManager.findFragmentById(R.id.fraglyout);
+            expressCheckoutFragment = ExpressCheckoutFragment.newInstance(BluesnapCheckoutActivity.this, new Bundle());
+            //prefsStorage = new PrefsStorage(this);
+            final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
+            //checkIfCurrencyExists(sdkRequest.getCurrencyNameCode());
+            if (blueSnapService.isexpressCheckoutActive())
+                setFragmentButtonsListeners();
+            hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        }
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        try {
-            sdkRequest.verify();
+        verifySDKRequest();
+    }
+
+    private boolean verifySDKRequest() {
+        //TODO: decide if we want to persist and use savedBundleState
+        if (sdkRequest == null) {
+            Log.e(TAG, "sdkrequest is null");
+
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, "Activity has been aborted."));
+            finish();
+            return false;
+        } else try {
+            return sdkRequest.verify();
         } catch (BSPaymentRequestException e) {
             String errorMsg = "payment request not validated:" + e.getMessage();
             e.printStackTrace();
             Log.d(TAG, errorMsg);
             setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
             finish();
-        }
-
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-
-    }
-
-    // check currency received from merchant and verify it actually exists
-    private void checkIfCurrencyExists(String currencyNameCode) {
-        if (blueSnapService.checkCurrencyCompatibility(currencyNameCode)) {
-            sharedCurrency = currencyNameCode;
-        } else {
-            String errorMsg = "Currency name code Error";
-            Log.e(TAG, errorMsg);
-            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
-            finish();
+            return false;
         }
     }
+
 
     private void setFragmentButtonsListeners() {
         final Button expressCheckoutButton = (Button) findViewById(R.id.expressCheckoutButton);

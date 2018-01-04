@@ -497,6 +497,7 @@ public class BlueSnapService {
         return sdkResult;
     }
 
+    @Nullable
     public SdkRequest getSdkRequest() {
         return sdkRequest;
     }
