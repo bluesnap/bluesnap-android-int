@@ -15,9 +15,17 @@
         <activity
             android:name=".BluesnapCheckoutActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".views.CurrencyActivity"
+            android:name=".views.activities.CreditCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".views.activities.ChoosePaymentMethodActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".views.activities.CurrencyActivity"
             android:label="@string/title_activity_currency"
             android:parentActivityName=".BluesnapCheckoutActivity"
             android:screenOrientation="portrait"
@@ -25,10 +33,10 @@
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BluesnapCheckoutActivity" />
+                android:value=".views.activities.CreditCardActivity" />
         </activity>
         <activity
-            android:name=".views.CountryActivity"
+            android:name=".views.activities.CountryActivity"
             android:label="@string/title_activity_country"
             android:parentActivityName=".BluesnapCheckoutActivity"
             android:screenOrientation="portrait"
@@ -36,7 +44,7 @@
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BluesnapCheckoutActivity" />
+                android:value=".views.activities.CreditCardActivity" />
         </activity>
         <activity
             android:name=".views.WebViewActivity"
@@ -47,7 +55,7 @@
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BluesnapCheckoutActivity" />
+                android:value=".views.activities.CreditCardActivity" />
         </activity>
     </application>
 

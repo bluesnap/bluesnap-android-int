@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi.services;
 
+import android.text.TextUtils;
+
 /**
  * A BlueSnap Token Representation that resolves URL accordint to token.
  * This must be instantiated with a toekn before accesing URL.
@@ -19,13 +21,13 @@ public class BluesnapToken {
     }
 
     public String getUrl() throws IllegalStateException {
-        if (AndroidUtil.isBlank(url))
+        if (TextUtils.isEmpty(url))
             throw new IllegalStateException("Token not set");
         return url;
     }
 
     public void setToken(String token) throws IllegalArgumentException {
-        if (AndroidUtil.isBlank(token) || token.length() < 10)
+        if (TextUtils.isEmpty(token) || token.length() < 10)
             throw new IllegalArgumentException("Malformed token");
 
         String lastChar = token.substring(token.length() - 1);

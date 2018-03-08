@@ -57,6 +57,7 @@ public class BlueSnapService {
     private BluesnapToken bluesnapToken;
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
+    private BluesnapServiceResultCallback bluesnapServiceResultCallback;
 
     public SDKConfiguration getsDKConfiguration() {
         return sDKConfiguration;
@@ -187,9 +188,58 @@ public class BlueSnapService {
         blueSnapAPI.tokenizeCard(createDataObject(shopper), responseHandler);
     }
 
+    /**
+     * Update details on the BlueSnap Server
+     *
+     * @param creditCard      {@link CreditCard}
+     * @param billingInfo     {@link BillingInfo}
+     * @param shippingInfo    {@link ShippingInfo}
+     * @param responseHandler {@link AsyncHttpResponseHandler}
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
+    public void tokenizeCard(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
+        blueSnapAPI.tokenizeCard(createDataObject(creditCard, billingInfo, shippingInfo), responseHandler);
+    }
+
+    /**
+     * Update details on the BlueSnap Server
+     *
+     * @param creditCard      {@link CreditCard}
+     * @param billingInfo     {@link BillingInfo}
+     * @param responseHandler {@link AsyncHttpResponseHandler}
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
+    public void tokenizeCard(CreditCard creditCard, BillingInfo billingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
+        blueSnapAPI.tokenizeCard(createDataObject(creditCard, billingInfo, null), responseHandler);
+    }
+
+    /**
+     * @param shopper {@link Shopper}
+     * @return {@link JSONObject} representation for api put call for the server
+     * @throws JSONException
+     */
     private JSONObject createDataObject(Shopper shopper) throws JSONException {
         CreditCard creditCard = shopper.getNewCreditCardInfo().getCreditCard();
         BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
+        ShippingInfo shippingInfo = null;
+        if (sdkRequest.isShippingRequired())
+            shippingInfo = shopper.getShippingContactInfo();
+
+        return createDataObject(creditCard, billingInfo, shippingInfo);
+    }
+
+    /**
+     * @param creditCard   {@link CreditCard}
+     * @param billingInfo  {@link BillingInfo}
+     * @param shippingInfo {@link ShippingInfo}
+     * @return {@link JSONObject} representation for api put call for the server
+     * @throws JSONException
+     */
+    private JSONObject createDataObject(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo) throws JSONException {
         JSONObject postData = new JSONObject();
 
         if (creditCard.getIsNewCreditCard()) {
@@ -220,9 +270,7 @@ public class BlueSnapService {
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
-        if (sdkRequest.isShippingRequired()) {
-            ShippingInfo shippingInfo = shopper.getShippingContactInfo();
-            assert shippingInfo != null;
+        if (sdkRequest.isShippingRequired() || null != shippingInfo) {
             postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
             postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
             postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
@@ -522,7 +570,6 @@ public class BlueSnapService {
         sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
     }
-
 
     @Subscribe
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {

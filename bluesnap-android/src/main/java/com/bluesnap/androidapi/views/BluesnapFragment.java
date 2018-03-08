@@ -32,9 +32,8 @@ import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.CreditCardTypes;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.LastPaymentInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -42,6 +41,9 @@ import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
+import com.bluesnap.androidapi.views.activities.CountryActivity;
+import com.bluesnap.androidapi.views.adapters.CustomCreditCardSpinnerAdapter;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -145,9 +147,9 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
             Drawable drawable;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                drawable = getResources().getDrawable(R.drawable.ic_forward_white_24dp, null);
+                drawable = getResources().getDrawable(R.drawable.forward_icon, null);
             else
-                drawable = getResources().getDrawable(R.drawable.ic_forward_white_24dp);
+                drawable = getResources().getDrawable(R.drawable.forward_icon);
             buyNowButton.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 
             subtotalView.setVisibility(View.INVISIBLE);
@@ -199,24 +201,24 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    AndroidUtil.validateEditTextString(emailEditText, emailTextView, AndroidUtil.EMAIL_FIELD);
+                //if (!hasFocus)
+                    //AndroidUtil.validateEditTextString(emailEditText, emailTextView, AndroidUtil.EMAIL_FIELD);
             }
         });
 
         billingAddressLineEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    AndroidUtil.validateEditTextString(billingAddressLineEditText, billingAddressLabelTextView, AndroidUtil.ADDRESS_FIELD);
+                //if (!hasFocus)
+                    //AndroidUtil.validateEditTextString(billingAddressLineEditText, billingAddressLabelTextView, AndroidUtil.ADDRESS_FIELD);
             }
         });
 
         billingCityEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    AndroidUtil.validateEditTextString(billingCityEditText, billingCityLabelTextView, AndroidUtil.CITY_FIELD);
+                //if (!hasFocus)
+                    //AndroidUtil.validateEditTextString(billingCityEditText, billingCityLabelTextView, AndroidUtil.CITY_FIELD);
             }
         });
 
@@ -314,12 +316,12 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                 addressCountryButton.setText(data.getStringExtra("result"));
             }
         }
-        if (AndroidUtil.checkCountryForState(getCountryText())) {
+        if (BlueSnapValidator.checkCountryForState(getCountryText())) {
             billingStateEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus)
-                        AndroidUtil.validateEditTextString(billingStateEditText, billingStateLabelTextView, AndroidUtil.STATE_FIELD);
+                    //if (!hasFocus)
+                        //AndroidUtil.validateEditTextString(billingStateEditText, billingStateLabelTextView, AndroidUtil.STATE_FIELD);
                 }
             });
         } else {
@@ -354,14 +356,14 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         } else {
             zipFieldLayout.setVisibility(View.VISIBLE);
             zipTextView.setText(
-                    AndroidUtil.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
+                    BlueSnapValidator.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
                             ? R.string.postal_code_hint
                             : R.string.billing_zip
             );
         }
 
         int maxLength = 50;
-        if (AndroidUtil.checkCountryForState(getCountryText()))
+        if (BlueSnapValidator.checkCountryForState(getCountryText()))
             maxLength = 2;
         billingStateEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
         billingAddressLabelTextView.setTextColor(Color.BLACK);
@@ -403,7 +405,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
 
     private void updatePreviousDetailsFromShopper() {
         shopper.getNewCreditCardInfo().setCreditCard(selectedPaymentInfoForReturningShopper.getCreditCard());
-        shopper.getNewCreditCardInfo().getCreditCard().setIsNewCreditCard(false);
+        //shopper.getNewCreditCardInfo().getCreditCard().setIsNewCreditCard(false);
         BillingInfo selectedBillingInfo = selectedPaymentInfoForReturningShopper.getBillingContactInfo();
 
         shopperFullNameEditText.setText(AndroidUtil.stringify(selectedBillingInfo.getFullName(), shopper.getFullName()));
@@ -454,7 +456,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         assert previousCreditCardInfoArray != null;
 
         for (CreditCardInfo previousCreditCardInfo : previousCreditCardInfoArray) {
-            if (previousCreditCardInfo.getCreditCard().validateExpiryDate()) {
+            /*if (previousCreditCardInfo.getCreditCard().validateExpiryDate()) {
                 if (LastPaymentInfo.CC_PAYMENT_METHOD.equals(lastPaymentInfo.getPaymentMethod())) {
                     if (!lastPaymentInfo.getCreditCard().getCardLastFourDigits().equals(previousCreditCardInfo.getCreditCard().getCardLastFourDigits())
                             && !lastPaymentInfo.getCreditCard().getCardType().equals(previousCreditCardInfo.getCreditCard().getCardType())) {
@@ -466,12 +468,12 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                 } else {
                     filteredCreditCardInfosArray.add(previousCreditCardInfo);
                 }
-            }
+            }*/
         }
 
         //add new card possibility
         CreditCardInfo newCardPossibilityCreditCardInfo = new CreditCardInfo();
-        newCardPossibilityCreditCardInfo.getCreditCard().setCardType(CreditCardTypes.NEWCARD);
+        newCardPossibilityCreditCardInfo.getCreditCard().setCardType(CreditCardTypeResolver.NEWCARD);
         filteredCreditCardInfosArray.add(newCardPossibilityCreditCardInfo);
         selectedPaymentInfoForReturningShopper = filteredCreditCardInfosArray.get(0);
 
@@ -486,10 +488,10 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedPaymentInfoForReturningShopper = (CreditCardInfo) creditCardNumberSpinner.getSelectedItem();
-                if (CreditCardTypes.NEWCARD.equals(selectedPaymentInfoForReturningShopper.getCreditCard().getCardType())) {
+                if (CreditCardTypeResolver.NEWCARD.equals(selectedPaymentInfoForReturningShopper.getCreditCard().getCardType())) {
                     creditCardNumberSpinnerVisibilityChange(View.INVISIBLE, 0);
                     newCardLayerVisibilityChange(View.VISIBLE);
-                    shopper.getNewCreditCardInfo().getCreditCard().setIsNewCreditCard(true);
+                    //shopper.getNewCreditCardInfo().getCreditCard().setIsNewCreditCard(true);
                     addressLineTableLayout.setBackgroundResource(0);
                 } else {
                     updatePreviousDetailsFromShopper();
@@ -571,41 +573,43 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         if (!validInput && checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
             checkWhichFieldIsInValid = CreditCardFields.ZIPEDITTEXT;
 
-        validInput &= billingValidation(AndroidUtil.ADDRESS_FIELD);
+        validInput &= billingValidation(BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
         if (!validInput && checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
             checkWhichFieldIsInValid = CreditCardFields.BILLINGADDRESSLINEEDITTEXT;
-        validInput &= billingValidation(AndroidUtil.CITY_FIELD);
+        validInput &= billingValidation(BlueSnapValidator.EditTextFields.CITY_FIELD);
         if (!validInput && checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
             checkWhichFieldIsInValid = CreditCardFields.BILLINGCITYEDITTEXT;
-        validInput &= billingValidation(AndroidUtil.STATE_FIELD);
+        validInput &= billingValidation(BlueSnapValidator.EditTextFields.STATE_FIELD);
         if (!validInput && checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
             checkWhichFieldIsInValid = CreditCardFields.BILLINGSTATEEDITTEXT;
 
         if (!checkWhichFieldIsInValid.equals(CreditCardFields.DEFAULT))
             setFocusOnCCFragmentEditText(checkWhichFieldIsInValid);
 
-        if (shopper.getNewCreditCardInfo().getCreditCard().validateAll())
+        if (BlueSnapValidator.creditCardFullValidation(shopper.getNewCreditCardInfo().getCreditCard()))
             validInput &= true;
 
         return validInput;
     }
 
-    private boolean billingValidation(String inputType) {
+    private boolean billingValidation(BlueSnapValidator.EditTextFields inputType) {
         if (!sdkRequest.isBillingRequired())
             return true;
-        else if (AndroidUtil.ADDRESS_FIELD.equals(inputType))
+        /*else if (BlueSnapValidator.ADDRESS_FIELD.equals(inputType))
             return AndroidUtil.validateEditTextString(billingAddressLineEditText, billingAddressLabelTextView, AndroidUtil.ADDRESS_FIELD);
-        else if (AndroidUtil.CITY_FIELD.equals(inputType))
+        else if (BlueSnapValidator.CITY_FIELD.equals(inputType))
             return AndroidUtil.validateEditTextString(billingCityEditText, billingCityLabelTextView, AndroidUtil.CITY_FIELD);
         else {
             return !AndroidUtil.checkCountryForState(getCountryText()) || AndroidUtil.validateEditTextString(billingStateEditText, billingStateLabelTextView, AndroidUtil.STATE_FIELD);
-        }
+        }*/
+        else
+            return false;
     }
 
     private boolean zipFieldValidation() {
-        String cardType = CreditCardTypes.getType(creditCardNumberEditText.getText().toString().trim());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText()) && (cardType.equals(CreditCardTypes.VISA) || cardType.equals(CreditCardTypes.DISCOVER))) {
-            return AndroidUtil.validateEditTextString(zipEditText, zipTextView, AndroidUtil.ZIP_FIELD);
+        String cardType = CreditCardTypeResolver.getType(creditCardNumberEditText.getText().toString().trim());
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getCountryText()) && (cardType.equals(CreditCardTypeResolver.VISA) || cardType.equals(CreditCardTypeResolver.DISCOVER))) {
+            return true; //AndroidUtil.validateEditTextString(zipEditText, zipTextView, AndroidUtil.ZIP_FIELD);
         } else {
             zipTextView.setTextColor(Color.BLACK);
             return true;
@@ -613,29 +617,28 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean emailFieldValidation() {
-        return !sdkRequest.isEmailRequired()
-                || AndroidUtil.validateEditTextString(emailEditText, emailTextView, AndroidUtil.EMAIL_FIELD);
+        return true; //!sdkRequest.isEmailRequired() || AndroidUtil.validateEditTextString(emailEditText, emailTextView, AndroidUtil.EMAIL_FIELD);
     }
 
     private boolean cvvValidation() {
         String cvv = AndroidUtil.stringify(cvvEditText.getText());
-        if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard() && !shopper.getNewCreditCardInfo().getCreditCard().validateCVC(cvv)) {
+        /*if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard() && !shopper.getNewCreditCardInfo().getCreditCard().validateCVC(cvv)) {
             cvvLabelTextView.setTextColor(Color.RED);
             return false;
         } else {
             cvvLabelTextView.setTextColor(Color.BLACK);
-        }
+        }*/
         return true;
     }
 
     private boolean expiryDateValidation() {
         String date = AndroidUtil.stringify(expDateEditText.getText());
-        if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard() && !CreditCard.validateExpiryDate(date)) {
+        /*if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard() && !CreditCard.validateExpiryDate(date)) {
             expDateLabelTextView.setTextColor(Color.RED);
             return false;
         } else {
             expDateLabelTextView.setTextColor(Color.BLACK);
-        }
+        }*/
         return true;
     }
 
@@ -655,7 +658,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         if (!processUserNameField(formattedName)) {
             valid = false;
         }
-        if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard() && !shopper.getNewCreditCardInfo().getCreditCard().validateNumber()) {
+        /*if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard() && !shopper.getNewCreditCardInfo().getCreditCard().validateNumber()) {
             creditCardLabelTextView.setTextColor(Color.RED);
             invaildCreditCardMessageTextView.setVisibility(View.VISIBLE);
             valid = false;
@@ -663,12 +666,12 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
             creditCardLabelTextView.setTextColor(Color.BLACK);
             invaildCreditCardMessageTextView.setVisibility(View.GONE);
             changeCardEditTextDrawable(shopper.getNewCreditCardInfo().getCreditCard().getCardType());
-        }
+        }*/
         return valid;
     }
 
     private void changeCardEditTextDrawable(String type) {
-        creditCardNumberImageView.setImageResource(CreditCardTypes.getCardTypeDrawable(type));
+        creditCardNumberImageView.setImageResource(CreditCardTypeResolver.getCardTypeDrawable(type));
     }
 
     @Override
@@ -753,7 +756,7 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
                 return;
 
             final String ccNum = s.toString();
-            changeCardEditTextDrawable(CreditCardTypes.getType(ccNum));
+            changeCardEditTextDrawable(CreditCardTypeResolver.getType(ccNum));
             creditCardLabelTextView.setTextColor(Color.BLACK);
             invaildCreditCardMessageTextView.setVisibility(View.GONE);
         }
@@ -777,16 +780,16 @@ public class BluesnapFragment extends Fragment implements BluesnapPaymentFragmen
         public void afterTextChanged(Editable s) {
 
             String ccNum = creditCardNumberEditText.getText().toString().trim();
-            if (AndroidUtil.isBlank(ccNum)) { // User cleared the text
+            if (TextUtils.isEmpty(ccNum)) { // User cleared the text
                 /*zipFieldLayout.setVisibility(View.GONE);
                 zipFieldBorderVanish.setVisibility(View.GONE);*/
                 invaildCreditCardMessageTextView.setVisibility(View.GONE);
                 creditCardLabelTextView.setTextColor(Color.BLACK);
             }
 
-            changeCardEditTextDrawable(CreditCardTypes.getType(ccNum));
+            changeCardEditTextDrawable(CreditCardTypeResolver.getType(ccNum));
 
-            /*if (CreditCardTypes.getType(ccNum).equals(CreditCardTypes.VISA)) {
+            /*if (CreditCardTypeResolver.getType(ccNum).equals(CreditCardTypeResolver.VISA)) {
                 zipFieldLayout.setVisibility(View.VISIBLE);
                 zipFieldBorderVanish.setVisibility(View.VISIBLE);
             }*/

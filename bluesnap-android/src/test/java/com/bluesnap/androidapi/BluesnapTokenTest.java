@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi;
 
+import android.text.TextUtils;
+
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapToken;
 import junit.framework.TestCase;
@@ -48,18 +50,18 @@ public class BluesnapTokenTest extends TestCase {
     public void notProductionLeagalTokenTest() {
         BluesnapToken token2 = new BluesnapToken("12345678910111_", null);
         assertFalse("not a production token", token2.isProduction());
-        assertFalse("toString failed", AndroidUtil.isBlank(token2.toString()));
+        assertFalse("toString failed", TextUtils.isEmpty(token2.toString()));
     }
 
     @Test
     public void isProductionTokenTest() {
         BluesnapToken token1 = new BluesnapToken("123456789101111", null);
         assertTrue("is a production token", token1.isProduction());
-        assertFalse("toString failed", AndroidUtil.isBlank(token1.toString()));
+        assertFalse("toString failed", TextUtils.isEmpty(token1.toString()));
 
         BluesnapToken token2 = new BluesnapToken("123456789101112", null);
         assertTrue("is a production token", token2.isProduction());
-        assertFalse("toString failed", AndroidUtil.isBlank(token2.toString()));
+        assertFalse("toString failed", TextUtils.isEmpty(token2.toString()));
     }
 
 }

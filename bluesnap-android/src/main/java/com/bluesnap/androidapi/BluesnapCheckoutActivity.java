@@ -1,11 +1,11 @@
 package com.bluesnap.androidapi;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
@@ -27,7 +28,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.BluesnapFragment;
-import com.bluesnap.androidapi.views.CurrencyActivity;
+import com.bluesnap.androidapi.views.activities.CurrencyActivity;
 import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
 import com.bluesnap.androidapi.views.ShippingFragment;
 import com.bluesnap.androidapi.views.WebViewActivity;
@@ -46,7 +47,7 @@ import cz.msebera.android.httpclient.Header;
  * A user Activity to carry out a purchase.
  * A {@link SdkRequest} must be provided as a parcelableExtra with the name BluesnapCheckoutActivity.EXTRA_PAYMENT_REQUEST;
  */
-public class BluesnapCheckoutActivity extends Activity {
+public class BluesnapCheckoutActivity extends AppCompatActivity {
     public final static String EXTRA_PAYMENT_REQUEST = "com.bluesnap.intent.BSNAP_PAYMENT_REQUEST";
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
     public final static String MERCHANT_TOKEN = "com.bluesnap.intent.BSNAP_CLIENT_PRIVATE_KEY";
@@ -130,8 +131,8 @@ public class BluesnapCheckoutActivity extends Activity {
                 expressCheckoutFragment.setUserVisibleHint(true);
                 fragmentTransaction.replace(R.id.fraglyout, expressCheckoutFragment, ExpressCheckoutFragment.TAG);
                 fragmentTransaction.commit();
-                expressCheckoutButton.setBackgroundResource(R.drawable.bg_tab_expresscheckout_sel);
-                creditCardButton.setBackgroundResource(R.drawable.bg_tab_creditcard);
+                /*expressCheckoutButton.setBackgroundResource(R.drawable.bg_tab_expresscheckout_sel);
+                creditCardButton.setBackgroundResource(R.drawable.bg_tab_creditcard);*/
                 expressCheckoutButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPureWhite));
                 creditCardButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorBluesnapBlue));
                 Button buyNowButton = (Button) findViewById(R.id.buyNowButton);
@@ -145,8 +146,8 @@ public class BluesnapCheckoutActivity extends Activity {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fraglyout, bluesnapFragment, "BluesnapFragment");
                 fragmentTransaction.commit();
-                expressCheckoutButton.setBackgroundResource(R.drawable.bg_tab_expresscheckout);
-                creditCardButton.setBackgroundResource(R.drawable.bg_tab_creditcard_sel);
+                /*expressCheckoutButton.setBackgroundResource(R.drawable.bg_tab_expresscheckout);
+                creditCardButton.setBackgroundResource(R.drawable.bg_tab_creditcard_sel);*/
                 creditCardButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPureWhite));
                 expressCheckoutButton.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorBluesnapBlue));
                 Button buyNowButton = (Button) findViewById(R.id.buyNowButton);
@@ -225,7 +226,7 @@ public class BluesnapCheckoutActivity extends Activity {
                     resultIntent.putExtra(EXTRA_PAYMENT_RESULT, sdkResult);
                     setResult(RESULT_OK, resultIntent);
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server
-                    getCreditCard().setTokenizationSucess();
+                    getCreditCard().setTokenizationSuccess();
                     Log.d(TAG, "tokenization finished");
                     finish();
                 } catch (NullPointerException | JSONException e) {
@@ -327,7 +328,7 @@ public class BluesnapCheckoutActivity extends Activity {
             newIntent.putExtra(getString(R.string.CURRENCY_STRING), sharedCurrency);
             startActivity(newIntent);
             return true;
-        } else if (i == R.id.id_privacy_policy) {
+        /*} else if (i == R.id.id_privacy_policy) {
             newIntent = new Intent(getApplicationContext(), WebViewActivity.class);
             newIntent.putExtra(getString(R.string.WEBVIEW_STRING), getResources().getString(R.string.privacy_policy));
             newIntent.putExtra(getString(R.string.WEBVIEW_URL), getResources().getString(R.string.privacy_policy_url));
@@ -344,7 +345,7 @@ public class BluesnapCheckoutActivity extends Activity {
             newIntent.putExtra(getString(R.string.WEBVIEW_STRING), getResources().getString(R.string.terms_conditions));
             newIntent.putExtra(getString(R.string.WEBVIEW_URL), getResources().getString(R.string.terms_conditions_url));
             startActivity(newIntent);
-            return true;
+            return true;*/
         } else {
             return false;
         }
@@ -360,12 +361,12 @@ public class BluesnapCheckoutActivity extends Activity {
         public void onClick(final View v) {
             sharedCurrency = sdkRequest.getCurrencyNameCode();
             invalidateOptionsMenu();
-            hamburgerMenuButton.setImageResource(R.drawable.ic_close_white_36dp);
+            /*hamburgerMenuButton.setImageResource(R.drawable.ic_close_white_36dp);*/
             PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
             popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
                 @Override
                 public void onDismiss(PopupMenu popupMenu) {
-                    hamburgerMenuButton.setImageResource(R.drawable.ic_menu_white_36dp);
+                    hamburgerMenuButton.setImageResource(R.drawable.menu_button);
                     popupMenu.dismiss();
                 }
             });

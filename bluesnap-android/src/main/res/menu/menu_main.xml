@@ -4,7 +4,7 @@
         android:orderInCategory="1"
         android:title="@string/currency"
         android:visible="false"></item>
-    <item
+    <!--<item
         android:id="@+id/id_privacy_policy"
         android:orderInCategory="2"
         android:title="@string/privacy_policy"></item>
@@ -15,5 +15,5 @@
     <item
         android:id="@+id/id_terms_conditions"
         android:orderInCategory="4"
-        android:title="@string/terms_conditions"></item>
+        android:title="@string/terms_conditions"></item>-->
 </menu>

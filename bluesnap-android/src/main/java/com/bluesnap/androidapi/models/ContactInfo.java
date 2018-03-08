@@ -39,6 +39,16 @@ public class ContactInfo implements Parcelable {
     public ContactInfo() {
     }
 
+    public ContactInfo(ContactInfo contactInfo) {
+        setFullName(contactInfo.getFullName());
+        setAddress(contactInfo.getAddress());
+        setAddress2(contactInfo.getAddress2());
+        setZip(contactInfo.getZip());
+        setCity(contactInfo.getCity());
+        setState(contactInfo.getState());
+        setCountry(contactInfo.getCountry());
+    }
+
     public String getFullName() {
         return firstName + " " + lastName;
     }

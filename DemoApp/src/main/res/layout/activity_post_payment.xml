@@ -59,7 +59,7 @@
         android:layout_above="@+id/imageButton2"
         android:layout_centerHorizontal="true"
         android:drawablePadding="1dp"
-        android:drawableTop="@drawable/ico_ok"
+        android:drawableTop="@drawable/blue_check_mark"
         android:gravity="bottom"
         android:text="Continue shopping"
         android:visibility="gone" />

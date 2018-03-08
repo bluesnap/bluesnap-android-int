@@ -24,6 +24,8 @@ import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
+import com.bluesnap.androidapi.views.activities.CountryActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -113,7 +115,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                 addressCountryButton.setText(data.getStringExtra("result"));
             }
         }
-        if (AndroidUtil.checkCountryForState(getCountryText())) {
+        if (BlueSnapValidator.checkCountryForState(getCountryText())) {
             ActivateOnFocusValidation(shippingStateEditText);
         } else {
             shippingStateEditText.setOnFocusChangeListener(null);
@@ -173,7 +175,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         ActivateOnEditorActionListener(shippingCityEditText);
         ActivateOnFocusValidation(shippingZipEditText);
         //ActivateOnFocusValidation(shippingEmailEditText);
-        if (AndroidUtil.checkCountryForState(getCountryText())) {
+        if (BlueSnapValidator.checkCountryForState(getCountryText())) {
             ActivateOnFocusValidation(shippingStateEditText);
             ActivateOnEditorActionListener(shippingStateEditText);
         } else {
@@ -189,7 +191,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean Validation(EditText editText) {
-        if (editText.equals(shippingAddressLineEditText)) {
+        /*if (editText.equals(shippingAddressLineEditText)) {
             return AndroidUtil.validateEditTextString(shippingAddressLineEditText, shippingAdressLabelTextView, invalidAddressMessageTextView);
         } else if (editText.equals(shippingCityEditText)) {
             return AndroidUtil.validateEditTextString(shippingCityEditText, shippingCityLabelTextView);
@@ -200,7 +202,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
                     || AndroidUtil.validateEditTextString(shippingZipEditText, shippingZipLabelTextView, AndroidUtil.ZIP_FIELD);
         } else if (editText.equals(shippingNameEditText)) {
             return AndroidUtil.validateEditTextString(shippingNameEditText, shippingNameLabelTextView, invalidNameMessageTextView, AndroidUtil.NAME_FIELD);
-        } /*else if (editText.equals(shippingEmailEditText)) {
+        } else if (editText.equals(shippingEmailEditText)) {
             return AndroidUtil.validateEditTextString(shippingEmailEditText, shippingEmailLabelTextView, invalidEmailMessageTextView, AndroidUtil.EMAIL_FIELD);
         }*/
         return false;
@@ -229,7 +231,7 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
     }
 
     private boolean checkStateValidation() {
-        if (AndroidUtil.checkCountryForState(getCountryText())) {
+        if (BlueSnapValidator.checkCountryForState(getCountryText())) {
             return Validation(shippingStateEditText);
         } else {
             shippingStateLabelTextView.setTextColor(Color.BLACK);
@@ -249,14 +251,14 @@ public class ShippingFragment extends Fragment implements BluesnapPaymentFragmen
         } else {
             shippingZipLinearLayout.setVisibility(View.VISIBLE);
             shippingZipLabelTextView.setText(
-                    AndroidUtil.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
+                    BlueSnapValidator.STATE_NEEDED_COUNTRIES[0].equals(getCountryText())
                             ? R.string.postal_code_hint
                             : R.string.zip
             );
         }
 
         int maxLength = 50;
-        if (AndroidUtil.checkCountryForState(getCountryText()))
+        if (BlueSnapValidator.checkCountryForState(getCountryText()))
             maxLength = 2;
         shippingStateEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
     }

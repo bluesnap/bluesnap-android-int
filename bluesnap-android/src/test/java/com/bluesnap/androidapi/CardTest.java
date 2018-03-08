@@ -3,7 +3,7 @@ package com.bluesnap.androidapi;
 import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.CreditCardTypes;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import junit.framework.Assert;
@@ -37,8 +37,8 @@ public class CardTest extends TestCase {
         for (String num : validAmex) {
             card.setNumber(num);
             assertTrue("AMEX luhn invalid", card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("AMEX type mismatch: " + type + " " + num, CreditCardTypes.AMEX.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("AMEX type mismatch: " + type + " " + num, CreditCardTypeResolver.AMEX.equals(type));
         }
     }
 
@@ -50,8 +50,8 @@ public class CardTest extends TestCase {
         for (String num : validMC) {
             card.setNumber(num);
             assertTrue("MASTERCARD luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("MASTERCARD type mismatch: " + type + " " + num, CreditCardTypes.MASTERCARD.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("MASTERCARD type mismatch: " + type + " " + num, CreditCardTypeResolver.MASTERCARD.equals(type));
         }
     }
 
@@ -63,8 +63,8 @@ public class CardTest extends TestCase {
         for (String num : validMC) {
             card.setNumber(num);
             assertFalse("MASTERCARD luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("MASTERCARD type mismatch: " + type + " " + num, CreditCardTypes.MASTERCARD.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("MASTERCARD type mismatch: " + type + " " + num, CreditCardTypeResolver.MASTERCARD.equals(type));
         }
     }
 
@@ -76,8 +76,8 @@ public class CardTest extends TestCase {
         for (String num : validMC) {
             card.setNumber(num);
             assertTrue("VISA luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("VISA type mismatch: " + type + " " + num, CreditCardTypes.VISA.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("VISA type mismatch: " + type + " " + num, CreditCardTypeResolver.VISA.equals(type));
         }
     }
 
@@ -88,8 +88,8 @@ public class CardTest extends TestCase {
         for (String num : validMC) {
             card.setNumber(num);
             assertFalse("InValidVISA luhn valid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("InValidVISA type match: " + type + " " + num, CreditCardTypes.VISA.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("InValidVISA type match: " + type + " " + num, CreditCardTypeResolver.VISA.equals(type));
         }
     }
 
@@ -101,8 +101,8 @@ public class CardTest extends TestCase {
         for (String num : validMaestro) {
             card.setNumber(num);
             assertTrue("MAESTR_UK luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("MAESTR_UK type mismatch: " + type + " " + num, CreditCardTypes.MASTERCARD.equals(type)); // ToDo check if server returns MC
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("MAESTR_UK type mismatch: " + type + " " + num, CreditCardTypeResolver.MASTERCARD.equals(type)); // ToDo check if server returns MC
         }
     }
 
@@ -114,8 +114,8 @@ public class CardTest extends TestCase {
         for (String num : validDiscover) {
             card.setNumber(num);
             assertTrue("DISCOVER luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("DISCOVER type mismatch: " + type + " " + num, CreditCardTypes.DISCOVER.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("DISCOVER type mismatch: " + type + " " + num, CreditCardTypeResolver.DISCOVER.equals(type));
         }
     }
 
@@ -127,8 +127,8 @@ public class CardTest extends TestCase {
         for (String num : validSolo) {
             card.setNumber(num);
             assertTrue("SOLO luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertFalse("SOLO type match: " + type + " " + num, CreditCardTypes.UNKNOWN.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertFalse("SOLO type match: " + type + " " + num, CreditCardTypeResolver.UNKNOWN.equals(type));
         }
     }
 
@@ -140,8 +140,8 @@ public class CardTest extends TestCase {
         for (String num : validDiners) {
             card.setNumber(num);
             assertTrue("DINERS luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("DINERS type mismatch: " + type + " " + num, CreditCardTypes.DINERS.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("DINERS type mismatch: " + type + " " + num, CreditCardTypeResolver.DINERS.equals(type));
         }
     }
 
@@ -153,8 +153,8 @@ public class CardTest extends TestCase {
         for (String num : validJCB) {
             card.setNumber(num);
             assertTrue("JCB luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("JCB type mismatch: " + type + " " + num, CreditCardTypes.JCB.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("JCB type mismatch: " + type + " " + num, CreditCardTypeResolver.JCB.equals(type));
         }
     }
 
@@ -166,8 +166,8 @@ public class CardTest extends TestCase {
         for (String num : validCarteBleue) {
             card.setNumber(num);
             assertTrue("CARTE_BLEUE luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("CARTE_BLEUE type mismatch: " + type + " " + num, CreditCardTypes.CARTE_BLEUE.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("CARTE_BLEUE type mismatch: " + type + " " + num, CreditCardTypeResolver.CARTE_BLEUE.equals(type));
         }
     }
 
@@ -179,8 +179,8 @@ public class CardTest extends TestCase {
         for (String num : validChinaUnionPay) {
             card.setNumber(num);
             assertTrue("CHINA_UNION_PAY luhn invalid: " + num, card.validateNumber());
-            String type = CreditCardTypes.getType(card.getNumber());
-            Assert.assertTrue("CHINA_UNION_PAY type mismatch: " + type + " " + num, CreditCardTypes.CHINA_UNION_PAY.equals(type));
+            String type = CreditCardTypeResolver.getType(card.getNumber());
+            Assert.assertTrue("CHINA_UNION_PAY type mismatch: " + type + " " + num, CreditCardTypeResolver.CHINA_UNION_PAY.equals(type));
         }
     }
 
@@ -264,7 +264,7 @@ public class CardTest extends TestCase {
         assertTrue(card.validateNumber());
         assertTrue(card.validateAll());
         assertFalse(card.getCardType().isEmpty());
-        assertTrue("this card type should be unknown", card.getCardType().equals(CreditCardTypes.UNKNOWN));
+        assertTrue("this card type should be unknown", card.getCardType().equals(CreditCardTypeResolver.UNKNOWN));
     }
 
     @Test

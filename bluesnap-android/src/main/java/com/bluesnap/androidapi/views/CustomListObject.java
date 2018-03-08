@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by roy.biber on 15/06/2016.
  */
-class CustomListObject {
+public class CustomListObject {
 
     private String name;
 
@@ -13,7 +13,7 @@ class CustomListObject {
         this.name = name;
     }
 
-    protected static ArrayList<CustomListObject> getCustomListObject(String[] listValue) {
+    public static ArrayList<CustomListObject> getCustomListObject(String[] listValue) {
         ArrayList<CustomListObject> customListObjects = new ArrayList<>();
         CustomListObject customListObject;
         for (int i = 0; i < listValue.length; i++) {

@@ -33,6 +33,16 @@ public class ShippingInfo extends ContactInfo implements Parcelable {
         super();
     }
 
+    public ShippingInfo(ContactInfo contactInfo) {
+        setFullName(contactInfo.getFullName());
+        setAddress(contactInfo.getAddress());
+        setAddress2(contactInfo.getAddress2());
+        setZip(contactInfo.getZip());
+        setCity(contactInfo.getCity());
+        setState(contactInfo.getState());
+        setCountry(contactInfo.getCountry());
+    }
+
     public static final Creator<ShippingInfo> CREATOR = new Creator<ShippingInfo>() {
         @Override
         public ShippingInfo createFromParcel(Parcel in) {

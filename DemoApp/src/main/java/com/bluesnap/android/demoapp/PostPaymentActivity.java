@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +52,7 @@ public class PostPaymentActivity extends Activity {
             transactions = DemoTransactions.getInstance();
             transactions.setContext(this);
 
-            if (!AndroidUtil.isBlank(sdkResult.getPaypalInvoiceId())) {
+            if (!TextUtils.isEmpty(sdkResult.getPaypalInvoiceId())) {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
                 //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {
