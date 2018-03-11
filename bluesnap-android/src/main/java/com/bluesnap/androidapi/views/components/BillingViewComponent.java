@@ -61,7 +61,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         if (!isFullBillingRequiredRequired)
             setFullBillingVisibility(GONE);
 
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_RESPONSE, new BroadcastReceiver() {
+        /*BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_RESPONSE, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (validateInfo()) {
@@ -71,7 +71,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                     shopper.getNewCreditCardInfo().setBillingContactInfo(getResource());
                 }
             }
-        });
+        });*/
     }
 
     /**
@@ -81,7 +81,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      */
     public void updateResource(BillingInfo billingInfo) {
         super.updateResource(billingInfo);
-        inputEmail.setText(billingInfo.getEmail());
+        if (isEmailRequired)
+            inputEmail.setText(billingInfo.getEmail());
     }
 
     /**
@@ -91,7 +92,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      */
     public BillingInfo getResource() {
         BillingInfo billingInfo = new BillingInfo(super.getResource());
-        billingInfo.setEmail(inputEmail.getText().toString().trim());
+        if (isEmailRequired)
+            billingInfo.setEmail(inputEmail.getText().toString().trim());
         return billingInfo;
     }
 

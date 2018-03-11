@@ -18,38 +18,18 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.Shopper;
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.KountService;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.views.WebViewActivity;
 import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
-import com.bluesnap.androidapi.views.components.BillingViewComponent;
 import com.bluesnap.androidapi.views.components.ButtonComponent;
-import com.bluesnap.androidapi.views.components.ContactInfoViewComponent;
-import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -63,25 +43,15 @@ public class CreditCardActivity extends AppCompatActivity {
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     private static final int RESULT_SDK_FAILED = -2;
-    private AmountTaxShippingComponent amountTaxShippingComponentView;
-    private ButtonComponent buttonComponentView;
-    private ContactInfoViewComponent contactInfoViewComponent;
     private String fragmentType;
     private TextView headerTextView;
-    private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
-    private SdkRequest sdkRequest;
     private String sharedCurrency;
+    private ImageButton hamburgerMenuButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.credit_card_activity);
-
-        amountTaxShippingComponentView = (AmountTaxShippingComponent) findViewById(R.id.amountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) findViewById(R.id.buttonComponentView);
-        headerTextView = (TextView) findViewById(R.id.headerTextView);
-
-        sdkRequest = blueSnapService.getSdkRequest();
 
         fragmentType = getIntent().getStringExtra(ChoosePaymentMethodActivity.FRAGMENT_TYPE);
         if (ChoosePaymentMethodActivity.NEW_CC.equals(fragmentType))
@@ -89,7 +59,8 @@ public class CreditCardActivity extends AppCompatActivity {
         else if (ChoosePaymentMethodActivity.RETURNING_CC.equals(fragmentType))
             startActivityWithReturningShopperCreditCardFragment();
 
-        final ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
+        headerTextView = (TextView) findViewById(R.id.headerTextView);
+        hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
 
         BlueSnapService.getBus().register(this);
@@ -98,7 +69,6 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        BlueSnapLocalBroadcastManager.unregisterReceiver(this, broadcastReceiver);
         super.onDestroy();
     }
 
@@ -107,62 +77,22 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     private void startActivityWithNewCreditCardFragment() {
         NewCreditCardFragment newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
-        finishActivityFragmentPlacement(newCreditCardFragment);
+        getFragmentManager().beginTransaction()
+                .add(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
     }
 
     /**
      * start this Activity With the Returning Shopper Credit Card Fragment
      */
     private void startActivityWithReturningShopperCreditCardFragment() {
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, broadcastReceiver);
+
         ReturningShopperCreditCardFragment returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
-        finishActivityFragmentPlacement(returningShopperCreditCardFragment);
-
-        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_REQUEST, broadcastReceiver);
-
-        if (isShippingRequired()) {
-            BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE_REQUEST, broadcastReceiver);
-        }
-    }
-
-    /**
-     * Finish Placing Fragment in Activity
-     *
-     * @param fragment - {@link Fragment}
-     */
-    private void finishActivityFragmentPlacement(Fragment fragment) {
-        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
-
         getFragmentManager().beginTransaction()
-                .add(R.id.creditCardFrameLayout, fragment).commit();
-
-        setBuyNowButtonView();
-    }
-
-    /**
-     * set Buy Now Button View
-     */
-    private void setBuyNowButtonView() {
-        ButtonComponent.ButtonComponentText buttonComponentText = ButtonComponent.ButtonComponentText.PAY;
-        if (buttonComponentText.equals(ButtonComponent.ButtonComponentText.PAY) && ChoosePaymentMethodActivity.NEW_CC.equals(fragmentType) && isShippingRequired())
-            buttonComponentText = ButtonComponent.ButtonComponentText.SHIPPING;
-
-        setBuyNowButtonView(buttonComponentText, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: finishActivity() and remove below;
-                finish();
-            }
-        });
-    }
-
-    /**
-     * set Buy Now Button View
-     *
-     * @param buttonComponentText - {@link ButtonComponent.ButtonComponentText}
-     * @param onClickListener     - View.OnClickListener function
-     */
-    private void setBuyNowButtonView(ButtonComponent.ButtonComponentText buttonComponentText, View.OnClickListener onClickListener) {
-        buttonComponentView.setBuyNowButton(buttonComponentText, onClickListener);
+                .add(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
     }
 
     /**
@@ -182,68 +112,38 @@ public class CreditCardActivity extends AppCompatActivity {
     }
 
     /**
-     * Finish Placing Fragment in Activity
+     * replace Fragment in Activity
      *
      * @param fragment - {@link Fragment}
      */
-    private void finishActivityFragmentPlacement(Fragment fragment, ButtonComponent.ButtonComponentText buttonComponentText, View.OnClickListener onClickListener) {
+    private void replaceFragmentPlacement(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.creditCardFrameLayout, fragment);
         fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
         fragmentTransaction.commit();
 
-        setBuyNowButtonView(buttonComponentText, onClickListener);
         setHeaderTextView(fragment.getClass().getSimpleName());
 
     }
 
     /**
-     * @return is Shipping Required - boolean
-     */
-    private boolean isShippingRequired() {
-        return sdkRequest.isShippingRequired();
-    }
-
-    /**
      * Broadcast Receiver for Credit Card Activity
-     * Handles actions and changes Fragment Accordingly
+     * Handles actions
      */
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            final String blueSnapLocalBroadcastResponse;
             String event = intent.getAction();
             Log.d(TAG, event);
 
-            if (!BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST.equals(event)) {
-                final Fragment fragment;
-                amountTaxShippingComponentView.setVisibility(View.GONE);
-
-                if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_REQUEST.equals(event)) {
-                    fragment = ReturningShopperBillingFragment.newInstance(CreditCardActivity.this, new Bundle());
-                    blueSnapLocalBroadcastResponse = BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_RESPONSE;
-                } else {
-                    fragment = ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
-                    blueSnapLocalBroadcastResponse = BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE_RESPONSE;
-                }
-
-                finishActivityFragmentPlacement(fragment, ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        BlueSnapLocalBroadcastManager.sendMessage(context, blueSnapLocalBroadcastResponse, TAG);
-
-                        if (blueSnapLocalBroadcastResponse.equals(BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_RESPONSE))
-                            contactInfoViewComponent = (BillingViewComponent) findViewById(R.id.billingViewComponent);
-                        else
-                            contactInfoViewComponent = (ShippingViewComponent) findViewById(R.id.shippingViewComponent);
-
-                        if (contactInfoViewComponent.validateInfo()) {
-                            getFragmentManager().popBackStack();
-                            amountTaxShippingComponentView.setVisibility(View.VISIBLE);
-                            setBuyNowButtonView();
-                        }
-                    }
-                });
+            if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event)
+                    || BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event)) {
+                getFragmentManager().popBackStack();
+                setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
+            } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT.equals(event)) {
+                replaceFragmentPlacement(ReturningShopperBillingFragment.newInstance(CreditCardActivity.this, new Bundle()));
+            } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT.equals(event)) {
+                replaceFragmentPlacement(ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
             } else {
                 Intent newIntent = new Intent(getApplicationContext(), CountryActivity.class);
                 String countryString = intent.getStringExtra(event);
@@ -287,7 +187,7 @@ public class CreditCardActivity extends AppCompatActivity {
         }
 
         public void onClick(final View v) {
-            sharedCurrency = sdkRequest.getCurrencyNameCode();
+            sharedCurrency = BlueSnapService.getInstance().getSdkRequest().getCurrencyNameCode();
             invalidateOptionsMenu();
             PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
             popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
@@ -315,7 +215,6 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Subscribe
     public void onCurrencyUpdated(Events.CurrencyUpdatedEvent currencyUpdatedEvent) {
-        setBuyNowButtonView();
-        amountTaxShippingComponentView.setAmountTaxShipping();
+        BlueSnapLocalBroadcastManager.sendMessage(this, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 }

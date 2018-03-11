@@ -15,7 +15,7 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
  */
 
 public class ShippingViewSummarizedComponent extends ContactInfoViewSummarizedComponent {
-    private Button editButton;
+    public Button editButton;
 
     public ShippingViewSummarizedComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -39,10 +39,10 @@ public class ShippingViewSummarizedComponent extends ContactInfoViewSummarizedCo
         super.initControl(context);
 
         editButton = (Button) findViewById(R.id.editButton);
-        editButton.setOnClickListener(new OnClickListener() {
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE_REQUEST, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, TAG);
             }
         });
     }

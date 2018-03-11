@@ -12,13 +12,14 @@ import android.util.Log;
  */
 
 public class BlueSnapLocalBroadcastManager {
-    public static final String SUMMARIZED_BILLING_CHANGE_REQUEST = "com.bluesnap.intent.SUMMARIZED_BILLING_CHANGE_REQUEST";
-    public static final String SUMMARIZED_BILLING_CHANGE_RESPONSE = "com.bluesnap.intent.SUMMARIZED_BILLING_CHANGE_RESPONSE";
-    public static final String SUMMARIZED_SHIPPING_CHANGE_REQUEST = "com.bluesnap.intent.SUMMARIZED_SHIPPING_CHANGE_REQUEST";
-    public static final String SUMMARIZED_SHIPPING_CHANGE_RESPONSE = "com.bluesnap.intent.SUMMARIZED_SHIPPING_CHANGE_RESPONSE";
+    public static final String SUMMARIZED_BILLING_EDIT = "com.bluesnap.intent.SUMMARIZED_BILLING_EDIT";
+    public static final String SUMMARIZED_BILLING_CHANGE = "com.bluesnap.intent.SUMMARIZED_BILLING_CHANGE";
+    public static final String SUMMARIZED_SHIPPING_EDIT = "com.bluesnap.intent.SUMMARIZED_SHIPPING_EDIT";
+    public static final String SUMMARIZED_SHIPPING_CHANGE = "com.bluesnap.intent.SUMMARIZED_SHIPPING_CHANGE";
     public static final String SHIPPING_SWITCH_ACTIVATED = "com.bluesnap.intent.SHIPPING_SWITCH_ACTIVATED";
     public static final String COUNTRY_CHANGE_REQUEST = "com.bluesnap.intent.COUNTRY_CHANGE_REQUEST";
     public static final String COUNTRY_CHANGE_RESPONSE = "com.bluesnap.intent.COUNTRY_CHANGE_RESPONSE";
+    public static final String CURRENCY_UPDATED_EVENT = "com.bluesnap.intent.CURRENCY_UPDATED_EVENT";
 
     /**
      * a LocalBroadcastManager sendMessage with an extra message inside the intent

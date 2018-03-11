@@ -12,9 +12,9 @@
         <RelativeLayout
             android:id="@+id/headerRelativeLayout"
             android:layout_width="match_parent"
-            android:background="@android:color/transparent"
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
             android:orientation="horizontal">
 
             <TextView
@@ -22,9 +22,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
+                android:background="@android:color/transparent"
                 android:text="@string/payment"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceLarge"
@@ -48,26 +48,8 @@
             android:id="@+id/creditCardFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/headerRelativeLayout"
-            android:layout_above="@+id/amountTaxShippingComponentView">
+            android:layout_below="@+id/headerRelativeLayout">
 
         </FrameLayout>
-
-        <com.bluesnap.androidapi.views.components.AmountTaxShippingComponent
-            android:id="@+id/amountTaxShippingComponentView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/buttonComponentView">
-
-        </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
-
-        <com.bluesnap.androidapi.views.components.ButtonComponent
-            android:id="@+id/buttonComponentView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:gravity="bottom">
-
-        </com.bluesnap.androidapi.views.components.ButtonComponent>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

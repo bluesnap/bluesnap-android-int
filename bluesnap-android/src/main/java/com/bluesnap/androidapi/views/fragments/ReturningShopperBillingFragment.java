@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.components.BillingViewComponent;
+import com.bluesnap.androidapi.views.components.ButtonComponent;
 import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
 
 /**
@@ -25,6 +24,8 @@ public class ReturningShopperBillingFragment extends Fragment {
     public static final String TAG = ReturningShopperBillingFragment.class.getSimpleName();
     private static FragmentManager fragmentManager;
     private BillingViewComponent billingViewComponent;
+    private ButtonComponent buttonComponentView;
+    private CreditCardInfo newCreditCardInfo;
 
     public static ReturningShopperBillingFragment newInstance(Activity activity, Bundle bundle) {
         fragmentManager = activity.getFragmentManager();
@@ -49,21 +50,40 @@ public class ReturningShopperBillingFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         final View inflate = inflater.inflate(R.layout.returning_shopper_billing_fragment, container, false);
 
-        // get Shopper
-        Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
-
         // get Credit Card Info
-        assert shopper != null;
-        CreditCardInfo creditCardInfo = shopper.getNewCreditCardInfo();
+        newCreditCardInfo = BlueSnapService.getInstance().getsDKConfiguration().getShopper().getNewCreditCardInfo();
 
         // set Billing Details
         billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponent.updateResource(creditCardInfo.getBillingContactInfo());
+        billingViewComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
 
         // set Credit Card View Component details
         OneLineCCViewComponent oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
-        oneLineCCViewComponent.updateResource(creditCardInfo.getCreditCard());
+        oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
+
+        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
+        buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(validateAndUpdate())
+                    BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE, TAG);
+            }
+        });
 
         return inflate;
     }
+
+    /**
+     * validate and Update BillingViewComponent
+     *
+     * @return boolean
+     */
+    public boolean validateAndUpdate() {
+        boolean isValid = billingViewComponent.validateInfo();
+        if (isValid) {
+            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+        }
+        return isValid;
+    }
+
 }

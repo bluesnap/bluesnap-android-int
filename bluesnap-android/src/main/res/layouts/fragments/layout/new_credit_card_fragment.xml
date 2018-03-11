@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorPureWhite"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <com.bluesnap.androidapi.views.components.OneLineCCEditComponent
         android:id="@+id/oneLineCCEditComponent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@android:color/transparent">
 
     </com.bluesnap.androidapi.views.components.OneLineCCEditComponent>
@@ -17,6 +16,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/amountTaxShippingComponentView"
+        android:layout_below="@+id/oneLineCCEditComponent"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
@@ -38,4 +39,21 @@
             </com.bluesnap.androidapi.views.components.BillingViewComponent>
         </ScrollView>
     </LinearLayout>
-</LinearLayout>
+
+    <com.bluesnap.androidapi.views.components.AmountTaxShippingComponent
+        android:id="@+id/amountTaxShippingComponentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonComponentView">
+
+    </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
+
+    <com.bluesnap.androidapi.views.components.ButtonComponent
+        android:id="@+id/buttonComponentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom">
+
+    </com.bluesnap.androidapi.views.components.ButtonComponent>
+</RelativeLayout>

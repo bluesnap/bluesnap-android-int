@@ -10,6 +10,7 @@ import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -36,7 +37,7 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
         setEmailVisibility(GONE);
         //inputEmail.setVisibility(GONE);
 
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE_RESPONSE, new BroadcastReceiver() {
+        /*BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE_RESPONSE, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (validateInfo()) {
@@ -46,7 +47,7 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
                     shopper.setShippingContactInfo(getResource());
                 }
             }
-        });
+        });*/
     }
 
     /**
@@ -65,5 +66,15 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
      */
     public ShippingInfo getResource() {
         return new ShippingInfo(super.getResource());
+    }
+
+    /**
+     * Validating form inputs
+     *
+     * @return boolean
+     */
+    @Override
+    public boolean validateInfo() {
+        return super.validateInfo();
     }
 }

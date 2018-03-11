@@ -19,7 +19,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 
 public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedComponent {
     public static final String TAG = BillingViewSummarizedComponent.class.getSimpleName();
-    private Button editButton;
+    public Button editButton;
     private LinearLayout forFullBillingLinearLayout;
 
     public BillingViewSummarizedComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -36,30 +36,29 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
 
     public void updateResource(BillingInfo billingInfo) {
         super.updateResource(billingInfo);
-        setEmailText(billingInfo.getEmail());
+
+        final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+
+        assert sdkRequest != null;
+        if (!sdkRequest.isEmailRequired())
+            setEmailVisibility(GONE);
+        else
+            setEmailText(billingInfo.getEmail());
+
+        if (!sdkRequest.isBillingRequired())
+            forFullBillingLinearLayout.setVisibility(GONE);
     }
 
     @Override
     void initControl(final Context context) {
         super.initControl(context);
 
-        final BlueSnapService blueSnapService = BlueSnapService.getInstance();
-        final SdkRequest sdkRequest = blueSnapService.getSdkRequest();
-
-        assert sdkRequest != null;
-        if (!blueSnapService.getSdkRequest().isEmailRequired()) {
-            setEmailVisibility(GONE);
-        }
-
         forFullBillingLinearLayout = (LinearLayout) findViewById(R.id.forFullBillingLinearLayout);
-        if (!blueSnapService.getSdkRequest().isBillingRequired())
-            forFullBillingLinearLayout.setVisibility(GONE);
-
         editButton = (Button) findViewById(R.id.editButton);
-        editButton.setOnClickListener(new OnClickListener() {
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_REQUEST, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT, TAG);
             }
         });
     }

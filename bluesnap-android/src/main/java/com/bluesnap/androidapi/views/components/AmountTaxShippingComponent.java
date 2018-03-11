@@ -77,6 +77,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxShipping() {
         SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
+        assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
             shippingSameAsBillingRelativeLayout.setVisibility(VISIBLE);
         else
@@ -98,7 +99,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
      * @param amount         - amount
      * @return textView for displaying $0.00
      */
-    private String setTextForAmountTaxView(String currencySymbol, Double amount) {
+    public static String setTextForAmountTaxView(String currencySymbol, Double amount) {
         return String.format("%s %s",
                 AndroidUtil.getCurrencySymbol(currencySymbol),
                 AndroidUtil.getDecimalFormat().format(amount));
