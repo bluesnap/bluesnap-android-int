@@ -67,6 +67,12 @@ public class NewCreditCardFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View inflate = inflater.inflate(R.layout.new_credit_card_fragment, container, false);

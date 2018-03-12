@@ -64,12 +64,14 @@ public class CreditCardActivity extends AppCompatActivity {
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
 
         BlueSnapService.getBus().register(this);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        BlueSnapLocalBroadcastManager.unregisterReceiver(this, broadcastReceiver);
     }
 
     /**
