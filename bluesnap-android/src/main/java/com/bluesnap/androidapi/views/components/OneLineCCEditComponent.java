@@ -140,11 +140,12 @@ public class OneLineCCEditComponent  extends LinearLayout {
 
     /**
      * Validating form inputs
+     * (assumes card number has already been set from editText)
      *
      * @return boolean
      */
     public boolean validateInfo() {
-        return cardNumberValidation() && cvvValidation() && expValidation();
+        return cardNumberValidation(newCreditCard.getNumber()) && cvvValidation() && expValidation();
     }
 
     /**
@@ -166,10 +167,18 @@ public class OneLineCCEditComponent  extends LinearLayout {
      * Validate and set card number input
      * will also change card icon drawable
      */
-    private boolean cardNumberValidation() {
+    private boolean setCardNumberFromEditTextAndValidate() {
         final String creditCardNumber = AndroidUtil.stringify(creditCardNumberEditText.getText());
         newCreditCard.setNumber(creditCardNumber);
-        boolean validationResult = BlueSnapValidator.creditCardNumberValidation(creditCardNumber);
+        return cardNumberValidation(creditCardNumber);
+    }
+
+    /**
+     * Validate card number input
+     * will also change card icon drawable
+     */
+    private boolean cardNumberValidation(String creditCardNumber) {
+        boolean validationResult = BlueSnapValidator.creditCardNumberValidation(AndroidUtil.stringify(creditCardNumber));
         changeInputColorAndErrorVisibility(creditCardNumberEditText, creditCardNumberErrorTextView, validationResult);
         return validationResult;
     }
@@ -248,7 +257,7 @@ public class OneLineCCEditComponent  extends LinearLayout {
     private void creditCardNumberOnLoseFocus() {
         if (activateMoveToCcImageButton)
             moveToCcImageButton.setVisibility(View.GONE);
-        cardNumberValidation();
+        setCardNumberFromEditTextAndValidate();
         creditCardNumberEditText.setHint("");
         creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
         creditCardNumberEditText.setText(getCardLastFourDigitsForView(newCreditCard.getNumber()));

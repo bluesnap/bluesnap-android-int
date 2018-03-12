@@ -15,7 +15,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/amountTaxShippingComponentView"
         android:layout_below="@+id/oneLineCCEditComponent"
         android:layout_marginBottom="20dp"
@@ -23,12 +23,13 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/layout_bg"
+        android:orientation="vertical"
         android:elevation="10dp">
 
         <ScrollView
             android:id="@+id/billingViewComponentScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <com.bluesnap.androidapi.views.components.BillingViewComponent
                 android:id="@+id/billingViewComponent"
@@ -37,6 +38,21 @@
                 android:background="@android:color/transparent">
 
             </com.bluesnap.androidapi.views.components.BillingViewComponent>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/shippingViewComponentScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <com.bluesnap.androidapi.views.components.ShippingViewComponent
+                android:id="@+id/shippingViewComponent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent">
+
+            </com.bluesnap.androidapi.views.components.ShippingViewComponent>
         </ScrollView>
     </LinearLayout>
 

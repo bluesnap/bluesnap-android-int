@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
@@ -31,7 +30,6 @@ import com.bluesnap.androidapi.views.BluesnapFragment;
 import com.bluesnap.androidapi.views.activities.CurrencyActivity;
 import com.bluesnap.androidapi.views.ExpressCheckoutFragment;
 import com.bluesnap.androidapi.views.ShippingFragment;
-import com.bluesnap.androidapi.views.WebViewActivity;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -195,7 +193,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     private void tokenizeCardOnServer(final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         this.resultIntent = resultIntent;
 
-        blueSnapService.tokenizeCard(getShopper(), new TextHttpResponseHandler() {
+        blueSnapService.submitTokenizedDetails(getShopper(), new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 try {

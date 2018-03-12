@@ -108,6 +108,16 @@ public class Shopper extends ContactInfo {
         this.shippingContactInfo = shippingContactInfo;
     }
 
+    public void setShippingContactInfo(@Nullable BillingInfo billingContactInfo) {
+        this.shippingContactInfo.setFullName(billingContactInfo.getFullName());
+        this.shippingContactInfo.setAddress(billingContactInfo.getAddress());
+        this.shippingContactInfo.setAddress2(billingContactInfo.getAddress2());
+        this.shippingContactInfo.setZip(billingContactInfo.getZip());
+        this.shippingContactInfo.setCity(billingContactInfo.getCity());
+        this.shippingContactInfo.setState(billingContactInfo.getState());
+        this.shippingContactInfo.setCountry(billingContactInfo.getCountry());
+    }
+
     @Nullable
     public LastPaymentInfo getLastPaymentInfo() {
         return lastPaymentInfo;

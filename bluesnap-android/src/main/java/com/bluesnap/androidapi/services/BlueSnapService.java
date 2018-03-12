@@ -183,7 +183,7 @@ public class BlueSnapService {
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void tokenizeCard(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void submitTokenizedDetails(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         blueSnapAPI.tokenizeCard(createDataObject(shopper), responseHandler);
     }
@@ -198,7 +198,7 @@ public class BlueSnapService {
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void tokenizeCard(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         blueSnapAPI.tokenizeCard(createDataObject(creditCard, billingInfo, shippingInfo), responseHandler);
     }
@@ -212,7 +212,7 @@ public class BlueSnapService {
      * @throws JSONException
      * @throws UnsupportedEncodingException
      */
-    public void tokenizeCard(CreditCard creditCard, BillingInfo billingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         blueSnapAPI.tokenizeCard(createDataObject(creditCard, billingInfo, null), responseHandler);
     }

@@ -104,7 +104,13 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      */
     @Override
     public boolean validateInfo() {
-        boolean validInput = super.validateInfo();
+        boolean validInput = validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
+        validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
+        if (isFullBillingRequiredRequired) {
+            validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+            validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
+            validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
+        }
         if (isEmailRequired)
             validInput &= validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
         return validInput;

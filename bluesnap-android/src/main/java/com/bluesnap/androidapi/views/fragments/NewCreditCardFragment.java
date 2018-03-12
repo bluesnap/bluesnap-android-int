@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
@@ -35,6 +36,8 @@ public class NewCreditCardFragment extends Fragment {
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
     private ShippingViewComponent shippingViewComponent;
+    private ScrollView shippingViewComponentScrollView;
+    private ScrollView billingViewComponentScrollView;
     private OneLineCCEditComponent oneLineCCEditComponent;
 
     private SdkRequest sdkRequest;
@@ -78,6 +81,9 @@ public class NewCreditCardFragment extends Fragment {
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
+        billingViewComponentScrollView = (ScrollView) inflate.findViewById(R.id.billingViewComponentScrollView);
+        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.shippingViewComponent);
+        shippingViewComponentScrollView = (ScrollView) inflate.findViewById(R.id.shippingViewComponentScrollView);
         oneLineCCEditComponent = (OneLineCCEditComponent) inflate.findViewById(R.id.oneLineCCEditComponent);
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
@@ -85,17 +91,22 @@ public class NewCreditCardFragment extends Fragment {
 
         if (!sdkRequest.isShippingRequired()) {
             BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
-            finishFromFragment();
+            finishFromFragmentNoShipping();
         } else {
-            finishFromShippingFragment();
+            finishFromFragmentWithShipping();
             BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
 
         return inflate;
     }
 
-    public boolean validateCreditCardInfoAndBillingInfo() {
-        return oneLineCCEditComponent.validateInfo() && billingViewComponent.validateInfo();
+    public boolean validateAndSetCreditCardInfoAndBillingInfo() {
+        boolean isValid = oneLineCCEditComponent.validateInfo() && billingViewComponent.validateInfo();
+        if (isValid) {
+            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+            newCreditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
+        }
+        return isValid;
     }
 
     public CreditCardInfo getCreditCardInfo() {
@@ -106,23 +117,45 @@ public class NewCreditCardFragment extends Fragment {
     }
 
     private void finishFromFragment() {
+        Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
+        Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
+        Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
+        //TODO: activate on activity result
+    }
+
+    private void finishFromFragmentNoShipping() {
         amountTaxShippingComponentView.setVisibility(View.VISIBLE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: activate on activity result
-
+                if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                    if (sdkRequest.isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
+                        shopper.setShippingContactInfo(billingViewComponent.getResource());
+                    finishFromFragment();
+                }
             }
         });
     }
 
-    private void finishFromShippingFragment() {
+    private void finishFromFragmentWithShipping() {
         amountTaxShippingComponentView.setVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: activate on activity result
-
+                if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                    billingViewComponentScrollView.setVisibility(View.GONE);
+                    oneLineCCEditComponent.setVisibility(View.GONE);
+                    shippingViewComponentScrollView.setVisibility(View.VISIBLE);
+                    buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (shippingViewComponent.validateInfo()) {
+                                shopper.setShippingContactInfo(shippingViewComponent.getResource());
+                                finishFromFragment();
+                            }
+                        }
+                    });
+                }
             }
         });
     }
@@ -142,10 +175,10 @@ public class NewCreditCardFragment extends Fragment {
             } else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 if (isShippingSameAsBilling) {
-                    finishFromFragment();
+                    finishFromFragmentNoShipping();
 
                 } else {
-                    finishFromShippingFragment();
+                    finishFromFragmentWithShipping();
                 }
             }
         }

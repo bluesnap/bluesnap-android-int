@@ -33,7 +33,8 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/shippingSameAsBillingSwitch"
-            android:text="@string/shipping_same_as_billing" />
+            android:text="@string/shipping_same_as_billing"
+            android:textSize="@dimen/contact_info_text_size" />
     </RelativeLayout>
 
     <LinearLayout
@@ -55,7 +56,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="$0.00" />
+                android:text="$0.00"
+                android:textSize="@dimen/contact_info_text_size" />
 
             <TextView
                 android:id="@+id/textViewTextAmount"
@@ -63,7 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_toStartOf="@+id/amountTextView"
-                android:text="@string/subtotal_label" />
+                android:text="@string/subtotal_label"
+                android:textSize="@dimen/contact_info_text_size" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -79,7 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="$0.00" />
+                android:text="$0.00"
+                android:textSize="@dimen/contact_info_text_size" />
 
             <TextView
                 android:id="@+id/textViewTextTax"
@@ -87,7 +91,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_toStartOf="@+id/taxTextView"
-                android:text="@string/tax_label" />
+                android:text="@string/tax_label"
+                android:textSize="@dimen/contact_info_text_size" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
