@@ -107,6 +107,9 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
+                Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
+                Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
                 //TODO: activate on activity result
 
             }
