@@ -1,0 +1,791 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:clickable="false"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:layoutDirection="ltr"
+    android:orientation="vertical"
+    android:tag="BluesnapFragment"
+    tools:context=".BluesnapCheckoutActivity">
+
+    <LinearLayout
+        android:id="@+id/cardFieldsLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:orientation="vertical">
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:layout_marginTop="1dp">
+
+                <LinearLayout
+                    android:id="@+id/nameLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/border"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="2dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/carHolderNameLabelTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/nameField" />
+
+                        <EditText
+                            android:id="@+id/cardHolderNameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/white"
+                            android:hint="@string/name_hint"
+                            android:inputType="textEmailAddress"
+                            android:padding="6sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/invalidShopperNameMessageTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/please_enter_your_name"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/emailLinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/emailTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/emailField" />
+
+                        <EditText
+                            android:id="@+id/emailEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/white"
+                            android:hint="@string/email_hint"
+                            android:inputType="textEmailAddress"
+                            android:maxLength="50"
+                            android:nextFocusDown="@+id/creditCardNumberEditText"
+                            android:padding="6sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/invalidEmailMessageTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:focusable="false"
+                        android:text="@string/invalid_email_address"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </TableRow>
+
+        </TableLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:id="@+id/emailBorderVanish"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:clickable="false"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0.86dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/line">
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:layout_marginTop="1dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/creditCardLabelTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/card" />
+
+                        <!--<LinearLayout
+                            android:id="@+id/creditCardNumberLayoutNewCard"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:orientation="horizontal"
+                            android:padding="6sp">
+
+                            <EditText
+                                android:id="@+id/creditCardNumberEditText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_vertical"
+                                android:background="@android:color/white"
+                                android:digits="0123456789 "
+                                android:hint="@string/cc_hint"
+                                android:imeOptions="actionNext"
+                                android:inputType="numberDecimal"
+                                android:maxLength="19"
+                                android:nextFocusDown="@+id/expDateEditText" />
+
+                            <ImageView
+                                android:id="@+id/creditCardNumberImageView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/visa_dark"/>
+
+                        </LinearLayout>-->
+
+                        <EditText
+                            android:id="@+id/creditCardNumberEditText"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:digits="0123456789 "
+                            android:hint="@string/cc_hint"
+                            android:imeOptions="actionNext"
+                            android:inputType="numberDecimal"
+                            android:maxLength="19"
+                            android:nextFocusDown="@+id/expDateEditText"
+                            android:padding="6sp" />
+
+                        <ImageView
+                            android:id="@+id/creditCardNumberImageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="5sp" />
+
+                        <Spinner
+                            android:id="@+id/creditCardNumberSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:nextFocusDown="@+id/expDateEditText"
+                            android:padding="5sp"
+                            android:visibility="gone" />
+
+                        <ImageButton
+                            android:id="@+id/creditCardNumberSpinnerImageButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@android:color/white"
+                            android:clickable="true"
+                            android:paddingEnd="2sp"
+                            android:paddingRight="2sp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/invaildCreditCardMessageTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorPureWhite"
+                        android:text="@string/invalid_card_number"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/expCvvTableRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
+                android:clickable="false">
+
+                <LinearLayout
+                    android:id="@+id/expLinearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp">
+
+                    <TextView
+                        android:id="@+id/expDateLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawablePadding="5dp"
+                        android:padding="6sp"
+                        android:text="@string/exp" />
+
+                    <EditText
+                        android:id="@+id/expDateEditText"
+                        android:layout_width="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="2sp"
+                        android:layout_weight="1"
+                        android:background="@android:color/white"
+                        android:digits="0123456789/"
+                        android:hint="@string/mm_yy"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:maxLength="5"
+                        android:nextFocusDown="@+id/cvvEditText"
+                        android:paddingBottom="5sp"
+                        android:paddingLeft="1sp"
+                        android:paddingTop="5sp" />
+
+                    <!--<TextView
+                        android:layout_width="0.01sp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.01"
+                        android:background="#d9d9d9"
+                        android:gravity="center" />-->
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/cvvLinearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/border"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp">
+
+                    <TextView
+                        android:id="@+id/cvvLabelTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="6sp"
+                        android:layout_weight="0.05"
+                        android:paddingBottom="5sp"
+                        android:paddingLeft="0.5sp"
+                        android:paddingTop="5sp"
+                        android:text="@string/cvv" />
+
+                    <EditText
+                        android:id="@+id/cvvEditText"
+                        android:layout_width="20dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.95"
+                        android:background="@android:color/white"
+                        android:hint="@string/cvv_hint"
+                        android:inputType="numberPassword"
+                        android:maxLength="4"
+                        android:paddingBottom="5sp"
+                        android:paddingLeft="1sp"
+                        android:paddingRight="2sp"
+                        android:paddingTop="5sp" />
+
+                </LinearLayout>
+
+            </TableRow>
+
+        </TableLayout>
+
+        <TableLayout
+            android:id="@+id/addressLineTableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:visibility="gone">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/billingAddressLineTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/address" />
+
+                        <EditText
+                            android:id="@+id/billingAddressLineEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/white"
+                            android:hint="@string/street_hint"
+                            android:inputType="textPostalAddress"
+                            android:maxLength="100"
+                            android:nextFocusDown="@+id/billingZipEditText"
+                            android:padding="6sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/invaildAddressMessageTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/invalid_address_line"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:showDividers="middle|beginning|none">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp">
+
+                    <LinearLayout
+                        android:id="@+id/zipFieldLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/zipTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/billing_zip" />
+
+                        <EditText
+                            android:id="@+id/zipEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="2sp"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:inputType="textPostalAddress"
+                            android:maxLength="10"
+                            android:padding="1sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/addressCountryTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/country" />
+
+                        <Button
+                            android:id="@+id/addressCountryButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:clickable="true"
+                            android:padding="2sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/stateAndCityTableRow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/billingStateLabelTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/state" />
+
+                        <EditText
+                            android:id="@+id/billingStateEditText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="2sp"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:inputType="textPostalAddress"
+                            android:maxLength="50"
+                            android:nextFocusDown="@+id/billingCityEditText"
+                            android:padding="1sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/border"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/billingCityTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:drawablePadding="5dp"
+                            android:padding="6sp"
+                            android:text="@string/city" />
+
+                        <EditText
+                            android:id="@+id/billingCityEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:imeOptions="actionDone"
+                            android:inputType="textPostalAddress"
+                            android:maxLength="50"
+                            android:padding="2sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </TableRow>
+
+        </TableLayout>
+
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp" />
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_gravity="center"
+            android:background="@android:color/white"
+            android:textAlignment="center"
+            android:visibility="visible" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout_coupon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:hint="@string/coupon"
+                    android:padding="6sp" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20sp"
+                    android:allowUndo="false"
+                    android:background="@color/colorPureWhite"
+                    android:inputType="phone"
+                    android:padding="6sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="30sp"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:visibility="invisible" />
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0.5dp"
+                    android:background="#d9d9d9">
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="0.5dp"
+                        android:orientation="horizontal">
+
+                    </LinearLayout>
+                </TableRow>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="1dp"
+            android:background="#FFFFFF">
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowLineSeparator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0.5dp"
+            android:background="#d9d9d9"
+            android:visibility="invisible">
+
+
+            <LinearLayout
+
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </TableRow>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/cardFieldsLinearLayout"
+        android:gravity="bottom|center">
+
+        <TableLayout
+            android:id="@+id/subtotal_tax_table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10sp"
+                    android:paddingRight="20sp"
+                    android:text="@string/subtotal_label" />
+
+                <TextView
+                    android:id="@+id/subtotalValueTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="10sp"
+                    android:paddingRight="20sp"
+                    android:text="@string/tax_label" />
+
+                <TextView
+                    android:id="@+id/taxValueTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/buyNowButton"
+            android:layout_width="match_parent"
+            android:layout_height="60sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:contentDescription="@string/buynowbutton"
+            android:paddingRight="5sp"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPureWhite"
+            android:textSize="25sp"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+</RelativeLayout>
+
