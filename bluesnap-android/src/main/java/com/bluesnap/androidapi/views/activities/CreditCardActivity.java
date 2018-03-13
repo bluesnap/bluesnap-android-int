@@ -60,6 +60,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private String sharedCurrency;
     private ImageButton hamburgerMenuButton;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    private SdkRequest sdkRequest;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -235,7 +236,10 @@ public class CreditCardActivity extends AppCompatActivity {
 
     public void finishFromFragment(final Shopper shopper) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
+        sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        assert sdkRequest != null;
+        if (sdkRequest.isShippingRequired())
+            resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
         resultIntent.putExtra(EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
 
         Log.d(TAG, "Testing if card requires server tokenization:" + shopper.getNewCreditCardInfo().getCreditCard().toString());
@@ -273,6 +277,9 @@ public class CreditCardActivity extends AppCompatActivity {
                         Log.d(TAG, "tokenization of previous used credit card");
                     }
 
+                    sdkResult.setBillingInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
+                    if (sdkRequest.isShippingRequired())
+                        sdkResult.setShippingInfo(shopper.getShippingContactInfo());
                     sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
                     sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
                     // update last4 from server result

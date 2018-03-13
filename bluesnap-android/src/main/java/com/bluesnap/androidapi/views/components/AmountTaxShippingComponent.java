@@ -113,4 +113,8 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public boolean isShippingSameAsBilling() {
         return isShippingSameAsBilling;
     }
+
+    public void setShippingSameAsBillingVisibility(int visibility) {
+        this.shippingSameAsBillingRelativeLayout.setVisibility(visibility);
+    }
 }

@@ -13,9 +13,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -155,6 +157,14 @@ public class ChoosePaymentMethodActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 shopper.setNewCreditCardInfo((CreditCardInfo) oneLineCCViewAdapter.getItem(position));
+                if (!sdkRequest.isEmailRequired())
+                    shopper.getNewCreditCardInfo().getBillingContactInfo().setEmail(null);
+                if (!sdkRequest.isBillingRequired()) {
+                    BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
+                    billingInfo.setAddress(null);
+                    billingInfo.setCity(null);
+                    billingInfo.setState(null);
+                }
                 startCreditCardActivityForResult(FRAGMENT_TYPE, RETURNING_CC);
             }
         });

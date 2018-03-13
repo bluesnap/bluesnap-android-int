@@ -152,6 +152,7 @@
             android:background="@android:color/transparent"
             android:focusable="false"
             android:gravity="center"
+            android:nextFocusDown="@+id/input_name"
             android:text="Invalid CVV"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="12sp"

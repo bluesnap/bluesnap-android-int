@@ -49,15 +49,16 @@
                     android:layout_height="wrap_content"
                     android:maxLines="3"
                     android:maxWidth="150sp"
+                    android:paddingEnd="5dp"
                     android:text="58 SomeStreet"
                     android:textSize="12sp" />
 
-                <TextView
+                <!--<TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingEnd="5dp"
                     android:text=","
-                    android:textSize="12sp" />
+                    android:textSize="12sp" />-->
 
                 <TextView
                     android:id="@+id/cityTextView"
@@ -80,6 +81,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/zipAndCountryLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

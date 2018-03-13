@@ -110,6 +110,8 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         }
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
+        amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
+
         buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
@@ -157,13 +159,13 @@ public class ReturningShopperCreditCardFragment extends Fragment {
             else if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
-            } else {
+            } /*else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 if (isShippingSameAsBilling)
                     setVisibilityForShippingView(View.INVISIBLE);
                 else
                     setVisibilityForShippingView(View.VISIBLE);
-            }
+            }*/
         }
     };
 }

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.services.AndroidUtil;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -17,6 +18,8 @@ import com.bluesnap.androidapi.models.ContactInfo;
 public class ContactInfoViewSummarizedComponent extends LinearLayout {
     public static final String TAG = ContactInfoViewSummarizedComponent.class.getSimpleName();
     private TextView countryTextView, zipTextView, stateTextView, cityTextView, addressTextView, emailTextView, nameTextView;
+    LinearLayout forFullBillingLinearLayout;
+    LinearLayout zipAndCountryLinearLayout;
 
     public ContactInfoViewSummarizedComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -50,6 +53,9 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         addressTextView = (TextView) findViewById(R.id.addressTextView);
         emailTextView = (TextView) findViewById(R.id.emailTextView);
         nameTextView = (TextView) findViewById(R.id.nameTextView);
+
+        forFullBillingLinearLayout = (LinearLayout) findViewById(R.id.forFullBillingLinearLayout);
+        zipAndCountryLinearLayout = (LinearLayout) findViewById(R.id.zipAndCountryLinearLayout);
     }
 
     /**
@@ -70,7 +76,16 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
      * @param zip
      * @param country
      */
-    public void updateResource(String fullName, String address, String city, String state, String zip, String country) {
+    private void updateResource(String fullName, String address, String city, String state, String zip, String country) {
+        address = stringify(address);
+        city = stringify(city);
+        state = stringify(state);
+
+        if(!address.isEmpty())
+            address += ",";
+        else if(address.isEmpty() && city.isEmpty() && state.isEmpty())
+            forFullBillingLinearLayout.setVisibility(GONE);
+
         setCountryText(country);
         setZipText(zip);
         setStateText(state);
@@ -111,4 +126,9 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         this.emailTextView.setVisibility(visibility);
     }
 
+    static String stringify(String s) {
+        if (s == null || s.isEmpty())
+            return "";
+        else return s;
+    }
 }

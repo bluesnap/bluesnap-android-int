@@ -20,7 +20,6 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedComponent {
     public static final String TAG = BillingViewSummarizedComponent.class.getSimpleName();
     public Button editButton;
-    private LinearLayout forFullBillingLinearLayout;
 
     public BillingViewSummarizedComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -40,7 +39,7 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
         assert sdkRequest != null;
-        if (!sdkRequest.isEmailRequired())
+        if (!sdkRequest.isEmailRequired() || stringify(billingInfo.getEmail()).isEmpty())
             setEmailVisibility(GONE);
         else
             setEmailText(billingInfo.getEmail());
@@ -53,7 +52,6 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
     void initControl(final Context context) {
         super.initControl(context);
 
-        forFullBillingLinearLayout = (LinearLayout) findViewById(R.id.forFullBillingLinearLayout);
         editButton = (Button) findViewById(R.id.editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
