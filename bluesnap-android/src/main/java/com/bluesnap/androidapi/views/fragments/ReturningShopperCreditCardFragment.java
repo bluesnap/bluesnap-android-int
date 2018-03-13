@@ -21,6 +21,7 @@ import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.views.activities.CreditCardActivity;
 import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
 import com.bluesnap.androidapi.views.components.BillingViewComponent;
 import com.bluesnap.androidapi.views.components.BillingViewSummarizedComponent;
@@ -116,7 +117,8 @@ public class ReturningShopperCreditCardFragment extends Fragment {
                 Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
                 Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
                 Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
-                //TODO: activate on activity result
+                CreditCardActivity creditCardActivity = (CreditCardActivity) getActivity();
+                creditCardActivity.finishFromFragment(shopper);
 
             }
         });

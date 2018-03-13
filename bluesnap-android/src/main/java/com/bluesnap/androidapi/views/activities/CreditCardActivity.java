@@ -20,16 +20,28 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.KountService;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
 import com.bluesnap.androidapi.views.components.ButtonComponent;
 import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -47,6 +59,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private TextView headerTextView;
     private String sharedCurrency;
     private ImageButton hamburgerMenuButton;
+    private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -218,5 +231,108 @@ public class CreditCardActivity extends AppCompatActivity {
     @Subscribe
     public void onCurrencyUpdated(Events.CurrencyUpdatedEvent currencyUpdatedEvent) {
         BlueSnapLocalBroadcastManager.sendMessage(this, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
+    }
+
+    public void finishFromFragment(final Shopper shopper) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
+        resultIntent.putExtra(EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
+
+        Log.d(TAG, "Testing if card requires server tokenization:" + shopper.getNewCreditCardInfo().getCreditCard().toString());
+        try {
+            tokenizeCardOnServer(shopper, resultIntent);
+        } catch (UnsupportedEncodingException | JSONException e) {
+            String errorMsg = "SDK service error";
+            Log.e(TAG, errorMsg, e);
+            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            finish();
+        }
+    }
+
+    private void tokenizeCardOnServer(final Shopper shopper, final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
+
+        blueSnapService.submitTokenizedDetails(shopper, new TextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                try {
+                    String Last4;
+                    String ccType;
+                    SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+
+                    if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
+                        // New Card
+                        JSONObject response = new JSONObject(responseString);
+                        Last4 = response.getString("last4Digits");
+                        ccType = response.getString("ccType");
+                        Log.d(TAG, "tokenization of new credit card");
+                    } else {
+                        // Reused Card
+                        sdkResult.setShopperID(String.valueOf(shopper.getVaultedShopperId()));
+                        Last4 = shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
+                        ccType = shopper.getNewCreditCardInfo().getCreditCard().getCardType();
+                        Log.d(TAG, "tokenization of previous used credit card");
+                    }
+
+                    sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
+                    sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
+                    // update last4 from server result
+                    sdkResult.setLast4Digits(Last4);
+                    // update card type from server result
+                    sdkResult.setCardType(ccType);
+                    resultIntent.putExtra(EXTRA_PAYMENT_RESULT, sdkResult);
+                    setResult(RESULT_OK, resultIntent);
+                    //Only set the remember shopper here since failure can lead to missing tokenization on the server
+                    shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
+                    Log.d(TAG, "tokenization finished");
+                    finish();
+                } catch (NullPointerException | JSONException e) {
+                    Log.e(TAG, "", e);
+                    String errorMsg = String.format("Service Error %s", e.getMessage());
+                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
+                    finish();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                if (statusCode == 400 && null != blueSnapService.getTokenProvider() && !"".equals(responseString)) {
+                    try {
+                        JSONObject errorResponse = new JSONObject(responseString);
+                        JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                        JSONObject rs3 = (JSONObject) rs2.get(0);
+                        if ("EXPIRED_TOKEN".equals(rs3.get("errorName"))) {
+                            blueSnapService.getTokenProvider().getNewToken(new TokenServiceCallback() {
+                                @Override
+                                public void complete(String newToken) {
+                                    blueSnapService.setNewToken(newToken);
+                                    try {
+                                        tokenizeCardOnServer(shopper, resultIntent);
+                                    } catch (UnsupportedEncodingException e) {
+                                        Log.e(TAG, "Unsupported Encoding Exception", e);
+                                    } catch (JSONException e) {
+                                        Log.e(TAG, "json parsing exception", e);
+                                    }
+                                }
+                            });
+                        } else {
+                            String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
+                            Log.e(TAG, errorMsg, throwable);
+                            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+                            finish();
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                    }
+                } else {
+                    String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
+                    Log.e(TAG, errorMsg, throwable);
+                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+                    finish();
+                }
+            }
+        });
+
     }
 }
