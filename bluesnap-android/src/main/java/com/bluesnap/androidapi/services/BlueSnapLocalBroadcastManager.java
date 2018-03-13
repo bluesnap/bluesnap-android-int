@@ -20,6 +20,7 @@ public class BlueSnapLocalBroadcastManager {
     public static final String COUNTRY_CHANGE_REQUEST = "com.bluesnap.intent.COUNTRY_CHANGE_REQUEST";
     public static final String COUNTRY_CHANGE_RESPONSE = "com.bluesnap.intent.COUNTRY_CHANGE_RESPONSE";
     public static final String CURRENCY_UPDATED_EVENT = "com.bluesnap.intent.CURRENCY_UPDATED_EVENT";
+    public static final String ONE_LINE_CC_EDIT_FINISH = "com.bluesnap.intent.ONE_LINE_CC_EDIT_FINISH";
 
     /**
      * a LocalBroadcastManager sendMessage with an extra message inside the intent

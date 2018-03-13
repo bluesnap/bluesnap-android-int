@@ -22,6 +22,7 @@ import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 /**
@@ -127,8 +128,10 @@ public class OneLineCCEditComponent  extends LinearLayout {
         cvvEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
                     cvvValidation();
+                    BlueSnapLocalBroadcastManager.sendMessage(getContext(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH,TAG);
+                }
                 else
                     cvvEditText.setSelection(cvvEditText.getText().length());
             }

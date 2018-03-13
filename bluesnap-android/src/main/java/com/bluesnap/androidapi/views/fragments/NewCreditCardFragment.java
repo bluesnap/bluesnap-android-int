@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.bluesnap.androidapi.R;
@@ -37,8 +38,7 @@ public class NewCreditCardFragment extends Fragment {
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
     private ShippingViewComponent shippingViewComponent;
-    private ScrollView shippingViewComponentScrollView;
-    private ScrollView billingViewComponentScrollView;
+    private LinearLayout shippingViewComponentLinearLayout, billingViewComponentLinearLayout;
     private OneLineCCEditComponent oneLineCCEditComponent;
 
     private SdkRequest sdkRequest;
@@ -88,13 +88,15 @@ public class NewCreditCardFragment extends Fragment {
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponentScrollView = (ScrollView) inflate.findViewById(R.id.billingViewComponentScrollView);
+        billingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.billingViewComponentLinearLayout);
         shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.shippingViewComponent);
-        shippingViewComponentScrollView = (ScrollView) inflate.findViewById(R.id.shippingViewComponentScrollView);
+        shippingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingViewComponentLinearLayout);
         oneLineCCEditComponent = (OneLineCCEditComponent) inflate.findViewById(R.id.oneLineCCEditComponent);
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
         buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
+
+        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
 
         if (!sdkRequest.isShippingRequired()) {
             BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
@@ -151,9 +153,10 @@ public class NewCreditCardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
-                    billingViewComponentScrollView.setVisibility(View.GONE);
+                    amountTaxShippingComponentView.setVisibility(View.VISIBLE);
+                    billingViewComponentLinearLayout.setVisibility(View.GONE);
                     oneLineCCEditComponent.setVisibility(View.GONE);
-                    shippingViewComponentScrollView.setVisibility(View.VISIBLE);
+                    shippingViewComponentLinearLayout.setVisibility(View.VISIBLE);
                     buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -180,6 +183,8 @@ public class NewCreditCardFragment extends Fragment {
             if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
+            } else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
+                billingViewComponent.requestFocusOnNameInput();
             } else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 if (isShippingSameAsBilling) {

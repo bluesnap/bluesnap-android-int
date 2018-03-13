@@ -8,6 +8,7 @@ import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -196,24 +197,20 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputName.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
                     validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
+                    inputZip.requestFocus();
+                }
             }
         });
-
-        /*inputEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
-            }
-        });*/
 
         inputZip.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
                     validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
+                    inputState.requestFocus();
+                }
             }
         });
 
@@ -222,8 +219,10 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputCity.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
                     validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
+                    inputAddress.requestFocus();
+                }
             }
         });
 
@@ -244,8 +243,10 @@ public class ContactInfoViewComponent extends LinearLayout {
             inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus)
+                    if (!hasFocus) {
                         validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+                        inputCity.requestFocus();
+                    }
                 }
             });
         } else {
@@ -344,6 +345,41 @@ public class ContactInfoViewComponent extends LinearLayout {
     void onCountryChange() {
         setCountryDrawable(getUserCountry(), getContext());
         changeZipHintAndTextAccordingToCountry();
+    }
+
+    /**
+     * in Billing View if Email is required,
+     * move focus from name to email
+     */
+    void changeInputNameNextFocusToInputEmail() {
+        inputName.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
+                    inputEmail.requestFocus();
+                }
+            }
+        });
+    }
+
+    /**
+     * in Billing View if Full Billing is not required,
+     * change next button to done
+     */
+    void changeInputZipNextFocusToDone() {
+        inputZip.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
+            }
+        });
+        inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
+    }
+
+    public void requestFocusOnNameInput() {
+        inputName.requestFocus();
     }
 }
 

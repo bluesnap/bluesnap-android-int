@@ -46,11 +46,14 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
         isEmailRequired = blueSnapService.getSdkRequest().isEmailRequired();
         if (isEmailRequired) {
+            changeInputNameNextFocusToInputEmail();
             inputEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus)
+                    if (!hasFocus) {
                         validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
+                        inputZip.requestFocus();
+                    }
                 }
             });
         } else {
@@ -58,20 +61,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         }
 
         isFullBillingRequiredRequired = blueSnapService.getSdkRequest().isBillingRequired();
-        if (!isFullBillingRequiredRequired)
+        if (!isFullBillingRequiredRequired) {
             setFullBillingVisibility(GONE);
-
-        /*BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE_RESPONSE, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (validateInfo()) {
-                    // get Shopper
-                    Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
-                    assert shopper != null;
-                    shopper.getNewCreditCardInfo().setBillingContactInfo(getResource());
-                }
-            }
-        });*/
+            changeInputZipNextFocusToDone();
+        }
     }
 
     /**

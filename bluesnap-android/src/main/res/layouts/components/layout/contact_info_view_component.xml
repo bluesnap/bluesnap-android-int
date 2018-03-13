@@ -26,7 +26,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_name"
-                android:nextFocusDown="@+id/input_email"
                 android:singleLine="true"
                 android:textSize="15sp" />
         </android.support.design.widget.TextInputLayout>
@@ -54,7 +53,6 @@
             android:layout_height="wrap_content"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress"
-            android:nextFocusDown="@+id/input_zip"
             android:textSize="@dimen/contact_info_text_size" />
     </android.support.design.widget.TextInputLayout>
 
@@ -69,7 +67,6 @@
             android:layout_height="wrap_content"
             android:hint="@string/zip"
             android:inputType="numberDecimal"
-            android:nextFocusDown="@+id/input_state"
             android:singleLine="true"
             android:textSize="@dimen/contact_info_text_size" />
     </android.support.design.widget.TextInputLayout>
@@ -84,7 +81,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/state"
-            android:nextFocusDown="@+id/input_city"
             android:singleLine="true"
             android:textSize="@dimen/contact_info_text_size" />
     </android.support.design.widget.TextInputLayout>
@@ -99,7 +95,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/city"
-            android:nextFocusDown="@+id/input_address"
             android:singleLine="true"
             android:textSize="@dimen/contact_info_text_size" />
     </android.support.design.widget.TextInputLayout>
