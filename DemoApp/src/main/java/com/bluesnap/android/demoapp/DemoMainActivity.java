@@ -1,6 +1,5 @@
 package com.bluesnap.android.demoapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,21 +20,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.BluesnapServiceResultCallback;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.views.activities.ChoosePaymentMethodActivity;
-import com.bluesnap.androidapi.views.activities.CreditCardActivity;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -299,9 +293,9 @@ public class DemoMainActivity extends AppCompatActivity {
 
         try {
             bluesnapService.setSdkRequest(sdkRequest);
-            Intent intent = new Intent(getApplicationContext(), ChoosePaymentMethodActivity.class);
-            startActivityForResult(intent, ChoosePaymentMethodActivity.REQUEST_CODE_DEFAULT);
-            //startActivity(new Intent(getApplicationContext(), ChoosePaymentMethodActivity.class));
+            Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
+            startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
+            //startActivity(new Intent(getApplicationContext(), BluesnapCheckoutActivity.class));
             /*bluesnapService.startBlueSnapActivityForResult(sdkRequest, getApplicationContext(), new BluesnapServiceResultCallback() {
                 @Override
                 public void onSuccess(SdkResult sdkResult) {
@@ -446,7 +440,7 @@ public class DemoMainActivity extends AppCompatActivity {
         if (resultCode != RESULT_OK) {
             if (data != null) {
                 String sdkErrorMsg = "SDK Failed to process the request:";
-                sdkErrorMsg += data.getStringExtra(ChoosePaymentMethodActivity.SDK_ERROR_MSG);
+                sdkErrorMsg += data.getStringExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG);
                 showDialog(sdkErrorMsg);
             } else {
                 showDialog("Purchase canceled");
@@ -456,25 +450,25 @@ public class DemoMainActivity extends AppCompatActivity {
 
         // Here we can access the payment result
         Bundle extras = data.getExtras();
-        SdkResult sdkResult = data.getParcelableExtra(ChoosePaymentMethodActivity.EXTRA_PAYMENT_RESULT); //TODO: why??? the change????? why???
+        SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT); //TODO: why??? the change????? why???
 
         //Start a demo activity that shows purchase summary.
         Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
         intent.putExtra("MERCHANT_TOKEN", merchantToken);
-        intent.putExtra(ChoosePaymentMethodActivity.EXTRA_PAYMENT_RESULT, sdkResult);
+        intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
 
         /*// If shipping information is available show it, Here we simply log the shipping info.
-        ShippingInfo shippingInfo = (ShippingInfo) extras.get(ChoosePaymentMethodActivity.EXTRA_SHIPPING_DETAILS);
+        ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
             Log.d(TAG, "ShippingInfo " + shippingInfo.toString());
-            intent.putExtra(ChoosePaymentMethodActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
+            intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
         }
 
         // If billing information is available show it, Here we simply log the billing info.
         BillingInfo billingInfo = (BillingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         if (billingInfo != null) {
             Log.d(TAG, "BillingInfo " + billingInfo.toString());
-            intent.putExtra(ChoosePaymentMethodActivity.EXTRA_BILLING_DETAILS, billingInfo);
+            intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
         }*/
 
         startActivity(intent);

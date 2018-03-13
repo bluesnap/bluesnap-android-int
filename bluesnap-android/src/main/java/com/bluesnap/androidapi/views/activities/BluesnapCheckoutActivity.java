@@ -17,12 +17,10 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.WebViewActivity;
@@ -36,12 +34,14 @@ import java.util.ArrayList;
  * Created by roy.biber on 21/02/2018.
  */
 
-public class ChoosePaymentMethodActivity extends AppCompatActivity {
+public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
+    public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
+    public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
-    private static final int RESULT_SDK_FAILED = -2;
-    private static final String TAG = ChoosePaymentMethodActivity.class.getSimpleName();
+    static final int RESULT_SDK_FAILED = -2;
+    private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";

@@ -13,21 +13,17 @@
 
     <application android:supportsRtl="true">
         <activity
-            android:name=".BluesnapCheckoutActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".views.activities.ChoosePaymentMethodActivity"
+            android:name=".views.activities.BluesnapCheckoutActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".views.activities.CurrencyActivity"
             android:label="@string/title_activity_currency"
-            android:parentActivityName=".BluesnapCheckoutActivity"
+            android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -38,7 +34,7 @@
         <activity
             android:name=".views.activities.CountryActivity"
             android:label="@string/title_activity_country"
-            android:parentActivityName=".BluesnapCheckoutActivity"
+            android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden">
@@ -49,7 +45,7 @@
         <activity
             android:name=".views.WebViewActivity"
             android:label="@string/title_activity_web_view"
-            android:parentActivityName=".BluesnapCheckoutActivity"
+            android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden">

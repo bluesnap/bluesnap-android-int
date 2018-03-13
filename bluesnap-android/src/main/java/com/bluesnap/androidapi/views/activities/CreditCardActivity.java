@@ -26,8 +26,6 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
-import com.bluesnap.androidapi.views.components.ButtonComponent;
 import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragment;
@@ -50,11 +48,6 @@ import cz.msebera.android.httpclient.Header;
 public class CreditCardActivity extends AppCompatActivity {
     private static final String TAG = CreditCardActivity.class.getSimpleName();
     public static final int CREDIT_CARD_ACTIVITY_REQUEST_CODE = 3;
-    public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
-    public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
-    public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
-    public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
-    private static final int RESULT_SDK_FAILED = -2;
     private String fragmentType;
     private TextView headerTextView;
     private String sharedCurrency;
@@ -67,10 +60,10 @@ public class CreditCardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.credit_card_activity);
 
-        fragmentType = getIntent().getStringExtra(ChoosePaymentMethodActivity.FRAGMENT_TYPE);
-        if (ChoosePaymentMethodActivity.NEW_CC.equals(fragmentType))
+        fragmentType = getIntent().getStringExtra(BluesnapCheckoutActivity.FRAGMENT_TYPE);
+        if (BluesnapCheckoutActivity.NEW_CC.equals(fragmentType))
             startActivityWithNewCreditCardFragment();
-        else if (ChoosePaymentMethodActivity.RETURNING_CC.equals(fragmentType))
+        else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType))
             startActivityWithReturningShopperCreditCardFragment();
 
         headerTextView = (TextView) findViewById(R.id.headerTextView);
@@ -239,8 +232,8 @@ public class CreditCardActivity extends AppCompatActivity {
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
         assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
-            resultIntent.putExtra(EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
-        resultIntent.putExtra(EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
+            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
+        resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
 
         Log.d(TAG, "Testing if card requires server tokenization:" + shopper.getNewCreditCardInfo().getCreditCard().toString());
         try {
@@ -248,7 +241,7 @@ public class CreditCardActivity extends AppCompatActivity {
         } catch (UnsupportedEncodingException | JSONException e) {
             String errorMsg = "SDK service error";
             Log.e(TAG, errorMsg, e);
-            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
             finish();
         }
     }
@@ -286,7 +279,7 @@ public class CreditCardActivity extends AppCompatActivity {
                     sdkResult.setLast4Digits(Last4);
                     // update card type from server result
                     sdkResult.setCardType(ccType);
-                    resultIntent.putExtra(EXTRA_PAYMENT_RESULT, sdkResult);
+                    resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
                     setResult(RESULT_OK, resultIntent);
                     //Only set the remember shopper here since failure can lead to missing tokenization on the server
                     shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
@@ -295,7 +288,7 @@ public class CreditCardActivity extends AppCompatActivity {
                 } catch (NullPointerException | JSONException e) {
                     Log.e(TAG, "", e);
                     String errorMsg = String.format("Service Error %s", e.getMessage());
-                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
+                    setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
                     finish();
                 }
 
@@ -326,7 +319,7 @@ public class CreditCardActivity extends AppCompatActivity {
                         } else {
                             String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
                             Log.e(TAG, errorMsg, throwable);
-                            setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+                            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
                             finish();
                         }
                     } catch (JSONException e) {
@@ -335,7 +328,7 @@ public class CreditCardActivity extends AppCompatActivity {
                 } else {
                     String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
                     Log.e(TAG, errorMsg, throwable);
-                    setResult(RESULT_SDK_FAILED, new Intent().putExtra(SDK_ERROR_MSG, errorMsg));
+                    setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
                     finish();
                 }
             }
