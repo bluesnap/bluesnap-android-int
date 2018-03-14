@@ -7,11 +7,11 @@ import android.support.test.rule.ActivityTestRule;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
-import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import org.junit.After;
 import org.junit.Before;

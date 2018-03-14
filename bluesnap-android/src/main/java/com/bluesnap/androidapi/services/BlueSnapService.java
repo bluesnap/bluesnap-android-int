@@ -360,7 +360,7 @@ public class BlueSnapService {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
-                    sDKConfiguration.getRates().setInitialRates();
+                    //sDKConfiguration.getRates().setInitialRates();
 
                     try {
                         if (null != context)
@@ -473,9 +473,7 @@ public class BlueSnapService {
      */
     @Nullable
     public Set<String> getSupportedRates() {
-        if (sDKConfiguration.getRates().getRatesMap() != null)
-            return sDKConfiguration.getRates().getRatesMap().keySet();
-        else return null;
+        return sDKConfiguration.getRates().getCurrencyCodes();
     }
 
     /**
@@ -519,8 +517,8 @@ public class BlueSnapService {
         // get Rates
         Rates rates = sDKConfiguration.getRates();
         // check if currentCurrencyNameCode is MerchantStoreCurrency
-        Double currentRate = rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate();
-        Double newRate = rates.getRatesMap().get(newCurrencyNameCode).getConversionRate();
+        Double currentRate = rates.getCurrencyByCode(currentCurrencyNameCode).getConversionRate();
+        Double newRate = rates.getCurrencyByCode(newCurrencyNameCode).getConversionRate();
 
         if (!currentCurrencyNameCode.equals(rates.getMerchantStoreCurrency())) {
             currentPrice = (1 / currentRate) * currentPrice;
