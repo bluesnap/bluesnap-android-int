@@ -10,6 +10,7 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.Rates;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -537,8 +538,9 @@ public class BlueSnapService {
         try {
             sdkResult.setToken(bluesnapToken.getMerchantToken());
             // Copy values from request
-            sdkResult.setAmount(sdkRequest.getAmount());
-            sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+            final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+            sdkResult.setAmount(priceDetails.getAmount());
+            sdkResult.setCurrencyNameCode(priceDetails.getCurrencyNameCode());
         } catch (Exception e) {
             Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
         }
@@ -566,43 +568,45 @@ public class BlueSnapService {
         sdkRequest = newSdkRequest;
         sdkResult = new SdkResult();
         // Copy values from request
-        sdkResult.setAmount(sdkRequest.getAmount());
-        sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        sdkResult.setAmount(priceDetails.getAmount());
+        sdkResult.setCurrencyNameCode(priceDetails.getCurrencyNameCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
     }
 
     @Subscribe
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
-        String baseCurrency = sdkRequest.getBaseCurrency();
+        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        String baseCurrency = priceDetails.getBaseCurrency();
         if (currencySelectionEvent.newCurrencyNameCode.equals(baseCurrency)) {
-            sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
-            if (sdkRequest.isSubtotalTaxSet()) {
-                sdkRequest.setAmountWithTax(sdkRequest.getBaseSubtotalAmount(), sdkRequest.getBaseTaxAmount());
+            priceDetails.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
+            if (priceDetails.isSubtotalTaxSet()) {
+                priceDetails.setAmountWithTax(priceDetails.getBaseSubtotalAmount(), priceDetails.getBaseTaxAmount());
             } else {
-                sdkRequest.setAmountNoTax(sdkRequest.getBaseAmount());
+                priceDetails.setAmountNoTax(priceDetails.getBaseAmount());
             }
-            busInstance.post(new Events.CurrencyUpdatedEvent(sdkRequest.getBaseAmount(),
+            busInstance.post(new Events.CurrencyUpdatedEvent(priceDetails.getBaseAmount(),
                     currencySelectionEvent.newCurrencyNameCode,
-                    sdkRequest.getBaseTaxAmount(),
-                    sdkRequest.getBaseSubtotalAmount()));
+                    priceDetails.getBaseTaxAmount(),
+                    priceDetails.getBaseSubtotalAmount()));
         } else {
-            Double newPrice = convertPrice(sdkRequest.getBaseAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
+            Double newPrice = convertPrice(priceDetails.getBaseAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
 
-            sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
+            priceDetails.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
             getSdkResult().setAmount(newPrice);
             getSdkResult().setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
 
-            Double newTaxValue = convertPrice(sdkRequest.getBaseTaxAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
-            Double newSubtotal = convertPrice(sdkRequest.getBaseSubtotalAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
-            if (sdkRequest.isSubtotalTaxSet()) {
-                sdkRequest.setAmountWithTax(newSubtotal, newTaxValue);
+            Double newTaxValue = convertPrice(priceDetails.getBaseTaxAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
+            Double newSubtotal = convertPrice(priceDetails.getBaseSubtotalAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
+            if (priceDetails.isSubtotalTaxSet()) {
+                priceDetails.setAmountWithTax(newSubtotal, newTaxValue);
             } else {
-                sdkRequest.setAmountNoTax(newPrice);
+                priceDetails.setAmountNoTax(newPrice);
             }
             busInstance.post(new Events.CurrencyUpdatedEvent(newPrice, currencySelectionEvent.newCurrencyNameCode, newTaxValue, newSubtotal));
         }
-        sdkResult.setAmount(sdkRequest.getAmount());
-        sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        sdkResult.setAmount(priceDetails.getAmount());
+        sdkResult.setCurrencyNameCode(priceDetails.getCurrencyNameCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
 
 

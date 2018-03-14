@@ -260,16 +260,17 @@ public class DemoMainActivity extends AppCompatActivity {
         if (!taxString.isEmpty()) {
             taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
         }
-        // You can set the Amout solely
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString());
+        Double taxAmount = 0D;
+        // You can set the Amouut solely
+        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
 
-        // Or you can set the Amount with tax, this will override setAmount()
-        // The total purchase amount will be the sum of both numbers
-        if (taxAmountPrecentage > 0D) {
-            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
-        } else {
-            sdkRequest.setAmountNoTax(productPrice);
-        }
+//        // Or you can set the Amount with tax, this will override setAmount()
+//        // The total purchase amount will be the sum of both numbers
+//        if (taxAmountPrecentage > 0D) {
+//            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
+//        } else {
+//            sdkRequest.setAmountNoTax(productPrice);
+//        }
 
 
         sdkRequest.setCustomTitle("Demo Merchant");

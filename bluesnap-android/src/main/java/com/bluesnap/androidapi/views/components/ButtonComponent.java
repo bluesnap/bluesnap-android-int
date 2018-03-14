@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -83,13 +84,12 @@ public class ButtonComponent extends LinearLayout {
     public void setBuyNowButton(ButtonComponentText buttonComponentText) {
 
         if (buttonComponentText.equals(ButtonComponentText.PAY)) {
-            SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
-
+            final PriceDetails priceDetails = BlueSnapService.getInstance().getSdkRequest().getPriceDetails();
             buyNowButton.setText(
                     getStringFormatAmount(
                             getResources().getString(R.string.pay),
-                            sdkRequest.getCurrencyNameCode(),
-                            sdkRequest.getAmount()
+                            priceDetails.getCurrencyNameCode(),
+                            priceDetails.getAmount()
                     )
             );
         } else if (buttonComponentText.equals(ButtonComponentText.DONE)) {

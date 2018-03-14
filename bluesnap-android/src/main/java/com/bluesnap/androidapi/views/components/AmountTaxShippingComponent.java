@@ -12,6 +12,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
@@ -83,10 +84,11 @@ public class AmountTaxShippingComponent extends LinearLayout {
         else
             shippingSameAsBillingRelativeLayout.setVisibility(GONE);
 
-        if (sdkRequest.isSubtotalTaxSet()) {
+        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        if (priceDetails.isSubtotalTaxSet()) {
             amountTaxLinearLayout.setVisibility(VISIBLE);
-            amountTextView.setText(setTextForAmountTaxView(sdkRequest.getCurrencyNameCode(), sdkRequest.getSubtotalAmount()));
-            taxTextView.setText(setTextForAmountTaxView(sdkRequest.getCurrencyNameCode(), sdkRequest.getTaxAmount()));
+            amountTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyNameCode(), priceDetails.getSubtotalAmount()));
+            taxTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyNameCode(), priceDetails.getTaxAmount()));
         } else {
             amountTaxLinearLayout.setVisibility(GONE);
         }

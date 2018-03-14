@@ -7,11 +7,11 @@ import android.support.test.rule.ActivityTestRule;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
-import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.hasToString;
 //@RunWith(AndroidJUnit4.class)
 @LargeTest
 public class CurrencyChangeTest extends EspressoBasedTest {
-    public static final Double AMOUNT = 23.4;
+    private static final Double AMOUNT = 23.4;
     private static final String TAG = CurrencyChangeTest.class.getSimpleName();
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
@@ -51,7 +51,7 @@ public class CurrencyChangeTest extends EspressoBasedTest {
     public void setup() throws InterruptedException, BSPaymentRequestException {
         super.setup();
         super.setSDKToken();
-        SdkRequest sdkRequest = new SdkRequest(AMOUNT, "USD");
+        SdkRequest sdkRequest = new SdkRequest(AMOUNT, "USD", 0D, false, false, false);
         //Thread.sleep(500);
         Intent intent = new Intent();
         BlueSnapService.getInstance().setSdkRequest(sdkRequest);
