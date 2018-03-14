@@ -68,7 +68,7 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/layout_bg"
-                android:elevation="10dp"
+                android:elevation="@dimen/elevation_size"
                 android:orientation="horizontal"
                 android:paddingBottom="2.5dp"
                 android:paddingTop="2.5dp">
@@ -93,7 +93,7 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/layout_bg"
-                android:elevation="10dp"
+                android:elevation="@dimen/elevation_size"
                 android:orientation="horizontal"
                 android:paddingBottom="2.5dp"
                 android:paddingTop="2.5dp">
