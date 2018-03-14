@@ -144,8 +144,12 @@ public class BlueSnapService {
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
 
+    /**
+     * check if paypal url is same as before and clears it if so
+     *
+     * @param merchantToken
+     */
     private void initPayPal(String merchantToken) {
-        // check if paypal url is same as before
         if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && !"".equals(getPayPalToken())) {
             Log.d(TAG, "clearPayPalToken");
             clearPayPalToken();
@@ -185,7 +189,7 @@ public class BlueSnapService {
      */
     public void submitTokenizedDetails(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(createDataObject(shopper), responseHandler);
+        blueSnapAPI.tokenizeDetails(createDataObject(shopper), responseHandler);
     }
 
     /**
@@ -200,7 +204,7 @@ public class BlueSnapService {
      */
     public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(createDataObject(creditCard, billingInfo, shippingInfo), responseHandler);
+        blueSnapAPI.tokenizeDetails(createDataObject(creditCard, billingInfo, shippingInfo), responseHandler);
     }
 
     /**
@@ -214,7 +218,7 @@ public class BlueSnapService {
      */
     public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(createDataObject(creditCard, billingInfo, null), responseHandler);
+        blueSnapAPI.tokenizeDetails(createDataObject(creditCard, billingInfo, null), responseHandler);
     }
 
     /**
@@ -297,13 +301,19 @@ public class BlueSnapService {
      */
     private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(new JSONObject(), responseHandler);
+        blueSnapAPI.tokenizeDetails(new JSONObject(), responseHandler);
     }
 
     private interface AfterNewTokenCreatedAction {
         void complete();
     }
 
+    /**
+     * check Token Is Expired and tries to create a new one if so
+     *
+     * @param callback                   - {@link BluesnapServiceCallback}
+     * @param afterNewTokenCreatedAction - {@link AfterNewTokenCreatedAction}
+     */
     private void tokenExpiredAction(final BluesnapServiceCallback callback, final AfterNewTokenCreatedAction afterNewTokenCreatedAction) {
         // try to PUT empty {} to check if token is expired
         try {
@@ -389,10 +399,22 @@ public class BlueSnapService {
         });
     }
 
+    /**
+     * retrieve Rates Array
+     *
+     * @return Currency Rate Array
+     */
     public ArrayList<Currency> getRatesArray() {
         return sDKConfiguration.getRates().getCurrencies();
     }
 
+    /**
+     * activates creation of PayPal Token(URL) {@link BlueSnapAPI}
+     *
+     * @param amount   - amount to change
+     * @param currency - currency to charge with
+     * @param callback - what to do when done
+     */
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
         blueSnapAPI.createPayPalToken(amount, currency, sdkRequest.isShippingRequired(), new JsonHttpResponseHandler() {
 
@@ -444,6 +466,11 @@ public class BlueSnapService {
         });
     }
 
+    /**
+     * check transaction status after PayPal transaction occurred
+     *
+     * @param callback - what to do when done
+     */
     public void retrieveTransactionStatus(final BluesnapServiceCallback callback) {
         blueSnapAPI.retrieveTransactionStatus(new JsonHttpResponseHandler() {
 
@@ -529,6 +556,11 @@ public class BlueSnapService {
         return (newRate) * currentPrice;
     }
 
+    /**
+     * get SdkResult with token, amount and currency set
+     *
+     * @return {@link SdkResult}
+     */
     public synchronized SdkResult getSdkResult() {
         if (sdkResult == null) {
             sdkResult = new SdkResult();
@@ -571,6 +603,11 @@ public class BlueSnapService {
         sdkResult.setShopperID(sdkRequest.getShopperID());
     }
 
+    /**
+     * for Event Bus when Currency change occured {@link Events}
+     *
+     * @param currencySelectionEvent
+     */
     @Subscribe
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
         String baseCurrency = sdkRequest.getBaseCurrency();
@@ -616,10 +653,22 @@ public class BlueSnapService {
         return bluesnapToken;
     }
 
+    /**
+     * check if country has zip according to countries without zip array {@link Constants}
+     *
+     * @param context - {@link Context}
+     * @return boolean
+     */
     public boolean doesCountryhaveZip(Context context) {
         return (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry(context)));
     }
 
+    /**
+     * returns user country according to {@link TelephonyManager} sim or network
+     *
+     * @param context - {@link Context}
+     * @return Country - ISO 3166-1 alpha-2 standard, default value is US
+     */
     public String getUserCountry(Context context) {
         try {
             final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);

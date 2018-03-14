@@ -41,6 +41,12 @@ public class AndroidUtil {
         context.getResources().updateConfiguration(config, null);
     }
 
+    /**
+     * get Currency Symbol according to Currency name code
+     *
+     * @param newCurrencyNameCode
+     * @return Currency Symbol
+     */
     public static String getCurrencySymbol(String newCurrencyNameCode) {
         try {
             String symbol = Currency.getInstance(newCurrencyNameCode).getSymbol();
@@ -76,6 +82,13 @@ public class AndroidUtil {
         return (!"".equals(mainString) ? mainString : stringify(secondary));
     }
 
+    /**
+     * check if null, if so returns empty string
+     * also trim and replace white spaces
+     *
+     * @param s
+     * @return trimmed String
+     */
     public static String stringify(Object s) {
         if (s == null || s.toString().isEmpty())
             return "";
