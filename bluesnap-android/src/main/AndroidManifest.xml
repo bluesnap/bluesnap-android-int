@@ -43,7 +43,7 @@
                 android:value=".views.activities.CreditCardActivity" />
         </activity>
         <activity
-            android:name=".views.WebViewActivity"
+            android:name=".views.activities.WebViewActivity"
             android:label="@string/title_activity_web_view"
             android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"

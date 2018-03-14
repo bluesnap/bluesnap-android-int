@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.views;
+package com.bluesnap.androidapi.models;
 
 import java.util.ArrayList;
 

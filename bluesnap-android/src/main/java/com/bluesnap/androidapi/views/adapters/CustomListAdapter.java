@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.views.CustomListObject;
+import com.bluesnap.androidapi.models.CustomListObject;
 
 import java.util.ArrayList;
 

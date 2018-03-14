@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.views;
+package com.bluesnap.androidapi.views.fragments;
 
 import com.bluesnap.androidapi.models.Events;
 

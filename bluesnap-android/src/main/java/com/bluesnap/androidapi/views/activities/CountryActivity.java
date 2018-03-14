@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.views.CustomListObject;
+import com.bluesnap.androidapi.models.CustomListObject;
 import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
 
 import java.util.ArrayList;

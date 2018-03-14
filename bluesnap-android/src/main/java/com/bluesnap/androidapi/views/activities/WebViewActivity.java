@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.views;
+package com.bluesnap.androidapi.views.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,7 +18,6 @@ import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 public class WebViewActivity extends Activity {
 

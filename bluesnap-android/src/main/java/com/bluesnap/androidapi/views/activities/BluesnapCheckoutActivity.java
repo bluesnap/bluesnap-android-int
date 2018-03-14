@@ -23,7 +23,6 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.views.WebViewActivity;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
 
 import org.json.JSONObject;
