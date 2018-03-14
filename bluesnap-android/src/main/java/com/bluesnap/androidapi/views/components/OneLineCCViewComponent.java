@@ -70,6 +70,6 @@ public class OneLineCCViewComponent extends LinearLayout {
     }
 
     private void setCardIconImage(String type) {
-        this.cardIconImageView.setImageResource(CreditCardTypeResolver.getCardTypeDrawable(type));
+        this.cardIconImageView.setImageResource(CreditCardTypeResolver.getInstance().getCardTypeDrawable(type));
     }
 }

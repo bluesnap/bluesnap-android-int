@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  */
 
 public class CreditCardTypeResolver {
+
     private static final String TAG = CreditCardTypeResolver.class.getSimpleName();
-    private static final CreditCardTypeResolver INSTANCE = new CreditCardTypeResolver();
     public static final String AMEX = "American Express";
     public static final String DISCOVER = "Discover";
     public static final String JCB = "JCB";
@@ -33,16 +33,20 @@ public class CreditCardTypeResolver {
     public static final String UNKNOWN = "Unknown";
     public static final String NEWCARD = "NEWCARD";
 
+    private static final CreditCardTypeResolver INSTANCE = new CreditCardTypeResolver();
+
     public static CreditCardTypeResolver getInstance() {
         return INSTANCE;
     }
+
+    protected CreditCardTypeResolver() {}
 
     /**
      *
      * @param number - credit card number
      * @return Card Type Resource String
      */
-    public static String getType(String number) {
+    public String getType(String number) {
         LinkedHashMap<String, String> creditCardRegex = creditCardRegex();
         for (HashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
             if (Pattern.matches(entry.getValue(), number))
@@ -56,7 +60,7 @@ public class CreditCardTypeResolver {
      * @param type - receive string type
      * @return Card Type Drawable
      */
-    public static int getCardTypeDrawable(final String type) {
+    public int getCardTypeDrawable(final String type) {
         int cardDrawable = 0;
         if (null == type)
             return cardDrawable;
@@ -103,7 +107,7 @@ public class CreditCardTypeResolver {
      * credit Car dRegex Linked Hash Map Presentation
      * @return LinkedHashMap of creditCardRegex
      */
-    private static LinkedHashMap<String, String> creditCardRegex() {
+    private LinkedHashMap<String, String> creditCardRegex() {
         LinkedHashMap<String, String> creditCardRegex = new LinkedHashMap<>();
         creditCardRegex.put("ELO", "^(40117[8-9]|431274|438935|451416|457393|45763[1-2]|504175|506699|5067[0-6][0-9]|50677[0-8]|509[0-9][0-9][0-9]|636368|636369|636297|627780).*");
         creditCardRegex.put("HIPERCARD", "^(606282|637095).*");
@@ -128,7 +132,7 @@ public class CreditCardTypeResolver {
      * @param cardTypeResourceName - server name representation of credit card type
      * @return client side name representation of credit card type
      */
-    public static String getCardTypeResource(String cardTypeResourceName) {
+    public String getCardTypeResource(String cardTypeResourceName) {
         try {
             return (String) CreditCardTypeResolver.class.getDeclaredField(cardTypeResourceName).get(null);
         } catch (IllegalAccessException e) {

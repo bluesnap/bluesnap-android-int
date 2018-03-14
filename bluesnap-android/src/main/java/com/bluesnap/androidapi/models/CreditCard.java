@@ -89,7 +89,7 @@ public class CreditCard {
      */
     public void setNumber(String number) {
         String normalizedCardNumber = normalizeCardNumber(number);
-        String cardType = CreditCardTypeResolver.getType(normalizedCardNumber);
+        String cardType = CreditCardTypeResolver.getInstance().getType(normalizedCardNumber);
         String lastFourDigits = getNumberLastFourDigits(normalizedCardNumber);
 
         if (normalizedCardNumber != null && normalizedCardNumber.length() > 2) {
