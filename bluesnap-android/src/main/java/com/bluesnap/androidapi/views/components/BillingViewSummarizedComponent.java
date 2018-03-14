@@ -33,6 +33,11 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
         super(context);
     }
 
+    /**
+     * updates BillingViewSummarizedComponent with details
+     *
+     * @param billingInfo - {@link BillingInfo}
+     */
     public void updateResource(BillingInfo billingInfo) {
         super.updateResource(billingInfo);
 

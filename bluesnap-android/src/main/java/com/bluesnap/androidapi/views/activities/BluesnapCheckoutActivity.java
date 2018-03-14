@@ -196,6 +196,10 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * start PayPal
+     * createsPayPal Token and redirects to Web View Activity
+     */
     private void startPayPal() {
         progressBar.setVisibility(View.VISIBLE);
         BlueSnapService.getInstance().createPayPalToken(sdkRequest.getAmount(), sdkRequest.getCurrencyNameCode(), new BluesnapServiceCallback() {
@@ -255,6 +259,11 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * start WebView Activity for PayPal Checkout
+     *
+     * @param payPalUrl - received from createPayPalToken {@link com.bluesnap.androidapi.services.BlueSnapAPI}
+     */
     private void startWebViewActivity(String payPalUrl) {
         Intent newIntent;
         newIntent = new Intent(getApplicationContext(), WebViewActivity.class);

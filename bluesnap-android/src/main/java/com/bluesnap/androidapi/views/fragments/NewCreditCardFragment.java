@@ -109,6 +109,11 @@ public class NewCreditCardFragment extends Fragment {
         return inflate;
     }
 
+    /**
+     * validate And Set Credit Card Info And Billing Info to new Credit Card Info {@link Shopper}
+     *
+     * @return boolean - validation success or failure
+     */
     public boolean validateAndSetCreditCardInfoAndBillingInfo() {
         boolean isValid = oneLineCCEditComponent.validateInfo() && billingViewComponent.validateInfo();
         if (isValid) {
@@ -118,6 +123,13 @@ public class NewCreditCardFragment extends Fragment {
         return isValid;
     }
 
+    /**
+     * get Credit Card Info from
+     * {@link OneLineCCEditComponent}
+     * {@link BillingViewComponent}
+     *
+     * @return {@link CreditCardInfo}
+     */
     public CreditCardInfo getCreditCardInfo() {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
         creditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
@@ -125,6 +137,10 @@ public class NewCreditCardFragment extends Fragment {
         return creditCardInfo;
     }
 
+    /**
+     * activate finish from fragment function {@link CreditCardActivity}
+     * with the shopper created in this fragment
+     */
     private void finishFromFragment() {
         Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
         Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
@@ -133,6 +149,11 @@ public class NewCreditCardFragment extends Fragment {
         creditCardActivity.finishFromFragment(shopper);
     }
 
+    /**
+     * finish From Fragment assumes no shipping
+     * validates Credit Card And Billing Info
+     * activate the finishFromFragment function
+     */
     private void finishFromFragmentNoShipping() {
         amountTaxShippingComponentView.setVisibility(View.VISIBLE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
@@ -147,6 +168,10 @@ public class NewCreditCardFragment extends Fragment {
         });
     }
 
+    /**
+     * finish From Fragment assumes no shipping
+     * validates Credit Card And Billing Info and moves to shipping
+     */
     private void finishFromFragmentWithShipping() {
         amountTaxShippingComponentView.setVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {

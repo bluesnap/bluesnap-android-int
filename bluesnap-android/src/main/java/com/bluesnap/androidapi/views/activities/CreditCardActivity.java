@@ -175,6 +175,12 @@ public class CreditCardActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * menu Switch
+     *
+     * @param i - Id pressed on the menu the switch accordingly
+     * @return boolean if exists
+     */
     private Boolean menuSwitch(int i) {
         Intent newIntent;
 
@@ -188,6 +194,10 @@ public class CreditCardActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * hamburger Menu Listener
+     * handles the menu button actions and update currency accordingly (View)
+     */
     private class hamburgerMenuListener implements View.OnClickListener {
         private ImageButton hamburgerMenuButton;
 
@@ -246,6 +256,15 @@ public class CreditCardActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * tokenize Card On Server,
+     * receive shopper and activate api tokenization to the server according to SDK Request {@link SdkRequest} spec
+     *
+     * @param shopper      - {@link Shopper}
+     * @param resultIntent - {@link Intent}
+     * @throws UnsupportedEncodingException
+     * @throws JSONException
+     */
     private void tokenizeCardOnServer(final Shopper shopper, final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
 
         blueSnapService.submitTokenizedDetails(shopper, new TextHttpResponseHandler() {

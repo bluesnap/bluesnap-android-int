@@ -81,9 +81,9 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         city = stringify(city);
         state = stringify(state);
 
-        if(!address.isEmpty())
+        if (!address.isEmpty())
             address += ",";
-        else if(address.isEmpty() && city.isEmpty() && state.isEmpty())
+        else if (address.isEmpty() && city.isEmpty() && state.isEmpty())
             forFullBillingLinearLayout.setVisibility(GONE);
 
         setCountryText(country);
@@ -126,6 +126,12 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         this.emailTextView.setVisibility(visibility);
     }
 
+    /**
+     * check if null, if so returns empty string
+     *
+     * @param s - String
+     * @return same String or an empty one if String is Empty or null
+     */
     static String stringify(String s) {
         if (s == null || s.isEmpty())
             return "";

@@ -51,10 +51,22 @@ public class OneLineCCViewComponent extends LinearLayout {
         cardIconImageView = (ImageView) findViewById(R.id.cardIconImageView);
     }
 
+    /**
+     * update OneLineCCViewComponent
+     *
+     * @param creditCard - {@link CreditCard}
+     */
     public void updateResource(CreditCard creditCard) {
         updateResource(creditCard.getCardLastFourDigits(), creditCard.getExpirationDateForEditTextAndSpinner(), creditCard.getCardType());
     }
 
+    /**
+     * update OneLineCCViewComponent
+     *
+     * @param lastFourDigits
+     * @param expDateString
+     * @param type
+     */
     public void updateResource(String lastFourDigits, String expDateString, String type) {
         setCCLastFourDigitsText(lastFourDigits);
         setExpText(expDateString);
@@ -69,6 +81,10 @@ public class OneLineCCViewComponent extends LinearLayout {
         this.ccLastFourDigitsTextView.setText(lastFourDigits);
     }
 
+    /**
+     * set image resource according to credit card type
+     * @param type - Credit Card Type {@link CreditCardTypeResolver}
+     */
     private void setCardIconImage(String type) {
         this.cardIconImageView.setImageResource(CreditCardTypeResolver.getCardTypeDrawable(type));
     }

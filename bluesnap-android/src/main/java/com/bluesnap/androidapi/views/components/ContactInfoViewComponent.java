@@ -378,6 +378,9 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
     }
 
+    /**
+     * request Focus On Name Input
+     */
     public void requestFocusOnNameInput() {
         inputName.requestFocus();
     }
