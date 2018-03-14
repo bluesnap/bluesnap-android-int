@@ -8,6 +8,7 @@ import android.util.Log;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardTypes;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.Rates;
@@ -321,6 +322,7 @@ public class BlueSnapService {
                         Log.e(TAG, "Kount SDK initialization error");
                     }
 
+                    CreditCardTypes.setCreditCardRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
