@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CustomListObject;
+import com.bluesnap.androidapi.views.adapters.CountryListAdapter;
 import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class CountryActivity extends Activity {
     String[] country_key_array;
     EditText inputSearch;
     String localeCountry;
-    CustomListAdapter adapter;
+    CountryListAdapter adapter;
     Map<String, Integer> mapIndex;
 
     @Override
@@ -50,13 +51,13 @@ public class CountryActivity extends Activity {
             localeCountry = country_values_array[Arrays.asList(country_key_array).indexOf(savedInstanceState.getString(getString(R.string.COUNTRY_STRING)).toUpperCase())];
         }
 
-        adapter = new CustomListAdapter(this, CustomListObject.getCustomListObject(country_values_array), localeCountry);
+        adapter = new CountryListAdapter(this, CustomListObject.getCustomListObject(country_values_array),CustomListObject.getCustomListObject(country_key_array), localeCountry);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String countryPick = country_key_array[Arrays.asList(country_values_array).indexOf(adapter.customListObjects.get(position).getName())];
+                String countryPick = adapter.countryInitialListObjects.get(position).getName();
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("result", countryPick);
                 setResult(Activity.RESULT_OK, returnIntent);

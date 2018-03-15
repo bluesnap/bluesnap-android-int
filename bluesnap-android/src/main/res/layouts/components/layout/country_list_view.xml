@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_view_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/countryImage"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10sp"
+        android:padding="5sp"
+        android:src="@drawable/us"
+        android:contentDescription="countryImage" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/countryTextView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10sp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:padding="5sp"
+        android:textDirection="ltr"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/bluensap_customlist_list_view_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10sp"
+        android:padding="5sp"
+        android:src="@drawable/blue_check_mark"
+        android:visibility="invisible"
+        android:contentDescription="previously selected country check mark icon" />
+
+</LinearLayout>
