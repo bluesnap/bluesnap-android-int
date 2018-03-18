@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.ContactInfo;
@@ -52,8 +55,18 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus) {
                         validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
-                        inputZip.requestFocus();
                     }
+                }
+            });
+
+            inputEmail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                        inputZip.requestFocus();
+                        return true;
+                    }
+                    return false;
                 }
             });
         } else {

@@ -295,49 +295,6 @@ public class DemoMainActivity extends AppCompatActivity {
             bluesnapService.setSdkRequest(sdkRequest);
             Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
             startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
-            //startActivity(new Intent(getApplicationContext(), BluesnapCheckoutActivity.class));
-            /*bluesnapService.startBlueSnapActivityForResult(sdkRequest, getApplicationContext(), new BluesnapServiceResultCallback() {
-                @Override
-                public void onSuccess(SdkResult sdkResult) {
-
-                    //Start a demo activity that shows purchase summary.
-                    Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
-                    intent.putExtra("MERCHANT_TOKEN", merchantToken);
-                    intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-
-                    // If shipping information is available show it, Here we simply log the shipping info.
-                    ShippingInfo shippingInfo = (ShippingInfo) sdkResult.getShippingInfo();
-                    if (shippingInfo != null) {
-                        Log.d(TAG, "ShippingInfo " + shippingInfo.toString());
-                        intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
-                    }
-
-                    // If billing information is available show it, Here we simply log the billing info.
-                    BillingInfo billingInfo = (BillingInfo) sdkResult.getBillingInfo();
-                    if (billingInfo != null) {
-                        Log.d(TAG, "BillingInfo " + billingInfo.toString());
-                        intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
-                    }
-
-                    startActivity(intent);
-
-                    //Recreate the demo activity
-                    merchantToken = null;
-                    recreate();
-                }
-
-                @Override
-                public void onFailure(String errorMsg) {
-                    if (errorMsg != null) {
-                        String sdkErrorMsg = "SDK Failed to process the request:";
-                        sdkErrorMsg += errorMsg;
-                        showDialog(sdkErrorMsg);
-                    } else {
-                        showDialog("Purchase canceled");
-                    }
-                    return;
-                }
-            });*/
         } catch (BSPaymentRequestException e) {
             Log.e(TAG, "payment request not validated: ", e);
             finish();

@@ -145,8 +145,7 @@ public class NewCreditCardFragment extends Fragment {
         Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
         Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
         Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
-        CreditCardActivity creditCardActivity = (CreditCardActivity) getActivity();
-        creditCardActivity.finishFromFragment(shopper);
+        ((CreditCardActivity) getActivity()).finishFromFragment(shopper);
     }
 
     /**
@@ -155,7 +154,7 @@ public class NewCreditCardFragment extends Fragment {
      * activate the finishFromFragment function
      */
     private void finishFromFragmentNoShipping() {
-        amountTaxShippingComponentView.setVisibility(View.VISIBLE);
+        amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,12 +172,15 @@ public class NewCreditCardFragment extends Fragment {
      * validates Credit Card And Billing Info and moves to shipping
      */
     private void finishFromFragmentWithShipping() {
-        amountTaxShippingComponentView.setVisibility(View.GONE);
+        amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.VISIBLE);
+        amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
-                    amountTaxShippingComponentView.setVisibility(View.VISIBLE);
+                    ((CreditCardActivity) getActivity()).setHeaderTextView(ReturningShopperShippingFragment.TAG);
+                    amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
+                    amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
                     billingViewComponentLinearLayout.setVisibility(View.GONE);
                     oneLineCCEditComponent.setVisibility(View.GONE);
                     shippingViewComponentLinearLayout.setVisibility(View.VISIBLE);

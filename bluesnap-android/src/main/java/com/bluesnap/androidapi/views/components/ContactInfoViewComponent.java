@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
@@ -80,6 +82,8 @@ public class ContactInfoViewComponent extends LinearLayout {
         setUserCountry(BlueSnapService.getInstance().getUserCountry(context));
         // activate all on focus out event listeners
         setOnFocusChangeListenerForInputs();
+        // activate all on editor action listener IME_ACTION_NEXT
+        setOnEditorActionListenerForInputs();
 
         countryImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,7 +203,6 @@ public class ContactInfoViewComponent extends LinearLayout {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
-                    inputZip.requestFocus();
                 }
             }
         });
@@ -209,7 +212,6 @@ public class ContactInfoViewComponent extends LinearLayout {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
-                    inputState.requestFocus();
                 }
             }
         });
@@ -221,7 +223,6 @@ public class ContactInfoViewComponent extends LinearLayout {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
-                    inputAddress.requestFocus();
                 }
             }
         });
@@ -245,7 +246,6 @@ public class ContactInfoViewComponent extends LinearLayout {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus) {
                         validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
-                        inputCity.requestFocus();
                     }
                 }
             });
@@ -357,8 +357,17 @@ public class ContactInfoViewComponent extends LinearLayout {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
-                    inputEmail.requestFocus();
                 }
+            }
+        });
+        inputName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    inputEmail.requestFocus();
+                    return true;
+                }
+                return false;
             }
         });
     }
@@ -383,6 +392,54 @@ public class ContactInfoViewComponent extends LinearLayout {
      */
     public void requestFocusOnNameInput() {
         inputName.requestFocus();
+    }
+
+    /**
+     * set On Editor Action Listener IME_ACTION_NEXT For All Inputs
+     */
+    void setOnEditorActionListenerForInputs() {
+        inputName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    inputZip.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        inputZip.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    inputState.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        inputState.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    inputCity.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+        inputCity.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    inputAddress.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }
 

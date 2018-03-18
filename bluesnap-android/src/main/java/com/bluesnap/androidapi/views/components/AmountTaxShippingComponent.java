@@ -27,6 +27,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     private Switch shippingSameAsBillingSwitch;
     private LinearLayout amountTaxLinearLayout;
     private TextView amountTextView, taxTextView;
+    private SdkRequest sdkRequest;
     private boolean isShippingSameAsBilling = false;
 
     public AmountTaxShippingComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -75,7 +76,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
      * also, show/hide Shipping same as billing switch
      */
     public void setAmountTaxShipping() {
-        SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
         assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
@@ -115,6 +116,12 @@ public class AmountTaxShippingComponent extends LinearLayout {
     }
 
     public void setShippingSameAsBillingVisibility(int visibility) {
-        this.shippingSameAsBillingRelativeLayout.setVisibility(visibility);
+        if (GONE == visibility || INVISIBLE == visibility || sdkRequest.isShippingRequired())
+            this.shippingSameAsBillingRelativeLayout.setVisibility(visibility);
+    }
+
+    public void setAmountTaxVisibility(int visibility) {
+        if (GONE == visibility || INVISIBLE == visibility || sdkRequest.isSubtotalTaxSet())
+            this.amountTaxLinearLayout.setVisibility(visibility);
     }
 }
