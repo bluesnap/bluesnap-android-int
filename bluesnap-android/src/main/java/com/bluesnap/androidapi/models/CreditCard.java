@@ -196,7 +196,7 @@ public class CreditCard {
      *
      * @param expirationMonth - expiration Date Month
      */
-    private void setExpirationMonth(Integer expirationMonth) {
+    public void setExpirationMonth(Integer expirationMonth) {
         this.expirationMonth = expirationMonth;
     }
 
@@ -206,7 +206,7 @@ public class CreditCard {
      *
      * @param expirationYear - expiration Date Year
      */
-    private void setExpirationYear(Integer expirationYear) {
+    public void setExpirationYear(Integer expirationYear) {
         if (expirationYear < 2000) {
             expirationYear += 2000;
         }

@@ -4,7 +4,7 @@ import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
-import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -14,7 +14,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static com.bluesnap.androidapi.services.AndroidUtil.getCalendarInstance;
+import java.util.Calendar;
+
 
 /**
  * Unit tests for card and card type
@@ -36,7 +37,7 @@ public class CardTest extends TestCase {
         String[] validAmex = new String[]{"376140184044485", "370796644125630", "377494679521484", "3782 8224 6310 005", "341111597241002"};
         for (String num : validAmex) {
             card.setNumber(num);
-            assertTrue("AMEX luhn invalid", card.validateNumber());
+            assertTrue("AMEX luhn invalid", BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("AMEX type mismatch: " + type + " " + num, CreditCardTypeResolver.AMEX.equals(type));
         }
@@ -49,7 +50,7 @@ public class CardTest extends TestCase {
         String[] validMC = new String[]{"5572758886015288", "5522796652320905", "5212330191503840", "5105 1051 0510 5100", "5424180279791732", "5555555555554444", "5365 2917 2765 9784", "6759411100000008"};
         for (String num : validMC) {
             card.setNumber(num);
-            assertTrue("MASTERCARD luhn invalid: " + num, card.validateNumber());
+            assertTrue("MASTERCARD luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("MASTERCARD type mismatch: " + type + " " + num, CreditCardTypeResolver.MASTERCARD.equals(type));
         }
@@ -62,7 +63,7 @@ public class CardTest extends TestCase {
         String[] validMC = new String[]{"5232000000123456"};
         for (String num : validMC) {
             card.setNumber(num);
-            assertFalse("MASTERCARD luhn invalid: " + num, card.validateNumber());
+            assertFalse("MASTERCARD luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("MASTERCARD type mismatch: " + type + " " + num, CreditCardTypeResolver.MASTERCARD.equals(type));
         }
@@ -75,7 +76,7 @@ public class CardTest extends TestCase {
         String[] validMC = new String[]{"4111111111111111" /*15 ones*/, "4916088887594869", "4716836794238927", "4594 4001 0053 3682", "4012 0000 3333 0026", "4263 9826 4026 9299", "4917484589897107", "4973 0100 0000 0004"};
         for (String num : validMC) {
             card.setNumber(num);
-            assertTrue("VISA luhn invalid: " + num, card.validateNumber());
+            assertTrue("VISA luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("VISA type mismatch: " + type + " " + num, CreditCardTypeResolver.VISA.equals(type));
         }
@@ -87,7 +88,7 @@ public class CardTest extends TestCase {
         String[] validMC = new String[]{"4111 1111 111" /* 10 ones */, "4111 1111 1111 1111 1111" /* 19 ones */};
         for (String num : validMC) {
             card.setNumber(num);
-            assertFalse("InValidVISA luhn valid: " + num, card.validateNumber());
+            assertFalse("InValidVISA luhn valid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("InValidVISA type match: " + type + " " + num, CreditCardTypeResolver.VISA.equals(type));
         }
@@ -100,7 +101,7 @@ public class CardTest extends TestCase {
         String[] validMaestro = new String[]{"6759411100000008"};
         for (String num : validMaestro) {
             card.setNumber(num);
-            assertTrue("MAESTR_UK luhn invalid: " + num, card.validateNumber());
+            assertTrue("MAESTR_UK luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("MAESTR_UK type mismatch: " + type + " " + num, CreditCardTypeResolver.MASTERCARD.equals(type)); // ToDo check if server returns MC
         }
@@ -113,7 +114,7 @@ public class CardTest extends TestCase {
         String[] validDiscover = new String[]{"6011 1111 1111 1117", "6011000990139424", "6011 1111 1111 1117"};
         for (String num : validDiscover) {
             card.setNumber(num);
-            assertTrue("DISCOVER luhn invalid: " + num, card.validateNumber());
+            assertTrue("DISCOVER luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("DISCOVER type mismatch: " + type + " " + num, CreditCardTypeResolver.DISCOVER.equals(type));
         }
@@ -126,7 +127,7 @@ public class CardTest extends TestCase {
         String[] validSolo = new String[]{"6334 5898 9800 0001"};
         for (String num : validSolo) {
             card.setNumber(num);
-            assertTrue("SOLO luhn invalid: " + num, card.validateNumber());
+            assertTrue("SOLO luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertFalse("SOLO type match: " + type + " " + num, CreditCardTypeResolver.UNKNOWN.equals(type));
         }
@@ -139,7 +140,7 @@ public class CardTest extends TestCase {
         String[] validDiners = new String[]{"3600 6666 3333 44"};
         for (String num : validDiners) {
             card.setNumber(num);
-            assertTrue("DINERS luhn invalid: " + num, card.validateNumber());
+            assertTrue("DINERS luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("DINERS type mismatch: " + type + " " + num, CreditCardTypeResolver.DINERS.equals(type));
         }
@@ -152,7 +153,7 @@ public class CardTest extends TestCase {
         String[] validJCB = new String[]{"3530 1113 3330 0000", "3566007770017510"};
         for (String num : validJCB) {
             card.setNumber(num);
-            assertTrue("JCB luhn invalid: " + num, card.validateNumber());
+            assertTrue("JCB luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("JCB type mismatch: " + type + " " + num, CreditCardTypeResolver.JCB.equals(type));
         }
@@ -165,7 +166,7 @@ public class CardTest extends TestCase {
         String[] validCarteBleue = new String[]{"5817 8400 4710 8510"};
         for (String num : validCarteBleue) {
             card.setNumber(num);
-            assertTrue("CARTE_BLEUE luhn invalid: " + num, card.validateNumber());
+            assertTrue("CARTE_BLEUE luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("CARTE_BLEUE type mismatch: " + type + " " + num, CreditCardTypeResolver.CARTE_BLEUE.equals(type));
         }
@@ -178,7 +179,7 @@ public class CardTest extends TestCase {
         String[] validChinaUnionPay = new String[]{"6240008631401148"};
         for (String num : validChinaUnionPay) {
             card.setNumber(num);
-            assertTrue("CHINA_UNION_PAY luhn invalid: " + num, card.validateNumber());
+            assertTrue("CHINA_UNION_PAY luhn invalid: " + num, BlueSnapValidator.creditCardNumberValidation(num));
             String type = CreditCardTypeResolver.getType(card.getNumber());
             Assert.assertTrue("CHINA_UNION_PAY type mismatch: " + type + " " + num, CreditCardTypeResolver.CHINA_UNION_PAY.equals(type));
         }
@@ -188,52 +189,52 @@ public class CardTest extends TestCase {
     public void testInvalidStrings() throws Exception {
         CreditCard card = new CreditCard();
         card.setNumber("abcdef");
-        assertFalse(card.validateNumber());
-        assertFalse(card.validateAll());
+        assertFalse(BlueSnapValidator.creditCardNumberValidation(card.getNumber()));
+        assertFalse(BlueSnapValidator.creditCardFullValidation(card));
     }
 
     @Test
     public void testValidateExpiryDate() throws Exception {
-        assertTrue("this date should be in the futre", AndroidUtil.isDateInFuture(11, 25));
+        assertTrue("this date should be in the future", BlueSnapValidator.isDateInFuture(11, 25));
         CreditCard card = new CreditCard();
         card.setExpirationMonth(13);
         card.setExpirationYear(33);
-        assertFalse("more than 12 month a year?", card.validateExpiryDate());
+        assertFalse("more than 12 month a year?", BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
         card.setExpirationMonth(21);
         card.setExpirationYear(5);
         assertFalse("Date should not be in future:" + card.getExpirationDate(),
-                AndroidUtil.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
-        assertFalse(card.validateExpiryDate());
-        assertFalse(card.validateAll());
+                BlueSnapValidator.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
+        assertFalse(BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
+        assertFalse(BlueSnapValidator.creditCardFullValidation(card));
 
         card.setExpirationMonth(0);
         card.setExpirationYear(25);
-        assertFalse("0 month is invalid", card.validateExpiryDate());
-        assertFalse(card.validateAll());
+        assertFalse("0 month is invalid", BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
+        assertFalse(BlueSnapValidator.creditCardFullValidation(card));
 
         card.setExpirationMonth(1);
         card.setExpirationYear(22);
-        assertTrue("have we past the year 2022? ", AndroidUtil.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
-        assertTrue(card.validateExpiryDate());
+        assertTrue("have we past the year 2022? ", BlueSnapValidator.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
+        assertTrue(BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
     }
 
     @Test
     public void testCurrentDateValid() throws Exception {
-        java.util.Calendar now = getCalendarInstance();
+        java.util.Calendar now = Calendar.getInstance();
         //return isYearInPast(year) || year == now.get(java.util.Calendar.YEAR) && month < (now.get(java.util.Calendar.MONTH) + 1);
         int year = now.get(java.util.Calendar.YEAR);
         int month = now.get(java.util.Calendar.MONTH) + 1;
         CreditCard card = new CreditCard();
         card.setExpirationMonth(month);
         card.setExpirationYear(year);
-        assertTrue("the card should be valid in the current month", card.validateExpiryDate());
+        assertTrue("the card should be valid in the current month", BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
 
         year = now.get(java.util.Calendar.YEAR);
         month = now.get(java.util.Calendar.MONTH); //Go to last month
         card.setExpirationMonth(month);
         card.setExpirationYear(year);
-        assertFalse("card should be invalid if expired last month", card.validateExpiryDate());
-        assertFalse(card.validateAll());
+        assertFalse("card should be invalid if expired last month", BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
+        assertFalse(BlueSnapValidator.creditCardFullValidation(card));
 
     }
 
@@ -243,26 +244,26 @@ public class CardTest extends TestCase {
         CreditCard card = new CreditCard();
         card.setExpirationMonth(java.util.Calendar.DECEMBER);
         card.setExpirationYear(05);
-        assertFalse(AndroidUtil.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
-        assertFalse(card.validateExpiryDate());
+        assertFalse(BlueSnapValidator.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
+        assertFalse(BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
         card.setExpirationMonth(11);
         card.setExpirationYear(25);
-        assertTrue(AndroidUtil.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
+        assertTrue(BlueSnapValidator.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
         card.setExpirationMonth(12);
         card.setExpirationYear(25);
-        assertTrue(card.validateExpiryDate());
+        assertTrue(BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
         card.setExpirationMonth(1);
         card.setExpirationYear(25);
-        assertTrue(card.validateExpiryDate());
+        assertTrue(BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
     }
 
     @Test
     public void validLuhnAndNoType() {
         CreditCard card = new CreditCard();
         card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/25", "123");
-        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
-        assertTrue(card.validateNumber());
-        assertTrue(card.validateAll());
+        //assertTrue("this should be a valid luhn", BlueSnapValidator.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue(BlueSnapValidator.creditCardNumberValidation(card.getNumber()));
+        assertTrue(BlueSnapValidator.creditCardFullValidation(card));
         assertFalse(card.getCardType().isEmpty());
         assertTrue("this card type should be unknown", card.getCardType().equals(CreditCardTypeResolver.UNKNOWN));
     }
@@ -271,9 +272,9 @@ public class CardTest extends TestCase {
     public void testValidateAll() throws Exception {
         CreditCard card = new CreditCard();
         card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/25", "123");
-        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
-        assertTrue(card.validateNumber());
-        assertTrue(card.validateAll());
+        //assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue(BlueSnapValidator.creditCardNumberValidation(card.getNumber()));
+        assertTrue(BlueSnapValidator.creditCardFullValidation(card));
     }
 
     @Test
@@ -284,9 +285,9 @@ public class CardTest extends TestCase {
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
         creditCard.update(number, "11/25", "123");
         billingInfo.setFullName("Homer Ssn");
-        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
-        assertTrue(creditCard.validateNumber());
-        assertTrue(creditCard.validateAll());
+        //assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue(BlueSnapValidator.creditCardNumberValidation(creditCard.getNumber()));
+        assertTrue(BlueSnapValidator.creditCardFullValidation(creditCard));
         assertFalse(creditCard.getCardType().isEmpty());
 
         String cardToString = creditCard.toString();

@@ -40,7 +40,7 @@ public class BlueSnapValidator {
     public static boolean creditCardFullValidation(CreditCard creditCard) {
         return creditCardNumberValidation(creditCard.getNumber())
                 && creditCardCVVValidation(creditCard.getCvc(), creditCard.getCardType())
-                && creditCardExpiryDateValidation(creditCard.getExpirationYear(), creditCard.getExpirationYear());
+                && creditCardExpiryDateValidation(creditCard.getExpirationYear(), creditCard.getExpirationMonth());
     }
 
     /**
@@ -135,7 +135,7 @@ public class BlueSnapValidator {
      * @param year  - expiration date, Year
      * @param month - expiration date, Month
      */
-    private static boolean isDateInFuture(int month, int year) {
+    public static boolean isDateInFuture(int month, int year) {
         Calendar now = getCalendarInstance();
         int currentYear = now.get(Calendar.YEAR);
         if (year < 2000) {
