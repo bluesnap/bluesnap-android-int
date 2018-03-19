@@ -122,7 +122,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     }
 
     public void setAmountTaxVisibility(int visibility) {
-        if (GONE == visibility || INVISIBLE == visibility || sdkRequest.isSubtotalTaxSet())
+        if (GONE == visibility || INVISIBLE == visibility || sdkRequest.getPriceDetails().isSubtotalTaxSet())
             this.amountTaxLinearLayout.setVisibility(visibility);
     }
 }
