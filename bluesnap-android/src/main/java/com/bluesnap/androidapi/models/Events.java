@@ -17,17 +17,10 @@ public class Events {
     }
 
     public static class CurrencyUpdatedEvent {
-        public String newCurrencyNameCode;
-        public Double updatedPrice;
-        public Double updatedTax;
-        public Double updatedSubtotal;
+        public PriceDetails updatedPriceDetails;
 
-
-        public CurrencyUpdatedEvent(Double newPrice, String newCurrencyNameCode, Double newTaxValue, Double newSubtotalAmount) {
-            this.updatedPrice = newPrice;
-            this.newCurrencyNameCode = newCurrencyNameCode;
-            this.updatedTax = newTaxValue;
-            this.updatedSubtotal = newSubtotalAmount;
+        public CurrencyUpdatedEvent(PriceDetails updatedPriceDetails) {
+            this.updatedPriceDetails = updatedPriceDetails;
         }
     }
 

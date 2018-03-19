@@ -206,7 +206,7 @@ public class CreditCardActivity extends AppCompatActivity {
         }
 
         public void onClick(final View v) {
-            sharedCurrency = BlueSnapService.getInstance().getSdkRequest().getCurrencyNameCode();
+            sharedCurrency = BlueSnapService.getInstance().getSdkRequest().getPriceDetails().getCurrencyCode();
             invalidateOptionsMenu();
             PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
             popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {

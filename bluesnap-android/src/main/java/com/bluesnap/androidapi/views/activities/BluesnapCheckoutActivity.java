@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.Shopper;
@@ -202,7 +203,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      */
     private void startPayPal() {
         progressBar.setVisibility(View.VISIBLE);
-        BlueSnapService.getInstance().createPayPalToken(sdkRequest.getAmount(), sdkRequest.getCurrencyNameCode(), new BluesnapServiceCallback() {
+        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        BlueSnapService.getInstance().createPayPalToken(priceDetails.getAmount(), priceDetails.getCurrencyCode(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 try {
@@ -225,7 +227,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                         //message = errorDescription.getString("description") + " please change to a PayPal supported Currency or contact Support for additional assistance";
                         message = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_1)
                                 + " "
-                                + sdkRequest.getCurrencyNameCode()
+                                + sdkRequest.getPriceDetails().getCurrencyCode()
                                 + " "
                                 + getString(R.string.CURRENCY_NOT_SUPPORTED_PART_2)
                                 + " "

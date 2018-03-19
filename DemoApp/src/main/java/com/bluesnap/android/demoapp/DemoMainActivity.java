@@ -20,6 +20,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.AndroidUtil;
@@ -27,6 +28,7 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
@@ -260,16 +262,17 @@ public class DemoMainActivity extends AppCompatActivity {
         if (!taxString.isEmpty()) {
             taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
         }
-        // You can set the Amout solely
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString());
+        Double taxAmount = 0D;
+        // You can set the Amouut solely
+        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
 
-        // Or you can set the Amount with tax, this will override setAmount()
-        // The total purchase amount will be the sum of both numbers
-        if (taxAmountPrecentage > 0D) {
-            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
-        } else {
-            sdkRequest.setAmountNoTax(productPrice);
-        }
+//        // Or you can set the Amount with tax, this will override setAmount()
+//        // The total purchase amount will be the sum of both numbers
+//        if (taxAmountPrecentage > 0D) {
+//            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
+//        } else {
+//            sdkRequest.setAmountNoTax(productPrice);
+//        }
 
 
         sdkRequest.setCustomTitle("Demo Merchant");
@@ -290,6 +293,22 @@ public class DemoMainActivity extends AppCompatActivity {
             Log.d(TAG, sdkRequest.toString());
             finish();
         }
+
+        // Set special tax policy: non-US pay no tax; MA pays 10%, other US states pay 5%
+        sdkRequest.setTaxCalculator(new TaxCalculator() {
+            @Override
+            public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
+                if ("us".equalsIgnoreCase(shippingCountry)) {
+                    Double taxRate = 0.05;
+                    if ("ma".equalsIgnoreCase(shippingState)) {
+                        taxRate = 0.1;
+                    }
+                    priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
+                } else {
+                    priceDetails.setTaxAmount(0D);
+                }
+            }
+        });
 
         try {
             bluesnapService.setSdkRequest(sdkRequest);
