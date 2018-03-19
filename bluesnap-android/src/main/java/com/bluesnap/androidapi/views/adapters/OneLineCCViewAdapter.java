@@ -59,7 +59,8 @@ public class OneLineCCViewAdapter extends BaseAdapter {
         cardIconImageView = (ImageView) convertView.findViewById(R.id.cardIconImageView);
         CreditCard creditCard = creditCardInfos.get(position).getCreditCard();
 
-        cardIconImageView.setImageResource(CreditCardTypeResolver.getCardTypeDrawable(CreditCardTypeResolver.getCardTypeResource(creditCard.getCardType())));
+        CreditCardTypeResolver creditCardTypeResolver = CreditCardTypeResolver.getInstance();
+        cardIconImageView.setImageResource(creditCardTypeResolver.getCardTypeDrawable(creditCardTypeResolver.getCardTypeResource(creditCard.getCardType())));
         ccLastFourDigitsTextView.setText(creditCard.getCardLastFourDigits());
         expTextView.setText(creditCard.getExpirationDateForEditTextAndSpinner());
 

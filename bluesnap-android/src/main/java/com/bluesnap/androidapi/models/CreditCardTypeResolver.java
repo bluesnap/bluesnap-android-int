@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
  * Created by roy.biber on 12/11/2017.
  */
 
-public class CreditCardTypes {
-    private static final String TAG = CreditCardTypes.class.getSimpleName();
-    private static final CreditCardTypes INSTANCE = new CreditCardTypes();
+public class CreditCardTypeResolver {
+
+    private static final String TAG = CreditCardTypeResolver.class.getSimpleName();
     public static final String AMEX = "American Express";
     public static final String DISCOVER = "Discover";
     public static final String JCB = "JCB";
@@ -32,13 +32,22 @@ public class CreditCardTypes {
     public static final String UNKNOWN = "Unknown";
     public static final String NEWCARD = "NEWCARD";
 
-    public static CreditCardTypes getInstance() {
+    private static final CreditCardTypeResolver INSTANCE = new CreditCardTypeResolver();
+
+    public static CreditCardTypeResolver getInstance() {
         return INSTANCE;
     }
 
+    protected CreditCardTypeResolver() {}
+
     private static LinkedHashMap<String, String> creditCardRegex = new LinkedHashMap<>();
 
-    public static String getType(String number) {
+    /**
+     *
+     * @param number - credit card number
+     * @return Card Type Resource String
+     */
+    public String getType(String number) {
          for (LinkedHashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
             if (Pattern.matches(entry.getValue(), number))
                 return getCardTypeResource(entry.getKey());
@@ -46,7 +55,7 @@ public class CreditCardTypes {
         return UNKNOWN;
     }
 
-    static boolean validateByType(String type, String number) {
+    boolean validateByType(String type, String number) {
         return number.length() > 11 && number.length() < 20;
     }
 
@@ -55,7 +64,7 @@ public class CreditCardTypes {
      * @param type - receive string type
      * @return Card Type Drawable
      */
-    public static int getCardTypeDrawable(final String type) {
+    public int getCardTypeDrawable(final String type) {
         int cardDrawable = 0;
         if (null == type)
             return cardDrawable;
@@ -107,9 +116,9 @@ public class CreditCardTypes {
      * @param cardTypeResourceName - server name representation of credit card type
      * @return client side name representation of credit card type
      */
-    public static String getCardTypeResource(String cardTypeResourceName) {
+    public String getCardTypeResource(String cardTypeResourceName) {
         try {
-            return (String) CreditCardTypes.class.getDeclaredField(cardTypeResourceName).get(null);
+            return (String) CreditCardTypeResolver.class.getDeclaredField(cardTypeResourceName).get(null);
         } catch (IllegalAccessException e) {
             Log.e(TAG, "getCardTypeResource IllegalAccessException: ", e);
             return UNKNOWN;
