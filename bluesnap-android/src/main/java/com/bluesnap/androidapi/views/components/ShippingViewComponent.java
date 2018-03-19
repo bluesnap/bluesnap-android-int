@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.services.BlueSnapService;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -59,4 +60,11 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
     public boolean validateInfo() {
         return super.validateInfo();
     }
+
+    @Override
+    protected void updateTaxOnCountryStateChange() {
+
+        BlueSnapService.getInstance().updateTax(getUserCountry(), inputState.getText().toString(), getContext());
+    }
+
 }

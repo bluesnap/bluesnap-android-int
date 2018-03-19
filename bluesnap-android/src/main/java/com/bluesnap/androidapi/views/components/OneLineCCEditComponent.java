@@ -190,7 +190,7 @@ public class OneLineCCEditComponent  extends LinearLayout {
      * Change credit card drawable according to received type
      */
     private void changeCardEditTextDrawable(String type) {
-        cardIconImageView.setImageResource(CreditCardTypeResolver.getCardTypeDrawable(type));
+        cardIconImageView.setImageResource(CreditCardTypeResolver.getInstance().getCardTypeDrawable(type));
     }
 
     /**
@@ -218,7 +218,7 @@ public class OneLineCCEditComponent  extends LinearLayout {
                 return;
 
             final String ccNum = s.toString().trim();
-            changeCardEditTextDrawable(CreditCardTypeResolver.getType(ccNum));
+            changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(ccNum));
 
             if (s.length() == getResources().getInteger(R.integer.ccn_max_length)) {
                 creditCardNumberOnLoseFocus();
@@ -234,7 +234,7 @@ public class OneLineCCEditComponent  extends LinearLayout {
         @Override
         public void afterTextChanged(Editable s) {
             String ccNum = creditCardNumberEditText.getText().toString().trim();
-            changeCardEditTextDrawable(CreditCardTypeResolver.getType(ccNum));
+            changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(ccNum));
 
             // Remove spacing char
             if (s.length() > 0 && (s.length() % 5) == 0) {

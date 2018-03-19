@@ -3,7 +3,8 @@ package com.bluesnap.androidapi.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Created by roy.biber on 12/11/2017.
@@ -16,25 +17,29 @@ public class Rates {
     private String merchantStoreCurrencyName;
     @SerializedName("exchangeRate")
     private ArrayList<Currency> currencies;
-    private HashMap<String, Currency> ratesMap;
 
-    /**
-     * Update the Conversion rates map from the server response data.
-     * The rates are merchant specific, the merchantToken is used to identify the merchant.
-     */
-    public void setInitialRates() {
-        ratesMap = new HashMap<>(currencies.size() + 1);
-        Currency baseCurrency = new Currency();
-        baseCurrency.setConversionRate(1.0);
-        baseCurrency.setQuoteCurrency(this.merchantStoreCurrency);
-        ratesMap.put(this.merchantStoreCurrency, baseCurrency);
-        for (Currency r : currencies) {
-            ratesMap.put(r.getQuoteCurrency(), r);
-        }
+    // internal c'tor for tests
+    Rates(ArrayList<Currency> currencies, String merchantStoreCurrency, String merchantStoreCurrencyName) {
+        this.currencies = currencies;
+        this.merchantStoreCurrency = merchantStoreCurrency;
+        this.merchantStoreCurrencyName = merchantStoreCurrencyName;
     }
 
-    public HashMap<String, Currency> getRatesMap() {
-        return ratesMap;
+    public Currency getCurrencyByCode(String currencyCode) {
+
+        if (this.merchantStoreCurrency.equals(currencyCode)) {
+            Currency baseCurrency = new Currency();
+            baseCurrency.setConversionRate(1.0);
+            baseCurrency.setQuoteCurrency(this.merchantStoreCurrency);
+            baseCurrency.setQuoteCurrencyName(this.merchantStoreCurrencyName);
+            return baseCurrency;
+        }
+        for (Currency r : currencies) {
+            if (r.getQuoteCurrency().equalsIgnoreCase(currencyCode)) {
+                return r;
+            }
+        }
+        return null;
     }
 
     public String getMerchantStoreCurrency() {
@@ -47,5 +52,14 @@ public class Rates {
 
     public ArrayList<Currency> getCurrencies() {
         return currencies;
+    }
+
+    public Set<String> getCurrencyCodes() {
+        Set<String> result = new HashSet<>();
+        result.add(this.merchantStoreCurrency);
+        for (Currency r : currencies) {
+            result.add(r.getQuoteCurrency());
+        }
+        return result;
     }
 }

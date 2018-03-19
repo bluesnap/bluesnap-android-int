@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.bluesnap.androidapi.R;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
@@ -13,8 +12,8 @@ import java.util.regex.Pattern;
  */
 
 public class CreditCardTypeResolver {
+
     private static final String TAG = CreditCardTypeResolver.class.getSimpleName();
-    private static final CreditCardTypeResolver INSTANCE = new CreditCardTypeResolver();
     public static final String AMEX = "American Express";
     public static final String DISCOVER = "Discover";
     public static final String JCB = "JCB";
@@ -33,22 +32,31 @@ public class CreditCardTypeResolver {
     public static final String UNKNOWN = "Unknown";
     public static final String NEWCARD = "NEWCARD";
 
+    private static final CreditCardTypeResolver INSTANCE = new CreditCardTypeResolver();
+
     public static CreditCardTypeResolver getInstance() {
         return INSTANCE;
     }
+
+    protected CreditCardTypeResolver() {}
+
+    private static LinkedHashMap<String, String> creditCardRegex = new LinkedHashMap<>();
 
     /**
      *
      * @param number - credit card number
      * @return Card Type Resource String
      */
-    public static String getType(String number) {
-        LinkedHashMap<String, String> creditCardRegex = creditCardRegex();
-        for (HashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
+    public String getType(String number) {
+         for (LinkedHashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
             if (Pattern.matches(entry.getValue(), number))
                 return getCardTypeResource(entry.getKey());
         }
         return UNKNOWN;
+    }
+
+    boolean validateByType(String type, String number) {
+        return number.length() > 11 && number.length() < 20;
     }
 
     /**
@@ -56,7 +64,7 @@ public class CreditCardTypeResolver {
      * @param type - receive string type
      * @return Card Type Drawable
      */
-    public static int getCardTypeDrawable(final String type) {
+    public int getCardTypeDrawable(final String type) {
         int cardDrawable = 0;
         if (null == type)
             return cardDrawable;
@@ -99,28 +107,8 @@ public class CreditCardTypeResolver {
         return cardDrawable;
     }
 
-    /**
-     * credit Car dRegex Linked Hash Map Presentation
-     * @return LinkedHashMap of creditCardRegex
-     */
-    private static LinkedHashMap<String, String> creditCardRegex() {
-        LinkedHashMap<String, String> creditCardRegex = new LinkedHashMap<>();
-        creditCardRegex.put("ELO", "^(40117[8-9]|431274|438935|451416|457393|45763[1-2]|504175|506699|5067[0-6][0-9]|50677[0-8]|509[0-9][0-9][0-9]|636368|636369|636297|627780).*");
-        creditCardRegex.put("HIPERCARD", "^(606282|637095).*");
-        creditCardRegex.put("CENCOSUD", "^603493.*");
-        creditCardRegex.put("NARANJA", "^589562.*");
-        creditCardRegex.put("TARJETASHOPPING", "^(603488|(27995[0-9])).*");
-        creditCardRegex.put("ARGENCARD", "^(501105).*");
-        creditCardRegex.put("CABAL", "^((627170)|(589657)|(603522)|(604((20[1-9])|(2[1-9][0-9])|(3[0-9]{2})|(400)))).*");
-        creditCardRegex.put("VISA", "^4.+");
-        creditCardRegex.put("MASTERCARD", "^(5(([1-5])|(0[1-5]))|2(([2-6])|(7(1|20)))|6((0(0[2-9]|1[2-9]|2[6-9]|[3-5]))|(2((1(0|2|3|[5-9]))|20|7[0-9]|80))|(60|3(0|[3-9]))|(4[0-2]|[6-8]))).+");
-        creditCardRegex.put("AMEX", "^3(24|4[0-9]|7|56904|379(41|12|13)).+");
-        creditCardRegex.put("DISCOVER", "^(3[8-9]|(6((01(1|300))|4[4-9]|5))).+");
-        creditCardRegex.put("DINERS", "^(3(0([0-5]|9|55)|6)).*");
-        creditCardRegex.put("JCB", "^(2131|1800|35).*");
-        creditCardRegex.put("CHINA_UNION_PAY", "(^62(([4-6]|8)[0-9]{13,16}|2[2-9][0-9]{12,15}))$");
-        creditCardRegex.put("CARTE_BLEUE", "^((3(6[1-4]|77451))|(4(059(?!34)|150|201|561|562|533|556|97))|(5(0[1-4]|13|30066|341[0-1]|587[0-2]|6|8))|(6(27244|390|75[1-6]|799999998))).*");
-        return creditCardRegex;
+    public static void setCreditCardRegex(LinkedHashMap<String, String> newCreditCardRegex) {
+        creditCardRegex = newCreditCardRegex;
     }
 
     /**
@@ -128,7 +116,7 @@ public class CreditCardTypeResolver {
      * @param cardTypeResourceName - server name representation of credit card type
      * @return client side name representation of credit card type
      */
-    public static String getCardTypeResource(String cardTypeResourceName) {
+    public String getCardTypeResource(String cardTypeResourceName) {
         try {
             return (String) CreditCardTypeResolver.class.getDeclaredField(cardTypeResourceName).get(null);
         } catch (IllegalAccessException e) {
