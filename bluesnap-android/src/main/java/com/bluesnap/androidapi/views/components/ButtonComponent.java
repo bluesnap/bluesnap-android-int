@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.PriceDetails;
-import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -88,7 +87,7 @@ public class ButtonComponent extends LinearLayout {
             buyNowButton.setText(
                     getStringFormatAmount(
                             getResources().getString(R.string.pay),
-                            priceDetails.getCurrencyNameCode(),
+                            priceDetails.getCurrencyCode(),
                             priceDetails.getAmount()
                     )
             );

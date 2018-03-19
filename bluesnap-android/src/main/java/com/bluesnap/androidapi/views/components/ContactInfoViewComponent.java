@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
@@ -244,7 +243,9 @@ public class ContactInfoViewComponent extends LinearLayout {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus) {
-                        validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+                        if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
+                            updateTaxOnCountryStateChange();
+                        }
                         inputCity.requestFocus();
                     }
                 }
@@ -252,6 +253,13 @@ public class ContactInfoViewComponent extends LinearLayout {
         } else {
             inputState.setOnFocusChangeListener(null);
         }
+    }
+
+    /**
+     * This should be overridden for shipping contact details
+     */
+    protected void updateTaxOnCountryStateChange() {
+
     }
 
     /**
@@ -345,6 +353,7 @@ public class ContactInfoViewComponent extends LinearLayout {
     void onCountryChange() {
         setCountryDrawable(getUserCountry(), getContext());
         changeZipHintAndTextAccordingToCountry();
+        updateTaxOnCountryStateChange();
     }
 
     /**

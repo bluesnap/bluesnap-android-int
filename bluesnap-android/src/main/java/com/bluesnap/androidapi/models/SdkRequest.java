@@ -1,10 +1,7 @@
 package com.bluesnap.androidapi.models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.TaxCalculator;
 
 /**
  * A Request for payment process in the SDK.
@@ -19,6 +16,7 @@ public class SdkRequest {
     private boolean billingRequired;
     private boolean emailRequired;
     private String shopperID;
+    private TaxCalculator taxCalculator;
 
     private SdkRequest() {
     }
@@ -82,5 +80,13 @@ public class SdkRequest {
     public boolean verify() throws BSPaymentRequestException {
         priceDetails.verify();
         return true;
+    }
+
+    public TaxCalculator getTaxCalculator() {
+        return taxCalculator;
+    }
+
+    public void setTaxCalculator(TaxCalculator taxCalculator) {
+        this.taxCalculator = taxCalculator;
     }
 }

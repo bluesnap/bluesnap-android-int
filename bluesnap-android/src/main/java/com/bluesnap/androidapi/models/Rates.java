@@ -48,4 +48,22 @@ public class Rates {
     public ArrayList<Currency> getCurrencies() {
         return currencies;
     }
+
+    public Currency getCurrencyByCode(String currencyCode) {
+
+        if (this.merchantStoreCurrency.equals(currencyCode)) {
+            Currency baseCurrency = new Currency();
+            baseCurrency.setConversionRate(1.0);
+            baseCurrency.setQuoteCurrency(this.merchantStoreCurrency);
+            baseCurrency.setQuoteCurrencyName(this.merchantStoreCurrencyName);
+            return baseCurrency;
+        }
+        for (Currency r : currencies) {
+            if (r.getQuoteCurrency().equalsIgnoreCase(currencyCode)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
 }

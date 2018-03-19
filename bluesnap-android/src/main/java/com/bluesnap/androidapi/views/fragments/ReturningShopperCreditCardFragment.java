@@ -11,23 +11,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.activities.CreditCardActivity;
 import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
-import com.bluesnap.androidapi.views.components.BillingViewComponent;
 import com.bluesnap.androidapi.views.components.BillingViewSummarizedComponent;
 import com.bluesnap.androidapi.views.components.ButtonComponent;
 import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
-import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 import com.bluesnap.androidapi.views.components.ShippingViewSummarizedComponent;
 
 /**
@@ -101,10 +99,11 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         // set Summarized Shipping details or hide Shipping View
         shippingViewSummarizedTextView = (TextView) inflate.findViewById(R.id.shippingViewSummarizedTextView);
         shippingViewSummarizedComponent = (ShippingViewSummarizedComponent) inflate.findViewById(R.id.shippingViewSummarizedComponent);
+        final ShippingInfo shippingContactInfo = shopper.getShippingContactInfo();
         if (!sdkRequest.isShippingRequired()) {
             setVisibilityForShippingView(View.INVISIBLE);
         } else {
-            shippingViewSummarizedComponent.updateResource(shopper.getShippingContactInfo());
+            shippingViewSummarizedComponent.updateResource(shippingContactInfo);
             setVisibilityForShippingView(View.VISIBLE);
             BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
@@ -118,7 +117,7 @@ public class ReturningShopperCreditCardFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
                 Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
-                Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
+                Log.d(TAG, "getShippingContactInfo: " + shippingContactInfo);
                 CreditCardActivity creditCardActivity = (CreditCardActivity) getActivity();
                 creditCardActivity.finishFromFragment(shopper);
 
@@ -128,6 +127,11 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
+
+        if (sdkRequest.isShippingRequired()) {
+            // calculate tax according to shipping country
+            BlueSnapService.getInstance().updateTax(shippingContactInfo.getCountry(), shippingContactInfo.getState(), inflater.getContext());
+        }
 
         return inflate;
     }

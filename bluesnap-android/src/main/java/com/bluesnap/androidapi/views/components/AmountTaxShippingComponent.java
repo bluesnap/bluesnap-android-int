@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -87,8 +86,8 @@ public class AmountTaxShippingComponent extends LinearLayout {
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         if (priceDetails.isSubtotalTaxSet()) {
             amountTaxLinearLayout.setVisibility(VISIBLE);
-            amountTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyNameCode(), priceDetails.getSubtotalAmount()));
-            taxTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyNameCode(), priceDetails.getTaxAmount()));
+            amountTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyCode(), priceDetails.getSubtotalAmount()));
+            taxTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyCode(), priceDetails.getTaxAmount()));
         } else {
             amountTaxLinearLayout.setVisibility(GONE);
         }
