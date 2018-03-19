@@ -21,6 +21,13 @@ public class SdkRequest {
     private SdkRequest() {
     }
 
+    public SdkRequest(Double amount, String currencyNameCode) {
+        priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
+        setBillingRequired(false);
+        setEmailRequired(false);
+        setShippingRequired(false);
+    }
+
     public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
 
         priceDetails = new PriceDetails(amount, currencyNameCode, taxAmount);

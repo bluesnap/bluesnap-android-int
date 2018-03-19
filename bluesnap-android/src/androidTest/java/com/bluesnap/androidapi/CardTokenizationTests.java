@@ -9,6 +9,7 @@ import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONException;
@@ -48,9 +49,9 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
         card.update(number, "11/25", "123");
         billingInfo.setFullName("John Doe");
-        assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
-        assertTrue(card.validateNumber());
-        assertTrue(card.validateAll());
+        //assertTrue("this should be a valid luhn", BlueSnapValidator.creditCardNumberValidation(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue(BlueSnapValidator.creditCardNumberValidation(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
+        assertTrue(BlueSnapValidator.creditCardFullValidation(card));
         assertFalse(card.getCardType().isEmpty());
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
