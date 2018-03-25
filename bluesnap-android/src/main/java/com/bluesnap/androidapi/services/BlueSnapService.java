@@ -185,7 +185,7 @@ public class BlueSnapService {
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
-    public void checkCreditCardNumberInServer(String creditCardNumber, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void submitTokenizedCCNumber(String creditCardNumber, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
         postData.put(CreditCard.CCNUMBER, creditCardNumber);

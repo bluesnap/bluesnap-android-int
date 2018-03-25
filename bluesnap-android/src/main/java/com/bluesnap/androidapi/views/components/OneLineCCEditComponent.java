@@ -1,7 +1,5 @@
 package com.bluesnap.androidapi.views.components;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
@@ -274,7 +272,7 @@ public class OneLineCCEditComponent extends LinearLayout {
         if (activateMoveToCcImageButton)
             moveToCcImageButton.setVisibility(View.GONE);
         if (setCardNumberFromEditTextAndValidate()) {
-            checkCreditCardNumberInServer();
+            submitCCNumber();
         }
         creditCardNumberEditText.setHint("");
         creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
@@ -380,11 +378,11 @@ public class OneLineCCEditComponent extends LinearLayout {
     /**
      * check Credit Card Number In Server
      */
-    private void checkCreditCardNumberInServer() {
+    private void submitCCNumber() {
         final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
         try {
-            blueSnapService.checkCreditCardNumberInServer(newCreditCard.getNumber(), new TextHttpResponseHandler() {
+            blueSnapService.submitTokenizedCCNumber(newCreditCard.getNumber(), new TextHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, String responseString) {
                     try {
@@ -411,7 +409,7 @@ public class OneLineCCEditComponent extends LinearLayout {
                                     @Override
                                     public void complete(String newToken) {
                                         blueSnapService.setNewToken(newToken);
-                                        checkCreditCardNumberInServer();
+                                        submitCCNumber();
                                     }
                                 });
                             } else if ("CARD_TYPE_NOT_SUPPORTED".equals(rs3.get("errorName"))) {

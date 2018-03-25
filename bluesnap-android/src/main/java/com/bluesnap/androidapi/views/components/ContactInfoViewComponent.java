@@ -141,7 +141,8 @@ public class ContactInfoViewComponent extends LinearLayout {
     public boolean validateInfo() {
         boolean validInput = validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
         //validInput &= validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
-        validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
+        if (isCountryRequiresZip())
+            validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
         validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
         validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
         validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
@@ -332,16 +333,25 @@ public class ContactInfoViewComponent extends LinearLayout {
     }
 
     /**
+     * is Country Requires Zip
+     *
+     * @return boolean
+     */
+    boolean isCountryRequiresZip() {
+        return (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry()));
+    }
+
+    /**
      * change Zip Hint And Text According To Country
      * USA -> Postal Code
      * Other -> Zip
      */
     void changeZipHintAndTextAccordingToCountry() {
-        // check if usa if so change zip text to postal code otherwise billing zip
-        if (Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry())) {
-            inputLayoutZip.setVisibility(View.INVISIBLE);
+        if (!isCountryRequiresZip()) {
+            inputLayoutZip.setVisibility(View.GONE);
         } else {
             inputLayoutZip.setVisibility(View.VISIBLE);
+            // check if usa if so change zip text to postal code otherwise billing zip
             inputLayoutZip.setHint(BlueSnapValidator.STATE_NEEDED_COUNTRIES[0].equals(getUserCountry())
                     ? getResources().getString(R.string.postal_code_hint)
                     : getResources().getString(R.string.zip));
