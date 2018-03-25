@@ -4,12 +4,15 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
-import com.bluesnap.androidapi.services.AndroidUtil;
+
+import java.util.Arrays;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -87,7 +90,11 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
             forFullBillingLinearLayout.setVisibility(GONE);
 
         setCountryText(country);
+
         setZipText(zip);
+        if (country.length() == 2)
+            changeZipVisibilityAccordingToCountry(country.toUpperCase());
+
         setStateText(state);
         setCityText(city);
         setAddressText(address);
@@ -137,4 +144,18 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
             return "";
         else return s;
     }
+
+    /**
+     * change Zip Visibility According To COUNTRIES_WITHOUT_ZIP {@link Constants}
+     *
+     * @param country - country upper case string ISO Alpha-2
+     */
+    void changeZipVisibilityAccordingToCountry(String country) {
+        if (Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country)) {
+            zipTextView.setVisibility(View.GONE);
+        } else {
+            zipTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
 }

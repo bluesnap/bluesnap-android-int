@@ -184,7 +184,7 @@ public class BlueSnapService {
      *
      * @param shopper         {@link Shopper}
      * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException    in case of invalid JSON object (should not happen)
+     * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
     public void submitTokenizedDetails(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
@@ -199,7 +199,7 @@ public class BlueSnapService {
      * @param billingInfo     {@link BillingInfo}
      * @param shippingInfo    {@link ShippingInfo}
      * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException    in case of invalid JSON object (should not happen)
+     * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
     public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
@@ -213,7 +213,7 @@ public class BlueSnapService {
      * @param creditCard      {@link CreditCard}
      * @param billingInfo     {@link BillingInfo}
      * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException    in case of invalid JSON object (should not happen)
+     * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
     public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
@@ -224,7 +224,7 @@ public class BlueSnapService {
     /**
      * @param shopper {@link Shopper}
      * @return {@link JSONObject} representation for api put call for the server
-     * @throws JSONException    in case of invalid JSON object (should not happen)
+     * @throws JSONException in case of invalid JSON object (should not happen)
      */
     private JSONObject createDataObject(Shopper shopper) throws JSONException {
         CreditCard creditCard = shopper.getNewCreditCardInfo().getCreditCard();
@@ -241,7 +241,7 @@ public class BlueSnapService {
      * @param billingInfo  {@link BillingInfo}
      * @param shippingInfo {@link ShippingInfo}
      * @return {@link JSONObject} representation for api put call for the server
-     * @throws JSONException    in case of invalid JSON object (should not happen)
+     * @throws JSONException in case of invalid JSON object (should not happen)
      */
     private JSONObject createDataObject(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo) throws JSONException {
         JSONObject postData = new JSONObject();
@@ -296,7 +296,7 @@ public class BlueSnapService {
      * Check if Token is Expired on the BlueSnap Server
      *
      * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException    in case of invalid JSON object (should not happen)
+     * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
     private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
@@ -534,8 +534,8 @@ public class BlueSnapService {
     /**
      * Convert a price in currentCurrencyNameCode to newCurrencyNameCode
      *
-     * @param priceDetails  The price details before conversion
-     * @param newCurrencyCode     The ISO 4217 currency name
+     * @param priceDetails    The price details before conversion
+     * @param newCurrencyCode The ISO 4217 currency name
      */
     public void convertPrice(PriceDetails priceDetails, String newCurrencyCode) {
 
