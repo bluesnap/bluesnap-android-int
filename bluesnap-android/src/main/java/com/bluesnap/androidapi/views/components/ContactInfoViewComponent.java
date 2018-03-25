@@ -368,46 +368,6 @@ public class ContactInfoViewComponent extends LinearLayout {
     }
 
     /**
-     * in Billing View if Email is required,
-     * move focus from name to email
-     */
-    void changeInputNameNextFocusToInputEmail() {
-        inputName.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
-                }
-            }
-        });
-        inputName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputEmail.requestFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    /**
-     * in Billing View if Full Billing is not required,
-     * change next button to done
-     */
-    void changeInputZipNextFocusToDone() {
-        inputZip.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
-            }
-        });
-        inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
-    }
-
-    /**
      * request Focus On Name Input
      */
     public void requestFocusOnNameInput() {
@@ -422,7 +382,10 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputZip.requestFocus();
+                    if (isCountryRequiresZip())
+                        inputZip.requestFocus();
+                    else
+                        inputState.requestFocus();
                     return true;
                 }
                 return false;

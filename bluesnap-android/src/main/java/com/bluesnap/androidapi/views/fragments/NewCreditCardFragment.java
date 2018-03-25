@@ -114,7 +114,8 @@ public class NewCreditCardFragment extends Fragment {
      * @return boolean - validation success or failure
      */
     public boolean validateAndSetCreditCardInfoAndBillingInfo() {
-        boolean isValid = oneLineCCEditComponent.validateInfo() && billingViewComponent.validateInfo();
+        boolean isValid = oneLineCCEditComponent.validateInfo();
+        isValid &= billingViewComponent.validateInfo();
         if (isValid) {
             newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
             newCreditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());

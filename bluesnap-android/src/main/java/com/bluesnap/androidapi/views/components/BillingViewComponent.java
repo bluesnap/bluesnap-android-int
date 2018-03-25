@@ -1,8 +1,6 @@
 package com.bluesnap.androidapi.views.components;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -11,10 +9,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.Shopper;
-import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 
@@ -49,7 +44,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
         isEmailRequired = blueSnapService.getSdkRequest().isEmailRequired();
         if (isEmailRequired) {
-            changeInputNameNextFocusToInputEmail();
             inputEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -76,8 +70,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         isFullBillingRequiredRequired = blueSnapService.getSdkRequest().isBillingRequired();
         if (!isFullBillingRequiredRequired) {
             setFullBillingVisibility(GONE);
-            changeInputZipNextFocusToDone();
+            inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
         }
+
+        setInputNameNextFocusAndActionListener();
     }
 
     /**
@@ -111,7 +107,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     @Override
     public boolean validateInfo() {
         boolean validInput = validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
-        validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
+        if (isCountryRequiresZip())
+            validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
         if (isFullBillingRequiredRequired) {
             validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
             validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
@@ -131,5 +128,41 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         setStateVisibility(visibility);
         setCityVisibility(visibility);
         setAddressVisibility(visibility);
+    }
+
+
+    /**
+     * in Billing View if Email is required,
+     * move focus from name to email
+     */
+    void setInputNameNextFocusAndActionListener() {
+        inputName.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    validateField(inputName, inputLayoutName, BlueSnapValidator.EditTextFields.NAME_FIELD);
+                } else {
+                    if (!isEmailRequired && !isFullBillingRequiredRequired && !isCountryRequiresZip())
+                        inputName.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                    else
+                        inputName.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                }
+            }
+        });
+        inputName.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    if (isEmailRequired)
+                        inputEmail.requestFocus();
+                    else if (isCountryRequiresZip())
+                        inputZip.requestFocus();
+                    else
+                        inputState.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 }

@@ -30,7 +30,6 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
     void initControl(final Context context) {
         super.initControl(context);
         setEmailVisibility(GONE);
-        changeInputNameNextFocusToInputEmail();
     }
 
     /**
