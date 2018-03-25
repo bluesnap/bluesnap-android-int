@@ -12,6 +12,7 @@ import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PriceDetails;
+import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.Rates;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -44,16 +45,13 @@ import cz.msebera.android.httpclient.Header;
 public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final BlueSnapService INSTANCE = new BlueSnapService();
-    private final BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
-    private final KountService kountService = KountService.getInstance();
-
     private static final String FRAUDSESSIONID = "fraudSessionId";
-
     private static final EventBus busInstance = new EventBus();
     private static String paypalURL;
     private static JSONObject errorDescription;
     private static String transactionStatus;
-
+    private final BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
+    private final KountService kountService = KountService.getInstance();
     private SdkResult sdkResult;
     private SdkRequest sdkRequest;
     private BluesnapToken bluesnapToken;
@@ -68,10 +66,6 @@ public class BlueSnapService {
         return INSTANCE;
     }
 
-    public SDKConfiguration getsDKConfiguration() {
-        return sDKConfiguration;
-    }
-
     public static String getPayPalToken() {
         return paypalURL;
     }
@@ -82,6 +76,10 @@ public class BlueSnapService {
 
     public static EventBus getBus() {
         return busInstance;
+    }
+
+    public SDKConfiguration getsDKConfiguration() {
+        return sDKConfiguration;
     }
 
     public boolean isexpressCheckoutActive() {
@@ -182,56 +180,27 @@ public class BlueSnapService {
     /**
      * Update details on the BlueSnap Server
      *
-     * @param shopper         {@link Shopper}
+     * @param purchaseDetails {@link PurchaseDetails}
      * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
-    public void submitTokenizedDetails(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void submitTokenizedDetails(PurchaseDetails purchaseDetails, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeDetails(createDataObject(shopper), responseHandler);
+        blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails), responseHandler);
     }
 
     /**
-     * Update details on the BlueSnap Server
-     *
-     * @param creditCard      {@link CreditCard}
-     * @param billingInfo     {@link BillingInfo}
-     * @param shippingInfo    {@link ShippingInfo}
-     * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException                in case of invalid JSON object (should not happen)
-     * @throws UnsupportedEncodingException should not happen
-     */
-    public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
-        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeDetails(createDataObject(creditCard, billingInfo, shippingInfo), responseHandler);
-    }
-
-    /**
-     * Update details on the BlueSnap Server
-     *
-     * @param creditCard      {@link CreditCard}
-     * @param billingInfo     {@link BillingInfo}
-     * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException                in case of invalid JSON object (should not happen)
-     * @throws UnsupportedEncodingException should not happen
-     */
-    public void submitTokenizedDetails(CreditCard creditCard, BillingInfo billingInfo, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
-        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeDetails(createDataObject(creditCard, billingInfo, null), responseHandler);
-    }
-
-    /**
-     * @param shopper {@link Shopper}
+     * @param purchaseDetails {@link PurchaseDetails}
      * @return {@link JSONObject} representation for api put call for the server
      * @throws JSONException in case of invalid JSON object (should not happen)
      */
-    private JSONObject createDataObject(Shopper shopper) throws JSONException {
-        CreditCard creditCard = shopper.getNewCreditCardInfo().getCreditCard();
-        BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
+    private JSONObject createDataObject(PurchaseDetails purchaseDetails) throws JSONException {
+        CreditCard creditCard = purchaseDetails.getCreditCard();
+        BillingInfo billingInfo = purchaseDetails.getBillingContactInfo();
         ShippingInfo shippingInfo = null;
         if (sdkRequest.isShippingRequired())
-            shippingInfo = shopper.getShippingContactInfo();
+            shippingInfo = purchaseDetails.getShippingContactInfo();
 
         return createDataObject(creditCard, billingInfo, shippingInfo);
     }
@@ -302,10 +271,6 @@ public class BlueSnapService {
     private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
         blueSnapAPI.tokenizeDetails(new JSONObject(), responseHandler);
-    }
-
-    private interface AfterNewTokenCreatedAction {
-        void complete();
     }
 
     /**
@@ -686,6 +651,10 @@ public class BlueSnapService {
             // send event to update amount in UI
             BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
         }
+    }
+
+    private interface AfterNewTokenCreatedAction {
+        void complete();
     }
 
 }

@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
@@ -266,8 +267,12 @@ public class CreditCardActivity extends AppCompatActivity {
      * @throws JSONException
      */
     private void tokenizeCardOnServer(final Shopper shopper, final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
+        final PurchaseDetails purchaseDetails = new PurchaseDetails(
+                shopper.getNewCreditCardInfo().getCreditCard(),
+                shopper.getNewCreditCardInfo().getBillingContactInfo(),
+                shopper.getShippingContactInfo());
 
-        blueSnapService.submitTokenizedDetails(shopper, new TextHttpResponseHandler() {
+        blueSnapService.submitTokenizedDetails(purchaseDetails, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 try {
