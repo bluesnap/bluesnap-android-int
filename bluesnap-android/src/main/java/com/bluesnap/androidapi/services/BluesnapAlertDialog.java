@@ -12,7 +12,7 @@ import com.bluesnap.androidapi.R;
  */
 public class BluesnapAlertDialog {
 
-    public static void setDialog(Activity activity, String dialogMessage, String dialogTitle) {
+    public static void setDialog(Context activity, String dialogMessage, String dialogTitle) {
         setDialog(activity, dialogMessage, dialogTitle, new BluesnapAlertDialog.BluesnapDialogCallback() {
             @Override
             public void setPositiveDialog() {
@@ -24,7 +24,7 @@ public class BluesnapAlertDialog {
         }, activity.getString(R.string.OK), activity.getString(R.string.CANCEL));
     }
 
-    public static void setDialog(Activity activity, String dialogMessage, String dialogTitle, final BluesnapDialogCallback dialogCallback) {
+    public static void setDialog(Context activity, String dialogMessage, String dialogTitle, final BluesnapDialogCallback dialogCallback) {
         setDialog(activity, dialogMessage, dialogTitle, dialogCallback, activity.getString(R.string.OK), activity.getString(R.string.CANCEL));
     }
 

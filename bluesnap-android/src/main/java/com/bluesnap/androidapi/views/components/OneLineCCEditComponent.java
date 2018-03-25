@@ -1,5 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
@@ -23,13 +25,25 @@ import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
+import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
+import com.bluesnap.androidapi.services.BluesnapAlertDialog;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by roy.biber on 20/02/2018.
  */
 
-public class OneLineCCEditComponent  extends LinearLayout {
+public class OneLineCCEditComponent extends LinearLayout {
     public static final String TAG = OneLineCCEditComponent.class.getSimpleName();
     private CreditCard newCreditCard;
     private ImageView cardIconImageView;
@@ -130,9 +144,8 @@ public class OneLineCCEditComponent  extends LinearLayout {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     cvvValidation();
-                    BlueSnapLocalBroadcastManager.sendMessage(getContext(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH,TAG);
-                }
-                else
+                    BlueSnapLocalBroadcastManager.sendMessage(getContext(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, TAG);
+                } else
                     cvvEditText.setSelection(cvvEditText.getText().length());
             }
         });
@@ -260,7 +273,9 @@ public class OneLineCCEditComponent  extends LinearLayout {
     private void creditCardNumberOnLoseFocus() {
         if (activateMoveToCcImageButton)
             moveToCcImageButton.setVisibility(View.GONE);
-        setCardNumberFromEditTextAndValidate();
+        if (setCardNumberFromEditTextAndValidate()) {
+            checkCreditCardNumberInServer();
+        }
         creditCardNumberEditText.setHint("");
         creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
         creditCardNumberEditText.setText(getCardLastFourDigitsForView(newCreditCard.getNumber()));
@@ -359,6 +374,66 @@ public class OneLineCCEditComponent  extends LinearLayout {
 
         @Override
         public void afterTextChanged(Editable s) {
+        }
+    }
+
+    /**
+     * check Credit Card Number In Server
+     */
+    private void checkCreditCardNumberInServer() {
+        final BlueSnapService blueSnapService = BlueSnapService.getInstance();
+
+        try {
+            blueSnapService.checkCreditCardNumberInServer(newCreditCard.getNumber(), new TextHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    try {
+                        JSONObject response = new JSONObject(responseString);
+                        String ccType = response.getString("ccType");
+                        if (!ccType.equals(newCreditCard.getCardType()))
+                            changeCardEditTextDrawable(ccType);
+                    } catch (NullPointerException | JSONException e) {
+                        Log.e(TAG, "", e);
+                        String errorMsg = String.format("Service Error %s", e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
+                    if (statusCode == 400 && null != blueSnapService.getTokenProvider() && !"".equals(responseString)) {
+                        try {
+                            JSONObject errorResponse = new JSONObject(responseString);
+                            JSONArray rs2 = (JSONArray) errorResponse.get("message");
+                            JSONObject rs3 = (JSONObject) rs2.get(0);
+                            if ("EXPIRED_TOKEN".equals(rs3.get("errorName"))) {
+                                blueSnapService.getTokenProvider().getNewToken(new TokenServiceCallback() {
+                                    @Override
+                                    public void complete(String newToken) {
+                                        blueSnapService.setNewToken(newToken);
+                                        checkCreditCardNumberInServer();
+                                    }
+                                });
+                            } else if ("CARD_TYPE_NOT_SUPPORTED".equals(rs3.get("errorName"))) {
+                                BluesnapAlertDialog.setDialog(getContext(), rs3.get("description").toString(), "CARD NOT SUPPORTED");
+                                changeInputColorAndErrorVisibility(creditCardNumberEditText, creditCardNumberErrorTextView, false);
+                            } else {
+                                String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
+                                Log.e(TAG, errorMsg, throwable);
+                            }
+                        } catch (JSONException e) {
+                            Log.e(TAG, "json parsing exception", e);
+                        }
+                    } else {
+                        String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
+                        Log.e(TAG, errorMsg, throwable);
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            Log.e(TAG, "json parsing exception", e);
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Unsupported Encoding Exception", e);
         }
     }
 
