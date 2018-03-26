@@ -75,6 +75,8 @@ public class NewCreditCardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+//        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         final View inflate = inflater.inflate(R.layout.new_credit_card_fragment, container, false);
 
         // get Shopper
@@ -96,14 +98,16 @@ public class NewCreditCardFragment extends Fragment {
         buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
 
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
-
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
+
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();
         } else {
             finishFromFragmentWithShipping();
             BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
+        amountTaxShippingComponentView.setAmountTaxShipping();
+        buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
 
         return inflate;
     }

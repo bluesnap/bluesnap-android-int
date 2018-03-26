@@ -18,7 +18,6 @@ import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
-import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -658,7 +657,7 @@ public class BlueSnapService {
 
         SdkRequest sdkRequest = getSdkRequest();
         TaxCalculator taxCalculator = sdkRequest.getTaxCalculator();
-        if (taxCalculator != null) {
+        if (sdkRequest.isShippingRequired() && taxCalculator != null) {
             PriceDetails priceDetails = sdkRequest.getPriceDetails();
             Log.d(TAG, "Calling taxCalculator; shippingCountry=" + shippingCountry + ", shippingState=" + shippingState + ", priceDetails=" + priceDetails);
             taxCalculator.updateTax(shippingCountry, shippingState, priceDetails);
