@@ -127,9 +127,9 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 this.shopper = shopper;
                 if (null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos())
                     populateFromCard();
-            } else
-                this.shopper = new Shopper();
-
+            } else {
+                sdkConfiguration.setShopper(new Shopper());
+            }
         } catch (NullPointerException e) {
             Log.e(TAG, "NullPointerException", e);
         } catch (Exception e) {

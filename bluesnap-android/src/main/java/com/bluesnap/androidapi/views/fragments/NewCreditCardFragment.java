@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,12 +37,10 @@ public class NewCreditCardFragment extends Fragment {
     private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
-    private ShippingViewComponent shippingViewComponent;
-    private LinearLayout shippingViewComponentLinearLayout, billingViewComponentLinearLayout;
     private OneLineCCEditComponent oneLineCCEditComponent;
 
     private SdkRequest sdkRequest;
-    private SdkResult sdkResult;
+
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
@@ -63,7 +62,6 @@ public class NewCreditCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
     }
 
     @Override
@@ -80,7 +78,7 @@ public class NewCreditCardFragment extends Fragment {
         final View inflate = inflater.inflate(R.layout.new_credit_card_fragment, container, false);
 
         // get Shopper
-        shopper = new Shopper();
+        shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         //get SDK Request
         sdkRequest = blueSnapService.getSdkRequest();
@@ -89,9 +87,6 @@ public class NewCreditCardFragment extends Fragment {
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.billingViewComponentLinearLayout);
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.shippingViewComponent);
-        shippingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingViewComponentLinearLayout);
         oneLineCCEditComponent = (OneLineCCEditComponent) inflate.findViewById(R.id.oneLineCCEditComponent);
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
@@ -173,28 +168,16 @@ public class NewCreditCardFragment extends Fragment {
      * finish From Fragment assumes no shipping
      * validates Credit Card And Billing Info and moves to shipping
      */
-    private void finishFromFragmentWithShipping() {
-        amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.VISIBLE);
+    public void finishFromFragmentWithShipping() {
+        if (!sdkRequest.isBillingRequired())
+            amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
-                    ((CreditCardActivity) getActivity()).setHeaderTextView(ReturningShopperShippingFragment.TAG);
-                    amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
-                    amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
-                    billingViewComponentLinearLayout.setVisibility(View.GONE);
-                    oneLineCCEditComponent.setVisibility(View.GONE);
-                    shippingViewComponentLinearLayout.setVisibility(View.VISIBLE);
-                    buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (shippingViewComponent.validateInfo()) {
-                                shopper.setShippingContactInfo(shippingViewComponent.getResource());
-                                finishFromFragment();
-                            }
-                        }
-                    });
+                    shopper.setNewCreditCardInfo(newCreditCardInfo);
+                    BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, TAG);
                 }
             }
         });

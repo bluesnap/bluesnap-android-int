@@ -128,7 +128,10 @@ public class DemoMainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 8) {
                     returningOrNewShopper = "?shopperId=" + s;
-                    generateMerchantToken(); // 22232799
+                    generateMerchantToken();
+                } else if (s.length() == 0) {
+                    returningOrNewShopper = "";
+                    generateMerchantToken();
                 }
             }
         });
