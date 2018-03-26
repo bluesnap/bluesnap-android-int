@@ -3,16 +3,19 @@ package com.bluesnap.androidapi;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -29,16 +32,17 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
         super(EUR);
     }
 
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
-
+//    @After
+//    public void keepRunning() throws InterruptedException {
+//        Thread.sleep(1000);
+//    }
+//
 
     @Before
     public void setup() throws InterruptedException {
-        super.getToken();
-        Log.i(TAG, "=============== Starting rates service tests ==================");
+        // No need to call getToken - it is already done by the parent class
+        // super.getToken();
+        Log.i(TAG, "=============== Starting EuroBasedCurrencyConverter tests ==================");
     }
 
 
@@ -49,11 +53,17 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
         SdkRequest sdkRequest = new SdkRequest(amount, EUR, 0d, false, false, false);
 
         blueSnapService.setSdkRequest(sdkRequest);
+
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        Double usdRate = getCurrencyRate(USD);
+        double expectedPrice = priceDetails.getAmount() * usdRate;
+
         blueSnapService.convertPrice(priceDetails, USD);
         Double convertedOncePrice = priceDetails.getAmount();
+
 //        assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
-        assertEquals("14.42", String.format("%.2f", convertedOncePrice));
+//        assertEquals("14.42", String.format("%.2f", convertedOncePrice));
+        assertEquals(String.format("%.2f", expectedPrice), String.format("%.2f", convertedOncePrice));
     }
 
     @Test
@@ -64,12 +74,20 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
 
         blueSnapService.setSdkRequest(sdkRequest);
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        Double ilsRate = getCurrencyRate(ILS);
+        Double usdRate = getCurrencyRate(USD);
+        double expectedPrice1 = priceDetails.getAmount() * ilsRate;
+        double expectedPrice2 = expectedPrice1 / ilsRate * usdRate;
+
         blueSnapService.convertPrice(priceDetails, ILS);
         Double convertedOncePrice = priceDetails.getAmount();
+        assertEquals(String.format("%.2f", expectedPrice1), String.format("%.2f", convertedOncePrice));
+
         blueSnapService.convertPrice(priceDetails, USD);
         Double convertedTwicePrice = priceDetails.getAmount();
         //assertEquals("14.42", new BigDecimal(convertedOncePrice).setScale(2, RoundingMode.HALF_UP).toString());
-        assertEquals("15.43", String.format("%.2f", convertedTwicePrice));
+        //assertEquals("15.43", String.format("%.2f", convertedTwicePrice));
+        assertEquals(String.format("%.2f", expectedPrice2), String.format("%.2f", convertedTwicePrice));
     }
 
 
@@ -111,5 +129,19 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
             assertEquals("not an ISO 4217 compatible 3 letter currency representation", e.getMessage());
         }
 
+    }
+
+    private double getCurrencyRate(String currencyCode) {
+
+        ArrayList<Currency> ratesArray = blueSnapService.getRatesArray();
+        Double usdRate = null;
+        for (Currency currency : blueSnapService.getRatesArray()) {
+            if (currency.getQuoteCurrency().equals(currencyCode)) {
+                usdRate = currency.getConversionRate();
+                break;
+            }
+        }
+        assertNotNull("usdRate should not be null", usdRate);
+        return usdRate.doubleValue();
     }
 }

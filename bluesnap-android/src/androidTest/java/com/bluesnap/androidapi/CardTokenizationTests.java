@@ -5,9 +5,8 @@ import android.os.Looper;
 
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
-import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -42,13 +41,15 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
 
         blueSnapService.setSdkRequest(sdkRequest);
 
-        final Shopper shopper = new Shopper();
-        final CreditCardInfo creditCardInfo = shopper.getNewCreditCardInfo();
-        final CreditCard card = creditCardInfo.getCreditCard();
-        final BillingInfo billingInfo = creditCardInfo.getBillingContactInfo();
+        final PurchaseDetails purchaseDetails = new PurchaseDetails();
+        final BillingInfo billingInfo = new BillingInfo();
+        purchaseDetails.setBillingContactInfo(billingInfo);
+        billingInfo.setFullName("John Doe");
+        final CreditCard card = new CreditCard();
+        purchaseDetails.setCreditCard(card);
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
         card.update(number, "11/25", "123");
-        billingInfo.setFullName("John Doe");
+
         //assertTrue("this should be a valid luhn", BlueSnapValidator.creditCardNumberValidation(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(BlueSnapValidator.creditCardNumberValidation(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(BlueSnapValidator.creditCardFullValidation(card));
@@ -56,7 +57,7 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
                 try {
-                    blueSnapService.submitTokenizedDetails(shopper, new JsonHttpResponseHandler() {
+                    blueSnapService.submitTokenizedDetails(purchaseDetails, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 

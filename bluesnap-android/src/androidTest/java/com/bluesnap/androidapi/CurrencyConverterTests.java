@@ -7,7 +7,6 @@ import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,10 +24,10 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     private static final String TAG = CurrencyConverterTests.class.getSimpleName();
 
 
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
+//    @After
+//    public void keepRunning() throws InterruptedException {
+//        Thread.sleep(1000);
+//    }
 
     //    public CurrencyConverterTests() {
     ////        ShadowLog.stream = System.out;
@@ -38,23 +37,10 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
 
     @Before
     public void setup() throws InterruptedException {
-        super.getToken();
-        Log.i(TAG, "=============== Starting rates service tests ==================");
+        // No need to call getToken - it is already done by the parent class
+        // super.getToken();
+        Log.i(TAG, "=============== Starting CurrencyConverter tests ==================");
     }
-
-//    @Test
-//    public void testAll() throws InterruptedException, BSPaymentRequestException {
-//
-//        convert_USD_to_ILS_and_Back();
-//        convert_ILS_to_EUR_and_Back();
-//        convert_ILS_to_EUR_to_GBP_and_Back();
-//        convert_EUR_to_USD();
-//        convert_EUR_to_ILS_to_USD();
-//        non_existing_currency_code();
-//        non_existing_new_currency_code();
-//        null_currency_code();
-//        null_new_currency_code();
-//    }
 
     @Test
     public void convert_USD_to_ILS_and_Back() throws InterruptedException, BSPaymentRequestException {
@@ -69,7 +55,6 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
         blueSnapService.convertPrice(priceDetails, "USD");
         Double reconvertedPrice = priceDetails.getAmount();
         assertEquals(String.format("%.2f", amount), String.format("%.2f", reconvertedPrice));
-
     }
 
     @Test
