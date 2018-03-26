@@ -162,6 +162,7 @@ public class ReturningShopperCreditCardFragment extends Fragment {
                 shippingViewSummarizedComponent.updateResource(shopper.getShippingContactInfo());
             else if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
+                amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
                 buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
             } /*else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
