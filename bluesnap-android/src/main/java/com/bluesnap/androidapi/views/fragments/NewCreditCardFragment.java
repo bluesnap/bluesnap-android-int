@@ -106,8 +106,6 @@ public class NewCreditCardFragment extends Fragment {
             finishFromFragmentWithShipping();
             BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
-        amountTaxShippingComponentView.setAmountTaxShipping();
-        buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
 
         return inflate;
     }
