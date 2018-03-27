@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.CustomListObject;
+import com.bluesnap.androidapi.models.CountryListObject;
 
 import java.util.ArrayList;
 
@@ -22,35 +22,33 @@ import java.util.ArrayList;
 public class CountryListAdapter extends BaseAdapter implements Filterable {
 
     private final Activity context;
-    public ArrayList<CustomListObject> countryFullNameListObjects;
-    public ArrayList<CustomListObject> countryInitialListObjects;
+    public ArrayList<CountryListObject> countryListObjects;
     CustomFilter filter;
-    ArrayList<CustomListObject> filterList;
+    ArrayList<CountryListObject> filterList;
     private String sharedLanguage;
 
-    public CountryListAdapter(Activity context, ArrayList<CustomListObject> countryFullNameListObjects, ArrayList<CustomListObject> countryInitialListObjects, String sharedLanguage) {
+    public CountryListAdapter(Activity context, ArrayList<CountryListObject> countryListObjects, String sharedLanguage) {
 
         this.sharedLanguage = sharedLanguage;
         this.context = context;
-        this.countryFullNameListObjects = countryFullNameListObjects;
-        this.countryInitialListObjects = countryInitialListObjects;
-        this.filterList = countryFullNameListObjects;
+        this.countryListObjects = countryListObjects;
+        this.filterList = countryListObjects;
 
     }
 
     @Override
     public int getCount() {
-        return countryFullNameListObjects.size();
+        return countryListObjects.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return countryFullNameListObjects.get(position);
+        return countryListObjects.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return countryFullNameListObjects.indexOf(getItem(position));
+        return countryListObjects.indexOf(getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -65,17 +63,20 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
         ImageView bluensap_customlist_list_view_icon = (ImageView) convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
         ImageView countryImage = (ImageView) convertView.findViewById(R.id.countryImage);
 
-        String countryFullName = countryFullNameListObjects.get(position).getName();
-        String countryInitial = countryInitialListObjects.get(position).getName();
+        String countryFullName = countryListObjects.get(position).getCountryFullName();
+        String countryInitial = countryListObjects.get(position).getCountryInitial();
+        int countryDrawable = countryListObjects.get(position).getDrawable();
 
-        int countryId = context.getResources().getIdentifier(countryInitial.toLowerCase(), "drawable", context.getPackageName());
+        /*int countryId = context.getResources().getIdentifier(countryInitial.toLowerCase(), "drawable", context.getPackageName());
         // int The associated resource identifier.  Returns 0 if no such resource was found.  (0 is not a valid resource ID.)
         if (countryId > 0)
             countryImage.setImageDrawable(context.getResources().getDrawable(countryId));
         else
-            countryImage.setImageDrawable(context.getResources().getDrawable(R.drawable.unknown));
+            countryImage.setImageDrawable(context.getResources().getDrawable(R.drawable.unknown));*/
+
+        countryImage.setImageResource(countryDrawable);
         txtTitle.setText(countryFullName);
-        if (sharedLanguage.equals(countryFullNameListObjects.get(position).getName())) {
+        if (sharedLanguage.equals(countryListObjects.get(position).getCountryFullName())) {
             bluensap_customlist_list_view_icon.setVisibility(View.VISIBLE);
         } else {
             bluensap_customlist_list_view_icon.setVisibility(View.INVISIBLE);
@@ -104,12 +105,12 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
                 //CONSTARINT TO UPPER
                 constraint = constraint.toString().toUpperCase();
 
-                ArrayList<CustomListObject> filters = new ArrayList<CustomListObject>();
+                ArrayList<CountryListObject> filters = new ArrayList<>();
 
                 //get specific items
                 for (int i = 0; i < filterList.size(); i++) {
-                    if (filterList.get(i).getName().toUpperCase().contains(constraint)) {
-                        CustomListObject p = new CustomListObject(filterList.get(i).getName());
+                    if (filterList.get(i).getCountryFullName().toUpperCase().contains(constraint)) {
+                        CountryListObject p = new CountryListObject(filterList.get(i).getCountryFullName(), filterList.get(i).getCountryInitial(), filterList.get(i).getDrawable());
 
                         filters.add(p);
                     }
@@ -131,7 +132,7 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
 
-            countryFullNameListObjects = (ArrayList<CustomListObject>) results.values;
+            countryListObjects = (ArrayList<CountryListObject>) results.values;
             notifyDataSetChanged();
         }
 

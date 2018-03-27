@@ -14,9 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.CustomListObject;
+import com.bluesnap.androidapi.models.CountryListObject;
 import com.bluesnap.androidapi.views.adapters.CountryListAdapter;
-import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,13 +50,22 @@ public class CountryActivity extends Activity {
             localeCountry = country_values_array[Arrays.asList(country_key_array).indexOf(savedInstanceState.getString(getString(R.string.COUNTRY_STRING)).toUpperCase())];
         }
 
-        adapter = new CountryListAdapter(this, CustomListObject.getCustomListObject(country_values_array),CustomListObject.getCustomListObject(country_key_array), localeCountry);
+        int[] country_drawable_array = new int[country_key_array.length];
+        for (int i = 0; i < country_key_array.length; i++) {
+            int countryId = getResources().getIdentifier(country_key_array[i].toLowerCase(), "drawable", getPackageName());
+            // int The associated resource identifier.  Returns 0 if no such resource was found.  (0 is not a valid resource ID.)
+            if (countryId > 0)
+                country_drawable_array[i] = countryId;
+            else
+                country_drawable_array[i] = R.drawable.unknown;
+        }
+        adapter = new CountryListAdapter(this, CountryListObject.getCountryListObject(country_values_array, country_key_array, country_drawable_array), localeCountry);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String countryPick = adapter.countryInitialListObjects.get(position).getName();
+                String countryPick = adapter.countryListObjects.get(position).getCountryInitial();
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("result", countryPick);
                 setResult(Activity.RESULT_OK, returnIntent);
