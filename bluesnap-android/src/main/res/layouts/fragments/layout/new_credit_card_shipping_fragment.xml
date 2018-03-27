@@ -7,19 +7,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/amountTaxShippingComponentView"
+        android:layout_above="@+id/shippingAmountTaxShippingComponentView"
         android:orientation="vertical">
 
-        <com.bluesnap.androidapi.views.components.OneLineCCEditComponent
-            android:id="@+id/oneLineCCEditComponent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
-
-        </com.bluesnap.androidapi.views.components.OneLineCCEditComponent>
-
         <LinearLayout
-            android:id="@+id/billingViewComponentLinearLayout"
+            android:id="@+id/shippingViewComponentLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
@@ -34,28 +26,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.bluesnap.androidapi.views.components.BillingViewComponent
-                    android:id="@+id/billingViewComponent"
+                <com.bluesnap.androidapi.views.components.ShippingViewComponent
+                    android:id="@+id/shippingViewComponent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent">
 
-                </com.bluesnap.androidapi.views.components.BillingViewComponent>
+                </com.bluesnap.androidapi.views.components.ShippingViewComponent>
             </ScrollView>
         </LinearLayout>
 
     </LinearLayout>
 
     <com.bluesnap.androidapi.views.components.AmountTaxShippingComponent
-        android:id="@+id/amountTaxShippingComponentView"
+        android:id="@+id/shippingAmountTaxShippingComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonComponentView">
+        android:layout_above="@+id/shippingButtonComponentView">
 
     </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
 
     <com.bluesnap.androidapi.views.components.ButtonComponent
-        android:id="@+id/buttonComponentView"
+        android:id="@+id/shippingButtonComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

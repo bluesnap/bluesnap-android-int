@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,15 +92,16 @@ public class ContactInfoViewComponent extends LinearLayout {
             }
         });
 
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                setUserCountry(intent.getStringExtra(intent.getAction()));
-                setOnFocusChangeListenerForState();
-            }
-        });
+        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
 
     }
+
+    @Override
+    public void onViewRemoved(View child) {
+        super.onViewRemoved(child);
+        BlueSnapLocalBroadcastManager.unregisterReceiver(getContext(), broadcastReceiver);
+    }
+
 
     /**
      * update resource with details
@@ -424,5 +426,19 @@ public class ContactInfoViewComponent extends LinearLayout {
             }
         });
     }
+
+    /**
+     * Broadcast Receiver for Credit Card Activity
+     * Handles actions
+     */
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            String event = intent.getAction();
+            Log.d(TAG, event);
+            setUserCountry(intent.getStringExtra(event));
+            setOnFocusChangeListenerForState();
+        }
+    };
 }
 

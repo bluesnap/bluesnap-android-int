@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
+import com.bluesnap.androidapi.views.fragments.NewCreditCardShippingFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
@@ -55,6 +57,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private ImageButton hamburgerMenuButton;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SdkRequest sdkRequest;
+    private NewCreditCardFragment newCreditCardFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,11 +85,22 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.unregisterReceiver(this, broadcastReceiver);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
+            setHeaderTextView(NewCreditCardFragment.TAG);
+        }
+    }
+
     /**
      * start this Activity With the New Credit Card Fragment
      */
     private void startActivityWithNewCreditCardFragment() {
-        NewCreditCardFragment newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, broadcastReceiver);
+
+        newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
                 .add(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
     }
@@ -115,7 +129,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         if (fragmentClassSimpleName.equals(ReturningShopperBillingFragment.TAG))
             text = getResources().getString(R.string.billing);
-        else if (fragmentClassSimpleName.equals(ReturningShopperShippingFragment.TAG))
+        else if (fragmentClassSimpleName.equals(ReturningShopperShippingFragment.TAG) || fragmentClassSimpleName.equals(NewCreditCardShippingFragment.TAG))
             text = getResources().getString(R.string.shipping);
 
         headerTextView.setText(text);
@@ -127,12 +141,18 @@ public class CreditCardActivity extends AppCompatActivity {
      * @param fragment - {@link Fragment}
      */
     private void replaceFragmentPlacement(Fragment fragment) {
+        String fragmentClassSimpleName = fragment.getClass().getSimpleName();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.creditCardFrameLayout, fragment);
+        if (!fragmentClassSimpleName.equals(NewCreditCardShippingFragment.TAG))
+            fragmentTransaction.replace(R.id.creditCardFrameLayout, fragment);
+        else {
+            fragmentTransaction.add(R.id.creditCardFrameLayout, fragment);
+            fragmentType = NewCreditCardShippingFragment.TAG;
+        }
         fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
         fragmentTransaction.commit();
 
-        setHeaderTextView(fragment.getClass().getSimpleName());
+        setHeaderTextView(fragmentClassSimpleName);
 
     }
 
@@ -154,6 +174,8 @@ public class CreditCardActivity extends AppCompatActivity {
                 replaceFragmentPlacement(ReturningShopperBillingFragment.newInstance(CreditCardActivity.this, new Bundle()));
             } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT.equals(event)) {
                 replaceFragmentPlacement(ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
+            } else if (BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE.equals(event)) {
+                replaceFragmentPlacement(NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
             } else {
                 Intent newIntent = new Intent(getApplicationContext(), CountryActivity.class);
                 String countryString = intent.getStringExtra(event);
