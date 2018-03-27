@@ -72,7 +72,8 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
         // int The associated resource identifier.  Returns 0 if no such resource was found.  (0 is not a valid resource ID.)
         if (countryId > 0)
             countryImage.setImageDrawable(context.getResources().getDrawable(countryId));
-
+        else
+            countryImage.setImageDrawable(context.getResources().getDrawable(R.drawable.unknown));
         txtTitle.setText(countryFullName);
         if (sharedLanguage.equals(countryFullNameListObjects.get(position).getName())) {
             bluensap_customlist_list_view_icon.setVisibility(View.VISIBLE);
