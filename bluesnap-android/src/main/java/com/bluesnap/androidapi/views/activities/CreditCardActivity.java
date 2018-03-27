@@ -90,10 +90,7 @@ public class CreditCardActivity extends AppCompatActivity {
         super.onBackPressed();
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
-
             setHeaderTextView(NewCreditCardFragment.TAG);
-            //newCreditCardFragment.finishFromFragmentWithShipping();
-
         }
     }
 

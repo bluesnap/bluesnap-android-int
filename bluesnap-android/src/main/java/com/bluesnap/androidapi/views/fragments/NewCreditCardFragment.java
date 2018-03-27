@@ -92,14 +92,10 @@ public class NewCreditCardFragment extends Fragment {
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
         buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
 
-        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
-        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
-
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();
         } else {
             finishFromFragmentWithShipping();
-            BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
 
         return inflate;
@@ -151,6 +147,9 @@ public class NewCreditCardFragment extends Fragment {
      * activate the finishFromFragment function
      */
     private void finishFromFragmentNoShipping() {
+        BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
@@ -169,6 +168,9 @@ public class NewCreditCardFragment extends Fragment {
      * validates Credit Card And Billing Info and moves to shipping
      */
     public void finishFromFragmentWithShipping() {
+        BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         if (!sdkRequest.isBillingRequired())
             amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);
