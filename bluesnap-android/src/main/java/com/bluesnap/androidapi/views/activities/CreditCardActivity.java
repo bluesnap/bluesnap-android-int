@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -72,7 +71,11 @@ public class CreditCardActivity extends AppCompatActivity {
 
         headerTextView = (TextView) findViewById(R.id.headerTextView);
         hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        if (BlueSnapService.getInstance().getSdkRequest().isAllowCurrencyChange()) {
+            hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        } else {
+            hamburgerMenuButton.setVisibility(View.INVISIBLE);
+        }
 
         BlueSnapService.getBus().register(this);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
