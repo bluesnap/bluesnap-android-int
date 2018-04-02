@@ -7,8 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_above="@+id/shippingAmountTaxShippingComponentView"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -25,7 +25,8 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="false">
 
                 <com.bluesnap.androidapi.views.components.ShippingViewComponent
                     android:id="@+id/shippingViewComponent"

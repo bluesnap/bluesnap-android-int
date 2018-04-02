@@ -33,7 +33,8 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="false">
 
                 <com.bluesnap.androidapi.views.components.BillingViewComponent
                     android:id="@+id/billingViewComponent"
