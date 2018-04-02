@@ -150,6 +150,8 @@ public class NewCreditCardFragment extends Fragment {
         BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
+        BlueSnapService.getInstance().updateTax(billingViewComponent.getUserCountry(), billingViewComponent.getState(), getActivity());
         amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
@@ -171,6 +173,7 @@ public class NewCreditCardFragment extends Fragment {
         BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
+        BlueSnapService.getInstance().updateTax("", "", getActivity());
         if (!sdkRequest.isBillingRequired())
             amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);

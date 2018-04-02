@@ -455,5 +455,9 @@ public class ContactInfoViewComponent extends LinearLayout {
             setOnFocusChangeListenerForState();
         }
     };
+
+    public String getState() {
+        return inputState.getText().toString().trim();
+    }
 }
 
