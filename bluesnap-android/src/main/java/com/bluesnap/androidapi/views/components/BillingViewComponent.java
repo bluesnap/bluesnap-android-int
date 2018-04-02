@@ -2,6 +2,7 @@ package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -57,7 +58,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                        inputZip.requestFocus();
+                        checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
                         return true;
                     }
                     return false;
@@ -110,7 +111,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         if (isCountryRequiresZip())
             validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
         if (isFullBillingRequiredRequired) {
-            validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+            if (BlueSnapValidator.checkCountryHasState(getUserCountry()))
+                validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
             validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
             validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
         }
@@ -153,12 +155,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    if (isEmailRequired)
-                        inputEmail.requestFocus();
-                    else if (isCountryRequiresZip())
-                        inputZip.requestFocus();
-                    else
-                        inputState.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;

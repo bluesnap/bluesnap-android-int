@@ -145,7 +145,8 @@ public class ContactInfoViewComponent extends LinearLayout {
         //validInput &= validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
         if (isCountryRequiresZip())
             validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
-        validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+        if (BlueSnapValidator.checkCountryHasState(getUserCountry()))
+            validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
         validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
         validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
         return validInput;
@@ -242,7 +243,8 @@ public class ContactInfoViewComponent extends LinearLayout {
      * set On Focus Change Listener For State Input according to Country
      */
     void setOnFocusChangeListenerForState() {
-        if (BlueSnapValidator.checkCountryForState(getUserCountry())) {
+        if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
+            setStateVisibility(VISIBLE);
             inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -250,12 +252,13 @@ public class ContactInfoViewComponent extends LinearLayout {
                         if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
                             updateTaxOnCountryStateChange();
                         }
-                        inputCity.requestFocus();
+                        //inputCity.requestFocus();
                     }
                 }
             });
         } else {
             inputState.setOnFocusChangeListener(null);
+            setStateVisibility(GONE);
         }
     }
 
@@ -384,10 +387,7 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    if (isCountryRequiresZip())
-                        inputZip.requestFocus();
-                    else
-                        inputState.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
@@ -398,7 +398,7 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputState.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutState, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
@@ -409,7 +409,7 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputCity.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
@@ -419,12 +419,27 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputAddress.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutAddress});
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    /**
+     * check TextInputLayout Visibility Array
+     *
+     * @param textInputLayouts - array of TextInputLayout to check
+     * @return TextInputLayout or null
+     */
+    void checkTextInputLayoutVisibilityArray(TextInputLayout[] textInputLayouts) {
+        for (TextInputLayout textInputLayout : textInputLayouts) {
+            if (textInputLayout.getVisibility() == VISIBLE) {
+                textInputLayout.getChildAt(0).requestFocus();
+                break;
+            }
+        }
     }
 
     /**
