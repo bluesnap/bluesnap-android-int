@@ -38,6 +38,9 @@ public class RegexTests extends BSAndroidTestsBase {
         ccType = creditCardTypeResolver.getType("401178");
         assertEquals(CreditCardTypeResolver.ELO, ccType);
 
+        ccType = creditCardTypeResolver.getType("4011 78");
+        assertEquals(CreditCardTypeResolver.ELO, ccType);
+
         ccType = creditCardTypeResolver.getType("40111");
         assertEquals(CreditCardTypeResolver.VISA, ccType);
 
