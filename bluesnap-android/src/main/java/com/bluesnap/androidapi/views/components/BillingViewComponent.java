@@ -22,6 +22,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     public static final String TAG = BillingViewComponent.class.getSimpleName();
     private boolean isEmailRequired;
     private boolean isFullBillingRequiredRequired;
+    private boolean isShippingSameAsBilling = false;
 
     public BillingViewComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -161,5 +162,15 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                 return false;
             }
         });
+    }
+
+    public void setShippingSameAsBilling(boolean shippingSameAsBilling) {
+        isShippingSameAsBilling = shippingSameAsBilling;
+    }
+
+    @Override
+    protected void updateTaxOnCountryStateChange() {
+        if (isShippingSameAsBilling)
+            BlueSnapService.getInstance().updateTax(getUserCountry(), inputState.getText().toString(), getContext());
     }
 }

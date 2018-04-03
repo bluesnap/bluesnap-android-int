@@ -204,9 +204,9 @@ public class NewCreditCardFragment extends Fragment {
                 billingViewComponent.requestFocusOnNameInput();
             } else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
+                billingViewComponent.setShippingSameAsBilling(isShippingSameAsBilling);
                 if (isShippingSameAsBilling) {
                     finishFromFragmentNoShipping();
-
                 } else {
                     finishFromFragmentWithShipping();
                 }
