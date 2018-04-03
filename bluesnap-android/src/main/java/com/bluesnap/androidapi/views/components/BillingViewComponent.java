@@ -58,7 +58,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                        checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
+                        checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                         return true;
                     }
                     return false;
@@ -155,7 +155,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
