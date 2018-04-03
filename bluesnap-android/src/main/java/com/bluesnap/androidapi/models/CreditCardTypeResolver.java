@@ -48,7 +48,8 @@ public class CreditCardTypeResolver {
      * @return Card Type Resource String
      */
     public String getType(String number) {
-         for (LinkedHashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
+        number = number.replace(" ", "");
+        for (LinkedHashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
             if (Pattern.matches(entry.getValue(), number))
                 return getCardTypeResource(entry.getKey());
         }
