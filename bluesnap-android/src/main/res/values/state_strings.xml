@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- mirror value key array, order is important, please see array below as well -->
+    <string-array name="state_us_key_array">
+        <item>AA</item>
+        <item>AE</item>
+        <item>AP</item>
+        <item>AL</item>
+        <item>AK</item>
+        <item>AR</item>
+        <item>AS</item>
+        <item>AZ</item>
+        <item>CA</item>
+        <item>CO</item>
+        <item>CT</item>
+        <item>DC</item>
+        <item>DE</item>
+        <item>FL</item>
+        <item>GA</item>
+        <item>GU</item>
+        <item>HI</item>
+        <item>IA</item>
+        <item>ID</item>
+        <item>IL</item>
+        <item>IN</item>
+        <item>KS</item>
+        <item>KY</item>
+        <item>LA</item>
+        <item>MA</item>
+        <item>MD</item>
+        <item>ME</item>
+        <item>MI</item>
+        <item>MN</item>
+        <item>MO</item>
+        <item>MS</item>
+        <item>MT</item>
+        <item>NC</item>
+        <item>ND</item>
+        <item>NE</item>
+        <item>NH</item>
+        <item>NJ</item>
+        <item>NM</item>
+        <item>NV</item>
+        <item>NY</item>
+        <item>OH</item>
+        <item>OK</item>
+        <item>OR</item>
+        <item>PA</item>
+        <item>PR</item>
+        <item>RI</item>
+        <item>SC</item>
+        <item>SD</item>
+        <item>TN</item>
+        <item>TX</item>
+        <item>UT</item>
+        <item>VA</item>
+        <item>VI</item>
+        <item>VT</item>
+        <item>WA</item>
+        <item>WI</item>
+        <item>WV</item>
+        <item>WY</item>
+    </string-array>
+    <!-- mirror value key array, order is important, please see array below as well -->
+    <string-array name="state_us_value_array">
+        <item>Armed Forces Americas</item>
+        <item>Armed Forces (AE)</item>
+        <item>Armed Forces Pacific</item>
+        <item>Alabama</item>
+        <item>Alaska</item>
+        <item>Arkansas</item>
+        <item>American Samoa</item>
+        <item>Arizona</item>
+        <item>California</item>
+        <item>Colorado</item>
+        <item>Connecticut</item>
+        <item>District Of Columbia</item>
+        <item>Delaware</item>
+        <item>Florida</item>
+        <item>Georgia</item>
+        <item>Guam</item>
+        <item>Hawaii</item>
+        <item>Iowa</item>
+        <item>Idaho</item>
+        <item>Illinois</item>
+        <item>Indiana</item>
+        <item>Kansas</item>
+        <item>Kentucky</item>
+        <item>Louisiana</item>
+        <item>Massachusetts</item>
+        <item>Maryland</item>
+        <item>Maine</item>
+        <item>Michigan</item>
+        <item>Minnesota</item>
+        <item>Missouri</item>
+        <item>Mississippi</item>
+        <item>Montana</item>
+        <item>North Carolina</item>
+        <item>North Dakota</item>
+        <item>Nebraska</item>
+        <item>New Hampshire</item>
+        <item>New Jersey</item>
+        <item>New Mexico</item>
+        <item>Nevada</item>
+        <item>New York</item>
+        <item>Ohio</item>
+        <item>Oklahoma</item>
+        <item>Oregon</item>
+        <item>Pennsylvania</item>
+        <item>Puerto Rico</item>
+        <item>Rhode Island</item>
+        <item>South Carolina</item>
+        <item>South Dakota</item>
+        <item>Tennessee</item>
+        <item>Texas</item>
+        <item>Utah</item>
+        <item>Virginia</item>
+        <item>Virgin Islands</item>
+        <item>Vermont</item>
+        <item>Washington</item>
+        <item>Wisconsin</item>
+        <item>West Virginia</item>
+        <item>Wyoming</item>
+    </string-array>
+
+    <!-- mirror value key array, order is important, please see array below as well -->
+    <string-array name="state_ca_key_array">
+        <item>AB</item>
+        <item>BC</item>
+        <item>NB</item>
+        <item>NF</item>
+        <item>NS</item>
+        <item>PE</item>
+        <item>QC</item>
+        <item>SK</item>
+        <item>ON</item>
+        <item>MB</item>
+        <item>YT</item>
+        <item>NT</item>
+        <item>NU</item>
+        <item>NL</item>
+    </string-array>
+    <!-- mirror value key array, order is important, please see array below as well -->
+    <string-array name="state_ca_value_array">
+        <item>Alberta</item>
+        <item>British Columbia</item>
+        <item>New Brunswick</item>
+        <item>Newfoundland</item>
+        <item>Nova Scotia</item>
+        <item>Prince Edward Island</item>
+        <item>Quebec</item>
+        <item>Saskatchewan</item>
+        <item>Ontario</item>
+        <item>Manitoba</item>
+        <item>Yukon Territor</item>
+        <item>Northwest Territories</item>
+        <item>Nunavut</item>
+        <item>Newfoundland and Labrador</item>
+    </string-array>
+
+    <!-- mirror value key array, order is important, please see array below as well -->
+    <string-array name="state_br_key_array">
+        <item>AC</item>
+        <item>AM</item>
+        <item>BA</item>
+        <item>CE</item>
+        <item>DF</item>
+        <item>ES</item>
+        <item>GO</item>
+        <item>MG</item>
+        <item>PB</item>
+        <item>PI</item>
+        <item>RJ</item>
+        <item>RN</item>
+        <item>RS</item>
+        <item>RO</item>
+        <item>RR</item>
+        <item>SP</item>
+        <item>SE</item>
+        <item>TO</item>
+        <item>XA</item>
+        <item>XB</item>
+        <item>XC</item>
+        <item>XD</item>
+        <item>XE</item>
+        <item>XF</item>
+        <item>XG</item>
+        <item>XH</item>
+        <item>XI</item>
+    </string-array>
+    <!-- mirror value key array, order is important, please see array below as well -->
+    <string-array name="state_br_value_array">
+        <item>Acre</item>
+        <item>Amazonas</item>
+        <item>Bahia</item>
+        <item>Ceará</item>
+        <item>Distrito Federal</item>
+        <item>Espírito Santo</item>
+        <item>Goiás</item>
+        <item>Minas Gerais</item>
+        <item>Paraíba</item>
+        <item>Piauí</item>
+        <item>Rio de Janeiro</item>
+        <item>Rio Grande do Norte</item>
+        <item>Rio Grande do Sull</item>
+        <item>Rondônia</item>
+        <item>Roraima</item>
+        <item>São Paulo</item>
+        <item>Sergipe</item>
+        <item>Tocantins</item>
+        <item>Maranhão</item>
+        <item>Mato Grosso do Sul</item>
+        <item>Mato Grosso</item>
+        <item>Santa Catarina</item>
+        <item>Pará</item>
+        <item>Pernambuco</item>
+        <item>Paraná</item>
+        <item>Alagoas</item>
+        <item>Amapá</item>
+    </string-array>
+</resources>

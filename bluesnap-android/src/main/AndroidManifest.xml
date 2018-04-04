@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
 
     <!-- Kount-->
     <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
@@ -33,6 +33,17 @@
         </activity>
         <activity
             android:name=".views.activities.CountryActivity"
+            android:label="@string/title_activity_state"
+            android:parentActivityName=".views.activities.CreditCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.activities.CreditCardActivity" />
+        </activity>
+        <activity
+            android:name=".views.activities.StateActivity"
             android:label="@string/title_activity_country"
             android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -51,6 +50,8 @@ import cz.msebera.android.httpclient.Header;
 public class CreditCardActivity extends AppCompatActivity {
     private static final String TAG = CreditCardActivity.class.getSimpleName();
     public static final int CREDIT_CARD_ACTIVITY_REQUEST_CODE = 3;
+    public static final int RESULT_COUNTRY = 11;
+    public static final int RESULT_STATE = 12;
     private String fragmentType;
     private TextView headerTextView;
     private String sharedCurrency;
@@ -76,6 +77,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         BlueSnapService.getBus().register(this);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
 
     }
 
@@ -177,18 +179,33 @@ public class CreditCardActivity extends AppCompatActivity {
             } else if (BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE.equals(event)) {
                 replaceFragmentPlacement(NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
             } else {
-                Intent newIntent = new Intent(getApplicationContext(), CountryActivity.class);
-                String countryString = intent.getStringExtra(event);
-                newIntent.putExtra(getString(R.string.COUNTRY_STRING), countryString);
-                startActivityForResult(newIntent, Activity.RESULT_FIRST_USER);
+                Intent newIntent;
+                int requestCode;
+                if (BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST.equals(event)) {
+                    newIntent = new Intent(getApplicationContext(), CountryActivity.class);
+                    String countryString = intent.getStringExtra(event);
+                    newIntent.putExtra(getString(R.string.COUNTRY_STRING), countryString);
+                    requestCode = RESULT_COUNTRY;
+                } else {
+                    newIntent = new Intent(getApplicationContext(), StateActivity.class);
+                    String countryString = intent.getStringExtra(getString(R.string.COUNTRY_STRING));
+                    newIntent.putExtra(getString(R.string.COUNTRY_STRING), countryString);
+                    String stateString = intent.getStringExtra(getString(R.string.STATE_STRING));
+                    newIntent.putExtra(getString(R.string.STATE_STRING), stateString);
+                    requestCode = RESULT_STATE;
+                }
+                startActivityForResult(newIntent, requestCode);
             }
         }
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Activity.RESULT_FIRST_USER && resultCode == Activity.RESULT_OK) {
-            BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == RESULT_COUNTRY)
+                BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
+            else
+                BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
         }
     }
 

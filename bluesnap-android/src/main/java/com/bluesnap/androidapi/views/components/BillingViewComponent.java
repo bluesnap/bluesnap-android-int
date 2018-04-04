@@ -22,6 +22,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     public static final String TAG = BillingViewComponent.class.getSimpleName();
     private boolean isEmailRequired;
     private boolean isFullBillingRequiredRequired;
+    private boolean isShippingSameAsBilling = false;
 
     public BillingViewComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -58,7 +59,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                        checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
+                        checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                         return true;
                     }
                     return false;
@@ -155,11 +156,21 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress});
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    public void setShippingSameAsBilling(boolean shippingSameAsBilling) {
+        isShippingSameAsBilling = shippingSameAsBilling;
+    }
+
+    @Override
+    protected void updateTaxOnCountryStateChange() {
+        if (isShippingSameAsBilling)
+            BlueSnapService.getInstance().updateTax(getUserCountry(), inputState.getText().toString(), getContext());
     }
 }
