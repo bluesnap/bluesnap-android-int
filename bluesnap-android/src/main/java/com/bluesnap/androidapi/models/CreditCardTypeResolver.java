@@ -38,17 +38,17 @@ public class CreditCardTypeResolver {
         return INSTANCE;
     }
 
-    protected CreditCardTypeResolver() {}
+    protected CreditCardTypeResolver() {
+    }
 
     private static LinkedHashMap<String, String> creditCardRegex = new LinkedHashMap<>();
 
     /**
-     *
      * @param number - credit card number
      * @return Card Type Resource String
      */
     public String getType(String number) {
-        number = number.replace(" ", "");
+        number = (number != null) ? number.trim().replaceAll("\\s+|-", "") : "";
         for (LinkedHashMap.Entry<String, String> entry : creditCardRegex.entrySet()) {
             if (Pattern.matches(entry.getValue(), number))
                 return getCardTypeResource(entry.getKey());
@@ -61,7 +61,6 @@ public class CreditCardTypeResolver {
     }
 
     /**
-     *
      * @param type - receive string type
      * @return Card Type Drawable
      */
@@ -113,7 +112,6 @@ public class CreditCardTypeResolver {
     }
 
     /**
-     *
      * @param cardTypeResourceName - server name representation of credit card type
      * @return client side name representation of credit card type
      */
