@@ -28,9 +28,9 @@ public class SdkRequest {
         setShippingRequired(false);
     }
 
-    public SdkRequest(Double amount, String currencyNameCode, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
+    public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
 
-        priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
+        priceDetails = new PriceDetails(amount, currencyNameCode, taxAmount);
         setBillingRequired(billingRequired);
         setEmailRequired(emailRequired);
         setShippingRequired(shippingRequired);

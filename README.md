@@ -58,12 +58,19 @@ The SDK includes a pre-built checkout form, enabling you to easily collect the s
 To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` as an Intent Extra.
 
 ### Create an SdkRequest instance 
-An `SdkRequest` instance is required to pass information about the purchase to the SDK. At a minimum, the instance must include the current purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code), as shown in the code below: 
+An `SdkRequest` instance is required to pass information about the purchase to the SDK.
+The instance must include:
+ - the current purchase amount 
+ - purchase currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code)
+ - an optional static tax amount (if you want the tax amount to be calculated dynamically, see 'Handling tax updates' below)
+ - billingRequired: if false, the SDK will collect name and country; if true, it will collect also the billing address.
+ - emailRequired: if true, the SDK will collect email as part of the billing information.
+ - shippingRequired: if true, the SDK will collect shipping details.
 
 ```
-SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode)
-SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, boolean billingRequired, boolean emailRequired, boolean shippingRequired)
+SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
+
 #### Handling tax updates (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 
 then you may want to update tax rates whenever the user changes their shipping location. 
