@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -64,7 +65,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
         if (verifySDKRequest()) {
 
-            initPrefsAndPopulateFromCard();
+            loadShopperFromSDKConfiguration();
 
             newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
             newCardButton.setOnClickListener(new View.OnClickListener() {
@@ -120,35 +121,27 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     /**
      * gets Shopper from SDK configuration and populate returning shopper cards (from populateFromCard function) or create a new shopper if shopper object does not exists
      */
-    private void initPrefsAndPopulateFromCard() {
-        try {
-            Shopper shopper = sdkConfiguration.getShopper();
-            if (null != shopper) {
-                this.shopper = shopper;
-                if (null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos())
-                    populateFromCard();
-            } else {
-                sdkConfiguration.setShopper(new Shopper());
-            }
-        } catch (NullPointerException e) {
-            Log.e(TAG, "NullPointerException", e);
-        } catch (Exception e) {
-            Log.e(TAG, "Exception", e);
+    private void loadShopperFromSDKConfiguration() {
+        final Shopper shopper = sdkConfiguration.getShopper();
+        if (shopper == null) {
+            Log.d(TAG, "SDK configurations contains no shopper, creating new.");
+            sdkConfiguration.setShopper(new Shopper());
+            return;
         }
+        this.shopper = shopper;
+        updateShopperCCViews(shopper);
     }
 
-    /**
-     * populate returning shopper cards ListView
-     *
-     * @throws NullPointerException
-     */
-    private void populateFromCard() throws NullPointerException {
-        oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
-
+    private void updateShopperCCViews(@NonNull final Shopper shopper) {
+        if (null == shopper.getPreviousPaymentSources() || null == shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
+            Log.d(TAG, "Existing shopper contains no previous paymentSources or Previous card info");
+            return;
+        }
         //create an ArrayList<CreditCardInfo> for the ListView.
-        assert shopper.getPreviousPaymentSources() != null;
         ArrayList<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
+
         //create an adapter to describe how the items are displayed.
+        oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
         oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray);
         //set the spinners adapter to the previously created one.
         oneLineCCViewComponentsListView.setAdapter(oneLineCCViewAdapter);
@@ -168,9 +161,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 startCreditCardActivityForResult(FRAGMENT_TYPE, RETURNING_CC);
             }
         });
-
         oneLineCCViewComponentsListView.setVisibility(View.VISIBLE);
-
     }
 
     /**
