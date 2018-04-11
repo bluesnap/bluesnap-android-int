@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -74,7 +75,20 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputName = (EditText) findViewById(R.id.input_name);
         inputEmail = (EditText) findViewById(R.id.input_email);
         inputZip = (EditText) findViewById(R.id.input_zip);
+
         inputState = (EditText) findViewById(R.id.input_state);
+        inputState.setInputType(InputType.TYPE_NULL);
+        inputState.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST,
+                        getResources().getString(R.string.COUNTRY_STRING), getUserCountry(),
+                        getResources().getString(R.string.STATE_STRING), getState(),
+                        TAG);
+            }
+        });
+        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
+
         inputCity = (EditText) findViewById(R.id.input_city);
         inputAddress = (EditText) findViewById(R.id.input_address);
 
@@ -145,7 +159,8 @@ public class ContactInfoViewComponent extends LinearLayout {
         //validInput &= validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
         if (isCountryRequiresZip())
             validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
-        validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+        if (BlueSnapValidator.checkCountryHasState(getUserCountry()))
+            validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
         validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
         validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
         return validInput;
@@ -242,20 +257,22 @@ public class ContactInfoViewComponent extends LinearLayout {
      * set On Focus Change Listener For State Input according to Country
      */
     void setOnFocusChangeListenerForState() {
-        if (BlueSnapValidator.checkCountryForState(getUserCountry())) {
-            inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
+        if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
+            setStateVisibility(VISIBLE);
+            /*inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus) {
                         if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
                             updateTaxOnCountryStateChange();
                         }
-                        inputCity.requestFocus();
+                        //inputCity.requestFocus();
                     }
                 }
-            });
+            });*/
         } else {
-            inputState.setOnFocusChangeListener(null);
+            //inputState.setOnFocusChangeListener(null);
+            setStateVisibility(GONE);
         }
     }
 
@@ -384,10 +401,7 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    if (isCountryRequiresZip())
-                        inputZip.requestFocus();
-                    else
-                        inputState.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
@@ -398,33 +412,48 @@ public class ContactInfoViewComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputState.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
             }
         });
 
-        inputState.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        /*inputState.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputCity.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
             }
-        });
+        });*/
         inputCity.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    inputAddress.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutAddress});
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    /**
+     * check TextInputLayout Visibility Array
+     *
+     * @param textInputLayouts - array of TextInputLayout to check
+     * @return TextInputLayout or null
+     */
+    void checkTextInputLayoutVisibilityArray(TextInputLayout[] textInputLayouts) {
+        for (TextInputLayout textInputLayout : textInputLayouts) {
+            if (textInputLayout.getVisibility() == VISIBLE) {
+                textInputLayout.getChildAt(0).requestFocus();
+                break;
+            }
+        }
     }
 
     /**
@@ -436,9 +465,22 @@ public class ContactInfoViewComponent extends LinearLayout {
         public void onReceive(final Context context, Intent intent) {
             String event = intent.getAction();
             Log.d(TAG, event);
-            setUserCountry(intent.getStringExtra(event));
-            setOnFocusChangeListenerForState();
+            if (BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE.equals(event)) {
+                setUserCountry(intent.getStringExtra(event));
+                setOnFocusChangeListenerForState();
+            } else {
+                setState(intent.getStringExtra(event));
+                updateTaxOnCountryStateChange();
+            }
         }
     };
+
+    public String getState() {
+        return inputState.getText().toString().trim();
+    }
+
+    public void setState(String state) {
+        this.inputState.setText(state);
+    }
 }
 

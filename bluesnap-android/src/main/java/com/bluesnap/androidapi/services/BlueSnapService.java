@@ -247,7 +247,8 @@ public class BlueSnapService {
             postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
 
         if (sdkRequest.isBillingRequired()) {
-            postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
+            if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
+                postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
             postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
             postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
@@ -261,7 +262,8 @@ public class BlueSnapService {
             postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
             postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
             postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
-            postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
+            if (BlueSnapValidator.checkCountryHasState(shippingInfo.getCountry()))
+                postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
             postData.put(ShippingInfo.SHIPPINGCITY, shippingInfo.getCity());
             postData.put(ShippingInfo.SHIPPINGADDRESS, shippingInfo.getAddress());
             postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
