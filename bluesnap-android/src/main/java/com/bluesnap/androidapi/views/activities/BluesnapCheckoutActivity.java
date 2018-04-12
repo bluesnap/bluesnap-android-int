@@ -36,23 +36,19 @@ import java.util.ArrayList;
  */
 
 public class BluesnapCheckoutActivity extends AppCompatActivity {
+    private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
     static final int RESULT_SDK_FAILED = -2;
-    private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";
-    public static String PAY_PAL = "PAY_PAL";
-    private LinearLayout payPalButton, newCardButton;
     private ProgressBar progressBar;
-    private ListView oneLineCCViewComponentsListView;
     private SdkRequest sdkRequest;
     private SDKConfiguration sdkConfiguration;
-    private Shopper shopper;
     private OneLineCCViewAdapter oneLineCCViewAdapter;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
@@ -63,40 +59,43 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         sdkRequest = blueSnapService.getSdkRequest();
         sdkConfiguration = blueSnapService.getsDKConfiguration();
 
-        if (verifySDKRequest()) {
+        // validate the SDK request, finish the activity with error result in case of failure.
+        if (!verifySDKRequest()) {
+            Log.d(TAG, "Closing Activity");
+            return;
+        }
 
-            loadShopperFromSDKConfiguration();
+        loadShopperFromSDKConfiguration();
+        LinearLayout newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
+        newCardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+            }
+        });
 
-            newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
-            newCardButton.setOnClickListener(new View.OnClickListener() {
+        LinearLayout payPalButton = (LinearLayout) findViewById(R.id.payPalButton);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
+            payPalButton.setVisibility(View.GONE);
+        } else {
+            payPalButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+
+                    String payPalToken = BlueSnapService.getPayPalToken();
+                    if ("".equals(payPalToken)) {
+                        Log.d(TAG, "create payPalToken");
+                        startPayPal();
+                    } else {
+                        Log.d(TAG, "startWebViewActivity");
+                        startWebViewActivity(payPalToken);
+                    }
+
                 }
             });
-
-            payPalButton = (LinearLayout) findViewById(R.id.payPalButton);
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
-                payPalButton.setVisibility(View.GONE);
-            } else {
-                payPalButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        String payPalToken = BlueSnapService.getPayPalToken();
-                        if ("".equals(payPalToken)) {
-                            Log.d(TAG, "create payPalToken");
-                            startPayPal();
-                        } else {
-                            Log.d(TAG, "startWebViewActivity");
-                            startWebViewActivity(payPalToken);
-                        }
-
-                    }
-                });
-            }
         }
+
     }
 
 
@@ -128,7 +127,6 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             sdkConfiguration.setShopper(new Shopper());
             return;
         }
-        this.shopper = shopper;
         updateShopperCCViews(shopper);
     }
 
@@ -141,7 +139,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         ArrayList<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
 
         //create an adapter to describe how the items are displayed.
-        oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
+        ListView oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
         oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray);
         //set the spinners adapter to the previously created one.
         oneLineCCViewComponentsListView.setAdapter(oneLineCCViewAdapter);
