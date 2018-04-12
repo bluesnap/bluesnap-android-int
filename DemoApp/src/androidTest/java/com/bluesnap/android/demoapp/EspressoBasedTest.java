@@ -72,8 +72,8 @@ public class EspressoBasedTest {
             e.printStackTrace();
         }
         randomTestValuesGeneretor = new RandomTestValuesGenerator();
-        IdlingPolicies.setMasterPolicyTimeout(400, TimeUnit.SECONDS);
-        IdlingPolicies.setIdlingResourceTimeout(400, TimeUnit.SECONDS);
+        IdlingPolicies.setMasterPolicyTimeout(60, TimeUnit.SECONDS);
+        IdlingPolicies.setIdlingResourceTimeout(60, TimeUnit.SECONDS);
 
         //Wake up device again in case token fetch took to much time
         try {
