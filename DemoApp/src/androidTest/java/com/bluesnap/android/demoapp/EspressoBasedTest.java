@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
@@ -9,6 +10,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
@@ -17,14 +19,16 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.PrefsStorage;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
-import org.junit.Before;
+import org.junit.Rule;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -48,14 +52,19 @@ import static org.hamcrest.Matchers.containsString;
  */
 public class EspressoBasedTest {
     public String merchantToken;
-    protected RandomTestValuesGenerator randomTestValuesGeneretor;
+    protected RandomTestValuesGenerator randomTestValuesGeneretor = new RandomTestValuesGenerator();
     protected IdlingResource tokenProgressBarIR;
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
     private boolean isSdkRequestIsNull = false;
 
-    @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
+    @Rule
+    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
+            BluesnapCheckoutActivity.class, false, false);
+    protected BluesnapCheckoutActivity mActivity;
+
+    //    @Before
+    public void doSetup() throws InterruptedException, BSPaymentRequestException {
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {
@@ -66,7 +75,6 @@ public class EspressoBasedTest {
         IdlingPolicies.setMasterPolicyTimeout(400, TimeUnit.SECONDS);
         IdlingPolicies.setIdlingResourceTimeout(400, TimeUnit.SECONDS);
 
-
         //Wake up device again in case token fetch took to much time
         try {
             wakeUpDeviceScreen();
@@ -74,7 +82,18 @@ public class EspressoBasedTest {
             fail("Could not wake up device");
             e.printStackTrace();
         }
+    }
 
+    public void setupAndLaunch(SdkRequest sdkRequest) throws InterruptedException, BSPaymentRequestException {
+
+        doSetup();
+
+        setSDKToken();
+        Intent intent = new Intent();
+        BlueSnapService.getInstance().setSdkRequest(sdkRequest);
+        mActivityRule.launchActivity(intent);
+        mActivity = mActivityRule.getActivity();
+        clearPrefs(mActivityRule.getActivity().getBaseContext());
     }
 
     public void setSDKToken() throws InterruptedException {

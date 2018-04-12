@@ -49,10 +49,8 @@ public class DemoFlowTest extends EspressoBasedTest {
         Thread.sleep(1000);
     }
 
-
-    @Override
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        super.setup();
+        super.doSetup();
         clearPrefs(mActivityRule.getActivity().getApplicationContext());
     }
 
@@ -74,6 +72,7 @@ public class DemoFlowTest extends EspressoBasedTest {
         onView(withId(R.id.productPriceEditText))
                 .perform(typeText(demoPurchaseAmount.toString()), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.merchantAppSubmitButton)).perform(click());
+        onView(withId(R.id.newCardButton)).perform(click());
         return demoPurchaseAmount;
     }
 
