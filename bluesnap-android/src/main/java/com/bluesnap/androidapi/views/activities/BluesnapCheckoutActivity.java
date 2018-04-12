@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,23 +36,19 @@ import java.util.ArrayList;
  */
 
 public class BluesnapCheckoutActivity extends AppCompatActivity {
+    private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     public static final String SDK_ERROR_MSG = "SDK_ERROR_MESSAGE";
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
     static final int RESULT_SDK_FAILED = -2;
-    private static final String TAG = BluesnapCheckoutActivity.class.getSimpleName();
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";
-    public static String PAY_PAL = "PAY_PAL";
-    private LinearLayout payPalButton, newCardButton;
     private ProgressBar progressBar;
-    private ListView oneLineCCViewComponentsListView;
     private SdkRequest sdkRequest;
     private SDKConfiguration sdkConfiguration;
-    private Shopper shopper;
     private OneLineCCViewAdapter oneLineCCViewAdapter;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
@@ -62,40 +59,43 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         sdkRequest = blueSnapService.getSdkRequest();
         sdkConfiguration = blueSnapService.getsDKConfiguration();
 
-        if (verifySDKRequest()) {
+        // validate the SDK request, finish the activity with error result in case of failure.
+        if (!verifySDKRequest()) {
+            Log.d(TAG, "Closing Activity");
+            return;
+        }
 
-            initPrefsAndPopulateFromCard();
+        loadShopperFromSDKConfiguration();
+        LinearLayout newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
+        newCardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+            }
+        });
 
-            newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
-            newCardButton.setOnClickListener(new View.OnClickListener() {
+        LinearLayout payPalButton = (LinearLayout) findViewById(R.id.payPalButton);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
+            payPalButton.setVisibility(View.GONE);
+        } else {
+            payPalButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+
+                    String payPalToken = BlueSnapService.getPayPalToken();
+                    if ("".equals(payPalToken)) {
+                        Log.d(TAG, "create payPalToken");
+                        startPayPal();
+                    } else {
+                        Log.d(TAG, "startWebViewActivity");
+                        startWebViewActivity(payPalToken);
+                    }
+
                 }
             });
-
-            payPalButton = (LinearLayout) findViewById(R.id.payPalButton);
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
-                payPalButton.setVisibility(View.GONE);
-            } else {
-                payPalButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        String payPalToken = BlueSnapService.getPayPalToken();
-                        if ("".equals(payPalToken)) {
-                            Log.d(TAG, "create payPalToken");
-                            startPayPal();
-                        } else {
-                            Log.d(TAG, "startWebViewActivity");
-                            startWebViewActivity(payPalToken);
-                        }
-
-                    }
-                });
-            }
         }
+
     }
 
 
@@ -120,35 +120,26 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     /**
      * gets Shopper from SDK configuration and populate returning shopper cards (from populateFromCard function) or create a new shopper if shopper object does not exists
      */
-    private void initPrefsAndPopulateFromCard() {
-        try {
-            Shopper shopper = sdkConfiguration.getShopper();
-            if (null != shopper) {
-                this.shopper = shopper;
-                if (null != shopper.getPreviousPaymentSources() && null != shopper.getPreviousPaymentSources().getPreviousCreditCardInfos())
-                    populateFromCard();
-            } else {
-                sdkConfiguration.setShopper(new Shopper());
-            }
-        } catch (NullPointerException e) {
-            Log.e(TAG, "NullPointerException", e);
-        } catch (Exception e) {
-            Log.e(TAG, "Exception", e);
+    private void loadShopperFromSDKConfiguration() {
+        final Shopper shopper = sdkConfiguration.getShopper();
+        if (shopper == null) {
+            Log.d(TAG, "SDK configurations contains no shopper, creating new.");
+            sdkConfiguration.setShopper(new Shopper());
+            return;
         }
+        updateShopperCCViews(shopper);
     }
 
-    /**
-     * populate returning shopper cards ListView
-     *
-     * @throws NullPointerException
-     */
-    private void populateFromCard() throws NullPointerException {
-        oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
-
+    private void updateShopperCCViews(@NonNull final Shopper shopper) {
+        if (null == shopper.getPreviousPaymentSources() || null == shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
+            Log.d(TAG, "Existing shopper contains no previous paymentSources or Previous card info");
+            return;
+        }
         //create an ArrayList<CreditCardInfo> for the ListView.
-        assert shopper.getPreviousPaymentSources() != null;
         ArrayList<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
+
         //create an adapter to describe how the items are displayed.
+        ListView oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
         oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray);
         //set the spinners adapter to the previously created one.
         oneLineCCViewComponentsListView.setAdapter(oneLineCCViewAdapter);
@@ -168,9 +159,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 startCreditCardActivityForResult(FRAGMENT_TYPE, RETURNING_CC);
             }
         });
-
         oneLineCCViewComponentsListView.setVisibility(View.VISIBLE);
-
     }
 
     /**
