@@ -237,10 +237,11 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
                         title = getString(R.string.ERROR);
                     }
-                    BluesnapAlertDialog.setDialog(getParent(), message, title);
+                    BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this
+                            , message, title);
                 } catch (Exception e) {
                     Log.e(TAG, "json parsing exception", e);
-                    BluesnapAlertDialog.setDialog(getParent(), "Paypal service error", "Error"); //TODO: friendly error
+                    BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
                 } finally {
                     progressBar.setVisibility(View.INVISIBLE);
                 }
