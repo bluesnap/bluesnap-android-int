@@ -40,11 +40,9 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     void initControl(final Context context) {
         super.initControl(context);
 
-        final BlueSnapService blueSnapService = BlueSnapService.getInstance();
-        final SdkRequest sdkRequest = blueSnapService.getSdkRequest();
-        assert sdkRequest != null;
+        final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        isEmailRequired = blueSnapService.getSdkRequest().isEmailRequired();
+        isEmailRequired = sdkRequest.isEmailRequired();
         if (isEmailRequired) {
             inputEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
@@ -69,7 +67,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             setEmailVisibility(GONE);
         }
 
-        isFullBillingRequiredRequired = blueSnapService.getSdkRequest().isBillingRequired();
+        isFullBillingRequiredRequired = sdkRequest.isBillingRequired();
         if (!isFullBillingRequiredRequired) {
             setFullBillingVisibility(GONE);
             inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);

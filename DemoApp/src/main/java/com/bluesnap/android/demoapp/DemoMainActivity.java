@@ -203,7 +203,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
     private void showDialog(String message) {
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(DemoMainActivity.this);
             builder.setMessage(message);
             builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {

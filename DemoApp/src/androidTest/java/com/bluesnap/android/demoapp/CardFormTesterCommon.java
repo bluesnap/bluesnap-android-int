@@ -25,6 +25,7 @@ public class CardFormTesterCommon {
         onView(withId(R.id.expEditText)).perform(typeText("1120"));
         onView(withId(R.id.cvvEditText)).perform(typeText("123")).perform(ViewActions.closeSoftKeyboard());
         onView(withId(R.id.input_name)).perform(clearText(), typeText("John Doe"));
+        onView(withId(R.id.input_zip)).perform(clearText(), typeText("abXD123"));
     }
 
     public static void changeCurrency(String currencyCode) {
