@@ -37,7 +37,7 @@ public class ContactInfoViewComponent extends LinearLayout {
     ImageButton countryImageButton;
     //boolean hasAlreadyRequestedFocus;
 
-    String userCountry;
+    private String userCountry;
 
     public ContactInfoViewComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -129,6 +129,7 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputState.setText(contactInfo.getState());
         inputCity.setText(contactInfo.getCity());
         inputAddress.setText(contactInfo.getAddress());
+        inputState.setText(contactInfo.getState());
         setUserCountry(contactInfo.getCountry());
     }
 
@@ -198,7 +199,8 @@ public class ContactInfoViewComponent extends LinearLayout {
      */
     boolean validateField(EditText editText, TextInputLayout textInputLayout, BlueSnapValidator.EditTextFields validationType) {
         if (!BlueSnapValidator.validateEditTextString(editText.getText().toString(), validationType)) {
-            textInputLayout.setError(getErrorMsg(validationType));
+            if (editText.getText().length() > 1)
+                textInputLayout.setError(getErrorMsg(validationType));
             /*if (!hasAlreadyRequestedFocus) {
                 hasAlreadyRequestedFocus = true;
                 AndroidUtil.setFocusOnFirstErrorInput(textInputLayout);
@@ -233,7 +235,7 @@ public class ContactInfoViewComponent extends LinearLayout {
             }
         });
 
-        setOnFocusChangeListenerForState();
+        setStateVisibilityByUserCountry();
 
         inputCity.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
@@ -256,7 +258,7 @@ public class ContactInfoViewComponent extends LinearLayout {
     /**
      * set On Focus Change Listener For State Input according to Country
      */
-    void setOnFocusChangeListenerForState() {
+    void setStateVisibilityByUserCountry() {
         if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
             /*inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -467,7 +469,7 @@ public class ContactInfoViewComponent extends LinearLayout {
             Log.d(TAG, event);
             if (BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE.equals(event)) {
                 setUserCountry(intent.getStringExtra(event));
-                setOnFocusChangeListenerForState();
+                setStateVisibilityByUserCountry();
             } else {
                 setState(intent.getStringExtra(event));
                 updateTaxOnCountryStateChange();
