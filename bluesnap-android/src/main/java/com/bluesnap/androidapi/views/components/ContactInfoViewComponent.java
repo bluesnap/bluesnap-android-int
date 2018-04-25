@@ -199,8 +199,8 @@ public class ContactInfoViewComponent extends LinearLayout {
      */
     boolean validateField(EditText editText, TextInputLayout textInputLayout, BlueSnapValidator.EditTextFields validationType) {
         if (!BlueSnapValidator.validateEditTextString(editText.getText().toString(), validationType)) {
-            if (editText.getText().length() > 1)
-                textInputLayout.setError(getErrorMsg(validationType));
+            //TODO: This may throw exception to the log if not checked for empty strings
+            textInputLayout.setError(getErrorMsg(validationType));
             /*if (!hasAlreadyRequestedFocus) {
                 hasAlreadyRequestedFocus = true;
                 AndroidUtil.setFocusOnFirstErrorInput(textInputLayout);

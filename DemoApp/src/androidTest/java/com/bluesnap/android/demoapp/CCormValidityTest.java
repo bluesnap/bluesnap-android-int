@@ -35,10 +35,6 @@ import static org.hamcrest.Matchers.not;
 @SmallTest
 public class CCormValidityTest extends EspressoBasedTest {
     private static final String TAG = CCormValidityTest.class.getSimpleName();
-//    @Rule
-//    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
-//            BluesnapCheckoutActivity.class, true, false);
-//    private BluesnapCheckoutActivity mActivity;
 
     @After
     public void keepRunning() throws InterruptedException {
@@ -145,32 +141,11 @@ public class CCormValidityTest extends EspressoBasedTest {
         onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
         onView(ccNumberEditTextVM).perform(click());
         onView(ccNumberEditTextVM).perform(clearText());
-        onView(ccNumberEditTextVM).perform(typeText("1"), ViewActions.closeSoftKeyboard());
+        onView(ccNumberEditTextVM).perform(typeText("1876987"), ViewActions.closeSoftKeyboard());
         onView(buynowButtonVM).perform(click());
         onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
 
     }
-
-
-//    /**
-//     * Test that when entering valid data and then modifying it eventually invalidates the form.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void test_validate_invalidate() throws InterruptedException {
-//        CardFormTesterCommon.fillInAllFieldsWithValidCard();
-//
-//        onView(withId(R.id.creditCardNumberEditText))
-//                .perform(ViewActions.closeSoftKeyboard())
-//                //.perform(pressKey(KeyEvent.KEYCODE_DEL))
-//                .perform(clearText())
-//                .perform(typeText("1"), ViewActions.closeSoftKeyboard());
-//
-//        onView(withId(R.id.buyNowButton)).perform(click());
-//        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
-//    }
-
 
 }
 
