@@ -29,7 +29,7 @@
                 android:fadeScrollbars="false">
 
                 <com.bluesnap.androidapi.views.components.ShippingViewComponent
-                    android:id="@+id/shippingViewComponent"
+                    android:id="@+id/returningShoppershippingViewComponent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent">

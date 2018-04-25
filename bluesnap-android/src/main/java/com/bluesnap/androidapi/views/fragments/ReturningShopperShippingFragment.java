@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class ReturningShopperShippingFragment extends Fragment {
         shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
 
         // set Shipping Details
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.shippingViewComponent);
+        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
         assert shopper != null;
         shippingViewComponent.updateResource(shopper.getShippingContactInfo());
 
@@ -61,8 +62,11 @@ public class ReturningShopperShippingFragment extends Fragment {
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validateAndUpdate())
+                if (validateAndUpdate()) {
                     BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, TAG);
+                } else {
+                    Log.d(TAG, "Invalid shopper contact info");
+                }
             }
         });
 
