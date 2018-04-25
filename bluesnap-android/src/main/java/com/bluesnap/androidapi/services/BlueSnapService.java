@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.services;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -60,6 +61,7 @@ public class BlueSnapService {
     private SDKConfiguration sDKConfiguration;
     private String merchantStoreCurrency;
     private TokenProvider tokenProvider;
+    private Context mContext;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -121,7 +123,7 @@ public class BlueSnapService {
      * @param context               A Merchant Application Context
      * @param callback              A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, final Context context, final BluesnapServiceCallback callback) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, @NonNull Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
         this.merchantStoreCurrency = merchantStoreCurrency;
         if (null != tokenProvider)
@@ -130,9 +132,8 @@ public class BlueSnapService {
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
-
+        mContext = context;
         sdkResult = null;
-        sdkRequest = null;
 
         clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
@@ -560,7 +561,7 @@ public class BlueSnapService {
         return sdkResult;
     }
 
-    @Nullable
+    @NonNull
     public SdkRequest getSdkRequest() {
         return sdkRequest;
     }
@@ -568,12 +569,12 @@ public class BlueSnapService {
     /**
      * Set a sdkRequest and call on  it.
      *
-     * @param newSdkRequest
-     * @throws BSPaymentRequestException
+     * @param newSdkRequest SdkRequest an Sdk request to uses
+     * @throws BSPaymentRequestException in case of invalid SdkRequest
      */
-    public void setSdkRequest(SdkRequest newSdkRequest) throws BSPaymentRequestException {
+    public synchronized void setSdkRequest(@NonNull SdkRequest newSdkRequest) throws BSPaymentRequestException {
         if (newSdkRequest == null)
-            throw new BSPaymentRequestException("null sdkRequest");
+            throw new BSPaymentRequestException("null sdkRequest was passed");
 
         if (sdkRequest != null) {
             Log.w(TAG, "sdkRequest override");
