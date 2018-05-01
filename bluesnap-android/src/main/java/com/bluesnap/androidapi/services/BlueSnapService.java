@@ -246,9 +246,10 @@ public class BlueSnapService {
         if (null != billingInfo.getZip() && !"".equals(billingInfo.getZip()))
             postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
 
+        if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
+            postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
+
         if (sdkRequest.isBillingRequired()) {
-            if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
-                postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
             postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
             postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
