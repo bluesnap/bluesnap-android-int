@@ -330,6 +330,8 @@ public class ContactInfoViewComponent extends LinearLayout {
         // int The associated resource identifier.  Returns 0 if no such resource was found.  (0 is not a valid resource ID.)
         if (countryId > 0)
             countryImageButton.setImageDrawable(getResources().getDrawable(countryId));
+        else
+            countryImageButton.setImageDrawable(getResources().getDrawable(R.drawable.unknown));
     }
 
     /**
