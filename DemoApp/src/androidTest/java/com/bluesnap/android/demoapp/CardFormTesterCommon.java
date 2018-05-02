@@ -22,10 +22,10 @@ public class CardFormTesterCommon {
     public static void fillInAllFieldsWithValidCard() {
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.expEditText)).perform(typeText("1120"));
-        onView(withId(R.id.cvvEditText)).perform(typeText("123")).perform(ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.input_name)).perform(clearText(), typeText("John Doe"));
-        onView(withId(R.id.input_zip)).perform(clearText(), typeText("abXD123"));
+        onView(withId(R.id.expEditText)).perform(typeText(""));
+        onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
+        onView(withId(R.id.input_zip)).perform(clearText(), typeText("abXD"));
     }
 
     public static void changeCurrency(String currencyCode) {
@@ -40,9 +40,10 @@ public class CardFormTesterCommon {
         }
     }
 
+    //TODO: this should accept country and state parameters
     public static void fillInShippingDetails() {
-        onView(withId(R.id.input_layout_name)).perform(clearText(), typeText("John Doe"));
-        onView(withId(R.id.input_layout_address)).perform(clearText(), typeText("9 Baker street"));
+        onView(withId(R.id.input_layout_name)).perform(clearText(), typeText("john doe"));
+        onView(withId(R.id.input_layout_address)).perform(clearText(), typeText("baker street"));
         onView(withId(R.id.input_layout_city)).perform(clearText(), typeText("London"));
         onView(withId(R.id.input_layout_state)).perform(clearText(), typeText("UK")).perform(ViewActions.closeSoftKeyboard());
     }

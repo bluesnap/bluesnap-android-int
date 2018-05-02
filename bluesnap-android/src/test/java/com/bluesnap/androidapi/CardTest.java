@@ -348,4 +348,13 @@ public class CardTest extends TestCase {
         assertTrue("the tostring should containg last4", cardToString.contains(last4));
         assertFalse("card tostring should not expose name", cardToString.contains(billingInfo.getFullName()));
     }
+
+    @Test
+    public void testEmptyCardStrings() {
+        CreditCard card = new CreditCard();
+        card.setNumber(null);
+        card.setNumber("");
+        assertTrue("Invalid type", "UNKNOWN".equals(card.getCardType().toUpperCase()));
+
+    }
 }

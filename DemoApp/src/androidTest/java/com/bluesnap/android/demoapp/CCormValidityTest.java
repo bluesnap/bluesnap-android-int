@@ -141,9 +141,43 @@ public class CCormValidityTest extends EspressoBasedTest {
         onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
         onView(ccNumberEditTextVM).perform(click());
         onView(ccNumberEditTextVM).perform(clearText());
-        onView(ccNumberEditTextVM).perform(typeText("1876987"), ViewActions.closeSoftKeyboard());
+        onView(ccNumberEditTextVM).perform(clearText(), typeText("1876987"), ViewActions.closeSoftKeyboard());
         onView(buynowButtonVM).perform(click());
         onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
+
+    }
+
+
+    /**
+     * @throws InterruptedException
+     */
+    @Test
+    public void empty_fields_validation() throws InterruptedException {
+        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
+
+        onView(withId(R.id.creditCardNumberEditText))
+                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.expEditText)).perform(typeText(""));
+        onView(buynowButtonVM).perform(click());
+        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
+
+    }
+
+    /**
+     * This test is reproducing validation state where no input is entered to make sure IndexOutOFBoundsException is not thrown
+     *
+     * @throws InterruptedException
+     */
+    @Test
+    public void test_empty_fields_affect_validation() throws InterruptedException {
+        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
+
+        onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
+        onView(withId(R.id.creditCardNumberEditText))
+                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.expEditText)).perform(typeText(""));
+        onView(buynowButtonVM).perform(click());
+        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
 
     }
 
