@@ -1,6 +1,9 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.action.ViewActions;
+import android.view.View;
+
+import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -19,13 +22,33 @@ import static org.hamcrest.Matchers.hasToString;
  */
 public class CardFormTesterCommon {
 
+    static Matcher<View> creditCardNumberErrorTextVM = withId(R.id.creditCardNumberErrorTextView);
+    static Matcher<View> ccNumberEditTextVM = withId(R.id.creditCardNumberEditText);
+    static Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
+    static Matcher<View> expEditTextVM = withId(R.id.expEditText);
+    static Matcher<View> expErrorTextVM = withId(R.id.expErrorTextView);
+    static Matcher<View> cvvEditTextVM = withId(R.id.cvvEditText);
+
+
     public static void fillInAllFieldsWithValidCard() {
+
+        //------------------------------------------
+
+
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.expEditText)).perform(typeText(""));
         onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
         onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
-        onView(withId(R.id.input_zip)).perform(clearText(), typeText("abXD"));
+        //TODO: This zip has to be entered according to locale, i.e with letters
+        onView(withId(R.id.input_zip)).perform(clearText(), typeText("3324"));
+
+        onView(expEditTextVM)
+                .perform(click(), clearText(), typeText("12 26"), ViewActions.closeSoftKeyboard());
+
+        onView(cvvEditTextVM)
+                .perform(click(), clearText(), typeText("123"), ViewActions.closeSoftKeyboard());
+
     }
 
     public static void changeCurrency(String currencyCode) {

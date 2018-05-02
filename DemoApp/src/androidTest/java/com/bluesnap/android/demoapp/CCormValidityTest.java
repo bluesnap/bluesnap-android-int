@@ -51,7 +51,7 @@ public class CCormValidityTest extends EspressoBasedTest {
     }
 
     @Test
-    public void invalidMessageCheck() throws InterruptedException {
+    public void ccn_new_card_validation_messages() throws InterruptedException {
 
         //------------------------------------------
         // CC number
@@ -138,12 +138,12 @@ public class CCormValidityTest extends EspressoBasedTest {
         onView(cvvErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
 
         // Test that when entering valid data and then modifying it eventually invalidates the form.
-        onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
-        onView(ccNumberEditTextVM).perform(click());
-        onView(ccNumberEditTextVM).perform(clearText());
-        onView(ccNumberEditTextVM).perform(clearText(), typeText("1876987"), ViewActions.closeSoftKeyboard());
-        onView(buynowButtonVM).perform(click());
-        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
+//        onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+//        onView(ccNumberEditTextVM).perform(click());
+//        onView(ccNumberEditTextVM).perform(clearText());
+//        onView(ccNumberEditTextVM).perform(clearText(), typeText("1876987"), ViewActions.closeSoftKeyboard());
+//        onView(buynowButtonVM).perform(click());
+//        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
 
     }
 
@@ -152,7 +152,7 @@ public class CCormValidityTest extends EspressoBasedTest {
      * @throws InterruptedException
      */
     @Test
-    public void empty_fields_validation() throws InterruptedException {
+    public void cc_new_Card_ccn_first() throws InterruptedException {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
         onView(withId(R.id.creditCardNumberEditText))
@@ -169,7 +169,7 @@ public class CCormValidityTest extends EspressoBasedTest {
      * @throws InterruptedException
      */
     @Test
-    public void test_empty_fields_affect_validation() throws InterruptedException {
+    public void cc_new_card_empty_name_then_ccn() throws InterruptedException {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
         onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
