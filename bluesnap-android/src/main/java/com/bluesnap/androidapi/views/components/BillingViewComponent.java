@@ -171,4 +171,12 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         if (isShippingSameAsBilling)
             BlueSnapService.getInstance().updateTax(getUserCountry(), inputState.getText().toString(), getContext());
     }
+
+    @Override
+    void setOnFocusChangeListenerForState() {
+        if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry()))
+            setStateVisibility(VISIBLE);
+        else
+            setStateVisibility(GONE);
+    }
 }
