@@ -1,7 +1,6 @@
 package com.bluesnap.android.demoapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,7 +22,6 @@ import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.PrefsStorage;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
@@ -93,7 +91,7 @@ public class EspressoBasedTest {
         BlueSnapService.getInstance().setSdkRequest(sdkRequest);
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
-        clearPrefs(mActivityRule.getActivity().getBaseContext());
+
     }
 
     public void setSDKToken() throws InterruptedException {
@@ -168,10 +166,6 @@ public class EspressoBasedTest {
         }
     }
 
-    public void clearPrefs(Context context) {
-        PrefsStorage prefsStorage = new PrefsStorage(context);
-        prefsStorage.clear();
-    }
 
     public void checkToken() {
         try {

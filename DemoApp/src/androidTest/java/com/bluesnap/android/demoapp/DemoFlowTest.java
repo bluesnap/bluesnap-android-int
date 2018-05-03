@@ -1,6 +1,7 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -14,6 +15,8 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -51,7 +54,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
     public void setup() throws InterruptedException, BSPaymentRequestException {
         super.doSetup();
-        clearPrefs(mActivityRule.getActivity().getApplicationContext());
+
     }
 
     public Double startDemoPurchase() {
@@ -87,6 +90,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
     public void finishDemoPurchase(String currencySymbol, String amount) {
         Espresso.registerIdlingResources(transactionMessageIR);
+        IdlingPolicies.setIdlingResourceTimeout(120, TimeUnit.SECONDS);
         onView(withId(R.id.transactionResult))
                 .check(matches(withText(containsString("Transaction Success"))));
         onView(withId(R.id.paymentResultTextView2))

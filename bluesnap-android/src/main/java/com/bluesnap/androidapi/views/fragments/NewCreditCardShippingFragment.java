@@ -88,7 +88,7 @@ public class NewCreditCardShippingFragment extends Fragment {
         shippingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingViewComponentLinearLayout);
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.newCCNShippingFragmentButtonComponentView);
+        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.shippingButtonComponentView);
 
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
 
