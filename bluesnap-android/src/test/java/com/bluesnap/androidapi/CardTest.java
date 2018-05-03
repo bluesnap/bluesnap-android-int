@@ -354,7 +354,7 @@ public class CardTest extends TestCase {
         CreditCard card = new CreditCard();
         card.setNumber(null);
         card.setNumber("");
-        assertTrue("Invalid type", "UNKNOWN".equals(card.getCardType().toUpperCase()));
+        assertTrue("Invalid type", null == card.getCardType());
 
     }
 }
