@@ -104,7 +104,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
-                .add(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
+                .replace(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
     }
 
     /**
