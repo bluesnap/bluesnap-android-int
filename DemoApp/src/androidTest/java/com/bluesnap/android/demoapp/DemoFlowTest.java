@@ -2,7 +2,10 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingPolicies;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.intent.Checks;
+import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
@@ -11,6 +14,8 @@ import android.view.View;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,12 +32,11 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.core.Is.is;
 
 
 /**
@@ -57,6 +61,22 @@ public class DemoFlowTest extends EspressoBasedTest {
 
     }
 
+    public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
+        Checks.checkNotNull(itemListText);
+        return new BoundedMatcher<Object, String>(String.class) {
+            @Override
+            public boolean matchesSafely(String item) {
+                return itemListText.matches(item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("with text: " + itemListText.toString());
+                itemListText.describeTo(description);
+            }
+        };
+    }
+
     public Double startDemoPurchase() {
         demoPurchaseAmount = randomTestValuesGeneretor.randomDemoAppPrice();
         //Double demoTaxPrecent = randomTestValuesGeneretor.randomTaxPrecentage();
@@ -68,10 +88,16 @@ public class DemoFlowTest extends EspressoBasedTest {
         onView(withId(R.id.productPriceEditText)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.productPriceEditText)).check(matches((isDisplayed())));
         //TODO: To test the tax we should calculate the subtotal
-        //        onView(withId(R.id.demoTaxEditText)).perform(typeText(demoTaxPrecent.toString()));
-        onView(withId(R.id.rateSpinner)).perform(closeSoftKeyboard()).perform(click());
-        onData(allOf(is(instanceOf(String.class)), containsString("USD")))
-                .perform(click());
+//                onView(withId(R.id.demoTaxEditText)).perform(typeText(demoTaxPrecent.toString()));
+//        onData(allOf(is(instanceOf(String.class)), containsString("USD"))).inAdapterView(withId(R.id.rateSpinner))
+//                        .perform(click());
+
+        onView(withId(R.id.rateSpinner)).perform(closeSoftKeyboard(), click());
+        ViewInteraction customTextView = onView(
+                allOf(withId(R.id.rateSpinner), withSpinnerText(containsString("USD"))));
+        customTextView.perform(click());
+
+        onView(withId(R.id.rateSpinner)).perform(click(), closeSoftKeyboard());
         onView(withId(R.id.productPriceEditText))
                 .perform(typeText(demoPurchaseAmount.toString()), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.merchantAppSubmitButton)).perform(click());

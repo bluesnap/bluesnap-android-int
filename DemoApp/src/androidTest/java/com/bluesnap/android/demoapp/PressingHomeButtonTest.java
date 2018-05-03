@@ -60,7 +60,6 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
         Intent intent = new Intent();
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
-        clearPrefs(mActivity.getApplicationContext());
 
         while (blueSnapService.getSdkRequest() != null && blueSnapService.getSdkRequest().getPriceDetails().getAmount() == -99.99) {
             Log.d(TAG, "Waiting for setup to complete");
