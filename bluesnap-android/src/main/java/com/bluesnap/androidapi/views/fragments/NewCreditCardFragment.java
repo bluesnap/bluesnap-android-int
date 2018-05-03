@@ -3,7 +3,6 @@ package com.bluesnap.androidapi.views.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,12 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -26,7 +23,6 @@ import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
 import com.bluesnap.androidapi.views.components.BillingViewComponent;
 import com.bluesnap.androidapi.views.components.ButtonComponent;
 import com.bluesnap.androidapi.views.components.OneLineCCEditComponent;
-import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -90,7 +86,7 @@ public class NewCreditCardFragment extends Fragment {
         oneLineCCEditComponent = (OneLineCCEditComponent) inflate.findViewById(R.id.oneLineCCEditComponent);
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
+        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
 
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();

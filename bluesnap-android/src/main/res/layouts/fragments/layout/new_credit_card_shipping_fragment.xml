@@ -44,7 +44,7 @@
         android:id="@+id/shippingAmountTaxShippingComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/shippingButtonComponentView">
+        android:layout_above="@+id/newCCNShippingFragmentButtonComponentView">
 
     </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
 

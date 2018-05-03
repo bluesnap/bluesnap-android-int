@@ -58,7 +58,7 @@ public class ReturningShopperShippingFragment extends Fragment {
         assert shopper != null;
         shippingViewComponent.updateResource(shopper.getShippingContactInfo());
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
+        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

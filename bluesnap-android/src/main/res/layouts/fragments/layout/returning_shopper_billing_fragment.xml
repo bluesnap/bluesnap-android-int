@@ -45,7 +45,7 @@
     </LinearLayout>
 
     <com.bluesnap.androidapi.views.components.ButtonComponent
-        android:id="@+id/buttonComponentView"
+        android:id="@+id/returningShopperBillingFragmentButtonComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom">

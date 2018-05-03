@@ -353,8 +353,13 @@ public class CardTest extends TestCase {
     public void testEmptyCardStrings() {
         CreditCard card = new CreditCard();
         card.setNumber(null);
+        assertTrue("Invalid type", null == card.getCardType());
+        assertTrue("Invalid type", null == card.getCardSubType());
+
         card.setNumber("");
         assertTrue("Invalid type", null == card.getCardType());
+        assertTrue("Invalid type", null == card.getCardType());
+
 
     }
 }
