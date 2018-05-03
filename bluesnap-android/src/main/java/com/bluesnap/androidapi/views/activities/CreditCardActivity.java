@@ -118,7 +118,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         ReturningShopperCreditCardFragment returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
-                .add(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
+                .replace(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
     }
 
     /**
