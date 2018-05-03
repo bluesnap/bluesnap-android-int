@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.services;
+package com.bluesnap.android.demoapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
