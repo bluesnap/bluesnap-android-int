@@ -40,8 +40,7 @@ public class CardFormTesterCommon {
         onView(withId(R.id.expEditText)).perform(typeText(""));
         onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
         onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
-        //TODO: This zip has to be entered according to locale, i.e with letters
-        onView(withId(R.id.input_zip)).perform(clearText(), typeText("3324"));
+        onView(withId(R.id.input_zip)).perform(clearText(), typeText("3abc 324a"));
 
         onView(expEditTextVM)
                 .perform(click(), clearText(), typeText("12 26"), ViewActions.closeSoftKeyboard());
