@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * A utility class to save android SharedPrefs.
+ * Should be used only in demo app.
  */
 public class PrefsStorage {
 
