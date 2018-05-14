@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * Created by roy.biber on 07/11/2017.
@@ -35,7 +35,7 @@ public class SupportedPaymentMethods {
     @SerializedName("creditCardTypes")
     private ArrayList<String> creditCardTypes;
     @SerializedName("creditCardRegex")
-    private HashMap<String, String> creditCardRegex;
+    private LinkedHashMap<String, String> creditCardRegex;
 
     public ArrayList<String> getPaymentMethods() {
         return paymentMethods;
@@ -70,11 +70,11 @@ public class SupportedPaymentMethods {
         this.creditCardTypes = creditCardTypes;
     }
 
-    public HashMap<String, String> getCreditCardRegex() {
+    public LinkedHashMap<String, String> getCreditCardRegex() {
         return creditCardRegex;
     }
 
-    public void setCreditCardRegex(HashMap<String, String> creditCardRegex) {
+    public void setCreditCardRegex(LinkedHashMap<String, String> creditCardRegex) {
         this.creditCardRegex = creditCardRegex;
     }
 

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.PrefsStorage;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 

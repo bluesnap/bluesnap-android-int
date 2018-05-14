@@ -1,11 +1,11 @@
 package com.bluesnap.android.demoapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,18 +20,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bluesnap.androidapi.BluesnapCheckoutActivity;
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -48,7 +48,7 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 
-public class DemoMainActivity extends Activity {
+public class DemoMainActivity extends AppCompatActivity {
 
     private static final String TAG = "DemoMainActivity";
     private static final int HTTP_MAX_RETRIES = 2;
@@ -128,7 +128,10 @@ public class DemoMainActivity extends Activity {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 8) {
                     returningOrNewShopper = "?shopperId=" + s;
-                    generateMerchantToken(); // 22232799
+                    generateMerchantToken();
+                } else if (s.length() == 0) {
+                    returningOrNewShopper = "";
+                    generateMerchantToken();
                 }
             }
         });
@@ -200,7 +203,7 @@ public class DemoMainActivity extends Activity {
 
     private void showDialog(String message) {
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(DemoMainActivity.this);
             builder.setMessage(message);
             builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -227,9 +230,10 @@ public class DemoMainActivity extends Activity {
     private void updateSpinnerAdapterFromRates(final Set<String> supportedRates) {
         String[] quotesArray = new String[supportedRates.size()];
         supportedRates.toArray(quotesArray);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray);
-        ratesSpinner.setAdapter(adapter);
-        merchantStoreCurrencySpinner.setAdapter(adapter);
+        ArrayAdapter<String> priceCurrencyAdapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray.clone());
+        ArrayAdapter<String> merchantStoreCurrencyAdapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray.clone());
+        ratesSpinner.setAdapter(priceCurrencyAdapter);
+        merchantStoreCurrencySpinner.setAdapter(merchantStoreCurrencyAdapter);
         int currentposition = 0;
         for (String rate : quotesArray) {
             if (rate.equals(currencyByLocale.getCurrencyCode())) {
@@ -262,16 +266,17 @@ public class DemoMainActivity extends Activity {
         if (!taxString.isEmpty()) {
             taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
         }
-        // You can set the Amout solely
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString());
+        Double taxAmount = 0D;
+        // You can set the Amouut solely
+        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
 
-        // Or you can set the Amount with tax, this will override setAmount()
-        // The total purchase amount will be the sum of both numbers
-        if (taxAmountPrecentage > 0D) {
-            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
-        } else {
-            sdkRequest.setAmountNoTax(productPrice);
-        }
+//        // Or you can set the Amount with tax, this will override setAmount()
+//        // The total purchase amount will be the sum of both numbers
+//        if (taxAmountPrecentage > 0D) {
+//            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
+//        } else {
+//            sdkRequest.setAmountNoTax(productPrice);
+//        }
 
 
         sdkRequest.setCustomTitle("Demo Merchant");
@@ -292,6 +297,22 @@ public class DemoMainActivity extends Activity {
             Log.d(TAG, sdkRequest.toString());
             finish();
         }
+
+        // Set special tax policy: non-US pay no tax; MA pays 10%, other US states pay 5%
+        sdkRequest.setTaxCalculator(new TaxCalculator() {
+            @Override
+            public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
+                if ("us".equalsIgnoreCase(shippingCountry)) {
+                    Double taxRate = 0.05;
+                    if ("ma".equalsIgnoreCase(shippingState)) {
+                        taxRate = 0.1;
+                    }
+                    priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
+                } else {
+                    priceDetails.setTaxAmount(0D);
+                }
+            }
+        });
 
         try {
             bluesnapService.setSdkRequest(sdkRequest);
@@ -416,7 +437,7 @@ public class DemoMainActivity extends Activity {
         intent.putExtra("MERCHANT_TOKEN", merchantToken);
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
 
-        // If shipping information is available show it, Here we simply log the shipping info.
+        /*// If shipping information is available show it, Here we simply log the shipping info.
         ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
             Log.d(TAG, "ShippingInfo " + shippingInfo.toString());
@@ -428,7 +449,7 @@ public class DemoMainActivity extends Activity {
         if (billingInfo != null) {
             Log.d(TAG, "BillingInfo " + billingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
-        }
+        }*/
 
         startActivity(intent);
 

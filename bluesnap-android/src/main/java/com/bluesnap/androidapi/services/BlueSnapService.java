@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.services;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -8,14 +9,16 @@ import android.util.Log;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.models.PriceDetails;
+import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.Rates;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
-import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -42,29 +45,23 @@ import cz.msebera.android.httpclient.Header;
 public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final BlueSnapService INSTANCE = new BlueSnapService();
-    private final BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
-    private final KountService kountService = KountService.getInstance();
-
     private static final String FRAUDSESSIONID = "fraudSessionId";
-
     private static final EventBus busInstance = new EventBus();
     private static String paypalURL;
     private static JSONObject errorDescription;
     private static String transactionStatus;
-
+    private final BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
+    private final KountService kountService = KountService.getInstance();
     private SdkResult sdkResult;
     private SdkRequest sdkRequest;
     private BluesnapToken bluesnapToken;
     private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
-
-    public SDKConfiguration getsDKConfiguration() {
-        return sDKConfiguration;
-    }
-
+    //private BluesnapServiceResultCallback bluesnapServiceResultCallback;
     private SDKConfiguration sDKConfiguration;
     private String merchantStoreCurrency;
     private TokenProvider tokenProvider;
+    private Context mContext;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -82,6 +79,9 @@ public class BlueSnapService {
         return busInstance;
     }
 
+    public SDKConfiguration getsDKConfiguration() {
+        return sDKConfiguration;
+    }
 
     public boolean isexpressCheckoutActive() {
         return sDKConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL);
@@ -123,7 +123,7 @@ public class BlueSnapService {
      * @param context               A Merchant Application Context
      * @param callback              A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, final Context context, final BluesnapServiceCallback callback) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, @NonNull Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
         this.merchantStoreCurrency = merchantStoreCurrency;
         if (null != tokenProvider)
@@ -132,9 +132,8 @@ public class BlueSnapService {
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
-
+        mContext = context;
         sdkResult = null;
-        sdkRequest = null;
 
         clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
@@ -143,8 +142,12 @@ public class BlueSnapService {
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
 
+    /**
+     * check if paypal url is same as before and clears it if so
+     *
+     * @param merchantToken
+     */
     private void initPayPal(String merchantToken) {
-        // check if paypal url is same as before
         if (!merchantToken.equals(bluesnapToken.getMerchantToken()) && !"".equals(getPayPalToken())) {
             Log.d(TAG, "clearPayPalToken");
             clearPayPalToken();
@@ -158,7 +161,7 @@ public class BlueSnapService {
      *
      * @param merchantToken A Merchant SDK token, obtained from the merchant.
      */
-    protected void changeExpiredToken(String merchantToken) {
+    private void changeExpiredToken(String merchantToken) {
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
         bluesnapToken.setToken(merchantToken);
         initPayPal(merchantToken);
@@ -175,21 +178,56 @@ public class BlueSnapService {
     }
 
     /**
-     * Update details on the BlueSnap Server
+     * check Credit Card Number In Server
      *
-     * @param shopper         {@link Shopper}
-     * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException
-     * @throws UnsupportedEncodingException
+     * @param creditCardNumber - credit Card Number String {@link CreditCard}
+     * @param responseHandler  {@link AsyncHttpResponseHandler}
+     * @throws JSONException                in case of invalid JSON object (should not happen)
+     * @throws UnsupportedEncodingException should not happen
      */
-    public void tokenizeCard(Shopper shopper, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public void submitTokenizedCCNumber(String creditCardNumber, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(createDataObject(shopper), responseHandler);
+        JSONObject postData = new JSONObject();
+        postData.put(CreditCard.CCNUMBER, creditCardNumber);
+        blueSnapAPI.tokenizeDetails(postData, responseHandler);
     }
 
-    private JSONObject createDataObject(Shopper shopper) throws JSONException {
-        CreditCard creditCard = shopper.getNewCreditCardInfo().getCreditCard();
-        BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
+    /**
+     * Update details on the BlueSnap Server
+     *
+     * @param purchaseDetails {@link PurchaseDetails}
+     * @param responseHandler {@link AsyncHttpResponseHandler}
+     * @throws JSONException                in case of invalid JSON object (should not happen)
+     * @throws UnsupportedEncodingException should not happen
+     */
+    public void submitTokenizedDetails(PurchaseDetails purchaseDetails, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
+        blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails), responseHandler);
+    }
+
+    /**
+     * @param purchaseDetails {@link PurchaseDetails}
+     * @return {@link JSONObject} representation for api put call for the server
+     * @throws JSONException in case of invalid JSON object (should not happen)
+     */
+    private JSONObject createDataObject(PurchaseDetails purchaseDetails) throws JSONException {
+        CreditCard creditCard = purchaseDetails.getCreditCard();
+        BillingInfo billingInfo = purchaseDetails.getBillingContactInfo();
+        ShippingInfo shippingInfo = null;
+        if (sdkRequest.isShippingRequired())
+            shippingInfo = purchaseDetails.getShippingContactInfo();
+
+        return createDataObject(creditCard, billingInfo, shippingInfo);
+    }
+
+    /**
+     * @param creditCard   {@link CreditCard}
+     * @param billingInfo  {@link BillingInfo}
+     * @param shippingInfo {@link ShippingInfo}
+     * @return {@link JSONObject} representation for api put call for the server
+     * @throws JSONException in case of invalid JSON object (should not happen)
+     */
+    private JSONObject createDataObject(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo) throws JSONException {
         JSONObject postData = new JSONObject();
 
         if (creditCard.getIsNewCreditCard()) {
@@ -210,7 +248,8 @@ public class BlueSnapService {
             postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
 
         if (sdkRequest.isBillingRequired()) {
-            postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
+            if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
+                postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
             postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
             postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
@@ -220,13 +259,12 @@ public class BlueSnapService {
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
-        if (sdkRequest.isShippingRequired()) {
-            ShippingInfo shippingInfo = shopper.getShippingContactInfo();
-            assert shippingInfo != null;
+        if (sdkRequest.isShippingRequired() || null != shippingInfo) {
             postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
             postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
             postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
-            postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
+            if (BlueSnapValidator.checkCountryHasState(shippingInfo.getCountry()))
+                postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
             postData.put(ShippingInfo.SHIPPINGCITY, shippingInfo.getCity());
             postData.put(ShippingInfo.SHIPPINGADDRESS, shippingInfo.getAddress());
             postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
@@ -244,18 +282,20 @@ public class BlueSnapService {
      * Check if Token is Expired on the BlueSnap Server
      *
      * @param responseHandler {@link AsyncHttpResponseHandler}
-     * @throws JSONException
-     * @throws UnsupportedEncodingException
+     * @throws JSONException                in case of invalid JSON object (should not happen)
+     * @throws UnsupportedEncodingException should not happen
      */
     private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
-        blueSnapAPI.tokenizeCard(new JSONObject(), responseHandler);
+        blueSnapAPI.tokenizeDetails(new JSONObject(), responseHandler);
     }
 
-    private interface AfterNewTokenCreatedAction {
-        void complete();
-    }
-
+    /**
+     * check Token Is Expired and tries to create a new one if so
+     *
+     * @param callback                   - {@link BluesnapServiceCallback}
+     * @param afterNewTokenCreatedAction - {@link AfterNewTokenCreatedAction}
+     */
     private void tokenExpiredAction(final BluesnapServiceCallback callback, final AfterNewTokenCreatedAction afterNewTokenCreatedAction) {
         // try to PUT empty {} to check if token is expired
         try {
@@ -312,7 +352,7 @@ public class BlueSnapService {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
-                    sDKConfiguration.getRates().setInitialRates();
+                    //sDKConfiguration.getRates().setInitialRates();
 
                     try {
                         if (null != context)
@@ -321,6 +361,7 @@ public class BlueSnapService {
                         Log.e(TAG, "Kount SDK initialization error");
                     }
 
+                    CreditCardTypeResolver.setCreditCardRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
                     callback.onSuccess();
                 } catch (Exception e) {
                     Log.e(TAG, "exception: ", e);
@@ -341,10 +382,22 @@ public class BlueSnapService {
         });
     }
 
+    /**
+     * retrieve Rates Array
+     *
+     * @return Currency Rate Array
+     */
     public ArrayList<Currency> getRatesArray() {
         return sDKConfiguration.getRates().getCurrencies();
     }
 
+    /**
+     * activates creation of PayPal Token(URL) {@link BlueSnapAPI}
+     *
+     * @param amount   - amount to change
+     * @param currency - currency to charge with
+     * @param callback - what to do when done
+     */
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
         blueSnapAPI.createPayPalToken(amount, currency, sdkRequest.isShippingRequired(), new JsonHttpResponseHandler() {
 
@@ -396,6 +449,11 @@ public class BlueSnapService {
         });
     }
 
+    /**
+     * check transaction status after PayPal transaction occurred
+     *
+     * @param callback - what to do when done
+     */
     public void retrieveTransactionStatus(final BluesnapServiceCallback callback) {
         blueSnapAPI.retrieveTransactionStatus(new JsonHttpResponseHandler() {
 
@@ -425,9 +483,7 @@ public class BlueSnapService {
      */
     @Nullable
     public Set<String> getSupportedRates() {
-        if (sDKConfiguration.getRates().getRatesMap() != null)
-            return sDKConfiguration.getRates().getRatesMap().keySet();
-        else return null;
+        return sDKConfiguration.getRates().getCurrencyCodes();
     }
 
     /**
@@ -452,35 +508,42 @@ public class BlueSnapService {
         if (usdPrice == null || usdPrice.isEmpty())
             return "0";
 
-        Double result = convertPrice(Double.valueOf(usdPrice), SupportedPaymentMethods.USD, convertTo);
-        return String.valueOf(AndroidUtil.getDecimalFormat().format(result));
+        PriceDetails priceDetails = new PriceDetails(Double.valueOf(usdPrice), SupportedPaymentMethods.USD, 0D);
+        convertPrice(priceDetails, convertTo);
+        return String.valueOf(AndroidUtil.getDecimalFormat().format(priceDetails.getAmount()));
     }
 
     /**
      * Convert a price in currentCurrencyNameCode to newCurrencyNameCode
      *
-     * @param currentPrice            the requested price
-     * @param currentCurrencyNameCode The currency of basePrice
-     * @param newCurrencyNameCode     The ISO 4217 currency name
-     * @return
+     * @param priceDetails    The price details before conversion
+     * @param newCurrencyCode The ISO 4217 currency name
      */
-    public Double convertPrice(Double currentPrice, String currentCurrencyNameCode, String newCurrencyNameCode) {
-        if (!checkCurrencyCompatibility(currentCurrencyNameCode) || !checkCurrencyCompatibility(newCurrencyNameCode))
+    public void convertPrice(PriceDetails priceDetails, String newCurrencyCode) {
+
+        String currentCurrencyCode = priceDetails.getCurrencyCode();
+        if (!checkCurrencyCompatibility(currentCurrencyCode) || !checkCurrencyCompatibility(newCurrencyCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
         // get Rates
         Rates rates = sDKConfiguration.getRates();
-        // check if currentCurrencyNameCode is MerchantStoreCurrency
-        Double currentRate = rates.getRatesMap().get(currentCurrencyNameCode).getConversionRate();
-        Double newRate = rates.getRatesMap().get(newCurrencyNameCode).getConversionRate();
 
-        if (!currentCurrencyNameCode.equals(rates.getMerchantStoreCurrency())) {
-            currentPrice = (1 / currentRate) * currentPrice;
-            currentCurrencyNameCode = rates.getMerchantStoreCurrency();
-        }
-        return (newRate) * currentPrice;
+        // check if currentCurrencyNameCode is MerchantStoreCurrency
+        Double currentRate = rates.getCurrencyByCode(currentCurrencyCode).getConversionRate();
+        Double newRate = rates.getCurrencyByCode(newCurrencyCode).getConversionRate() / currentRate;
+
+        Double newSubtotal = priceDetails.getSubtotalAmount() * newRate;
+        Double taxAmount = priceDetails.getTaxAmount();
+        Double newTaxAmount = (taxAmount == null) ? null : taxAmount * newRate;
+
+        priceDetails.set(newSubtotal, newCurrencyCode, newTaxAmount);
     }
 
+    /**
+     * get SdkResult with token, amount and currency set
+     *
+     * @return {@link SdkResult}
+     */
     public synchronized SdkResult getSdkResult() {
         if (sdkResult == null) {
             sdkResult = new SdkResult();
@@ -489,15 +552,16 @@ public class BlueSnapService {
         try {
             sdkResult.setToken(bluesnapToken.getMerchantToken());
             // Copy values from request
-            sdkResult.setAmount(sdkRequest.getAmount());
-            sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+            final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+            sdkResult.setAmount(priceDetails.getAmount());
+            sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
         } catch (Exception e) {
             Log.e(TAG, "sdkResult set Token, Amount, Currency or ShopperId resulted in an error");
         }
         return sdkResult;
     }
 
-    @Nullable
+    @NonNull
     public SdkRequest getSdkRequest() {
         return sdkRequest;
     }
@@ -505,12 +569,12 @@ public class BlueSnapService {
     /**
      * Set a sdkRequest and call on  it.
      *
-     * @param newSdkRequest
-     * @throws BSPaymentRequestException
+     * @param newSdkRequest SdkRequest an Sdk request to uses
+     * @throws BSPaymentRequestException in case of invalid SdkRequest
      */
-    public void setSdkRequest(SdkRequest newSdkRequest) throws BSPaymentRequestException {
+    public synchronized void setSdkRequest(@NonNull SdkRequest newSdkRequest) throws BSPaymentRequestException {
         if (newSdkRequest == null)
-            throw new BSPaymentRequestException("null sdkRequest");
+            throw new BSPaymentRequestException("null sdkRequest was passed");
 
         if (sdkRequest != null) {
             Log.w(TAG, "sdkRequest override");
@@ -518,47 +582,28 @@ public class BlueSnapService {
         sdkRequest = newSdkRequest;
         sdkResult = new SdkResult();
         // Copy values from request
-        sdkResult.setAmount(sdkRequest.getAmount());
-        sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        sdkResult.setAmount(priceDetails.getAmount());
+        sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
     }
 
-
+    /**
+     * for Event Bus when Currency change occured {@link Events}
+     *
+     * @param currencySelectionEvent
+     */
     @Subscribe
     public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
-        String baseCurrency = sdkRequest.getBaseCurrency();
-        if (currencySelectionEvent.newCurrencyNameCode.equals(baseCurrency)) {
-            sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
-            if (sdkRequest.isSubtotalTaxSet()) {
-                sdkRequest.setAmountWithTax(sdkRequest.getBaseSubtotalAmount(), sdkRequest.getBaseTaxAmount());
-            } else {
-                sdkRequest.setAmountNoTax(sdkRequest.getBaseAmount());
-            }
-            busInstance.post(new Events.CurrencyUpdatedEvent(sdkRequest.getBaseAmount(),
-                    currencySelectionEvent.newCurrencyNameCode,
-                    sdkRequest.getBaseTaxAmount(),
-                    sdkRequest.getBaseSubtotalAmount()));
-        } else {
-            Double newPrice = convertPrice(sdkRequest.getBaseAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
 
-            sdkRequest.setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
-            getSdkResult().setAmount(newPrice);
-            getSdkResult().setCurrencyNameCode(currencySelectionEvent.newCurrencyNameCode);
+        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
+        convertPrice(priceDetails, currencySelectionEvent.newCurrencyNameCode);
 
-            Double newTaxValue = convertPrice(sdkRequest.getBaseTaxAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
-            Double newSubtotal = convertPrice(sdkRequest.getBaseSubtotalAmount(), baseCurrency, currencySelectionEvent.newCurrencyNameCode);
-            if (sdkRequest.isSubtotalTaxSet()) {
-                sdkRequest.setAmountWithTax(newSubtotal, newTaxValue);
-            } else {
-                sdkRequest.setAmountNoTax(newPrice);
-            }
-            busInstance.post(new Events.CurrencyUpdatedEvent(newPrice, currencySelectionEvent.newCurrencyNameCode, newTaxValue, newSubtotal));
-        }
-        sdkResult.setAmount(sdkRequest.getAmount());
-        sdkResult.setCurrencyNameCode(sdkRequest.getCurrencyNameCode());
+        busInstance.post(new Events.CurrencyUpdatedEvent(priceDetails));
+
+        sdkResult.setAmount(priceDetails.getAmount());
+        sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
-
-
     }
 
     public void setCheckoutActivity(TokenServiceCallback checkoutActivity) {
@@ -569,10 +614,22 @@ public class BlueSnapService {
         return bluesnapToken;
     }
 
+    /**
+     * check if country has zip according to countries without zip array {@link Constants}
+     *
+     * @param context - {@link Context}
+     * @return boolean
+     */
     public boolean doesCountryhaveZip(Context context) {
         return (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry(context)));
     }
 
+    /**
+     * returns user country according to {@link TelephonyManager} sim or network
+     *
+     * @param context - {@link Context}
+     * @return Country - ISO 3166-1 alpha-2 standard, default value is US
+     */
     public String getUserCountry(Context context) {
         try {
             final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -591,4 +648,30 @@ public class BlueSnapService {
 
         return Locale.US.getCountry();
     }
+
+    /**
+     * Update the roce details according to shipping country and state, by calling the provided TaxCalculator.
+     *
+     * @param shippingCountry
+     * @param shippingState
+     * @param context
+     */
+    public void updateTax(String shippingCountry, String shippingState, Context context) {
+
+        SdkRequest sdkRequest = getSdkRequest();
+        TaxCalculator taxCalculator = sdkRequest.getTaxCalculator();
+        if (sdkRequest.isShippingRequired() && taxCalculator != null) {
+            PriceDetails priceDetails = sdkRequest.getPriceDetails();
+            Log.d(TAG, "Calling taxCalculator; shippingCountry=" + shippingCountry + ", shippingState=" + shippingState + ", priceDetails=" + priceDetails);
+            taxCalculator.updateTax(shippingCountry, shippingState, priceDetails);
+            Log.d(TAG, "After calling taxCalculator; priceDetails=" + priceDetails);
+            // send event to update amount in UI
+            BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
+        }
+    }
+
+    private interface AfterNewTokenCreatedAction {
+        void complete();
+    }
+
 }

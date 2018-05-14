@@ -27,38 +27,7 @@ import java.util.Locale;
  * A Collection of static methods used in the Android UI parts.
  */
 public class AndroidUtil {
-    public static final String NAME_FIELD = "NAME_FIELD";
-    public static final String ZIP_FIELD = "ZIP_FIELD";
-    public static final String EMAIL_FIELD = "EMAIL_FIELD";
-    public static final String ADDRESS_FIELD = "ADDRESS_FIELD";
-    public static final String CITY_FIELD = "CITY_FIELD";
-    public static final String STATE_FIELD = "STATE_FIELD";
-    public static final String[] STATE_NEEDED_COUNTRIES = {"US", "BR", "CA"};
-    protected static Calendar calendarInstance;
     protected static DecimalFormat decimalFormat;
-
-    public static Calendar getCalendarInstance() {
-        return calendarInstance != null ? (Calendar) calendarInstance.clone() : Calendar.getInstance();
-    }
-
-
-    public static boolean isBlank(String str) {
-        return TextUtils.isEmpty(str);
-    }
-
-    public static boolean isYearInPast(int year) {
-        Calendar now = getCalendarInstance();
-        return year < now.get(Calendar.YEAR);
-    }
-
-    public static boolean isDateInFuture(int month, int year) {
-        Calendar now = getCalendarInstance();
-        int currentYear = now.get(Calendar.YEAR);
-        if (year < 2000) {
-            year += 2000;
-        }
-        return (year > currentYear && year < (11 + currentYear)) || (year == currentYear && month >= (now.get(Calendar.MONTH) + 1));
-    }
 
     public static AndroidUtil getInstance() {
         return AndroidUtilHOLDER.INSTANCE;
@@ -72,6 +41,12 @@ public class AndroidUtil {
         context.getResources().updateConfiguration(config, null);
     }
 
+    /**
+     * get Currency Symbol according to Currency name code
+     *
+     * @param newCurrencyNameCode
+     * @return Currency Symbol
+     */
     public static String getCurrencySymbol(String newCurrencyNameCode) {
         try {
             String symbol = Currency.getInstance(newCurrencyNameCode).getSymbol();
@@ -107,85 +82,18 @@ public class AndroidUtil {
         return (!"".equals(mainString) ? mainString : stringify(secondary));
     }
 
+    /**
+     * check if null, if so returns empty string
+     * also trim and replace white spaces
+     *
+     * @param s
+     * @return trimmed String
+     */
     public static String stringify(Object s) {
         if (s == null || s.toString().isEmpty())
             return "";
 
         return s.toString().trim().replaceAll("\\s+", " ");
-    }
-
-    public static boolean checkCountryForState(String countryText) {
-        for (String item : STATE_NEEDED_COUNTRIES) {
-            if (item.equals(countryText)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean validateEditTextString(EditText editText, TextView textView) {
-        return validateEditTextString(editText, textView, null, null);
-    }
-
-    public static boolean validateEditTextString(EditText editText, TextView textView, String differentValidation) {
-        return validateEditTextString(editText, textView, null, differentValidation);
-    }
-
-    public static boolean validateEditTextString(EditText editText, TextView textView, TextView optionalInvalidStatement) {
-        return validateEditTextString(editText, textView, optionalInvalidStatement, null);
-    }
-
-    public static boolean validateEditTextString(EditText editText, TextView textView, TextView optionalInvalidStatement, String validationType) {
-        String regex = "^[a-zA-Z0-9-]*$";
-        String targetNoSpaces = editText.getText().toString().trim().replaceAll(" ", "");
-        String target = editText.getText().toString();
-        String[] splittedNames = target.trim().split(" ");
-
-        if (TextUtils.isEmpty(targetNoSpaces) || targetNoSpaces.length() < 2) {
-            if (optionalInvalidStatement != null)
-                textInValidChanges(textView, optionalInvalidStatement);
-            else
-                textInValidChanges(textView);
-            return false;
-        } else if (validationType != null) {
-            if ((NAME_FIELD.equals(validationType)) && (splittedNames.length < 2 || splittedNames[0].length() < 2)) {
-                if (optionalInvalidStatement != null)
-                    textInValidChanges(textView, optionalInvalidStatement);
-                else
-                    textInValidChanges(textView);
-                return false;
-            } else if ((ZIP_FIELD.equals(validationType)) && (!target.matches(regex))) {
-                if (optionalInvalidStatement != null)
-                    textInValidChanges(textView, optionalInvalidStatement);
-                else
-                    textInValidChanges(textView);
-                return false;
-            } else if ((EMAIL_FIELD.equals(validationType)) && (!Patterns.EMAIL_ADDRESS.matcher(target).matches())) {
-                if (optionalInvalidStatement != null)
-                    textInValidChanges(textView, optionalInvalidStatement);
-                else
-                    textInValidChanges(textView);
-                return false;
-            } else if ((STATE_FIELD.equals(validationType)) && (target.length() != 2)) {
-                if (optionalInvalidStatement != null)
-                    textInValidChanges(textView, optionalInvalidStatement);
-                else
-                    textInValidChanges(textView);
-                return false;
-            } else {
-                if (optionalInvalidStatement != null)
-                    textValidChanges(textView, optionalInvalidStatement);
-                else
-                    textValidChanges(textView);
-                return true;
-            }
-        } else {
-            if (optionalInvalidStatement != null)
-                textValidChanges(textView, optionalInvalidStatement);
-            else
-                textValidChanges(textView);
-            return true;
-        }
     }
 
     private static void textValidChanges(TextView textView) {

@@ -5,18 +5,19 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import java.text.DecimalFormat;
 
@@ -51,7 +52,7 @@ public class PostPaymentActivity extends Activity {
             transactions = DemoTransactions.getInstance();
             transactions.setContext(this);
 
-            if (!AndroidUtil.isBlank(sdkResult.getPaypalInvoiceId())) {
+            if (!TextUtils.isEmpty(sdkResult.getPaypalInvoiceId())) {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
                 //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {

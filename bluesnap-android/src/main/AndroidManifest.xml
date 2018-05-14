@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />-->
 
     <!-- Kount-->
     <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
@@ -13,41 +13,56 @@
 
     <application android:supportsRtl="true">
         <activity
-            android:name=".BluesnapCheckoutActivity"
+            android:name=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".views.CurrencyActivity"
+            android:name=".views.activities.BluesnapCheckoutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".views.activities.CurrencyActivity"
             android:label="@string/title_activity_currency"
-            android:parentActivityName=".BluesnapCheckoutActivity"
+            android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BluesnapCheckoutActivity" />
+                android:value=".views.activities.CreditCardActivity" />
         </activity>
         <activity
-            android:name=".views.CountryActivity"
+            android:name=".views.activities.CountryActivity"
+            android:label="@string/title_activity_state"
+            android:parentActivityName=".views.activities.CreditCardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.activities.CreditCardActivity" />
+        </activity>
+        <activity
+            android:name=".views.activities.StateActivity"
             android:label="@string/title_activity_country"
-            android:parentActivityName=".BluesnapCheckoutActivity"
+            android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BluesnapCheckoutActivity" />
+                android:value=".views.activities.CreditCardActivity" />
         </activity>
         <activity
-            android:name=".views.WebViewActivity"
+            android:name=".views.activities.WebViewActivity"
             android:label="@string/title_activity_web_view"
-            android:parentActivityName=".BluesnapCheckoutActivity"
+            android:parentActivityName=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BluesnapCheckoutActivity" />
+                android:value=".views.activities.CreditCardActivity" />
         </activity>
     </application>
 

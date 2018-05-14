@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPureWhite">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/amountTaxShippingComponentView"
+        android:orientation="vertical">
+
+        <com.bluesnap.androidapi.views.components.OneLineCCEditComponent
+            android:id="@+id/oneLineCCEditComponent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+        </com.bluesnap.androidapi.views.components.OneLineCCEditComponent>
+
+        <LinearLayout
+            android:id="@+id/billingViewComponentLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layout_bg"
+            android:elevation="@dimen/elevation_size"
+            android:orientation="vertical">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fadeScrollbars="false">
+
+                <com.bluesnap.androidapi.views.components.BillingViewComponent
+                    android:id="@+id/billingViewComponent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent">
+
+                </com.bluesnap.androidapi.views.components.BillingViewComponent>
+            </ScrollView>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.bluesnap.androidapi.views.components.AmountTaxShippingComponent
+        android:id="@+id/amountTaxShippingComponentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/newCCNFragmentButtonComponentView">
+
+    </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
+
+    <com.bluesnap.androidapi.views.components.ButtonComponent
+        android:id="@+id/newCCNFragmentButtonComponentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom">
+
+    </com.bluesnap.androidapi.views.components.ButtonComponent>
+</RelativeLayout>

@@ -42,6 +42,9 @@ class BlueSnapAPI {
         return INSTANCE;
     }
 
+    /**
+     * set BlueSnap API headers and connection setup
+     */
     private BlueSnapAPI() {
         httpClient = new AsyncHttpClient();
         httpClient.setMaxRetriesAndTimeout(2, 2000);
@@ -53,22 +56,50 @@ class BlueSnapAPI {
         httpClient.addHeader("BLUESNAP_VERSION_HEADER", String.valueOf(BLUESNAP_VERSION_HEADER));
     }
 
-    void tokenizeCard(JSONObject jsonObject, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    /**
+     * tokenize details to server
+     *
+     * @param jsonObject      - details to set
+     * @param responseHandler
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
+    void tokenizeDetails(JSONObject jsonObject, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
         ByteArrayEntity entity = new ByteArrayEntity(jsonObject.toString().getBytes("UTF-8"));
         entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
         httpClient.put(null, url + CARD_TOKENIZE + merchantToken, entity, "application/json", responseHandler);
     }
 
+    /**
+     * add header to http client for TOKEN_AUTHENTICATION and set domain path
+     *
+     * @param merchantToken
+     * @param url
+     */
     void setupMerchantToken(String merchantToken, String url) {
         this.merchantToken = merchantToken;
         this.url = url;
         httpClient.addHeader(TOKEN_AUTHENTICATION, merchantToken);
     }
 
+    /**
+     * get sdk initilize data from server
+     *
+     * @param baseCurrency            - currency to base the rates on
+     * @param jsonHttpResponseHandler
+     */
     void sdkInit(final String baseCurrency, JsonHttpResponseHandler jsonHttpResponseHandler) {
         httpClient.get(url + SDK_INIT + BASE_CURRENCY + baseCurrency, jsonHttpResponseHandler);
     }
 
+    /**
+     * create PayPal Token (url)
+     *
+     * @param amount                  - amount to charge
+     * @param currency                - currency to charge with
+     * @param isShippingRequired      - boolean is shipping required
+     * @param jsonHttpResponseHandler
+     */
     void createPayPalToken(final Double amount, final String currency, boolean isShippingRequired, JsonHttpResponseHandler jsonHttpResponseHandler) {
         String urlString = url + PAYPAL_SERVICE + amount + "&currency=" + currency;
         if (isShippingRequired)
@@ -77,6 +108,11 @@ class BlueSnapAPI {
         httpClient.get(urlString, jsonHttpResponseHandler);
     }
 
+    /**
+     * check transaction status after PayPal transaction occurred
+     *
+     * @param jsonHttpResponseHandler - what to do on success or failure
+     */
     void retrieveTransactionStatus(JsonHttpResponseHandler jsonHttpResponseHandler) {
         httpClient.get(url + RETRIEVE_TRANSACTION_SERVICE, jsonHttpResponseHandler);
     }

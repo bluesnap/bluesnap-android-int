@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by roy.biber on 12/11/2017.
  */
 
-public class BillingInfo extends ContactInfo implements Parcelable{
+public class BillingInfo extends ContactInfo implements Parcelable {
     public static final String BILLINGFIRSTNAME = "billingFirstName";
     public static final String BILLINGLASTNAME = "billingLastName";
     public static final String BILLINGCOUNTRY = "billingCountry";
@@ -43,6 +43,16 @@ public class BillingInfo extends ContactInfo implements Parcelable{
 
     public BillingInfo() {
         super();
+    }
+
+    public BillingInfo(ContactInfo contactInfo) {
+        setFullName(contactInfo.getFullName());
+        setAddress(contactInfo.getAddress());
+        setAddress2(contactInfo.getAddress2());
+        setZip(contactInfo.getZip());
+        setCity(contactInfo.getCity());
+        setState(contactInfo.getState());
+        setCountry(contactInfo.getCountry());
     }
 
     public void writeToParcel(Parcel parcel, int flags) {

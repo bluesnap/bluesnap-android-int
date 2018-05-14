@@ -1,19 +1,29 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.intent.Checks;
+import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
 
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.BlueSnapService;
 
+import junit.framework.Assert;
+
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -27,9 +37,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.core.Is.is;
 
 
 /**
@@ -46,14 +56,29 @@ public class DemoFlowTest extends EspressoBasedTest {
 
     @After
     public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
+        mActivityRule.getActivity().finish();
+        //Thread.sleep(1000);
     }
 
+//    public void setup() throws InterruptedException, BSPaymentRequestException {
+//        super.doSetup();
+//
+//    }
 
-    @Override
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        super.setup();
-        clearPrefs(mActivityRule.getActivity().getApplicationContext());
+    public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
+        Checks.checkNotNull(itemListText);
+        return new BoundedMatcher<Object, String>(String.class) {
+            @Override
+            public boolean matchesSafely(String item) {
+                return itemListText.matches(item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("with text: " + itemListText.toString());
+                itemListText.describeTo(description);
+            }
+        };
     }
 
     public Double startDemoPurchase() {
@@ -67,13 +92,23 @@ public class DemoFlowTest extends EspressoBasedTest {
         onView(withId(R.id.productPriceEditText)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.productPriceEditText)).check(matches((isDisplayed())));
         //TODO: To test the tax we should calculate the subtotal
-        //        onView(withId(R.id.demoTaxEditText)).perform(typeText(demoTaxPrecent.toString()));
-        onView(withId(R.id.rateSpinner)).perform(closeSoftKeyboard()).perform(click());
-        onData(allOf(is(instanceOf(String.class)), containsString("USD")))
+//                onView(withId(R.id.demoTaxEditText)).perform(typeText(demoTaxPrecent.toString()));
+//        onData(allOf(is(instanceOf(String.class)), containsString("USD"))).inAdapterView(withId(R.id.rateSpinner))
+//                        .perform(click());
+
+        onView(withId(R.id.rateSpinner)).check(matches(isDisplayed())).perform(closeSoftKeyboard(), click());
+//        ViewInteraction customTextView = onView(
+//                allOf(withId(R.id.rateSpinner), withSpinnerText("USD")));
+//        customTextView.perform(click());
+
+        onData(allOf(is(instanceOf(String.class)), itemListMatcher(containsString("USD"))))
                 .perform(click());
+
+        // onView(withId(R.id.rateSpinner)).perform(click(), closeSoftKeyboard());
         onView(withId(R.id.productPriceEditText))
                 .perform(typeText(demoPurchaseAmount.toString()), ViewActions.closeSoftKeyboard());
         onView(withId(R.id.merchantAppSubmitButton)).perform(click());
+        onView(withId(R.id.newCardButton)).perform(click());
         return demoPurchaseAmount;
     }
 
@@ -83,11 +118,13 @@ public class DemoFlowTest extends EspressoBasedTest {
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         CardFormTesterCommon.fillInAllFieldsWithValidCard();
         onView(withId(R.id.buyNowButton)).perform(click());
-        finishDemoPurchase("USD", demoPurchaseAmount.toString());
+        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+        finishDemoPurchase("USD", demoPurchaseAmount, sdkResult);
     }
 
-    public void finishDemoPurchase(String currencySymbol, String amount) {
+    public void finishDemoPurchase(String currencySymbol, Double amountRequestedInTest, SdkResult sdkResult) {
         Espresso.registerIdlingResources(transactionMessageIR);
+        IdlingPolicies.setIdlingResourceTimeout(120, TimeUnit.SECONDS);
         onView(withId(R.id.transactionResult))
                 .check(matches(withText(containsString("Transaction Success"))));
         onView(withId(R.id.paymentResultTextView2))
@@ -96,6 +133,12 @@ public class DemoFlowTest extends EspressoBasedTest {
         ;
 
         Espresso.unregisterIdlingResources(transactionMessageIR);
+
+        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - amountRequestedInTest) < 0.00000000001);
+        Assert.assertEquals("SDKResult wong currency", sdkResult.getCurrencyNameCode(), "USD");
+        Assert.assertNotNull("SDK result contains no Kount SessionID", sdkResult.getKountSessionId());
+
+
     }
 
     @Test
@@ -122,7 +165,10 @@ public class DemoFlowTest extends EspressoBasedTest {
 
 
         onView(withId(R.id.buyNowButton)).perform(click());
-        finishDemoPurchase("USD", startDemoPurchaseAmount.toString());
+        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+        finishDemoPurchase("USD", startDemoPurchaseAmount, sdkResult);
+
+
     }
 
     @Test
@@ -154,7 +200,8 @@ public class DemoFlowTest extends EspressoBasedTest {
 
 
         onView(withId(R.id.buyNowButton)).perform(click());
-        finishDemoPurchase("USD", startDemoPurchaseAmount.toString());
+        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+        finishDemoPurchase("USD", startDemoPurchaseAmount, sdkResult);
     }
 }
 

@@ -1,21 +1,17 @@
 package com.bluesnap.android.demoapp;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.View;
 
-import com.bluesnap.androidapi.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,16 +27,14 @@ import static org.hamcrest.Matchers.not;
 
 
 /**
+ * Checks validations on the new CC form input fields
+ * 
  * Created by oz on 5/26/16.
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class CCormValidityTest extends EspressoBasedTest {
     private static final String TAG = CCormValidityTest.class.getSimpleName();
-    @Rule
-    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
-            BluesnapCheckoutActivity.class, true, false);
-    private BluesnapCheckoutActivity mActivity;
 
     @After
     public void keepRunning() throws InterruptedException {
@@ -51,96 +45,141 @@ public class CCormValidityTest extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        super.setup();
-        super.setSDKToken();
         SdkRequest sdkRequest = new SdkRequest(23.4, "USD");
-        //Thread.sleep(500);
-        BlueSnapService.getInstance().setSdkRequest(sdkRequest);
-        Intent intent = new Intent();
-        sdkRequest.setShippingRequired(false);
-
-        mActivityRule.launchActivity(intent);
-        mActivity = mActivityRule.getActivity();
-        clearPrefs(mActivity.getApplicationContext());
+        setupAndLaunch(sdkRequest);
+        onView(withId(R.id.newCardButton)).perform(click());
     }
 
     @Test
-    public void invalidCardMessageCheck() throws InterruptedException {
+    public void ccn_new_card_validation_messages() throws InterruptedException {
+
+        //------------------------------------------
+        // CC number
+        //------------------------------------------
+
+        Matcher<View> creditCardNumberErrorTextVM = withId(R.id.creditCardNumberErrorTextView);
+        Matcher<View> ccNumberEditTextVM = withId(R.id.creditCardNumberEditText);
+        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
+
         //Test validation of invalid number
-        onView(withId(R.id.invaildCreditCardMessageTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-        onView(withId(R.id.creditCardNumberEditText))
+        onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+        onView(ccNumberEditTextVM)
                 .perform(typeText(invalidCardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.invaildCreditCardMessageTextView)).check(matches(ViewMatchers.isDisplayed()));
+        onView(buynowButtonVM).perform(click());
+        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
 
-        //Clear the invalid number
-        onView(withId(R.id.creditCardNumberEditText)).perform(clearText());
+        // Clear the invalid number
+        onView(ccNumberEditTextVM).perform(clearText());
 
-        //Put a valid number
+        // Put a valid number
+        onView(ccNumberEditTextVM)
+                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
+
+        //------------------------------------------
+        // EXP date
+        //------------------------------------------
+
+        Matcher<View> expErrorTextVM = withId(R.id.expErrorTextView);
+        Matcher<View> expEditTextVM = withId(R.id.expEditText);
+
+        // Test validation of invalid exp date: invalid Month (56)
+        onView(expErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+        onView(expEditTextVM)
+                .perform(typeText("56 44"), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(expErrorTextVM).check(matches(ViewMatchers.isDisplayed()));
+
+        // Now enter a valid month
+        onView(expEditTextVM).perform(click());
+        onView(expEditTextVM).perform(clearText());
+        onView(expEditTextVM)
+                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(expErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+
+        // Test validation of past date
+        onView(expEditTextVM).perform(click());
+        onView(expEditTextVM).perform(clearText());
+        onView(expEditTextVM)
+                .perform(typeText("11 17"), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(expErrorTextVM).check(matches(ViewMatchers.isDisplayed()));
+
+        // Now enter a valid month
+        onView(expEditTextVM).perform(click());
+        onView(expEditTextVM).perform(clearText());
+        onView(expEditTextVM)
+                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(expErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+
+
+        //------------------------------------------
+        // CVV
+        //------------------------------------------
+
+        Matcher<View> cvvErrorTextVM = withId(R.id.cvvErrorTextView);
+        Matcher<View> cvvEditTextVM = withId(R.id.cvvEditText);
+
+        // Test validation of invalid exp date: invalid cvv (56)
+        onView(cvvEditTextVM)
+                .perform(typeText("56"), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(cvvErrorTextVM).check(matches(ViewMatchers.isDisplayed()));
+
+        // Now enter a valid cvv
+        onView(cvvEditTextVM).perform(click());
+        onView(cvvEditTextVM).perform(clearText());
+        onView(cvvEditTextVM)
+                .perform(typeText("123"), ViewActions.closeSoftKeyboard());
+        onView(buynowButtonVM).perform(click());
+        onView(cvvErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+
+        // Test that when entering valid data and then modifying it eventually invalidates the form.
+//        onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
+//        onView(ccNumberEditTextVM).perform(click());
+//        onView(ccNumberEditTextVM).perform(clearText());
+//        onView(ccNumberEditTextVM).perform(clearText(), typeText("1876987"), ViewActions.closeSoftKeyboard());
+//        onView(buynowButtonVM).perform(click());
+//        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
+
+    }
+
+
+    /**
+     * @throws InterruptedException
+     */
+    @Test
+    public void cc_new_Card_ccn_first() throws InterruptedException {
+        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
+
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.invaildCreditCardMessageTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-    }
+        onView(withId(R.id.expEditText)).perform(typeText(""));
+        onView(buynowButtonVM).perform(click());
+        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
 
-
-    @Test
-    public void dateFieldValidationCheck() throws InterruptedException {
-        //Test validation of invalid Month (56)
-        onView(withId(R.id.expDateLabelTextView)).check(matches(not(TestUtils.withCurrentTextColor(Color.RED))));
-        onView(withId(R.id.expDateEditText))
-                .perform(clearText(), typeText("56 44"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        Thread.sleep(1000);
-        onView(withId(R.id.expDateLabelTextView)).check(matches((TestUtils.withCurrentTextColor(Color.RED))));
-        onView(withId(R.id.expDateEditText))
-                .perform(clearText());
-
-        //Now enter a valid month
-        onView(withId(R.id.expDateEditText))
-                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
-
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.expDateLabelTextView)).check(matches(not(TestUtils.withCurrentTextColor(Color.RED))));
-    }
-
-    @Test
-    public void dateFieldPastCheck() throws InterruptedException {
-        onView(withId(R.id.expDateLabelTextView)).check(matches(not(TestUtils.withCurrentTextColor(Color.RED))));
-        onView(withId(R.id.expDateEditText))
-                .perform(typeText("11 05"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.expDateLabelTextView)).check(matches((TestUtils.withCurrentTextColor(Color.RED))));
-        onView(withId(R.id.expDateEditText))
-                .perform(clearText());
-
-        //Now enter a valid month
-        onView(withId(R.id.expDateEditText))
-                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
-
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.expDateLabelTextView)).check(matches(not(TestUtils.withCurrentTextColor(Color.RED))));
     }
 
     /**
-     * Test that when entering valid data and then modifying it eventually invalidates the form.
+     * This test is reproducing validation state where no input is entered to make sure IndexOutOFBoundsException is not thrown
      *
      * @throws InterruptedException
      */
     @Test
-    public void test_validate_invalidate() throws InterruptedException {
-        CardFormTesterCommon.fillInAllFieldsWithValidCard();
+    public void cc_new_card_empty_name_then_ccn() throws InterruptedException {
+        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
+        onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
         onView(withId(R.id.creditCardNumberEditText))
-                .perform(ViewActions.closeSoftKeyboard())
-                //.perform(pressKey(KeyEvent.KEYCODE_DEL))
-                .perform(clearText())
-                .perform(typeText("1"), ViewActions.closeSoftKeyboard());
+                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.expEditText)).perform(typeText(""));
+        onView(buynowButtonVM).perform(click());
+        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
 
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.invaildCreditCardMessageTextView)).check(matches(ViewMatchers.isDisplayed()));
     }
-
 
 }
 

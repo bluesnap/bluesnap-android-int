@@ -71,16 +71,12 @@ public class BSAndroidTestsBase {
             }
 
         });
-
-
     }
 
     @Before
     public void getToken() throws InterruptedException {
 
-
         final Semaphore semaphore = new Semaphore(1);
-        semaphore.acquire();
         tokenProvider = new TokenProvider() {
             @Override
             public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
@@ -97,25 +93,31 @@ public class BSAndroidTestsBase {
                     public void onServiceFailure() {
                         Log.e(TAG, "Token failure");
                         fail("Token failure");
+                        tokenServiceCallback.complete(null);
                     }
                 });
             }
         };
 
-
-        while (merchantToken == null) {
-            Thread.sleep(2000);
-            Log.i(TAG, "Waiting for test token");
+        do {
+            semaphore.acquire();
             tokenProvider.getNewToken(new TokenServiceCallback() {
                 @Override
                 public void complete(String newToken) {
                     Log.i(TAG, "Got token");
                     merchantToken = newToken;
+                    semaphore.release();
                 }
             });
-        }
+            while (!semaphore.tryAcquire()) {
+                Thread.sleep(1000);
+                Log.i(TAG, "Waiting for test token");
+            }
+        } while (merchantToken == null);
 
         blueSnapService = BlueSnapService.getInstance();
+        final Semaphore semaphore2 = new Semaphore(1);
+        semaphore2.acquire();
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
@@ -126,11 +128,12 @@ public class BSAndroidTestsBase {
                         Log.d(TAG, "Got rates callback");
                         ArrayList<Currency> ratesArray = blueSnapService.getRatesArray();
                         Assert.assertNotNull(ratesArray.get(0));
-                        semaphore.release();
+                        semaphore2.release();
                     }
 
                     @Override
                     public void onFailure() {
+                        semaphore2.release();
                         fail("failed to get rates");
                     }
                 });
@@ -138,12 +141,12 @@ public class BSAndroidTestsBase {
         }, 100);
 
 
-        while (!semaphore.tryAcquire()) {
-            Thread.sleep(20000);
+        do {
+            Thread.sleep(1000);
             Log.i(TAG, "Waiting for SDK configuration to finish");
+        } while (!semaphore2.tryAcquire());
 
-        }
-
+        Log.i(TAG, "Done");
     }
 
     public static String extractTokenFromHeaders(Header[] headers) {

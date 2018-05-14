@@ -24,12 +24,24 @@
     <string name="shipping_information">Shipping information</string>
     <string name="invalid_card_number">Invalid Card Number</string>
     <string name="coupon_questionmark">Coupon?</string>
+    <string name="done">Done</string>
     <string name="shipping">Shipping</string>
     <string name="billing">Billing</string>
+    <string name="payment">Payment</string>
+    <string name="payment_type">Payment Type</string>
     <string name="shipping_Info">Shipping Info</string>
     <string name="pay">Pay</string>
     <string name="total">Total</string>
     <string name="buynowbutton" translatable="false">BuyNowbutton</string>
+
+    <string name="hint_name">Full Name</string>
+    <string name="hint_email">Email</string>
+    <string name="err_msg_name">Enter your full name</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="err_msg_zip">Enter a valid zip / postal code</string>
+    <string name="err_msg_state">Enter a valid state</string>
+    <string name="err_msg_city">Enter a valid city</string>
+    <string name="err_msg_address">Enter a valid address</string>
 
     <string name="search">Search</string>
     <string name="language">Language -</string>
@@ -60,8 +72,11 @@
     <string name="DEFAULT_CURRENCY_FULL" translatable="false">USD - United States Dollars</string>
     <!-- Country -->
     <string name="COUNTRY_STRING" translatable="false">COUNTRY_STRING</string>
+    <string name="STATE_STRING" translatable="false">STATE_STRING</string>
     <string name="title_activity_country" translatable="false">CountryActivity</string>
+    <string name="title_activity_state" translatable="false">StateActivity</string>
     <string name="select_country">Select Country</string>
+    <string name="select_state">Select State</string>
     <!-- WebView Activity -->
     <string name="WEBVIEW_STRING" translatable="false">WEBVIEW_STRING</string>
     <string name="WEBVIEW_URL" translatable="false">WEBVIEW_URL</string>
@@ -99,5 +114,10 @@
     <string name="lastFourDigitsHint">1234</string>
     <string name="cardTypeImageText">CardTypeImage</string>
     <string name="newCardText">New Card</string>
+    <string name="card_icon">card icon</string>
+    <string name="move_from_cc_to_exp_button">move from cc to exp button</string>
+    <string name="invalid_date">Invalid date</string>
+    <string name="invalid_cvv">Invalid CVV</string>
+    <string name="shipping_same_as_billing">Shipping Same As Billing</string>
 
 </resources>
