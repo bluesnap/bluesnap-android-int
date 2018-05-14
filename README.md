@@ -1,5 +1,8 @@
 ## bluesnap-android
 
+[![Build Status-Master](https://travis-ci.org/bluesnap/bluesnap-android-int.svg?branch=master)](https://travis-ci.org/bluesnap/bluesnap-android-int)
+[![Build Status-Develop](https://travis-ci.org/bluesnap/bluesnap-android-int.svg?branch=develop)](https://travis-ci.org/bluesnap/bluesnap-android-int)
+
 # About
 BlueSnap's Android SDK enables you to easily accept credit card and PayPal payments directly from your Android app, and then process payments from your server using the Payment API. When you use this library, BlueSnap handles most of the PCI compliance burden for you, as the shopper's payment data is tokenized and sent directly to BlueSnap's servers.
 
@@ -11,7 +14,8 @@ This SDK supports Android SDK 25 and above for development. The minimum Android 
 ## Android Studio (Gradle) instructions
 To get started, add the following line in your `build.gradle` file in the dependencies section:
 
-    compile 'com.bluesnap:bluesnap-android:1.1.+'
+    compile 'com.bluesnap:bluesnap-android:[version]'
+
 
 # Usage
 
