@@ -5,9 +5,10 @@ buildscript {
             url 'https://maven.google.com/'
             name 'Google'
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
@@ -26,14 +27,15 @@ allprojects {
             url 'https://maven.google.com/'
             name 'Google'
         }
+        jcenter()
     }
 
 
     ext {
-        compileSdkVersion = 25
-        buildToolsVersion = '26.0.2'
+        compileSdkVersion = 27
+        buildToolsVersion = '27.0.2'
         minSdkVersion = 18
-        targetSdkVersion = 25
+        targetSdkVersion = 27
     }
 
 }

@@ -36,7 +36,7 @@ android {
     }
 
 
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 }
 String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
 
