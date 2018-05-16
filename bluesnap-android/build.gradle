@@ -9,7 +9,6 @@ apply plugin: 'checkstyle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -54,6 +53,7 @@ android {
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
+    buildToolsVersion '27.0.3'
 }
 configurations {
 
