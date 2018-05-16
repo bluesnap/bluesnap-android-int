@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.Events;
+import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.models.CustomListObject;
 import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CurrencyActivity extends Activity {
+    private static final String TAG = CurrencyActivity.class.getSimpleName();
 
     ListView listView;
     String[] currency_value_array;
@@ -56,7 +57,7 @@ public class CurrencyActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String currencyPick = currency_key_array[Arrays.asList(currency_value_array).indexOf(adapter.customListObjects.get(position).getName().toString())];
-                BlueSnapService.getBus().post(new Events.CurrencySelectionEvent(currencyPick));
+                BlueSnapService.getInstance().onCurrencyChange(currencyPick, CurrencyActivity.this);
                 finish();
             }
         });

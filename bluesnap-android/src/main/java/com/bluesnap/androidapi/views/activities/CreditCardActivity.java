@@ -18,7 +18,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
@@ -34,7 +33,6 @@ import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragmen
 import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
 import com.loopj.android.http.TextHttpResponseHandler;
 
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,7 +73,6 @@ public class CreditCardActivity extends AppCompatActivity {
         hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
 
-        BlueSnapService.getBus().register(this);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
 
@@ -270,11 +267,6 @@ public class CreditCardActivity extends AppCompatActivity {
             popupMenu.getMenu().add(1, R.id.id_currency, 1, currentCurrency);
             popupMenu.show();
         }
-    }
-
-    @Subscribe
-    public void onCurrencyUpdated(Events.CurrencyUpdatedEvent currencyUpdatedEvent) {
-        BlueSnapLocalBroadcastManager.sendMessage(this, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 
     public void finishFromFragment(final Shopper shopper) {

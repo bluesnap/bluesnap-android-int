@@ -11,7 +11,6 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.Currency;
-import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.Rates;
@@ -25,8 +24,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.TextHttpResponseHandler;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +43,6 @@ public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final BlueSnapService INSTANCE = new BlueSnapService();
     private static final String FRAUDSESSIONID = "fraudSessionId";
-    private static final EventBus busInstance = new EventBus();
     private static String paypalURL;
     private static JSONObject errorDescription;
     private static String transactionStatus;
@@ -73,10 +69,6 @@ public class BlueSnapService {
 
     public static JSONObject getErrorDescription() {
         return errorDescription;
-    }
-
-    public static EventBus getBus() {
-        return busInstance;
     }
 
     public SDKConfiguration getsDKConfiguration() {
@@ -138,7 +130,6 @@ public class BlueSnapService {
         clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
 
-        if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
 
@@ -589,21 +580,19 @@ public class BlueSnapService {
     }
 
     /**
-     * for Event Bus when Currency change occured {@link Events}
+     * for Event Bus when Currency change event {@link com.bluesnap.androidapi.views.activities.CurrencyActivity}
      *
-     * @param currencySelectionEvent
+     * @param newCurrencyNameCode - String, new Currency Name Code
+     * @param context             - Context
      */
-    @Subscribe
-    public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
-
+    public void onCurrencyChange(String newCurrencyNameCode, Context context) {
+        Log.d(TAG, "onCurrencyChange= " + newCurrencyNameCode);
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
-        convertPrice(priceDetails, currencySelectionEvent.newCurrencyNameCode);
-
-        busInstance.post(new Events.CurrencyUpdatedEvent(priceDetails));
-
+        convertPrice(priceDetails, newCurrencyNameCode);
         sdkResult.setAmount(priceDetails.getAmount());
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
+        BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 
     public void setCheckoutActivity(TokenServiceCallback checkoutActivity) {
