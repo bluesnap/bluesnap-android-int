@@ -135,9 +135,7 @@ public class DemoFlowTest extends EspressoBasedTest {
         Espresso.unregisterIdlingResources(transactionMessageIR);
 
         Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - amountRequestedInTest) < 0.00000000001);
-        Assert.assertEquals("SDKResult wong currency", sdkResult.getCurrencyNameCode(), "USD");
-        Assert.assertNotNull("SDK result contains no Kount SessionID", sdkResult.getKountSessionId());
-
+        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), "USD");
 
     }
 

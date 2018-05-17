@@ -210,7 +210,7 @@ If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passe
 All the other fields that are relevant to a credit card transaction will be empty.
 
 ## Kount
-The SDK includes an integrated Kount SDK. A `kountSessionId` will be passed as part of the `SdkResult`.
+The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [https://developers.bluesnap.com/docs/fraud-prevention] 
 
 ## Customization and UI Overrides
 The SDK allows you to customize the checkout experience, change colors, icons and basic layouts. One way to achieve that is by overriding the SDK resources files in your application and provide matching resource file names to override the SDK default values.
