@@ -128,7 +128,7 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
 
-        if (sdkRequest.isShippingRequired()) {
+        if (sdkRequest.isShippingRequired() && shippingContactInfo != null) {
             // calculate tax according to shipping country
             BlueSnapService.getInstance().updateTax(shippingContactInfo.getCountry(), shippingContactInfo.getState(), inflater.getContext());
         }

@@ -43,7 +43,7 @@ public class OneLineCCViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return creditCardInfos.indexOf(getItem(position));
+        return creditCardInfos.indexOf((CreditCardInfo)getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

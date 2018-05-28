@@ -62,7 +62,6 @@ public class CurrencyActivity extends Activity {
             }
         });
 
-        Arrays.asList(currency_value_array);
         getIndexList(currency_value_array);
         displayIndex();
 
@@ -92,7 +91,7 @@ public class CurrencyActivity extends Activity {
     }
 
     private void getIndexList(String[] lists) {
-        mapIndex = new LinkedHashMap<String, Integer>();
+        mapIndex = new LinkedHashMap<>();
         for (int i = 0; i < lists.length; i++) {
             String list = lists[i];
             String index = list.substring(0, 1);
@@ -106,7 +105,7 @@ public class CurrencyActivity extends Activity {
         LinearLayout indexLayout = (LinearLayout) findViewById(R.id.side_index);
 
         TextView textView;
-        List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        List<String> indexList = new ArrayList<>(mapIndex.keySet());
         for (String index : indexList) {
             textView = (TextView) getLayoutInflater().inflate(
                     R.layout.side_index_item, null);
@@ -115,7 +114,7 @@ public class CurrencyActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     TextView selectedIndex = (TextView) view;
-                    listView.setSelection(mapIndex.get(selectedIndex.getText()));
+                    listView.setSelection(mapIndex.get(selectedIndex.getText().toString()));
                 }
             });
             indexLayout.addView(textView);

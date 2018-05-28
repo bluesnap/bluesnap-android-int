@@ -564,8 +564,6 @@ public class BlueSnapService {
      * @throws BSPaymentRequestException in case of invalid SdkRequest
      */
     public synchronized void setSdkRequest(@NonNull SdkRequest newSdkRequest) throws BSPaymentRequestException {
-        if (newSdkRequest == null)
-            throw new BSPaymentRequestException("null sdkRequest was passed");
 
         if (sdkRequest != null) {
             Log.w(TAG, "sdkRequest override");
@@ -622,16 +620,20 @@ public class BlueSnapService {
     public String getUserCountry(Context context) {
         try {
             final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            final String simCountry = tm.getSimCountryIso();
-            if (simCountry != null && simCountry.length() == 2) {
-                return simCountry.toUpperCase(Locale.US);
-            } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
-                String networkCountry = tm.getNetworkCountryIso();
-                if (networkCountry != null && networkCountry.length() == 2) {
-                    return networkCountry.toUpperCase(Locale.US);
+            if (tm == null) {
+                Log.w(TAG, "TelephonyManager is null");
+            } else {
+                final String simCountry = tm.getSimCountryIso();
+                if (simCountry != null && simCountry.length() == 2) {
+                    return simCountry.toUpperCase(Locale.US);
+                } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
+                    String networkCountry = tm.getNetworkCountryIso();
+                    if (networkCountry != null && networkCountry.length() == 2) {
+                        return networkCountry.toUpperCase(Locale.US);
+                    }
                 }
             }
-        } catch (Exception e) {
+         } catch (Exception e) {
             Log.e(TAG, "TelephonyManager, getSimCountryIso or getNetworkCountryIso failed");
         }
 

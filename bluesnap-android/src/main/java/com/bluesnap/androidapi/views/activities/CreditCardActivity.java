@@ -272,7 +272,6 @@ public class CreditCardActivity extends AppCompatActivity {
     public void finishFromFragment(final Shopper shopper) {
         Intent resultIntent = new Intent();
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
-        assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
         resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());

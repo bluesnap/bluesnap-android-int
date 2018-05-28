@@ -43,7 +43,6 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
 
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        assert sdkRequest != null;
         if (!sdkRequest.isEmailRequired() || stringify(billingInfo.getEmail()).isEmpty())
             setEmailVisibility(GONE);
         else

@@ -3,23 +3,14 @@ package com.bluesnap.androidapi.services;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -27,6 +18,7 @@ import java.util.Locale;
  * A Collection of static methods used in the Android UI parts.
  */
 public class AndroidUtil {
+    private static final String TAG = AndroidUtil.class.getSimpleName();
     protected static DecimalFormat decimalFormat;
 
     public static AndroidUtil getInstance() {
@@ -141,10 +133,13 @@ public class AndroidUtil {
 
     private static void setKeyboardStatus(final View view, final boolean showKey) {
         final InputMethodManager inputMethodManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (showKey)
-            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-        else
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
+        if (inputMethodManager == null) {
+            Log.w(TAG, "inputMethodManager is null");
+        } else {
+            if (showKey)
+                inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+            else
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

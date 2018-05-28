@@ -105,7 +105,12 @@ public class NewCreditCardShippingFragment extends Fragment {
         Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
         Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
         Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
-        ((CreditCardActivity) getActivity()).finishFromFragment(shopper);
+        Activity activity = getActivity();
+        if (activity instanceof CreditCardActivity) {
+            ((CreditCardActivity) activity).finishFromFragment(shopper);
+        } else {
+            Log.w(TAG, "activity is NOT instanceof CreditCardActivity");
+        }
     }
 
     /**

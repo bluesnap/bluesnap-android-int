@@ -191,13 +191,12 @@ public class DemoMainActivity extends AppCompatActivity {
 
     private String readCurencyFromSpinner(String selectedRateName) {
         currency = Currency.getInstance(selectedRateName);
-        String convertedPrice = "0";
         currencySymbol = currency.getSymbol();
         currencyName = currency.getCurrencyCode();
         if (initialPrice == null) {
             initialPrice = productPriceEditText.getText().toString().trim();
         }
-        convertedPrice = bluesnapService.convertUSD(initialPrice, selectedRateName).trim();
+        String convertedPrice = bluesnapService.convertUSD(initialPrice, selectedRateName).trim();
         return convertedPrice;
     }
 
@@ -262,22 +261,8 @@ public class DemoMainActivity extends AppCompatActivity {
 
         readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
         String taxString = taxAmountEditText.getText().toString().trim();
-        Double taxAmountPrecentage = 0D;
-        if (!taxString.isEmpty()) {
-            taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
-        }
         Double taxAmount = 0D;
-        // You can set the Amouut solely
         sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
-
-//        // Or you can set the Amount with tax, this will override setAmount()
-//        // The total purchase amount will be the sum of both numbers
-//        if (taxAmountPrecentage > 0D) {
-//            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
-//        } else {
-//            sdkRequest.setAmountNoTax(productPrice);
-//        }
-
 
         sdkRequest.setCustomTitle("Demo Merchant");
 
@@ -398,9 +383,12 @@ public class DemoMainActivity extends AppCompatActivity {
         bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                Set<String> supportedRates = bluesnapService.getSupportedRates();
-                if (null == currency || null == currency.getCurrencyCode())
-                    updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                if (null == currency || null == currency.getCurrencyCode()) {
+                    Set<String> supportedRates = bluesnapService.getSupportedRates();
+                    if (supportedRates != null) {
+                        updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                    }
+                }
                 progressBar.setVisibility(View.INVISIBLE);
                 linearLayoutForProgressBar.setVisibility(View.VISIBLE);
                 productPriceEditText.setVisibility(View.VISIBLE);
@@ -474,7 +462,7 @@ public class DemoMainActivity extends AppCompatActivity {
      */
 
     private TreeSet<String> demoSupportedRates(Set<String> supportedRates) {
-        TreeSet<String> treeSet = new TreeSet();
+        TreeSet<String> treeSet = new TreeSet<>();
         if (supportedRates.contains("USD")) {
             treeSet.add("USD");
         }

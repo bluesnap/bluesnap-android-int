@@ -86,7 +86,7 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
 
         if (!address.isEmpty())
             address += ",";
-        else if (address.isEmpty() && city.isEmpty() && state.isEmpty())
+        else if (/*address.isEmpty() &&*/ city.isEmpty() && state.isEmpty())
             forFullBillingLinearLayout.setVisibility(GONE);
 
         setCountryText(country);

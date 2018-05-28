@@ -58,11 +58,15 @@ public class ContactInfoViewComponent extends LinearLayout {
      * Load component XML layout
      */
     void initControl(final Context context) {
+
         //hasAlreadyRequestedFocus = false;
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        inflater.inflate(R.layout.contact_info_view_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.contact_info_view_component, this);
+        }
 
         // layout is inflated, assign local variables to components
         inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);

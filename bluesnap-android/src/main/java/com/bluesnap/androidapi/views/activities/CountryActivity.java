@@ -47,7 +47,9 @@ public class CountryActivity extends Activity {
 
         savedInstanceState = getIntent().getExtras();
         if (savedInstanceState != null) {
-            localeCountry = country_values_array[Arrays.asList(country_key_array).indexOf(savedInstanceState.getString(getString(R.string.COUNTRY_STRING)).toUpperCase())];
+            String country = savedInstanceState.getString(getString(R.string.COUNTRY_STRING));
+            country = country == null ? "" : country.toUpperCase();
+            localeCountry = country_values_array[Arrays.asList(country_key_array).indexOf(country)];
         }
 
         int[] country_drawable_array = new int[country_key_array.length];
@@ -73,7 +75,6 @@ public class CountryActivity extends Activity {
             }
         });
 
-        Arrays.asList(country_values_array);
         getIndexList(country_values_array);
         displayIndex();
 
@@ -103,7 +104,7 @@ public class CountryActivity extends Activity {
     }
 
     private void getIndexList(String[] lists) {
-        mapIndex = new LinkedHashMap<String, Integer>();
+        mapIndex = new LinkedHashMap<>();
         for (int i = 0; i < lists.length; i++) {
             String list = lists[i];
             String index = list.substring(0, 1);
@@ -117,7 +118,7 @@ public class CountryActivity extends Activity {
         LinearLayout indexLayout = (LinearLayout) findViewById(R.id.side_index);
 
         TextView textView;
-        List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        List<String> indexList = new ArrayList<>(mapIndex.keySet());
         for (String index : indexList) {
             textView = (TextView) getLayoutInflater().inflate(
                     R.layout.side_index_item, null);
@@ -126,7 +127,7 @@ public class CountryActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     TextView selectedIndex = (TextView) view;
-                    listView.setSelection(mapIndex.get(selectedIndex.getText()));
+                    listView.setSelection(mapIndex.get(selectedIndex.getText().toString()));
                 }
             });
             indexLayout.addView(textView);
