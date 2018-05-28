@@ -51,13 +51,9 @@ public class BlueSnapService {
     private SdkResult sdkResult;
     private SdkRequest sdkRequest;
     private BluesnapToken bluesnapToken;
-    private TokenServiceCallback checkoutActivity;
     private BluesnapServiceCallback bluesnapServiceCallback;
-    //private BluesnapServiceResultCallback bluesnapServiceResultCallback;
     private SDKConfiguration sDKConfiguration;
-    private String merchantStoreCurrency;
     private TokenProvider tokenProvider;
-    private Context mContext;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -117,14 +113,12 @@ public class BlueSnapService {
      */
     public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, @NonNull Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
-        this.merchantStoreCurrency = merchantStoreCurrency;
         if (null != tokenProvider)
             this.tokenProvider = tokenProvider;
 
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
-        mContext = context;
         sdkResult = null;
 
         clearPayPalToken();
@@ -591,10 +585,6 @@ public class BlueSnapService {
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
         BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
-    }
-
-    public void setCheckoutActivity(TokenServiceCallback checkoutActivity) {
-        this.checkoutActivity = checkoutActivity;
     }
 
     public BluesnapToken getBlueSnapToken() {

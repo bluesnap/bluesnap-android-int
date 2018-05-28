@@ -29,14 +29,13 @@ import com.bluesnap.androidapi.views.components.OneLineCCEditComponent;
  */
 
 public class NewCreditCardFragment extends Fragment {
+
     public static final String TAG = NewCreditCardFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
     private OneLineCCEditComponent oneLineCCEditComponent;
 
     private SdkRequest sdkRequest;
-
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
@@ -44,7 +43,8 @@ public class NewCreditCardFragment extends Fragment {
     private ButtonComponent buttonComponentView;
 
     public static NewCreditCardFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+
+        FragmentManager fragmentManager = activity.getFragmentManager();
         NewCreditCardFragment bsFragment = (NewCreditCardFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {

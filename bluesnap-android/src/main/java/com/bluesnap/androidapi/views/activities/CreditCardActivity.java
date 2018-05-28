@@ -53,10 +53,8 @@ public class CreditCardActivity extends AppCompatActivity {
     private String fragmentType;
     private TextView headerTextView;
     private String sharedCurrency;
-    private ImageButton hamburgerMenuButton;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SdkRequest sdkRequest;
-    private NewCreditCardFragment newCreditCardFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +68,7 @@ public class CreditCardActivity extends AppCompatActivity {
             startActivityWithReturningShopperCreditCardFragment();
 
         headerTextView = (TextView) findViewById(R.id.headerTextView);
-        hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
+        ImageButton hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
         hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
 
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
@@ -99,7 +97,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private void startActivityWithNewCreditCardFragment() {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, broadcastReceiver);
 
-        newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+        NewCreditCardFragment newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
                 .replace(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
     }

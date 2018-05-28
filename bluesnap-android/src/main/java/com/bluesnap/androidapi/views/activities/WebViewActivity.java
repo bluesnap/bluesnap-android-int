@@ -23,12 +23,6 @@ public class WebViewActivity extends Activity {
 
     public static final int PAYPAL_REQUEST_CODE = 1;
     static final String TAG = WebViewActivity.class.getSimpleName();
-    private ProgressBar progressBar;
-    private WebView webView;
-    private TextView textView;
-    private String urlRedirect;
-    private String textHeader;
-    private Boolean javaScriptEnabled;
     private int transactionPendingCounter;
     private String message;
     private String title;
@@ -40,13 +34,16 @@ public class WebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_webview);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar1);
-        webView = (WebView) findViewById(R.id.webView1);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+        WebView webView = (WebView) findViewById(R.id.webView1);
         webView.setWebViewClient(new WebClientProgressBar(progressBar));
 
         transactionPendingCounter = 0;
 
         Bundle extras = getIntent().getExtras();
+        String textHeader = null;
+        String urlRedirect = null;
+        Boolean javaScriptEnabled = false;
         if (extras != null) {
             textHeader = extras.getString(getString(R.string.WEBVIEW_STRING));
             urlRedirect = extras.getString(getString(R.string.WEBVIEW_URL));
@@ -54,7 +51,7 @@ public class WebViewActivity extends Activity {
         }
 
         if (urlRedirect != null && textHeader != null) {
-            textView = (TextView) findViewById(R.id.textHeader1);
+            TextView textView = (TextView) findViewById(R.id.textHeader1);
             textView.setText(textHeader);
             webView.getSettings().setJavaScriptEnabled(javaScriptEnabled);
             webView.loadUrl(urlRedirect);

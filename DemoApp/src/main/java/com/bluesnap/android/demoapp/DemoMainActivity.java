@@ -53,12 +53,10 @@ public class DemoMainActivity extends AppCompatActivity {
     private static final String TAG = "DemoMainActivity";
     private static final int HTTP_MAX_RETRIES = 2;
     private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
-    private static Context context;
     protected BlueSnapService bluesnapService;
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private Spinner merchantStoreCurrencySpinner;
-    private EditText returningShopperEditText;
     private String returningOrNewShopper = "";
     private EditText productPriceEditText;
     private Currency currency;
@@ -67,7 +65,6 @@ public class DemoMainActivity extends AppCompatActivity {
     private String initialPrice;
     private String displayedCurrency;
     private String currencyName;
-    private SdkRequest sdkRequest;
     private String merchantToken;
     private Currency currencyByLocale;
     private ProgressBar progressBar;
@@ -108,11 +105,11 @@ public class DemoMainActivity extends AppCompatActivity {
             currencyByLocale = Currency.getInstance("USD");
         }
 
-        context = getBaseContext();
+        Context context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
 
         generateMerchantToken();
-        returningShopperEditText = (EditText) findViewById(R.id.returningShopperEditText);
+        EditText returningShopperEditText = (EditText) findViewById(R.id.returningShopperEditText);
         returningShopperEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -262,7 +259,7 @@ public class DemoMainActivity extends AppCompatActivity {
         readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
         String taxString = taxAmountEditText.getText().toString().trim();
         Double taxAmount = 0D;
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
 
         sdkRequest.setCustomTitle("Demo Merchant");
 

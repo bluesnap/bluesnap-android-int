@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
@@ -33,16 +32,12 @@ import com.bluesnap.androidapi.views.components.ShippingViewSummarizedComponent;
  */
 
 public class ReturningShopperCreditCardFragment extends Fragment {
+
     public static final String TAG = ReturningShopperCreditCardFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
-    private SdkRequest sdkRequest;
-    private SdkResult sdkResult;
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
-
-    private OneLineCCViewComponent oneLineCCViewComponent;
 
     public BillingViewSummarizedComponent billingViewSummarizedComponent;
     public ShippingViewSummarizedComponent shippingViewSummarizedComponent;
@@ -52,7 +47,8 @@ public class ReturningShopperCreditCardFragment extends Fragment {
     private ButtonComponent buttonComponentView;
 
     public static ReturningShopperCreditCardFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+
+        FragmentManager fragmentManager = activity.getFragmentManager();
         ReturningShopperCreditCardFragment bsFragment = (ReturningShopperCreditCardFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -66,7 +62,6 @@ public class ReturningShopperCreditCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
     }
 
     @Override
@@ -84,13 +79,13 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         //get SDK Request
-        sdkRequest = blueSnapService.getSdkRequest();
+        SdkRequest sdkRequest = blueSnapService.getSdkRequest();
 
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         // set Credit Card View Component details
-        oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
+        OneLineCCViewComponent oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
         oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
 
         billingViewSummarizedComponent = (BillingViewSummarizedComponent) inflate.findViewById(R.id.billingViewSummarizedComponent);

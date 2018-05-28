@@ -23,9 +23,9 @@ import com.bluesnap.androidapi.services.BlueSnapService;
  */
 
 public class AmountTaxShippingComponent extends LinearLayout {
+
     private static final String TAG = AmountTaxShippingComponent.class.getSimpleName();
     private RelativeLayout shippingSameAsBillingRelativeLayout;
-    private Switch shippingSameAsBillingSwitch;
     private LinearLayout amountTaxLinearLayout;
     private TextView amountTextView, taxTextView;
     private SdkRequest sdkRequest;
@@ -60,7 +60,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
         }
 
         shippingSameAsBillingRelativeLayout = (RelativeLayout) findViewById(R.id.shippingSameAsBillingRelativeLayout);
-        shippingSameAsBillingSwitch = (Switch) findViewById(R.id.shippingSameAsBillingSwitch);
+        Switch shippingSameAsBillingSwitch = (Switch) findViewById(R.id.shippingSameAsBillingSwitch);
         amountTaxLinearLayout = (LinearLayout) findViewById(R.id.amountTaxLinearLayout);
         amountTextView = (TextView) findViewById(R.id.amountTextView);
         taxTextView = (TextView) findViewById(R.id.taxTextView);
