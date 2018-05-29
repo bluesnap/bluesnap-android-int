@@ -149,6 +149,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode != RESULT_OK) {
         // User aborted the checkout process
         return;
+    }
 
     SdkResult sdkResult = (SdkResult) data.getExtras().get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
     ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
