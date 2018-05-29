@@ -17,6 +17,7 @@ import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -95,6 +96,16 @@ public class NewCreditCardShippingFragment extends Fragment {
         finishFromFragmentWithShipping();
 
         return inflate;
+    }
+
+    /**
+     * get ShippingInfo from
+     * {@link ShippingViewComponent}
+     *
+     * @return {@link ShippingInfo}
+     */
+    public ShippingInfo getShippingInfo() {
+        return shippingViewComponent.getResource();
     }
 
     /**

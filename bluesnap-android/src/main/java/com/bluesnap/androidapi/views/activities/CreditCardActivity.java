@@ -18,6 +18,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
@@ -57,10 +58,22 @@ public class CreditCardActivity extends AppCompatActivity {
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SdkRequest sdkRequest;
     private NewCreditCardFragment newCreditCardFragment;
+    private ReturningShopperCreditCardFragment returningShopperCreditCardFragment;
+    private NewCreditCardShippingFragment newCreditCardShippingFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // recovering the instance state
+        if (savedInstanceState != null) {
+            //TODO: some transient state for the activity instance
+            String savedInstanceFragmentType = savedInstanceState.getString("fragmentType");
+            if (!savedInstanceFragmentType.equals(fragmentType)) {
+                //TODO
+            }
+        }
+
         setContentView(R.layout.credit_card_activity);
 
         fragmentType = getIntent().getStringExtra(BluesnapCheckoutActivity.FRAGMENT_TYPE);
@@ -78,6 +91,51 @@ public class CreditCardActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This callback is called only when there is a saved instance that is previously saved by using
+     * onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
+     * other state here, possibly usable after onStart() has completed.
+     * The savedInstanceState Bundle is same as the one used in onCreate().
+     *
+     * @param savedInstanceState {@link Bundle}
+     */
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        //TODO: assign details according to savedInstanceState
+        //fragmentType = savedInstanceState.getString("fragmentType");
+        //outState.putString("fragmentType", fragmentType);
+
+    }
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     *
+     * @param outState {@link Bundle}
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //TODO: put details inside outState to retain savedInstanceState
+        outState.putString("fragmentType", fragmentType);
+
+        // get Shopper
+        Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
+
+        if (BluesnapCheckoutActivity.NEW_CC.equals(fragmentType)) {
+            //outState.putParcelable("CreditCardInfo", newCreditCardFragment.getCreditCardInfo());
+            // get Credit Card Info
+            if (shopper != null) {
+                CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
+                CreditCardInfo newCreditCardFragmentInfo = newCreditCardFragment.getCreditCardInfo();
+                newCreditCardInfo.setBillingContactInfo(newCreditCardFragmentInfo.getBillingContactInfo());
+                newCreditCardInfo.setCreditCard(newCreditCardFragmentInfo.getCreditCard());
+            }
+        } else if (NewCreditCardShippingFragment.TAG.equals(fragmentType))
+            //outState.putParcelable("ShippingInfo", newCreditCardShippingFragment.getShippingInfo());
+            shopper.setShippingContactInfo(newCreditCardShippingFragment.getShippingInfo());
+        // call superclass to save any view hierarchy
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -90,6 +148,9 @@ public class CreditCardActivity extends AppCompatActivity {
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
             setHeaderTextView(NewCreditCardFragment.TAG);
+        } else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType)) {
+            setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
+            setHamburgerMenuButtonVisibility(View.VISIBLE);
         }
     }
 
@@ -113,7 +174,7 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, broadcastReceiver);
 
-        ReturningShopperCreditCardFragment returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+        returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
                 .replace(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
     }
@@ -132,6 +193,15 @@ public class CreditCardActivity extends AppCompatActivity {
             text = getResources().getString(R.string.shipping);
 
         headerTextView.setText(text);
+    }
+
+    /**
+     * set HamburgerMenuButton Visibility
+     *
+     * @param visibility - View.VISIBLE, View.INVISIBLE, View.GONE {@link View}
+     */
+    public void setHamburgerMenuButtonVisibility(int visibility) {
+        this.hamburgerMenuButton.setVisibility(visibility);
     }
 
     /**
@@ -169,12 +239,16 @@ public class CreditCardActivity extends AppCompatActivity {
                     || BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event)) {
                 getFragmentManager().popBackStack();
                 setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
+                setHamburgerMenuButtonVisibility(View.VISIBLE);
             } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT.equals(event)) {
                 replaceFragmentPlacement(ReturningShopperBillingFragment.newInstance(CreditCardActivity.this, new Bundle()));
+                setHamburgerMenuButtonVisibility(View.INVISIBLE);
             } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT.equals(event)) {
                 replaceFragmentPlacement(ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
+                setHamburgerMenuButtonVisibility(View.INVISIBLE);
             } else if (BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE.equals(event)) {
-                replaceFragmentPlacement(NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
+                newCreditCardShippingFragment = NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
+                replaceFragmentPlacement(newCreditCardShippingFragment);
             } else {
                 Intent newIntent;
                 int requestCode;
