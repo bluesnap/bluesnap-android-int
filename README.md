@@ -35,7 +35,7 @@ The token is returned in the Location header in the response. For more informati
 ## Initialize the SDK with the token
 To initiate the SDK, prepare it for rate conversion, and intialize the required objects for the user interface, pass your token to the `setup` method of the `BlueSnapService` class, along with the following: 
 
-* `tokenProvider()` - Callback function that handles token expiration by creating a new token. 
+* `new TokenProvider() {...}` - Callback function that handles token expiration by creating a new token.
 * `merchantStoreCurrency` - [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code of your base currency. Default value is USD. 
 * `getApplicationContext()` - Context of your application, which is used for fraud prevention purposes. 
 * `new BluesnapServiceCallback() {...}` - Callback function that is invoked after the setup process finishes, either resulting in a success or failure (`setup` is an async function). 
