@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.google.gson.annotations.SerializedName;
 
 
@@ -50,7 +51,7 @@ public class ContactInfo implements Parcelable {
     }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        return AndroidUtil.stringify(firstName) + " " + AndroidUtil.stringify(lastName);
     }
 
     public void setFullName(String fullName) {

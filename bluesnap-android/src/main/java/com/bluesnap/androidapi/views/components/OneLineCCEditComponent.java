@@ -76,6 +76,19 @@ public class OneLineCCEditComponent extends LinearLayout {
     }
 
     /**
+     * get credit card Resource from inputs
+     *
+     * @return {@link CreditCard}
+     */
+    public CreditCard getResource() {
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber(AndroidUtil.stringify(getNewCreditCard().getNumber(), creditCardNumberEditText.getText().toString().trim()));
+        creditCard.setExpDateFromString(expEditText.getText().toString().trim());
+        creditCard.setCvc(cvvEditText.getText().toString().trim());
+        return creditCard;
+    }
+
+    /**
      * Load component XML layout
      */
     private void initControl(Context context) {
@@ -151,6 +164,24 @@ public class OneLineCCEditComponent extends LinearLayout {
 
         // flag for activation of the next button, relevant only for the second time
         activateMoveToCcImageButton = false;
+    }
+
+    /**
+     * update resource with details
+     *
+     * @param creditCard - {@link CreditCard}
+     */
+    public void updateResource(CreditCard creditCard) {
+        if (!TextUtils.isEmpty(creditCard.getNumber())) {
+            creditCardNumberEditText.setText(creditCard.getNumber());
+            changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(creditCard.getNumber()));
+            if (creditCard.getNumber().length() == getResources().getInteger(R.integer.ccn_max_length))
+                creditCardNumberOnLoseFocus();
+        }
+        if (!TextUtils.isEmpty(creditCard.getExpirationDateForEditTextAndSpinner()))
+            expEditText.setText(creditCard.getExpirationDateForEditTextAndSpinner());
+        if (!TextUtils.isEmpty(creditCard.getCvc()))
+            cvvEditText.setText(creditCard.getCvc());
     }
 
     /**

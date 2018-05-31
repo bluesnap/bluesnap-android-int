@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
@@ -123,14 +124,12 @@ public class ContactInfoViewComponent extends LinearLayout {
      * @param contactInfo - {@link ContactInfo}
      */
     public void updateResource(ContactInfo contactInfo) {
-        inputName.setText(contactInfo.getFullName());
-        //inputEmail.setText(contactInfo.getEmail());
-        inputZip.setText(contactInfo.getZip());
-        inputState.setText(contactInfo.getState());
-        inputCity.setText(contactInfo.getCity());
-        inputAddress.setText(contactInfo.getAddress());
-        inputState.setText(contactInfo.getState());
-        setUserCountry(contactInfo.getCountry());
+        inputName.setText(AndroidUtil.stringify(contactInfo.getFullName()));
+        inputZip.setText(AndroidUtil.stringify(contactInfo.getZip()));
+        inputCity.setText(AndroidUtil.stringify(contactInfo.getCity()));
+        inputAddress.setText(AndroidUtil.stringify(contactInfo.getAddress()));
+        inputState.setText(AndroidUtil.stringify(contactInfo.getState()));
+        setUserCountry(AndroidUtil.stringify(contactInfo.getCountry()));
     }
 
     /**

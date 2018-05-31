@@ -119,11 +119,21 @@ public class NewCreditCardFragment extends Fragment {
      *
      * @return {@link CreditCardInfo}
      */
-    public CreditCardInfo getCreditCardInfo() {
+    public CreditCardInfo getResource() {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
-        creditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
+        creditCardInfo.setCreditCard(oneLineCCEditComponent.getResource());
         creditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
         return creditCardInfo;
+    }
+
+    /**
+     * set Credit Card in view - {@link OneLineCCEditComponent}, {@link BillingViewComponent}
+     *
+     * @param creditCardInfo - {@link CreditCardInfo}
+     */
+    public void updateResource(CreditCardInfo creditCardInfo) {
+        oneLineCCEditComponent.updateResource(creditCardInfo.getCreditCard());
+        billingViewComponent.updateResource(creditCardInfo.getBillingContactInfo());
     }
 
     /**

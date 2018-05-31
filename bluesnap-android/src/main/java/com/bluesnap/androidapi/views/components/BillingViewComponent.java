@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 
@@ -84,7 +85,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     public void updateResource(BillingInfo billingInfo) {
         super.updateResource(billingInfo);
         if (isEmailRequired)
-            inputEmail.setText(billingInfo.getEmail());
+            inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
         setStateVisibilityByUserCountry();
     }
 

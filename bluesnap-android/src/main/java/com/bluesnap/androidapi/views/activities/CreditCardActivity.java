@@ -104,6 +104,11 @@ public class CreditCardActivity extends AppCompatActivity {
         //TODO: assign details according to savedInstanceState
         //fragmentType = savedInstanceState.getString("fragmentType");
         //outState.putString("fragmentType", fragmentType);
+        Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
+        if (shopper != null) {
+            CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
+            newCreditCardFragment.updateResource(newCreditCardInfo);
+        }
 
     }
 
@@ -121,11 +126,11 @@ public class CreditCardActivity extends AppCompatActivity {
         Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         if (BluesnapCheckoutActivity.NEW_CC.equals(fragmentType)) {
-            //outState.putParcelable("CreditCardInfo", newCreditCardFragment.getCreditCardInfo());
+            //outState.putParcelable("CreditCardInfo", newCreditCardFragment.getResource());
             // get Credit Card Info
             if (shopper != null) {
                 CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
-                CreditCardInfo newCreditCardFragmentInfo = newCreditCardFragment.getCreditCardInfo();
+                CreditCardInfo newCreditCardFragmentInfo = newCreditCardFragment.getResource();
                 newCreditCardInfo.setBillingContactInfo(newCreditCardFragmentInfo.getBillingContactInfo());
                 newCreditCardInfo.setCreditCard(newCreditCardFragmentInfo.getCreditCard());
             }
