@@ -41,7 +41,7 @@ jdk:
 
 
 script:
-  - ./gradlew build  bluesnap-android:connectedAndroidTest --info
+  - ./gradlew build
 
 deploy:
   provider: script
