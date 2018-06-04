@@ -109,6 +109,15 @@ public class NewCreditCardShippingFragment extends Fragment {
     }
 
     /**
+     * set Shipping Info in view - {@link ShippingViewComponent}
+     *
+     * @param shippingInfo - {@link ShippingInfo}
+     */
+    public void updateResource(ShippingInfo shippingInfo) {
+        shippingViewComponent.updateResource(shippingInfo);
+    }
+
+    /**
      * activate finish from fragment function {@link CreditCardActivity}
      * with the shopper created in this fragment
      */

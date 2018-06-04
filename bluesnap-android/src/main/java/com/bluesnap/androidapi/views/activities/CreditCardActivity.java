@@ -66,21 +66,24 @@ public class CreditCardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // recovering the instance state
-        if (savedInstanceState != null) {
-            //TODO: some transient state for the activity instance
-            String savedInstanceFragmentType = savedInstanceState.getString("fragmentType");
-            if (!savedInstanceFragmentType.equals(fragmentType)) {
-                //TODO
-            }
-        }
+        if (null != savedInstanceState
+                && null != savedInstanceState.getString("fragmentType")
+                && NewCreditCardShippingFragment.TAG.equals(savedInstanceState.getString("fragmentType")))
+            fragmentType = NewCreditCardShippingFragment.TAG;
+        else
+            fragmentType = getIntent().getStringExtra(BluesnapCheckoutActivity.FRAGMENT_TYPE);
 
         setContentView(R.layout.credit_card_activity);
 
-        fragmentType = getIntent().getStringExtra(BluesnapCheckoutActivity.FRAGMENT_TYPE);
         if (BluesnapCheckoutActivity.NEW_CC.equals(fragmentType))
             startActivityWithNewCreditCardFragment();
         else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType))
             startActivityWithReturningShopperCreditCardFragment();
+        else {
+            newCreditCardShippingFragment = NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.creditCardFrameLayout, newCreditCardShippingFragment).commit();
+        }
 
         headerTextView = (TextView) findViewById(R.id.headerTextView);
         hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
@@ -106,8 +109,11 @@ public class CreditCardActivity extends AppCompatActivity {
         //outState.putString("fragmentType", fragmentType);
         Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
         if (shopper != null) {
-            CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
-            newCreditCardFragment.updateResource(newCreditCardInfo);
+            if (!NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
+                CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
+                newCreditCardFragment.updateResource(newCreditCardInfo);
+            } else if (NewCreditCardShippingFragment.TAG.equals(fragmentType))
+                newCreditCardShippingFragment.updateResource(shopper.getShippingContactInfo());
         }
 
     }
