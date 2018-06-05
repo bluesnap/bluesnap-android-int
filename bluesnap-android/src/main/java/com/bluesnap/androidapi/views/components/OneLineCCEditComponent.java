@@ -172,10 +172,11 @@ public class OneLineCCEditComponent extends LinearLayout {
      * @param creditCard - {@link CreditCard}
      */
     public void updateResource(CreditCard creditCard) {
+        newCreditCard = creditCard;
         if (!TextUtils.isEmpty(creditCard.getNumber())) {
             creditCardNumberEditText.setText(creditCard.getNumber());
             changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(creditCard.getNumber()));
-            if (creditCard.getNumber().length() == getResources().getInteger(R.integer.ccn_max_length))
+            if (creditCard.getNumber().length() >= getResources().getInteger(R.integer.ccn_max_length_no_spaces))
                 creditCardNumberOnLoseFocus();
         }
         if (!TextUtils.isEmpty(creditCard.getExpirationDateForEditTextAndSpinner()))

@@ -20,7 +20,7 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperShippingFragment extends Fragment {
+public class ReturningShopperShippingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperShippingFragment.class.getSimpleName();
     private static FragmentManager fragmentManager;
     private ShippingViewComponent shippingViewComponent;

@@ -20,7 +20,7 @@ import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperBillingFragment extends Fragment {
+public class ReturningShopperBillingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperBillingFragment.class.getSimpleName();
     private static FragmentManager fragmentManager;
     private BillingViewComponent billingViewComponent;

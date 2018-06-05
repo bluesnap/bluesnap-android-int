@@ -27,6 +27,7 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.views.fragments.BlueSnapFragment;
 import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
 import com.bluesnap.androidapi.views.fragments.NewCreditCardShippingFragment;
 import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
@@ -104,17 +105,8 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        //TODO: assign details according to savedInstanceState
-        //fragmentType = savedInstanceState.getString("fragmentType");
-        //outState.putString("fragmentType", fragmentType);
-        Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
-        if (shopper != null) {
-            if (!NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
-                CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
-                newCreditCardFragment.updateResource(newCreditCardInfo);
-            } else if (NewCreditCardShippingFragment.TAG.equals(fragmentType))
-                newCreditCardShippingFragment.updateResource(shopper.getShippingContactInfo());
-        }
+        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+        blueSnapFragment.onActivityRestoredInstanceState();
 
     }
 
@@ -125,24 +117,9 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        //TODO: put details inside outState to retain savedInstanceState
         outState.putString("fragmentType", fragmentType);
-
-        // get Shopper
-        Shopper shopper = blueSnapService.getsDKConfiguration().getShopper();
-
-        if (BluesnapCheckoutActivity.NEW_CC.equals(fragmentType)) {
-            //outState.putParcelable("CreditCardInfo", newCreditCardFragment.getResource());
-            // get Credit Card Info
-            if (shopper != null) {
-                CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
-                CreditCardInfo newCreditCardFragmentInfo = newCreditCardFragment.getResource();
-                newCreditCardInfo.setBillingContactInfo(newCreditCardFragmentInfo.getBillingContactInfo());
-                newCreditCardInfo.setCreditCard(newCreditCardFragmentInfo.getCreditCard());
-            }
-        } else if (NewCreditCardShippingFragment.TAG.equals(fragmentType))
-            //outState.putParcelable("ShippingInfo", newCreditCardShippingFragment.getShippingInfo());
-            shopper.setShippingContactInfo(newCreditCardShippingFragment.getShippingInfo());
+        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+        blueSnapFragment.onActivitySavedInstanceState();
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }

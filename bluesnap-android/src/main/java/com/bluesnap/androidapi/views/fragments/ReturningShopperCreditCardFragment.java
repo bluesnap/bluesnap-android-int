@@ -32,7 +32,7 @@ import com.bluesnap.androidapi.views.components.ShippingViewSummarizedComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperCreditCardFragment extends Fragment {
+public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperCreditCardFragment.class.getSimpleName();
     private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();

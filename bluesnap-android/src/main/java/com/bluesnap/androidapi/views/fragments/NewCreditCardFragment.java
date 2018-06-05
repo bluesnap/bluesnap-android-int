@@ -28,7 +28,7 @@ import com.bluesnap.androidapi.views.components.OneLineCCEditComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class NewCreditCardFragment extends Fragment {
+public class NewCreditCardFragment extends BlueSnapFragment {
     public static final String TAG = NewCreditCardFragment.class.getSimpleName();
     private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
@@ -95,6 +95,27 @@ public class NewCreditCardFragment extends Fragment {
         }
 
         return inflate;
+    }
+
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState() {
+        // get Credit Card Info
+        shopper.setNewCreditCardInfo(getResource());
+    }
+
+    /**
+     * This callback is called only when there is a saved instance that is previously saved by using
+     * onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
+     * other state here, possibly usable after onStart() has completed.
+     * The savedInstanceState Bundle is same as the one used in onCreate().
+     */
+    @Override
+    public void onActivityRestoredInstanceState() {
+        updateResource(shopper.getNewCreditCardInfo());
     }
 
     /**

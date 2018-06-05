@@ -30,7 +30,7 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class NewCreditCardShippingFragment extends Fragment {
+public class NewCreditCardShippingFragment extends BlueSnapFragment {
     public static final String TAG = NewCreditCardShippingFragment.class.getSimpleName();
     private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
@@ -96,6 +96,26 @@ public class NewCreditCardShippingFragment extends Fragment {
         finishFromFragmentWithShipping();
 
         return inflate;
+    }
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState() {
+        // get Shipping Info
+        shopper.setShippingContactInfo(getShippingInfo());
+    }
+
+    /**
+     * This callback is called only when there is a saved instance that is previously saved by using
+     * onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
+     * other state here, possibly usable after onStart() has completed.
+     * The savedInstanceState Bundle is same as the one used in onCreate().
+     */
+    @Override
+    public void onActivityRestoredInstanceState() {
+        updateResource(shopper.getShippingContactInfo());
     }
 
     /**
