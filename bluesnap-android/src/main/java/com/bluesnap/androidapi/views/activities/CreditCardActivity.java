@@ -91,7 +91,7 @@ public class CreditCardActivity extends AppCompatActivity {
         if (BlueSnapService.getInstance().getSdkRequest().isAllowCurrencyChange()) {
             hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
         } else {
-            hamburgerMenuButton.setVisibility(View.INVISIBLE);
+            setHamburgerMenuButtonVisibility(View.INVISIBLE);
         }
 
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
@@ -193,7 +193,10 @@ public class CreditCardActivity extends AppCompatActivity {
      * @param visibility - View.VISIBLE, View.INVISIBLE, View.GONE {@link View}
      */
     public void setHamburgerMenuButtonVisibility(int visibility) {
-        this.hamburgerMenuButton.setVisibility(visibility);
+        if (BlueSnapService.getInstance().getSdkRequest().isAllowCurrencyChange())
+            this.hamburgerMenuButton.setVisibility(visibility);
+        else
+            this.hamburgerMenuButton.setVisibility(View.INVISIBLE);
     }
 
     /**
