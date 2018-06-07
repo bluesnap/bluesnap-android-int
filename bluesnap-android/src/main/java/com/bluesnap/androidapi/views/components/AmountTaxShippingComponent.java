@@ -24,7 +24,6 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 public class AmountTaxShippingComponent extends LinearLayout {
     private static final String TAG = AmountTaxShippingComponent.class.getSimpleName();
     private RelativeLayout shippingSameAsBillingRelativeLayout;
-    private Switch shippingSameAsBillingSwitch;
     private LinearLayout amountTaxLinearLayout;
     private TextView amountTextView, taxTextView;
     private SdkRequest sdkRequest;
@@ -52,13 +51,15 @@ public class AmountTaxShippingComponent extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        inflater.inflate(R.layout.amount_tax_shipping_component, this);
+        if (inflater != null) {
+            inflater.inflate(R.layout.amount_tax_shipping_component, this);
+        }
 
-        shippingSameAsBillingRelativeLayout = (RelativeLayout) findViewById(R.id.shippingSameAsBillingRelativeLayout);
-        shippingSameAsBillingSwitch = (Switch) findViewById(R.id.shippingSameAsBillingSwitch);
-        amountTaxLinearLayout = (LinearLayout) findViewById(R.id.amountTaxLinearLayout);
-        amountTextView = (TextView) findViewById(R.id.amountTextView);
-        taxTextView = (TextView) findViewById(R.id.taxTextView);
+        shippingSameAsBillingRelativeLayout = findViewById(R.id.shippingSameAsBillingRelativeLayout);
+        Switch shippingSameAsBillingSwitch = findViewById(R.id.shippingSameAsBillingSwitch);
+        amountTaxLinearLayout = findViewById(R.id.amountTaxLinearLayout);
+        amountTextView = findViewById(R.id.amountTextView);
+        taxTextView = findViewById(R.id.taxTextView);
 
         setAmountTaxShipping();
 
@@ -78,7 +79,6 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxShipping() {
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
             shippingSameAsBillingRelativeLayout.setVisibility(VISIBLE);
         else

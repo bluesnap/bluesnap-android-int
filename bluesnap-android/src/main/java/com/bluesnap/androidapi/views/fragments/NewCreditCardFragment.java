@@ -29,7 +29,6 @@ import com.bluesnap.androidapi.views.components.OneLineCCEditComponent;
 
 public class NewCreditCardFragment extends BlueSnapFragment {
     public static final String TAG = NewCreditCardFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
     private OneLineCCEditComponent oneLineCCEditComponent;
@@ -43,7 +42,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     private ButtonComponent buttonComponentView;
 
     public static NewCreditCardFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         NewCreditCardFragment bsFragment = (NewCreditCardFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -81,11 +80,11 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
-        billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        oneLineCCEditComponent = (OneLineCCEditComponent) inflate.findViewById(R.id.oneLineCCEditComponent);
+        billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
+        oneLineCCEditComponent = inflate.findViewById(R.id.oneLineCCEditComponent);
 
-        amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
+        amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
+        buttonComponentView = inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
 
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();

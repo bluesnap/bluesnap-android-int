@@ -23,9 +23,6 @@ public class WebViewActivity extends Activity {
 
     public static final int PAYPAL_REQUEST_CODE = 1;
     static final String TAG = WebViewActivity.class.getSimpleName();
-    private ProgressBar progressBar;
-    private WebView webView;
-    private TextView textView;
     private String urlRedirect;
     private String textHeader;
     private Boolean javaScriptEnabled;
@@ -40,8 +37,8 @@ public class WebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_webview);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar1);
-        webView = (WebView) findViewById(R.id.webView1);
+        ProgressBar progressBar = findViewById(R.id.progressBar1);
+        WebView webView = findViewById(R.id.webView1);
         webView.setWebViewClient(new WebClientProgressBar(progressBar));
 
         transactionPendingCounter = 0;
@@ -54,13 +51,13 @@ public class WebViewActivity extends Activity {
         }
 
         if (urlRedirect != null && textHeader != null) {
-            textView = (TextView) findViewById(R.id.textHeader1);
+            TextView textView = findViewById(R.id.textHeader1);
             textView.setText(textHeader);
             webView.getSettings().setJavaScriptEnabled(javaScriptEnabled);
             webView.loadUrl(urlRedirect);
         }
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
+        final ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,6 +100,7 @@ public class WebViewActivity extends Activity {
                             Log.d(TAG, "retrying paypal transaction");
                             onPayPalProceedUrl();
                         } catch (InterruptedException e) {
+                            Log.e(TAG, "error while retrying paypal transaction", e);
                         }
                     } else {
                         message = getString(R.string.SUPPORT_PLEASE)
@@ -156,7 +154,7 @@ public class WebViewActivity extends Activity {
     private class WebClientProgressBar extends WebViewClient {
         private ProgressBar progressBar;
 
-        public WebClientProgressBar(ProgressBar progressBar) {
+        WebClientProgressBar(ProgressBar progressBar) {
             this.progressBar = progressBar;
         }
 

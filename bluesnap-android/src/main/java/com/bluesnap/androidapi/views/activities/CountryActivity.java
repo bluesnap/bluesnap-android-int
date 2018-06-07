@@ -38,9 +38,9 @@ public class CountryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_country_selector);
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
-        inputSearch = (EditText) findViewById(R.id.searchView);
-        listView = (ListView) findViewById(R.id.country_list_view);
+        final ImageButton backButton = findViewById(R.id.back_button);
+        inputSearch = findViewById(R.id.searchView);
+        listView = findViewById(R.id.country_list_view);
         //country_map = getHashMapResource(this.getApplicationContext(), R.xml.countries_hash_map);
         country_values_array = getResources().getStringArray(R.array.country_value_array);
         country_key_array = getResources().getStringArray(R.array.country_key_array);
@@ -103,7 +103,7 @@ public class CountryActivity extends Activity {
     }
 
     private void getIndexList(String[] lists) {
-        mapIndex = new LinkedHashMap<String, Integer>();
+        mapIndex = new LinkedHashMap<>();
         for (int i = 0; i < lists.length; i++) {
             String list = lists[i];
             String index = list.substring(0, 1);
@@ -114,10 +114,10 @@ public class CountryActivity extends Activity {
     }
 
     private void displayIndex() {
-        LinearLayout indexLayout = (LinearLayout) findViewById(R.id.side_index);
+        LinearLayout indexLayout = findViewById(R.id.side_index);
 
         TextView textView;
-        List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        List<String> indexList = new ArrayList<>(mapIndex.keySet());
         for (String index : indexList) {
             textView = (TextView) getLayoutInflater().inflate(
                     R.layout.side_index_item, null);

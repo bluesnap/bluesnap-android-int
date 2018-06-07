@@ -66,7 +66,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         }
 
         loadShopperFromSDKConfiguration();
-        LinearLayout newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
+        LinearLayout newCardButton = findViewById(R.id.newCardButton);
         newCardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,8 +74,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             }
         });
 
-        LinearLayout payPalButton = (LinearLayout) findViewById(R.id.payPalButton);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        LinearLayout payPalButton = findViewById(R.id.payPalButton);
+        progressBar = findViewById(R.id.progressBar);
         if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
             payPalButton.setVisibility(View.GONE);
         } else {
@@ -139,7 +139,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         ArrayList<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
 
         //create an adapter to describe how the items are displayed.
-        ListView oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
+        ListView oneLineCCViewComponentsListView = findViewById(R.id.oneLineCCViewComponentsListView);
         oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray);
         //set the spinners adapter to the previously created one.
         oneLineCCViewComponentsListView.setAdapter(oneLineCCViewAdapter);

@@ -39,9 +39,9 @@ public class StateActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_state_selector);
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
-        inputSearch = (EditText) findViewById(R.id.searchView);
-        listView = (ListView) findViewById(R.id.state_list_view);
+        final ImageButton backButton = findViewById(R.id.back_button);
+        inputSearch = findViewById(R.id.searchView);
+        listView = findViewById(R.id.state_list_view);
 
         savedInstanceState = getIntent().getExtras();
         if (savedInstanceState != null) {

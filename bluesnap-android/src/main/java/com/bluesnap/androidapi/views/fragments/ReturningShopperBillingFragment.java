@@ -21,13 +21,11 @@ import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
 
 public class ReturningShopperBillingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperBillingFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private BillingViewComponent billingViewComponent;
-    private ButtonComponent buttonComponentView;
     private CreditCardInfo newCreditCardInfo;
 
     public static ReturningShopperBillingFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         ReturningShopperBillingFragment bsFragment = (ReturningShopperBillingFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -53,14 +51,14 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
         newCreditCardInfo = BlueSnapService.getInstance().getsDKConfiguration().getShopper().getNewCreditCardInfo();
 
         // set Billing Details
-        billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
+        billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
         billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
 
         // set Credit Card View Component details
-        OneLineCCViewComponent oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
+        OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
         oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
+        ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

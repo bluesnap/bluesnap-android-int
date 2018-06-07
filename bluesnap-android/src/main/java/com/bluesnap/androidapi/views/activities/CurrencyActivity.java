@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.models.CustomListObject;
 import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
@@ -40,9 +39,9 @@ public class CurrencyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_currency_selector);
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
-        inputSearch = (EditText) findViewById(R.id.searchView);
-        listView = (ListView) findViewById(R.id.currency_list_view);
+        final ImageButton backButton = findViewById(R.id.back_button);
+        inputSearch = findViewById(R.id.searchView);
+        listView = findViewById(R.id.currency_list_view);
         currency_value_array = getResources().getStringArray(R.array.currency_value_array);
         currency_key_array = getResources().getStringArray(R.array.currency_key_array);
 
@@ -92,7 +91,7 @@ public class CurrencyActivity extends Activity {
     }
 
     private void getIndexList(String[] lists) {
-        mapIndex = new LinkedHashMap<String, Integer>();
+        mapIndex = new LinkedHashMap<>();
         for (int i = 0; i < lists.length; i++) {
             String list = lists[i];
             String index = list.substring(0, 1);
@@ -103,10 +102,10 @@ public class CurrencyActivity extends Activity {
     }
 
     private void displayIndex() {
-        LinearLayout indexLayout = (LinearLayout) findViewById(R.id.side_index);
+        LinearLayout indexLayout = findViewById(R.id.side_index);
 
         TextView textView;
-        List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        List<String> indexList = new ArrayList<>(mapIndex.keySet());
         for (String index : indexList) {
             textView = (TextView) getLayoutInflater().inflate(
                     R.layout.side_index_item, null);

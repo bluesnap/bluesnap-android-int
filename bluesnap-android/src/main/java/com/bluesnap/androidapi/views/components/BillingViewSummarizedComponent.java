@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.BillingInfo;
@@ -43,7 +42,6 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
 
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        assert sdkRequest != null;
         if (!sdkRequest.isEmailRequired() || stringify(billingInfo.getEmail()).isEmpty())
             setEmailVisibility(GONE);
         else
@@ -57,7 +55,7 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
     void initControl(final Context context) {
         super.initControl(context);
 
-        editButton = (Button) findViewById(R.id.editButton);
+        editButton = findViewById(R.id.editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -49,16 +49,16 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         assert inflater != null;
         inflater.inflate(R.layout.contact_info_summerized_view_component, this);
 
-        countryTextView = (TextView) findViewById(R.id.countryTextView);
-        zipTextView = (TextView) findViewById(R.id.zipTextView);
-        stateTextView = (TextView) findViewById(R.id.stateTextView);
-        cityTextView = (TextView) findViewById(R.id.cityTextView);
-        addressTextView = (TextView) findViewById(R.id.addressTextView);
-        emailTextView = (TextView) findViewById(R.id.emailTextView);
-        nameTextView = (TextView) findViewById(R.id.nameTextView);
+        countryTextView = findViewById(R.id.countryTextView);
+        zipTextView = findViewById(R.id.zipTextView);
+        stateTextView = findViewById(R.id.stateTextView);
+        cityTextView = findViewById(R.id.cityTextView);
+        addressTextView = findViewById(R.id.addressTextView);
+        emailTextView = findViewById(R.id.emailTextView);
+        nameTextView = findViewById(R.id.nameTextView);
 
-        forFullBillingLinearLayout = (LinearLayout) findViewById(R.id.forFullBillingLinearLayout);
-        zipAndCountryLinearLayout = (LinearLayout) findViewById(R.id.zipAndCountryLinearLayout);
+        forFullBillingLinearLayout = findViewById(R.id.forFullBillingLinearLayout);
+        zipAndCountryLinearLayout = findViewById(R.id.zipAndCountryLinearLayout);
     }
 
     /**
@@ -73,11 +73,11 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
     /**
      * update resource with details
      *
-     * @param fullName
-     * @param address
-     * @param state
-     * @param zip
-     * @param country
+     * @param fullName - fullName
+     * @param address - address
+     * @param state - state
+     * @param zip - zip
+     * @param country - country
      */
     private void updateResource(String fullName, String address, String city, String state, String zip, String country) {
         address = stringify(address);
@@ -86,7 +86,7 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
 
         if (!address.isEmpty())
             address += ",";
-        else if (address.isEmpty() && city.isEmpty() && state.isEmpty())
+        else if (city.isEmpty() && state.isEmpty())
             forFullBillingLinearLayout.setVisibility(GONE);
 
         setCountryText(country);

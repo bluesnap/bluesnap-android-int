@@ -95,7 +95,9 @@ public class OneLineCCEditComponent extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        inflater.inflate(R.layout.one_line_cc_edit_component, this);
+        if (inflater != null) {
+            inflater.inflate(R.layout.one_line_cc_edit_component, this);
+        }
 
         try {
             this.newCreditCard = new CreditCard();
@@ -104,10 +106,10 @@ public class OneLineCCEditComponent extends LinearLayout {
         }
 
         // layout is inflated, assign local variables to components
-        cardIconImageView = (ImageView) findViewById(R.id.cardIconImageView);
-        creditCardNumberEditText = (EditText) findViewById(R.id.creditCardNumberEditText);
-        moveToCcImageButton = (ImageButton) findViewById(R.id.moveToCcImageButton);
-        creditCardNumberErrorTextView = (TextView) findViewById(R.id.creditCardNumberErrorTextView);
+        cardIconImageView = findViewById(R.id.cardIconImageView);
+        creditCardNumberEditText = findViewById(R.id.creditCardNumberEditText);
+        moveToCcImageButton = findViewById(R.id.moveToCcImageButton);
+        creditCardNumberErrorTextView = findViewById(R.id.creditCardNumberErrorTextView);
         creditCardNumberEditText.setOnFocusChangeListener(new creditCardNumberOnFocusChangeListener());
         creditCardNumberEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -124,9 +126,9 @@ public class OneLineCCEditComponent extends LinearLayout {
             }
         });
 
-        expEditText = (EditText) findViewById(R.id.expEditText);
-        expErrorTextView = (TextView) findViewById(R.id.expErrorTextView);
-        expLinearLayout = (LinearLayout) findViewById(R.id.expLinearLayout);
+        expEditText = findViewById(R.id.expEditText);
+        expErrorTextView = findViewById(R.id.expErrorTextView);
+        expLinearLayout = findViewById(R.id.expLinearLayout);
         expEditText.addTextChangedListener(expTextWatcher);
         expEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -148,9 +150,9 @@ public class OneLineCCEditComponent extends LinearLayout {
             }
         });
 
-        cvvEditText = (EditText) findViewById(R.id.cvvEditText);
-        cvvErrorTextView = (TextView) findViewById(R.id.cvvErrorTextView);
-        cvvLinearLayout = (LinearLayout) findViewById(R.id.cvvLinearLayout);
+        cvvEditText = findViewById(R.id.cvvEditText);
+        cvvErrorTextView = findViewById(R.id.cvvErrorTextView);
+        cvvLinearLayout = findViewById(R.id.cvvLinearLayout);
         cvvEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -426,8 +428,8 @@ public class OneLineCCEditComponent extends LinearLayout {
                         if (!ccType.equals(newCreditCard.getCardType()))
                             changeCardEditTextDrawable(ccType);
                     } catch (NullPointerException | JSONException e) {
-                        Log.e(TAG, "", e);
                         String errorMsg = String.format("Service Error %s", e.getMessage());
+                        Log.e(TAG, errorMsg, e);
                     }
                 }
 

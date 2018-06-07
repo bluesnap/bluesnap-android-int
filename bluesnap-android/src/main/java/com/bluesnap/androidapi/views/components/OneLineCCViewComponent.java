@@ -46,9 +46,9 @@ public class OneLineCCViewComponent extends LinearLayout {
         assert inflater != null;
         inflater.inflate(R.layout.one_line_cc_view_component, this);
 
-        ccLastFourDigitsTextView = (TextView) findViewById(R.id.ccLastFourDigitsTextView);
-        expTextView = (TextView) findViewById(R.id.expTextView);
-        cardIconImageView = (ImageView) findViewById(R.id.cardIconImageView);
+        ccLastFourDigitsTextView = findViewById(R.id.ccLastFourDigitsTextView);
+        expTextView = findViewById(R.id.expTextView);
+        cardIconImageView = findViewById(R.id.cardIconImageView);
     }
 
     /**
@@ -63,9 +63,9 @@ public class OneLineCCViewComponent extends LinearLayout {
     /**
      * update OneLineCCViewComponent
      *
-     * @param lastFourDigits
-     * @param expDateString
-     * @param type
+     * @param lastFourDigits - lastFourDigits
+     * @param expDateString - expDateString
+     * @param type - type
      */
     public void updateResource(String lastFourDigits, String expDateString, String type) {
         setCCLastFourDigitsText(lastFourDigits);

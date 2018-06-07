@@ -18,7 +18,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
@@ -58,8 +57,6 @@ public class CreditCardActivity extends AppCompatActivity {
     private ImageButton hamburgerMenuButton;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SdkRequest sdkRequest;
-    private NewCreditCardFragment newCreditCardFragment;
-    private ReturningShopperCreditCardFragment returningShopperCreditCardFragment;
     private NewCreditCardShippingFragment newCreditCardShippingFragment;
 
     @Override
@@ -86,8 +83,8 @@ public class CreditCardActivity extends AppCompatActivity {
                     .replace(R.id.creditCardFrameLayout, newCreditCardShippingFragment).commit();
         }
 
-        headerTextView = (TextView) findViewById(R.id.headerTextView);
-        hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
+        headerTextView = findViewById(R.id.headerTextView);
+        hamburgerMenuButton = findViewById(R.id.hamburger_button);
         if (BlueSnapService.getInstance().getSdkRequest().isAllowCurrencyChange()) {
             hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
         } else {
@@ -152,7 +149,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private void startActivityWithNewCreditCardFragment() {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, broadcastReceiver);
 
-        newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+        NewCreditCardFragment newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
                 .replace(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
     }
@@ -166,7 +163,7 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, broadcastReceiver);
 
-        returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+        ReturningShopperCreditCardFragment returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
                 .replace(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
     }
@@ -307,7 +304,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private class hamburgerMenuListener implements View.OnClickListener {
         private ImageButton hamburgerMenuButton;
 
-        public hamburgerMenuListener(ImageButton hamburgerMenuButton) {
+        hamburgerMenuListener(ImageButton hamburgerMenuButton) {
             this.hamburgerMenuButton = hamburgerMenuButton;
         }
 
@@ -341,7 +338,6 @@ public class CreditCardActivity extends AppCompatActivity {
     public void finishFromFragment(final Shopper shopper) {
         Intent resultIntent = new Intent();
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
-        assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
         resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
@@ -363,8 +359,8 @@ public class CreditCardActivity extends AppCompatActivity {
      *
      * @param shopper      - {@link Shopper}
      * @param resultIntent - {@link Intent}
-     * @throws UnsupportedEncodingException
-     * @throws JSONException
+     * @throws UnsupportedEncodingException - UnsupportedEncodingException
+     * @throws JSONException - JSONException
      */
     private void tokenizeCardOnServer(final Shopper shopper, final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         final PurchaseDetails purchaseDetails = new PurchaseDetails(

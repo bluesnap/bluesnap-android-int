@@ -10,12 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
@@ -31,13 +28,8 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 
 public class NewCreditCardShippingFragment extends BlueSnapFragment {
     public static final String TAG = NewCreditCardShippingFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private ShippingViewComponent shippingViewComponent;
-    private LinearLayout shippingViewComponentLinearLayout;
-
-    private SdkRequest sdkRequest;
-    private SdkResult sdkResult;
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
@@ -45,7 +37,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
     private ButtonComponent buttonComponentView;
 
     public static NewCreditCardShippingFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         NewCreditCardShippingFragment bsFragment = (NewCreditCardShippingFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -78,17 +70,13 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         // get Shopper
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
-        //get SDK Request
-        sdkRequest = blueSnapService.getSdkRequest();
-
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
-        shippingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingViewComponentLinearLayout);
+        shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
 
-        amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.shippingButtonComponentView);
+        amountTaxShippingComponentView = inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);
+        buttonComponentView = inflate.findViewById(R.id.shippingButtonComponentView);
 
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
 
