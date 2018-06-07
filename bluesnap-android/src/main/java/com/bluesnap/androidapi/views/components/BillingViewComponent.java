@@ -82,8 +82,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      *
      * @param billingInfo - {@link BillingInfo}
      */
-    public void updateResource(BillingInfo billingInfo) {
-        super.updateResource(billingInfo);
+    public void updateViewResourceWithDetails(BillingInfo billingInfo) {
+        super.updateViewResourceWithDetails(billingInfo);
         if (isEmailRequired)
             inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
         setStateVisibilityByUserCountry();
@@ -94,8 +94,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      *
      * @return billing info
      */
-    public BillingInfo getResource() {
-        BillingInfo billingInfo = new BillingInfo(super.getResource());
+    public BillingInfo getViewResourceDetails() {
+        BillingInfo billingInfo = new BillingInfo(super.getViewResourceDetails());
         if (isEmailRequired)
             billingInfo.setEmail(inputEmail.getText().toString().trim());
         return billingInfo;

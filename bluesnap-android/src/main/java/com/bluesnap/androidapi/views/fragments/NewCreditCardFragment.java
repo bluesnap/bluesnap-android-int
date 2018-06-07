@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -104,7 +103,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     @Override
     public void onActivitySavedInstanceState() {
         // get Credit Card Info
-        shopper.setNewCreditCardInfo(getResource());
+        shopper.setNewCreditCardInfo(getViewResourceDetails());
     }
 
     /**
@@ -115,7 +114,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      */
     @Override
     public void onActivityRestoredInstanceState() {
-        updateResource(shopper.getNewCreditCardInfo());
+        updateViewResourceWithDetails(shopper.getNewCreditCardInfo());
     }
 
     /**
@@ -127,7 +126,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         boolean isValid = oneLineCCEditComponent.validateInfo();
         isValid &= billingViewComponent.validateInfo();
         if (isValid) {
-            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
             newCreditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
         }
         return isValid;
@@ -140,10 +139,10 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      *
      * @return {@link CreditCardInfo}
      */
-    public CreditCardInfo getResource() {
+    public CreditCardInfo getViewResourceDetails() {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
-        creditCardInfo.setCreditCard(oneLineCCEditComponent.getResource());
-        creditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+        creditCardInfo.setCreditCard(oneLineCCEditComponent.getViewResourceDetails());
+        creditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
         return creditCardInfo;
     }
 
@@ -152,9 +151,9 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      *
      * @param creditCardInfo - {@link CreditCardInfo}
      */
-    public void updateResource(CreditCardInfo creditCardInfo) {
-        oneLineCCEditComponent.updateResource(creditCardInfo.getCreditCard());
-        billingViewComponent.updateResource(creditCardInfo.getBillingContactInfo());
+    public void updateViewResourceWithDetails(CreditCardInfo creditCardInfo) {
+        oneLineCCEditComponent.updateViewResourceWithDetails(creditCardInfo.getCreditCard());
+        billingViewComponent.updateViewResourceWithDetails(creditCardInfo.getBillingContactInfo());
     }
 
     /**
@@ -185,7 +184,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
                     if (sdkRequest.isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
-                        shopper.setShippingContactInfo(billingViewComponent.getResource());
+                        shopper.setShippingContactInfo(billingViewComponent.getViewResourceDetails());
                     finishFromFragment();
                 }
             }

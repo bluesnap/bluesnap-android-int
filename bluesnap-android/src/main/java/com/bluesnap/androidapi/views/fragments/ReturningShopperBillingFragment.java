@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -55,7 +54,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
 
         // set Billing Details
         billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
+        billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
 
         // set Credit Card View Component details
         OneLineCCViewComponent oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
@@ -81,7 +80,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     public boolean validateAndUpdate() {
         boolean isValid = billingViewComponent.validateInfo();
         if (isValid) {
-            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
         }
         return isValid;
     }

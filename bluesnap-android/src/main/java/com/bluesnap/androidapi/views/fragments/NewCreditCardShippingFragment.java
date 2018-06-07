@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -125,7 +124,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      * @return {@link ShippingInfo}
      */
     public ShippingInfo getShippingInfo() {
-        return shippingViewComponent.getResource();
+        return shippingViewComponent.getViewResourceDetails();
     }
 
     /**
@@ -134,7 +133,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      * @param shippingInfo - {@link ShippingInfo}
      */
     public void updateResource(ShippingInfo shippingInfo) {
-        shippingViewComponent.updateResource(shippingInfo);
+        shippingViewComponent.updateViewResourceWithDetails(shippingInfo);
     }
 
     /**
@@ -160,7 +159,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
             @Override
             public void onClick(View v) {
                 if (shippingViewComponent.validateInfo()) {
-                    shopper.setShippingContactInfo(shippingViewComponent.getResource());
+                    shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
                     finishFromFragment();
                 }
             }

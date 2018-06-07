@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,7 +55,7 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
         // set Shipping Details
         shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
         assert shopper != null;
-        shippingViewComponent.updateResource(shopper.getShippingContactInfo());
+        shippingViewComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
 
         buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
@@ -81,7 +80,7 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
     public boolean validateAndUpdate() {
         boolean isValid = shippingViewComponent.validateInfo();
         if (isValid) {
-            shopper.setShippingContactInfo(shippingViewComponent.getResource());
+            shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
         }
         return isValid;
     }

@@ -123,7 +123,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      *
      * @param contactInfo - {@link ContactInfo}
      */
-    public void updateResource(ContactInfo contactInfo) {
+    public void updateViewResourceWithDetails(ContactInfo contactInfo) {
         inputName.setText(AndroidUtil.stringify(contactInfo.getFullName()));
         inputZip.setText(AndroidUtil.stringify(contactInfo.getZip()));
         inputCity.setText(AndroidUtil.stringify(contactInfo.getCity()));
@@ -137,7 +137,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      *
      * @return contact info
      */
-    public ContactInfo getResource() {
+    public ContactInfo getViewResourceDetails() {
         ContactInfo contactInfo = new ContactInfo();
         contactInfo.setFullName(inputName.getText().toString().trim());
         //contactInfo.setEmail(inputEmail.getText().toString().trim());

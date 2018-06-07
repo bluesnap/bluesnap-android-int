@@ -80,7 +80,7 @@ public class OneLineCCEditComponent extends LinearLayout {
      *
      * @return {@link CreditCard}
      */
-    public CreditCard getResource() {
+    public CreditCard getViewResourceDetails() {
         CreditCard creditCard = new CreditCard();
         creditCard.setNumber(AndroidUtil.stringify(getNewCreditCard().getNumber(), creditCardNumberEditText.getText().toString().trim()));
         creditCard.setExpDateFromString(expEditText.getText().toString().trim());
@@ -171,7 +171,7 @@ public class OneLineCCEditComponent extends LinearLayout {
      *
      * @param creditCard - {@link CreditCard}
      */
-    public void updateResource(CreditCard creditCard) {
+    public void updateViewResourceWithDetails(CreditCard creditCard) {
         newCreditCard = creditCard;
         if (!TextUtils.isEmpty(creditCard.getNumber())) {
             creditCardNumberEditText.setText(creditCard.getNumber());
