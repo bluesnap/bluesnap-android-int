@@ -90,12 +90,11 @@ public class CreditCard {
     public void setNumber(String number) {
         String normalizedCardNumber = normalizeCardNumber(number);
         String cardType = CreditCardTypeResolver.getInstance().getType(normalizedCardNumber);
-        String lastFourDigits = getNumberLastFourDigits(normalizedCardNumber);
 
         if (normalizedCardNumber != null && normalizedCardNumber.length() > 2) {
             setCardType(cardType);
             if (normalizedCardNumber.length() > 4)
-                setCardLastFourDigits(lastFourDigits);
+                setCardLastFourDigits(getNumberLastFourDigits(normalizedCardNumber));
         }
 
         setIsNewCreditCard();

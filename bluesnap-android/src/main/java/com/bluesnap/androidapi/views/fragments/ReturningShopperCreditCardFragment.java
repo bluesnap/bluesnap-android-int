@@ -111,7 +111,7 @@ public class ReturningShopperCreditCardFragment extends Fragment {
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
         amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
+        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShppoerCCNFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

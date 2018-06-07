@@ -50,7 +50,8 @@ public class OneLineCCEditComponent extends LinearLayout {
     private EditText creditCardNumberEditText, expEditText, cvvEditText;
     private TextView creditCardNumberErrorTextView, expErrorTextView, cvvErrorTextView;
     private LinearLayout expLinearLayout, cvvLinearLayout;
-    private final TextWatcher creditCardNumberWatcher = new creditCardNumberWatcher(), expTextWatcher = new expTextWatcher();
+    private final TextWatcher creditCardNumberWatcher = new creditCardNumberWatcher();
+    private final TextWatcher expTextWatcher = new expTextWatcher();
 
     public OneLineCCEditComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -286,17 +287,19 @@ public class OneLineCCEditComponent extends LinearLayout {
     private class creditCardNumberOnFocusChangeListener implements View.OnFocusChangeListener {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus) {
-                creditCardNumberEditText.setHint("1234 5678 9012 3456");
-                creditCardNumberEditText.setText(newCreditCard.getNumber());
-                creditCardNumberEditText.addTextChangedListener(creditCardNumberWatcher);
-                cvvLinearLayout.setVisibility(View.GONE);
-                expLinearLayout.setVisibility(View.GONE);
-                creditCardNumberEditText.setSelection(creditCardNumberEditText.getText().length());
-                if (activateMoveToCcImageButton)
-                    moveToCcImageButton.setVisibility(View.VISIBLE);
-
+            if (!hasFocus) {
+                return;
             }
+            creditCardNumberEditText.setHint("1234 5678 9012 3456");
+            creditCardNumberEditText.setText(newCreditCard.getNumber());
+            creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
+            creditCardNumberEditText.addTextChangedListener(creditCardNumberWatcher);
+            cvvLinearLayout.setVisibility(View.GONE);
+            expLinearLayout.setVisibility(View.GONE);
+            creditCardNumberEditText.setSelection(creditCardNumberEditText.getText().length());
+            if (activateMoveToCcImageButton)
+                moveToCcImageButton.setVisibility(View.VISIBLE);
+
         }
     }
 

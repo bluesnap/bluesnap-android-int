@@ -22,9 +22,7 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.activities.CreditCardActivity;
 import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
-import com.bluesnap.androidapi.views.components.BillingViewComponent;
 import com.bluesnap.androidapi.views.components.ButtonComponent;
-import com.bluesnap.androidapi.views.components.OneLineCCEditComponent;
 import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 
 /**
@@ -86,7 +84,7 @@ public class NewCreditCardShippingFragment extends Fragment {
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.shippingViewComponent);
+        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
         shippingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingViewComponentLinearLayout);
 
         amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);

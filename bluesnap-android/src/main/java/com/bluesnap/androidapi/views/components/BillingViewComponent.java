@@ -2,6 +2,7 @@ package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     public static final String TAG = BillingViewComponent.class.getSimpleName();
     private boolean isEmailRequired;
     private boolean isFullBillingRequiredRequired;
+    private boolean isShippingSameAsBilling = false;
 
     public BillingViewComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -36,13 +38,12 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
     @Override
     void initControl(final Context context) {
+        final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        isFullBillingRequiredRequired = sdkRequest.isBillingRequired();
+
         super.initControl(context);
 
-        final BlueSnapService blueSnapService = BlueSnapService.getInstance();
-        final SdkRequest sdkRequest = blueSnapService.getSdkRequest();
-        assert sdkRequest != null;
-
-        isEmailRequired = blueSnapService.getSdkRequest().isEmailRequired();
+        isEmailRequired = sdkRequest.isEmailRequired();
         if (isEmailRequired) {
             inputEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override
@@ -57,7 +58,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                        inputZip.requestFocus();
+                        checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                         return true;
                     }
                     return false;
@@ -67,7 +68,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             setEmailVisibility(GONE);
         }
 
-        isFullBillingRequiredRequired = blueSnapService.getSdkRequest().isBillingRequired();
         if (!isFullBillingRequiredRequired) {
             setFullBillingVisibility(GONE);
             inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -85,6 +85,7 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         super.updateResource(billingInfo);
         if (isEmailRequired)
             inputEmail.setText(billingInfo.getEmail());
+        setStateVisibilityByUserCountry();
     }
 
     /**
@@ -110,7 +111,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         if (isCountryRequiresZip())
             validInput &= validateField(inputZip, inputLayoutZip, BlueSnapValidator.EditTextFields.ZIP_FIELD);
         if (isFullBillingRequiredRequired) {
-            validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+            if (BlueSnapValidator.checkCountryHasState(getUserCountry()))
+                validInput &= validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
             validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
             validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
         }
@@ -153,16 +155,29 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    if (isEmailRequired)
-                        inputEmail.requestFocus();
-                    else if (isCountryRequiresZip())
-                        inputZip.requestFocus();
-                    else
-                        inputState.requestFocus();
+                    checkTextInputLayoutVisibilityArray(new TextInputLayout[]{inputLayoutEmail, inputLayoutZip, inputLayoutCity, inputLayoutAddress});
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    public void setShippingSameAsBilling(boolean shippingSameAsBilling) {
+        isShippingSameAsBilling = shippingSameAsBilling;
+    }
+
+    @Override
+    protected void updateTaxOnCountryStateChange() {
+        if (isShippingSameAsBilling)
+            BlueSnapService.getInstance().updateTax(getUserCountry(), inputState.getText().toString(), getContext());
+    }
+
+    @Override
+    void setStateVisibilityByUserCountry() {
+        if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry()))
+            setStateVisibility(VISIBLE);
+        else
+            setStateVisibility(GONE);
     }
 }

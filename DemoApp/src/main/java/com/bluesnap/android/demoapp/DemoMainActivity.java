@@ -207,7 +207,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
     private void showDialog(String message) {
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(DemoMainActivity.this);
             builder.setMessage(message);
             builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -234,9 +234,10 @@ public class DemoMainActivity extends AppCompatActivity {
     private void updateSpinnerAdapterFromRates(final Set<String> supportedRates) {
         String[] quotesArray = new String[supportedRates.size()];
         supportedRates.toArray(quotesArray);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray);
-        ratesSpinner.setAdapter(adapter);
-        merchantStoreCurrencySpinner.setAdapter(adapter);
+        ArrayAdapter<String> priceCurrencyAdapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray.clone());
+        ArrayAdapter<String> merchantStoreCurrencyAdapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray.clone());
+        ratesSpinner.setAdapter(priceCurrencyAdapter);
+        merchantStoreCurrencySpinner.setAdapter(merchantStoreCurrencyAdapter);
         int currentposition = 0;
         for (String rate : quotesArray) {
             if (rate.equals(currencyByLocale.getCurrencyCode())) {

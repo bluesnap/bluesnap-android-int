@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 /**
  * A BlueSnap Token Representation that resolves URL accordint to token.
- * This must be instantiated with a toekn before accesing URL.
+ * This must be instantiated with a token before accessing URL.
  */
 public class BluesnapToken {
     private static final String SANDBOX_URL = "https://sandbox.bluesnap.com/services/2/";

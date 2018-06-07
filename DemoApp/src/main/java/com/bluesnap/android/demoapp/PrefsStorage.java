@@ -1,4 +1,4 @@
-package com.bluesnap.androidapi.services;
+package com.bluesnap.android.demoapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * A utility class to save android SharedPrefs.
+ * Should be used only in demo app.
  */
 public class PrefsStorage {
 

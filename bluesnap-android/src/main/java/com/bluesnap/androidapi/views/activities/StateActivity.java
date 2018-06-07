@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,10 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.models.CustomListObject;
-import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
+import com.bluesnap.androidapi.models.StateListObject;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
+import com.bluesnap.androidapi.views.adapters.StateListAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,46 +24,65 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CurrencyActivity extends Activity {
-    private static final String TAG = CurrencyActivity.class.getSimpleName();
+public class StateActivity extends Activity {
 
     ListView listView;
-    String[] currency_value_array;
-    String[] currency_key_array;
+    String[] state_values_array;
+    String[] state_key_array;
     EditText inputSearch;
-    String localeCurrencyFull;
-    CustomListAdapter adapter;
+    String localeState;
+    StateListAdapter adapter;
     Map<String, Integer> mapIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.bluesnap_currency_selector);
+        setContentView(R.layout.bluesnap_state_selector);
 
         final ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
         inputSearch = (EditText) findViewById(R.id.searchView);
-        listView = (ListView) findViewById(R.id.currency_list_view);
-        currency_value_array = getResources().getStringArray(R.array.currency_value_array);
-        currency_key_array = getResources().getStringArray(R.array.currency_key_array);
+        listView = (ListView) findViewById(R.id.state_list_view);
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            localeCurrencyFull = currency_value_array[Arrays.asList(currency_key_array).indexOf(extras.getString(getString(R.string.CURRENCY_STRING)))].toString();
+        savedInstanceState = getIntent().getExtras();
+        if (savedInstanceState != null) {
+            String countryString = savedInstanceState.getString(getString(R.string.COUNTRY_STRING)).toUpperCase();
+            String stateString = savedInstanceState.getString(getString(R.string.STATE_STRING)).toUpperCase();
+
+            // check if US, BlueSnapValidator.STATE_NEEDED_COUNTRIES[0] = US
+            if (countryString.equals(BlueSnapValidator.STATE_NEEDED_COUNTRIES[0])) {
+                state_values_array = getResources().getStringArray(R.array.state_us_value_array);
+                state_key_array = getResources().getStringArray(R.array.state_us_key_array);
+            } else if (countryString.equals(BlueSnapValidator.STATE_NEEDED_COUNTRIES[1])) {
+                // check if BR, BlueSnapValidator.STATE_NEEDED_COUNTRIES[1] = BR
+                state_values_array = getResources().getStringArray(R.array.state_br_value_array);
+                state_key_array = getResources().getStringArray(R.array.state_br_key_array);
+            } else {
+                // check if CA, BlueSnapValidator.STATE_NEEDED_COUNTRIES[2] = CA
+                state_values_array = getResources().getStringArray(R.array.state_ca_value_array);
+                state_key_array = getResources().getStringArray(R.array.state_ca_key_array);
+            }
+            if (!"".equals(stateString))
+                localeState = state_values_array[Arrays.asList(state_key_array).indexOf(stateString)];
+            else
+                localeState = "";
         }
 
-        adapter = new CustomListAdapter(this, CustomListObject.getCustomListObject(currency_value_array), localeCurrencyFull);
+        adapter = new StateListAdapter(this, StateListObject.getStateListObject(state_values_array, state_key_array), localeState);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String currencyPick = currency_key_array[Arrays.asList(currency_value_array).indexOf(adapter.customListObjects.get(position).getName().toString())];
-                BlueSnapService.getInstance().onCurrencyChange(currencyPick, CurrencyActivity.this);
+                String statePick = adapter.stateListObjects.get(position).getStateCode();
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", statePick);
+                setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
         });
 
-        Arrays.asList(currency_value_array);
-        getIndexList(currency_value_array);
+        Arrays.asList(state_values_array);
+        getIndexList(state_values_array);
         displayIndex();
 
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -121,5 +140,4 @@ public class CurrencyActivity extends Activity {
             indexLayout.addView(textView);
         }
     }
-
 }

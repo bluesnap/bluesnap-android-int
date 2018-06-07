@@ -18,7 +18,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
@@ -34,7 +33,6 @@ import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragmen
 import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
 import com.loopj.android.http.TextHttpResponseHandler;
 
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +48,8 @@ import cz.msebera.android.httpclient.Header;
 public class CreditCardActivity extends AppCompatActivity {
     private static final String TAG = CreditCardActivity.class.getSimpleName();
     public static final int CREDIT_CARD_ACTIVITY_REQUEST_CODE = 3;
+    public static final int RESULT_COUNTRY = 11;
+    public static final int RESULT_STATE = 12;
     private String fragmentType;
     private TextView headerTextView;
     private String sharedCurrency;
@@ -77,8 +77,8 @@ public class CreditCardActivity extends AppCompatActivity {
             hamburgerMenuButton.setVisibility(View.INVISIBLE);
         }
 
-        BlueSnapService.getBus().register(this);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
 
     }
 
@@ -105,7 +105,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
-                .add(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
+                .replace(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
     }
 
     /**
@@ -119,7 +119,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         ReturningShopperCreditCardFragment returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
         getFragmentManager().beginTransaction()
-                .add(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
+                .replace(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
     }
 
     /**
@@ -180,18 +180,33 @@ public class CreditCardActivity extends AppCompatActivity {
             } else if (BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE.equals(event)) {
                 replaceFragmentPlacement(NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle()));
             } else {
-                Intent newIntent = new Intent(getApplicationContext(), CountryActivity.class);
-                String countryString = intent.getStringExtra(event);
-                newIntent.putExtra(getString(R.string.COUNTRY_STRING), countryString);
-                startActivityForResult(newIntent, Activity.RESULT_FIRST_USER);
+                Intent newIntent;
+                int requestCode;
+                if (BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST.equals(event)) {
+                    newIntent = new Intent(getApplicationContext(), CountryActivity.class);
+                    String countryString = intent.getStringExtra(event);
+                    newIntent.putExtra(getString(R.string.COUNTRY_STRING), countryString);
+                    requestCode = RESULT_COUNTRY;
+                } else {
+                    newIntent = new Intent(getApplicationContext(), StateActivity.class);
+                    String countryString = intent.getStringExtra(getString(R.string.COUNTRY_STRING));
+                    newIntent.putExtra(getString(R.string.COUNTRY_STRING), countryString);
+                    String stateString = intent.getStringExtra(getString(R.string.STATE_STRING));
+                    newIntent.putExtra(getString(R.string.STATE_STRING), stateString);
+                    requestCode = RESULT_STATE;
+                }
+                startActivityForResult(newIntent, requestCode);
             }
         }
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Activity.RESULT_FIRST_USER && resultCode == Activity.RESULT_OK) {
-            BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == RESULT_COUNTRY)
+                BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
+            else
+                BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
         }
     }
 
@@ -256,11 +271,6 @@ public class CreditCardActivity extends AppCompatActivity {
             popupMenu.getMenu().add(1, R.id.id_currency, 1, currentCurrency);
             popupMenu.show();
         }
-    }
-
-    @Subscribe
-    public void onCurrencyUpdated(Events.CurrencyUpdatedEvent currencyUpdatedEvent) {
-        BlueSnapLocalBroadcastManager.sendMessage(this, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 
     public void finishFromFragment(final Shopper shopper) {

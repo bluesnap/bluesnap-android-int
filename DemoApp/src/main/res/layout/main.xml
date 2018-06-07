@@ -118,11 +118,17 @@
                     android:hint="Currency"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <Spinner
-                    android:id="@+id/rateSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp" />
+                <android.support.v7.widget.LinearLayoutCompat android:id="@+id/rateSpinnerLayout"
+
+                    >
+
+                    <Spinner
+                        android:id="@+id/rateSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp" />
+
+                </android.support.v7.widget.LinearLayoutCompat>
 
             </TableRow>
 

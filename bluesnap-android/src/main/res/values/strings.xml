@@ -72,8 +72,11 @@
     <string name="DEFAULT_CURRENCY_FULL" translatable="false">USD - United States Dollars</string>
     <!-- Country -->
     <string name="COUNTRY_STRING" translatable="false">COUNTRY_STRING</string>
+    <string name="STATE_STRING" translatable="false">STATE_STRING</string>
     <string name="title_activity_country" translatable="false">CountryActivity</string>
+    <string name="title_activity_state" translatable="false">StateActivity</string>
     <string name="select_country">Select Country</string>
+    <string name="select_state">Select State</string>
     <!-- WebView Activity -->
     <string name="WEBVIEW_STRING" translatable="false">WEBVIEW_STRING</string>
     <string name="WEBVIEW_URL" translatable="false">WEBVIEW_URL</string>

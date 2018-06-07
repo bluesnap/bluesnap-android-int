@@ -1,5 +1,8 @@
 ## bluesnap-android
 
+[![Build Status-Master](https://travis-ci.org/bluesnap/bluesnap-android-int.svg?branch=master)](https://travis-ci.org/bluesnap/bluesnap-android-int)
+[![Build Status-Develop](https://travis-ci.org/bluesnap/bluesnap-android-int.svg?branch=develop)](https://travis-ci.org/bluesnap/bluesnap-android-int)
+
 # About
 BlueSnap's Android SDK enables you to easily accept credit card and PayPal payments directly from your Android app, and then process payments from your server using the Payment API. When you use this library, BlueSnap handles most of the PCI compliance burden for you, as the shopper's payment data is tokenized and sent directly to BlueSnap's servers.
 
@@ -11,7 +14,8 @@ This SDK supports Android SDK 25 and above for development. The minimum Android 
 ## Android Studio (Gradle) instructions
 To get started, add the following line in your `build.gradle` file in the dependencies section:
 
-    compile 'com.bluesnap:bluesnap-android:1.1.+'
+    compile 'com.bluesnap:bluesnap-android:[version]'
+
 
 # Usage
 
@@ -50,26 +54,50 @@ BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "m
 });
 ```
 
-**Note:** Since the token is valid for 60 minutes, only initialize the SDK with the token close to the purchase time.
+**Note:**  For each purchase, you'll need to call setup() 
 
 ## Launch the checkout page and collect shopper payment info
 The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
 
-To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` as an Intent Extra.
+To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
 
 ### Create an SdkRequest instance 
-An `SdkRequest` instance is required to pass information about the purchase to the SDK. At a minimum, the instance must include the current purchase amount and currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code), as shown in the code below: 
+An `SdkRequest` instance is required to pass information about the purchase to the SDK.
+The instance must include:
+ - the current purchase amount 
+ - purchase currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code)
+ - an optional static tax amount (if you want the tax amount to be calculated dynamically, see 'Handling tax updates' below)
+ - billingRequired: if false, the SDK will collect name and country; if true, it will collect also the billing address.
+ - emailRequired: if true, the SDK will collect email as part of the billing information.
+ - shippingRequired: if true, the SDK will collect shipping details.
 
 ```
-SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode)
-SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount)
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
-#### Specify tax amounts and subtotals
-Even if after constructor was created you can still pass a tax amount and a subtotal price (the tax amount will be added to the subtotal).
+
+#### Handling tax updates (optional)
+If you choose to collect shipping details (i.e. withShipping is set to true), 
+then you may want to update tax rates whenever the user changes their shipping location. 
+Supply a callback function to handle tax updates to the updateTaxFunc property of sdkRequest. 
+Your function will be called whenever the user changes their shipping country or state. 
+To see an example, check out updateTax in the demo app.
 
 ```
-setAmountWithTax(Double subtotalAmount, Double taxAmount);
+// Set special tax policy: non-US pay no tax; MA pays 10%, other US states pay 5%
+        sdkRequest.setTaxCalculator(new TaxCalculator() {
+            @Override
+            public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
+                if ("us".equalsIgnoreCase(shippingCountry)) {
+                    Double taxRate = 0.05;
+                    if ("ma".equalsIgnoreCase(shippingState)) {
+                        taxRate = 0.1;
+                    }
+                    priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
+                } else {
+                    priceDetails.setTaxAmount(0D);
+                }
+            }
+        });
 ```
 #### Specify required information 
 Even if after constructor was created You can still collect additional information:
@@ -182,7 +210,7 @@ If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passe
 All the other fields that are relevant to a credit card transaction will be empty.
 
 ## Kount
-The SDK includes an integrated Kount SDK. A `kountSessionId` will be passed as part of the `SdkResult`.
+The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [https://developers.bluesnap.com/docs/fraud-prevention] 
 
 ## Customization and UI Overrides
 The SDK allows you to customize the checkout experience, change colors, icons and basic layouts. One way to achieve that is by overriding the SDK resources files in your application and provide matching resource file names to override the SDK default values.

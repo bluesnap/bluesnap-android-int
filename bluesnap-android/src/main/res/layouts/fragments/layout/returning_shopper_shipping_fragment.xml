@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content">
 
                 <com.bluesnap.androidapi.views.components.ShippingViewComponent
-                    android:id="@+id/shippingViewComponent"
+                    android:id="@+id/returningShoppershippingViewComponent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent">
@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <com.bluesnap.androidapi.views.components.ButtonComponent
-        android:id="@+id/buttonComponentView"
+        android:id="@+id/returningShopperShippingFragmentButtonComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom">

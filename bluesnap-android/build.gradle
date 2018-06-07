@@ -5,9 +5,10 @@ plugins {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'checkstyle'
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
@@ -40,19 +41,19 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     lintOptions {
         quiet false
-        abortOnError false
+        //abortOnError false
         ignoreWarnings true
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 }
 configurations {
 
@@ -63,32 +64,37 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:design:25.4.0'
-    compile 'com.android.support:support-fragment:25.4.0'
-    compile 'com.android.support:support-v4:25.4.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.android.support:appcompat-v7:27.1.1'
+    compile 'com.android.support:design:27.1.1'
+    compile 'com.android.support:support-fragment:27.1.1'
+    compile 'com.android.support:support-v4:27.1.1'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.22'
-    testCompile 'org.robolectric:robolectric:3.4'
+    testCompile 'org.mockito:mockito-core:2.10.0'
+    testCompile 'org.robolectric:robolectric:3.5.1'
 
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestCompile 'com.android.support.test:runner:1.0.2'
 
     testCompile 'org.powermock:powermock-api-mockito:1.6.1'
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.1'
     testCompile 'org.powermock:powermock-module-junit4-rule:1.6.1'
     testCompile 'org.powermock:powermock-module-junit4:1.6.1'
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.9.5'
-    testCompile 'com.android.support.test:runner:0.5'
+    testCompile 'org.mockito:mockito-core:2.10.0'
+    testCompile 'com.android.support.test:runner:1.0.2'
 
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 }
+
 tasks.withType(Test) {
     systemProperty "robolectric.logging", "stdout"
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
 }
 
 task javadocs(type: Javadoc) {

@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.services;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -10,7 +11,6 @@ import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.Currency;
-import com.bluesnap.androidapi.models.Events;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.Rates;
@@ -24,8 +24,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.TextHttpResponseHandler;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +43,6 @@ public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final BlueSnapService INSTANCE = new BlueSnapService();
     private static final String FRAUDSESSIONID = "fraudSessionId";
-    private static final EventBus busInstance = new EventBus();
     private static String paypalURL;
     private static JSONObject errorDescription;
     private static String transactionStatus;
@@ -60,6 +57,7 @@ public class BlueSnapService {
     private SDKConfiguration sDKConfiguration;
     private String merchantStoreCurrency;
     private TokenProvider tokenProvider;
+    private Context mContext;
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -71,10 +69,6 @@ public class BlueSnapService {
 
     public static JSONObject getErrorDescription() {
         return errorDescription;
-    }
-
-    public static EventBus getBus() {
-        return busInstance;
     }
 
     public SDKConfiguration getsDKConfiguration() {
@@ -121,7 +115,7 @@ public class BlueSnapService {
      * @param context               A Merchant Application Context
      * @param callback              A {@link BluesnapServiceCallback}
      */
-    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, final Context context, final BluesnapServiceCallback callback) {
+    public void setup(String merchantToken, TokenProvider tokenProvider, String merchantStoreCurrency, @NonNull Context context, final BluesnapServiceCallback callback) {
         this.bluesnapServiceCallback = callback;
         this.merchantStoreCurrency = merchantStoreCurrency;
         if (null != tokenProvider)
@@ -130,14 +124,12 @@ public class BlueSnapService {
         bluesnapToken = new BluesnapToken(merchantToken, tokenProvider);
 
         blueSnapAPI.setupMerchantToken(bluesnapToken.getMerchantToken(), bluesnapToken.getUrl());
-
+        mContext = context;
         sdkResult = null;
-        sdkRequest = null;
 
         clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
 
-        if (!busInstance.isRegistered(this)) busInstance.register(this);
         Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
     }
 
@@ -247,7 +239,8 @@ public class BlueSnapService {
             postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
 
         if (sdkRequest.isBillingRequired()) {
-            postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
+            if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
+                postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
             postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
             postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
         }
@@ -261,7 +254,8 @@ public class BlueSnapService {
             postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
             postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
             postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
-            postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
+            if (BlueSnapValidator.checkCountryHasState(shippingInfo.getCountry()))
+                postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
             postData.put(ShippingInfo.SHIPPINGCITY, shippingInfo.getCity());
             postData.put(ShippingInfo.SHIPPINGADDRESS, shippingInfo.getAddress());
             postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
@@ -558,7 +552,7 @@ public class BlueSnapService {
         return sdkResult;
     }
 
-    @Nullable
+    @NonNull
     public SdkRequest getSdkRequest() {
         return sdkRequest;
     }
@@ -566,12 +560,12 @@ public class BlueSnapService {
     /**
      * Set a sdkRequest and call on  it.
      *
-     * @param newSdkRequest
-     * @throws BSPaymentRequestException
+     * @param newSdkRequest SdkRequest an Sdk request to uses
+     * @throws BSPaymentRequestException in case of invalid SdkRequest
      */
-    public void setSdkRequest(SdkRequest newSdkRequest) throws BSPaymentRequestException {
+    public synchronized void setSdkRequest(@NonNull SdkRequest newSdkRequest) throws BSPaymentRequestException {
         if (newSdkRequest == null)
-            throw new BSPaymentRequestException("null sdkRequest");
+            throw new BSPaymentRequestException("null sdkRequest was passed");
 
         if (sdkRequest != null) {
             Log.w(TAG, "sdkRequest override");
@@ -586,21 +580,19 @@ public class BlueSnapService {
     }
 
     /**
-     * for Event Bus when Currency change occured {@link Events}
+     * for Event Bus when Currency change event {@link com.bluesnap.androidapi.views.activities.CurrencyActivity}
      *
-     * @param currencySelectionEvent
+     * @param newCurrencyNameCode - String, new Currency Name Code
+     * @param context             - Context
      */
-    @Subscribe
-    public synchronized void onCurrencyChange(Events.CurrencySelectionEvent currencySelectionEvent) {
-
+    public void onCurrencyChange(String newCurrencyNameCode, Context context) {
+        Log.d(TAG, "onCurrencyChange= " + newCurrencyNameCode);
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
-        convertPrice(priceDetails, currencySelectionEvent.newCurrencyNameCode);
-
-        busInstance.post(new Events.CurrencyUpdatedEvent(priceDetails));
-
+        convertPrice(priceDetails, newCurrencyNameCode);
         sdkResult.setAmount(priceDetails.getAmount());
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
         sdkResult.setShopperID(sdkRequest.getShopperID());
+        BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 
     public void setCheckoutActivity(TokenServiceCallback checkoutActivity) {

@@ -170,7 +170,7 @@ public class BlueSnapValidator {
      *
      * @param countryText - ISO 3166-1 alpha-2 standard
      */
-    public static boolean checkCountryForState(String countryText) {
+    public static boolean checkCountryHasState(String countryText) {
         for (String item : STATE_NEEDED_COUNTRIES) {
             if (item.equals(countryText)) {
                 return true;
@@ -187,7 +187,7 @@ public class BlueSnapValidator {
      * @see EditTextFields
      */
     public static boolean validateEditTextString(String editTextString, EditTextFields validationType) {
-        String regex = "^[a-zA-Z0-9-]*$";
+        String regex = "^[a-zA-Z0-9- ]*$";
         String editTextStringNoSpaces = editTextString.trim().replaceAll(" ", "");
         String[] splittedNames = editTextString.trim().split(" ");
 

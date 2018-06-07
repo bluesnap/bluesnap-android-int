@@ -61,7 +61,7 @@ public class ReturningShopperBillingFragment extends Fragment {
         OneLineCCViewComponent oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
         oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.buttonComponentView);
+        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

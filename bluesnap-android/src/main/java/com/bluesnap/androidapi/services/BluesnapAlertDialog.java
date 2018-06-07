@@ -1,9 +1,9 @@
 package com.bluesnap.androidapi.services;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 
 import com.bluesnap.androidapi.R;
 
@@ -12,7 +12,7 @@ import com.bluesnap.androidapi.R;
  */
 public class BluesnapAlertDialog {
 
-    public static void setDialog(Context activity, String dialogMessage, String dialogTitle) {
+    public static void setDialog(@NonNull Context activity, @NonNull String dialogMessage, @NonNull String dialogTitle) {
         setDialog(activity, dialogMessage, dialogTitle, new BluesnapAlertDialog.BluesnapDialogCallback() {
             @Override
             public void setPositiveDialog() {
@@ -24,13 +24,15 @@ public class BluesnapAlertDialog {
         }, activity.getString(R.string.OK), activity.getString(R.string.CANCEL));
     }
 
-    public static void setDialog(Context activity, String dialogMessage, String dialogTitle, final BluesnapDialogCallback dialogCallback) {
+    public static void setDialog(@NonNull Context activity, @NonNull String dialogMessage, @NonNull String dialogTitle, @NonNull final BluesnapDialogCallback dialogCallback) {
         setDialog(activity, dialogMessage, dialogTitle, dialogCallback, activity.getString(R.string.OK), activity.getString(R.string.CANCEL));
     }
 
-    public static void setDialog(Context activity, String dialogMessage, String dialogTitle, final BluesnapDialogCallback dialogCallback, String positive, String negative) {
+    public static void setDialog(@NonNull Context activity, @NonNull String dialogMessage, @NonNull String dialogTitle, @NonNull final BluesnapDialogCallback dialogCallback, String positive, String negative) {
+        if (activity == null) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
         builder.setMessage(dialogMessage).setTitle(dialogTitle);
 
         builder.setPositiveButton(positive, new DialogInterface.OnClickListener() {
