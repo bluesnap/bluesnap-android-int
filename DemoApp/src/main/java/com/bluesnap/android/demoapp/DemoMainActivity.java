@@ -75,6 +75,7 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch shippingSwitch;
     private Switch billingSwitch;
     private Switch emailSwitch;
+    private Switch allowCurrencyChangeSwitch;
     private EditText taxAmountEditText;
 
     /**
@@ -94,6 +95,9 @@ public class DemoMainActivity extends AppCompatActivity {
         billingSwitch.setChecked(false);
         emailSwitch = (Switch) findViewById(R.id.emailSwitch);
         emailSwitch.setChecked(false);
+        allowCurrencyChangeSwitch = (Switch) findViewById(R.id.allowCurrencyChangeSwitch);
+        allowCurrencyChangeSwitch.setChecked(true);
+
         progressBar.setVisibility(View.VISIBLE);
         productPriceEditText = (EditText) findViewById(R.id.productPriceEditText);
         taxAmountEditText = (EditText) findViewById(R.id.demoTaxEditText);
@@ -268,7 +272,7 @@ public class DemoMainActivity extends AppCompatActivity {
         }
         Double taxAmount = 0D;
         // You can set the Amouut solely
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
+        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
 
 //        // Or you can set the Amount with tax, this will override setAmount()
 //        // The total purchase amount will be the sum of both numbers
@@ -280,16 +284,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
 
         sdkRequest.setCustomTitle("Demo Merchant");
-
-        if (shippingSwitch.isChecked()) {
-            sdkRequest.setShippingRequired(true);
-        }
-        if (billingSwitch.isChecked()) {
-            sdkRequest.setBillingRequired(true);
-        }
-        if (emailSwitch.isChecked()) {
-            sdkRequest.setEmailRequired(true);
-        }
+        sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
         try {
             sdkRequest.verify();
         } catch (BSPaymentRequestException e) {

@@ -88,7 +88,11 @@ public class CreditCardActivity extends AppCompatActivity {
 
         headerTextView = (TextView) findViewById(R.id.headerTextView);
         hamburgerMenuButton = (ImageButton) findViewById(R.id.hamburger_button);
-        hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        if (BlueSnapService.getInstance().getSdkRequest().isAllowCurrencyChange()) {
+            hamburgerMenuButton.setOnClickListener(new hamburgerMenuListener(hamburgerMenuButton));
+        } else {
+            hamburgerMenuButton.setVisibility(View.INVISIBLE);
+        }
 
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
