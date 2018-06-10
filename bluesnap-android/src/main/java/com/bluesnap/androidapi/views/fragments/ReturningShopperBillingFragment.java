@@ -56,23 +56,23 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
         } else {
             newCreditCardInfo = shopper.getNewCreditCardInfo();
 
-        // set Billing Details
-        billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
+            // set Billing Details
+            billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
+            billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
 
-        // set Credit Card View Component details
-        OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
-        oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
+            // set Credit Card View Component details
+            OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
+            oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
 
-        ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
-        buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(validateAndUpdate())
-                    BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE, TAG);
-            }
-        });
-
+            ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
+            buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (validateAndUpdate())
+                        BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE, TAG);
+                }
+            });
+        }
         return inflate;
     }
 
