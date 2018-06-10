@@ -53,12 +53,10 @@ public class DemoMainActivity extends AppCompatActivity {
     private static final String TAG = "DemoMainActivity";
     private static final int HTTP_MAX_RETRIES = 2;
     private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
-    private static Context context;
     protected BlueSnapService bluesnapService;
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private Spinner merchantStoreCurrencySpinner;
-    private EditText returningShopperEditText;
     private String returningOrNewShopper = "";
     private EditText productPriceEditText;
     private Currency currency;
@@ -67,7 +65,6 @@ public class DemoMainActivity extends AppCompatActivity {
     private String initialPrice;
     private String displayedCurrency;
     private String currencyName;
-    private SdkRequest sdkRequest;
     private String merchantToken;
     private Currency currencyByLocale;
     private ProgressBar progressBar;
@@ -112,11 +109,11 @@ public class DemoMainActivity extends AppCompatActivity {
             currencyByLocale = Currency.getInstance("USD");
         }
 
-        context = getBaseContext();
+        Context context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
 
         generateMerchantToken();
-        returningShopperEditText = (EditText) findViewById(R.id.returningShopperEditText);
+        EditText returningShopperEditText = (EditText) findViewById(R.id.returningShopperEditText);
         returningShopperEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -195,13 +192,12 @@ public class DemoMainActivity extends AppCompatActivity {
 
     private String readCurencyFromSpinner(String selectedRateName) {
         currency = Currency.getInstance(selectedRateName);
-        String convertedPrice = "0";
         currencySymbol = currency.getSymbol();
         currencyName = currency.getCurrencyCode();
         if (initialPrice == null) {
             initialPrice = productPriceEditText.getText().toString().trim();
         }
-        convertedPrice = bluesnapService.convertUSD(initialPrice, selectedRateName).trim();
+        String convertedPrice = bluesnapService.convertUSD(initialPrice, selectedRateName).trim();
         return convertedPrice;
     }
 
@@ -266,13 +262,9 @@ public class DemoMainActivity extends AppCompatActivity {
 
         readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
         String taxString = taxAmountEditText.getText().toString().trim();
-        Double taxAmountPrecentage = 0D;
-        if (!taxString.isEmpty()) {
-            taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
-        }
         Double taxAmount = 0D;
         // You can set the Amouut solely
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+        SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
 
 //        // Or you can set the Amount with tax, this will override setAmount()
 //        // The total purchase amount will be the sum of both numbers
@@ -393,9 +385,12 @@ public class DemoMainActivity extends AppCompatActivity {
         bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                Set<String> supportedRates = bluesnapService.getSupportedRates();
-                if (null == currency || null == currency.getCurrencyCode())
-                    updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                if (null == currency || null == currency.getCurrencyCode()) {
+                    Set<String> supportedRates = bluesnapService.getSupportedRates();
+                    if (supportedRates != null) {
+                        updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                    }
+                }
                 progressBar.setVisibility(View.INVISIBLE);
                 linearLayoutForProgressBar.setVisibility(View.VISIBLE);
                 productPriceEditText.setVisibility(View.VISIBLE);
@@ -469,7 +464,7 @@ public class DemoMainActivity extends AppCompatActivity {
      */
 
     private TreeSet<String> demoSupportedRates(Set<String> supportedRates) {
-        TreeSet<String> treeSet = new TreeSet();
+        TreeSet<String> treeSet = new TreeSet<>();
         if (supportedRates.contains("USD")) {
             treeSet.add("USD");
         }

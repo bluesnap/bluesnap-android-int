@@ -61,7 +61,6 @@ public class CurrencyActivity extends Activity {
             }
         });
 
-        Arrays.asList(currency_value_array);
         getIndexList(currency_value_array);
         displayIndex();
 
@@ -114,7 +113,7 @@ public class CurrencyActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     TextView selectedIndex = (TextView) view;
-                    listView.setSelection(mapIndex.get(selectedIndex.getText()));
+                    listView.setSelection(mapIndex.get(selectedIndex.getText().toString()));
                 }
             });
             indexLayout.addView(textView);

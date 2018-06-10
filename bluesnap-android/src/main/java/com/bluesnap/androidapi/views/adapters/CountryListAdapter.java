@@ -48,7 +48,7 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
-        return countryListObjects.indexOf(getItem(position));
+        return countryListObjects.indexOf((CountryListObject)getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

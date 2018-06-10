@@ -23,9 +23,6 @@ public class WebViewActivity extends Activity {
 
     public static final int PAYPAL_REQUEST_CODE = 1;
     static final String TAG = WebViewActivity.class.getSimpleName();
-    private String urlRedirect;
-    private String textHeader;
-    private Boolean javaScriptEnabled;
     private int transactionPendingCounter;
     private String message;
     private String title;
@@ -44,6 +41,9 @@ public class WebViewActivity extends Activity {
         transactionPendingCounter = 0;
 
         Bundle extras = getIntent().getExtras();
+        String textHeader = null;
+        String urlRedirect = null;
+        Boolean javaScriptEnabled = false;
         if (extras != null) {
             textHeader = extras.getString(getString(R.string.WEBVIEW_STRING));
             urlRedirect = extras.getString(getString(R.string.WEBVIEW_URL));

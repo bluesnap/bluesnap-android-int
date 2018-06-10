@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -22,6 +23,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
  */
 
 public class AmountTaxShippingComponent extends LinearLayout {
+
     private static final String TAG = AmountTaxShippingComponent.class.getSimpleName();
     private RelativeLayout shippingSameAsBillingRelativeLayout;
     private LinearLayout amountTaxLinearLayout;
@@ -48,10 +50,12 @@ public class AmountTaxShippingComponent extends LinearLayout {
      * Load component XML layout
      */
     private void initControl(final Context context) {
+
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (inflater != null) {
+        if (inflater == null) {
+            Log.w(TAG, "Cannot get inflater from context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)");
+        } else {
             inflater.inflate(R.layout.amount_tax_shipping_component, this);
         }
 

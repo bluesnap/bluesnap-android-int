@@ -3,12 +3,14 @@ package com.bluesnap.androidapi.views.fragments;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.components.BillingViewComponent;
@@ -48,7 +50,11 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
         final View inflate = inflater.inflate(R.layout.returning_shopper_billing_fragment, container, false);
 
         // get Credit Card Info
-        newCreditCardInfo = BlueSnapService.getInstance().getsDKConfiguration().getShopper().getNewCreditCardInfo();
+        Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
+        if (shopper == null) {
+            Log.w(TAG, "shopper is null");
+        } else {
+            newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         // set Billing Details
         billingViewComponent = inflate.findViewById(R.id.billingViewComponent);

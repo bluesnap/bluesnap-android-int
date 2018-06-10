@@ -62,8 +62,9 @@ public class ContactInfoViewComponent extends LinearLayout {
         //hasAlreadyRequestedFocus = false;
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (inflater != null) {
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
             inflater.inflate(R.layout.contact_info_view_component, this);
         }
 

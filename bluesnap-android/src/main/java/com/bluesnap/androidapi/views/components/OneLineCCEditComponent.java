@@ -92,10 +92,12 @@ public class OneLineCCEditComponent extends LinearLayout {
      * Load component XML layout
      */
     private void initControl(Context context) {
+
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (inflater != null) {
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
             inflater.inflate(R.layout.one_line_cc_edit_component, this);
         }
 

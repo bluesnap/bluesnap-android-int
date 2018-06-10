@@ -48,7 +48,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
-        return customListObjects.indexOf(getItem(position));
+        return customListObjects.indexOf((CustomListObject)getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -92,7 +92,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
                 //CONSTARINT TO UPPER
                 constraint = constraint.toString().toUpperCase();
 
-                ArrayList<CustomListObject> filters = new ArrayList<CustomListObject>();
+                ArrayList<CustomListObject> filters = new ArrayList<>();
 
                 //get specific items
                 for (int i = 0; i < filterList.size(); i++) {

@@ -34,7 +34,6 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     private OneLineCCEditComponent oneLineCCEditComponent;
 
     private SdkRequest sdkRequest;
-
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
