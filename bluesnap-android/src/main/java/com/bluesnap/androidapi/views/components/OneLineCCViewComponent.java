@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import com.bluesnap.androidapi.models.CreditCardTypeResolver;
  */
 
 public class OneLineCCViewComponent extends LinearLayout {
+    public static final String TAG = OneLineCCViewComponent.class.getSimpleName();
     private TextView expTextView, ccLastFourDigitsTextView;
     private ImageView cardIconImageView;
 
@@ -43,8 +45,11 @@ public class OneLineCCViewComponent extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        assert inflater != null;
-        inflater.inflate(R.layout.one_line_cc_view_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.one_line_cc_view_component, this);
+        }
 
         ccLastFourDigitsTextView = findViewById(R.id.ccLastFourDigitsTextView);
         expTextView = findViewById(R.id.expTextView);

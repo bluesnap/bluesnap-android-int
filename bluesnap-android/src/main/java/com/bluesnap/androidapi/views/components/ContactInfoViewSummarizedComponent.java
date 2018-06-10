@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -46,8 +47,11 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        assert inflater != null;
-        inflater.inflate(R.layout.contact_info_summerized_view_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.contact_info_summerized_view_component, this);
+        }
 
         countryTextView = findViewById(R.id.countryTextView);
         zipTextView = findViewById(R.id.zipTextView);
