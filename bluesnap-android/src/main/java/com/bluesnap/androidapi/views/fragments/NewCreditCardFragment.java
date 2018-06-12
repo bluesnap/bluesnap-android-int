@@ -115,6 +115,16 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         updateViewResourceWithDetails(shopper.getNewCreditCardInfo());
     }
 
+    @Override
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
+        billingViewComponent.unregisterBlueSnapLocalBroadcastReceiver();
+    }
+
+    @Override
+    public void registerBlueSnapLocalBroadcastReceiver() {
+        billingViewComponent.registerBlueSnapLocalBroadcastReceiver();
+    }
+
     /**
      * validate And Set Credit Card Info And Billing Info to new Credit Card Info {@link Shopper}
      *
@@ -207,6 +217,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
                     BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, TAG);
+                    unregisterBlueSnapLocalBroadcastReceiver();
                 }
             }
         });

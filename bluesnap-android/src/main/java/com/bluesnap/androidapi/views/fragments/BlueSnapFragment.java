@@ -10,4 +10,12 @@ public class BlueSnapFragment extends Fragment {
     public void onActivityRestoredInstanceState() {
 
     }
+
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
+
+    }
+
+    public void registerBlueSnapLocalBroadcastReceiver() {
+
+    }
 }

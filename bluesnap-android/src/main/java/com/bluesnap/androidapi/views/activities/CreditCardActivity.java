@@ -137,6 +137,8 @@ public class CreditCardActivity extends AppCompatActivity {
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
             setHeaderTextView(NewCreditCardFragment.TAG);
+            BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+            blueSnapFragment.registerBlueSnapLocalBroadcastReceiver();
         } else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType)) {
             setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
             setHamburgerMenuButtonVisibility(View.VISIBLE);

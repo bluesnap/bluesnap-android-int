@@ -114,12 +114,32 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     }
 
+    /**
+     * Called when a child view is removed from this ViewGroup. Overrides should always
+     * call super.onViewRemoved.
+     *
+     * @param child the removed child view
+     */
     @Override
     public void onViewRemoved(View child) {
         super.onViewRemoved(child);
+        unregisterBlueSnapLocalBroadcastReceiver();
+    }
+
+    /**
+     * unregister broadcastReceiver for BlueSnap Local Broadcast Manager
+     */
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
         BlueSnapLocalBroadcastManager.unregisterReceiver(getContext(), broadcastReceiver);
     }
 
+    /**
+     * register broadcastReceiver for BlueSnap Local Broadcast Manager
+     */
+    public void registerBlueSnapLocalBroadcastReceiver() {
+        BlueSnapLocalBroadcastManager.registerReceiver(getContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
+    }
 
     /**
      * update resource with details
