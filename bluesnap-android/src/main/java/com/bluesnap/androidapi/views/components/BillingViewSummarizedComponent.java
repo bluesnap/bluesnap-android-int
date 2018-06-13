@@ -37,8 +37,8 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
      *
      * @param billingInfo - {@link BillingInfo}
      */
-    public void updateResource(BillingInfo billingInfo) {
-        super.updateResource(billingInfo);
+    public void updateViewResourceWithDetails(BillingInfo billingInfo) {
+        super.updateViewResourceWithDetails(billingInfo);
 
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 

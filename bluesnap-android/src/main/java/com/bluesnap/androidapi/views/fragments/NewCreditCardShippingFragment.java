@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +86,17 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         return inflate;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        onActivityRestoredInstanceState();
+    }
+
+    @Override
+    public void onActivityBackPressed() {
+        onActivitySavedInstanceState();
+    }
+
     /**
      * invoked when the activity may be temporarily destroyed, save the instance state here
      */
@@ -102,7 +114,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      */
     @Override
     public void onActivityRestoredInstanceState() {
-        updateResource(shopper.getShippingContactInfo());
+        updateViewResourceWithDetails(shopper.getShippingContactInfo());
     }
 
     /**
@@ -120,7 +132,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      *
      * @param shippingInfo - {@link ShippingInfo}
      */
-    public void updateResource(ShippingInfo shippingInfo) {
+    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
         shippingViewComponent.updateViewResourceWithDetails(shippingInfo);
     }
 

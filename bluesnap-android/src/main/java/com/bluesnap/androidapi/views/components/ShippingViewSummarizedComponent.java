@@ -29,8 +29,8 @@ public class ShippingViewSummarizedComponent extends ContactInfoViewSummarizedCo
         super(context);
     }
 
-    public void updateResource(ShippingInfo shippingInfo) {
-        super.updateResource(shippingInfo);
+    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
+        super.updateViewResourceWithDetails(shippingInfo);
         setEmailVisibility(GONE);
     }
 

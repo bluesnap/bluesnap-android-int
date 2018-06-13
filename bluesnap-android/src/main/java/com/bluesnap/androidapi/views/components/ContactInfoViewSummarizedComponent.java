@@ -70,8 +70,8 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
      *
      * @param contactInfo - {@link ContactInfo}
      */
-    public void updateResource(ContactInfo contactInfo) {
-        updateResource(contactInfo.getFullName(), contactInfo.getAddress(), contactInfo.getCity(), contactInfo.getState(), contactInfo.getZip(), contactInfo.getCountry());
+    public void updateViewResourceWithDetails(ContactInfo contactInfo) {
+        updateViewResourceWithDetails(contactInfo.getFullName(), contactInfo.getAddress(), contactInfo.getCity(), contactInfo.getState(), contactInfo.getZip(), contactInfo.getCountry());
     }
 
     /**
@@ -83,7 +83,7 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
      * @param zip - zip
      * @param country - country
      */
-    private void updateResource(String fullName, String address, String city, String state, String zip, String country) {
+    private void updateViewResourceWithDetails(String fullName, String address, String city, String state, String zip, String country) {
         address = stringify(address);
         city = stringify(city);
         state = stringify(state);

@@ -83,10 +83,10 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
 
         // set Credit Card View Component details
         OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
-        oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
+        oneLineCCViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getCreditCard());
 
         billingViewSummarizedComponent = inflate.findViewById(R.id.billingViewSummarizedComponent);
-        billingViewSummarizedComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
+        billingViewSummarizedComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
 
         // set Summarized Shipping details or hide Shipping View
         shippingViewSummarizedTextView = inflate.findViewById(R.id.shippingViewSummarizedTextView);
@@ -95,7 +95,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         if (!sdkRequest.isShippingRequired()) {
             setVisibilityForShippingView(View.INVISIBLE);
         } else {
-            shippingViewSummarizedComponent.updateResource(shippingContactInfo);
+            shippingViewSummarizedComponent.updateViewResourceWithDetails(shippingContactInfo);
             setVisibilityForShippingView(View.VISIBLE);
             BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
@@ -149,9 +149,9 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
             Log.d(TAG, event);
 
             if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event))
-                billingViewSummarizedComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
+                billingViewSummarizedComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
             else if (BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event))
-                shippingViewSummarizedComponent.updateResource(shopper.getShippingContactInfo());
+                shippingViewSummarizedComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
             else if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);

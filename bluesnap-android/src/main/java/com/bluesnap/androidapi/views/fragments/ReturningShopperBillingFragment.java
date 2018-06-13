@@ -62,7 +62,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
 
             // set Credit Card View Component details
             OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
-            oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
+            oneLineCCViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getCreditCard());
 
             ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
             buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
