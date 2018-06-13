@@ -378,7 +378,6 @@ public class DemoMainActivity extends AppCompatActivity {
     }
 
     private void initControlsAfterToken() {
-
         final String merchantStoreCurrency = null != merchantStoreCurrencySpinner && null != merchantStoreCurrencySpinner.getSelectedItem() ? merchantStoreCurrencySpinner.getSelectedItem().toString() : "USD";
         //final String merchantStoreCurrency = (null == currency || null == currency.getCurrencyCode()) ? "USD" : currency.getCurrencyCode();
         bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
