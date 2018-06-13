@@ -72,7 +72,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         // get Credit Card Info
-        newCreditCardInfo = shopper.getNewCreditCardInfo();
+        newCreditCardInfo = shopper != null ? shopper.getNewCreditCardInfo() : new CreditCardInfo();
 
         shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
 
