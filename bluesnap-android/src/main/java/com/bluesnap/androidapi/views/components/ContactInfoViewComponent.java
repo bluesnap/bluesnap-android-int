@@ -373,7 +373,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      * @param userCountry - country string ISO Alpha-2
      */
     public void setUserCountry(String userCountry) {
-        this.userCountry = userCountry;
+        this.userCountry = AndroidUtil.stringify(userCountry, BlueSnapService.getInstance().getUserCountry(getContext()));
         onCountryChange();
     }
 
