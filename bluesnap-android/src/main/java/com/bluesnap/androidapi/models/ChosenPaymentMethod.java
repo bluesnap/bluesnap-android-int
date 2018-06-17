@@ -13,10 +13,15 @@ public class ChosenPaymentMethod {
     @SerializedName("creditCard")
     private CreditCard creditCard;
 
-    public ChosenPaymentMethod(PaymentTypes chosenPaymentMethodType, CreditCard creditCard) {
+    public ChosenPaymentMethod(PaymentTypes chosenPaymentMethodType, @Nullable CreditCard creditCard) {
 
         this.chosenPaymentMethodType = chosenPaymentMethodType;
         this.creditCard = creditCard;
+    }
+
+    public ChosenPaymentMethod(ChosenPaymentMethod chosenPaymentMethod) {
+        this.chosenPaymentMethodType = chosenPaymentMethod.chosenPaymentMethodType;
+        this.creditCard = chosenPaymentMethod.creditCard == null ? null : new CreditCard(chosenPaymentMethod.creditCard);
     }
 
     public PaymentTypes getChosenPaymentMethodType() {
@@ -27,11 +32,12 @@ public class ChosenPaymentMethod {
         this.chosenPaymentMethodType = chosenPaymentMethodType;
     }
 
+    @Nullable
     public CreditCard getCreditCard() {
         return creditCard;
     }
 
-    public void setCreditCard(CreditCard creditCard) {
+    public void setCreditCard(@Nullable CreditCard creditCard) {
         this.creditCard = creditCard;
     }
 }

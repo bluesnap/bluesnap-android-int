@@ -38,6 +38,14 @@ public class CreditCard {
     public CreditCard() {
     }
 
+    public CreditCard(CreditCard creditCard) {
+        this.cardLastFourDigits = creditCard.cardLastFourDigits;
+        this.cardType = creditCard.cardType;
+        this.cardSubType = creditCard.cardSubType;
+        this.expirationMonth = creditCard.expirationMonth;
+        this.expirationYear = creditCard.expirationYear;
+    }
+
     /**
      * update credit card details
      *

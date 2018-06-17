@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.ChosenPaymentMethod;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.Currency;
@@ -18,6 +19,8 @@ import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.models.ShopperConfiguration;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -647,6 +650,26 @@ public class BlueSnapService {
             // send event to update amount in UI
             BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
         }
+    }
+
+    /**
+     * After calling initBluesnap() with a token created for an existing shopper, the merchant app can use this method to
+     * get the shopper details, including the chosen payment method
+     *
+     * @return ShopperConfiguration
+     */
+    public ShopperConfiguration getShopperConfiguration() {
+
+        ShopperConfiguration res = null;
+        final Shopper shopper = sDKConfiguration.getShopper();
+        if (shopper != null) {
+            BillingInfo billingInfo = new BillingInfo(shopper);
+            billingInfo.setEmail(shopper.getEmail());
+            ShippingInfo shippingInfo = new ShippingInfo(shopper.getShippingContactInfo());
+            ChosenPaymentMethod chosenPaymentMethod = null;
+            res = new ShopperConfiguration(billingInfo, shippingInfo, chosenPaymentMethod);
+        }
+        return res;
     }
 
     private interface AfterNewTokenCreatedAction {
