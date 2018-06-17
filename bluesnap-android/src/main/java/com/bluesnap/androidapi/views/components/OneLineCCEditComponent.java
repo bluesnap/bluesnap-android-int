@@ -76,13 +76,30 @@ public class OneLineCCEditComponent extends LinearLayout {
     }
 
     /**
+     * get credit card Resource from inputs
+     *
+     * @return {@link CreditCard}
+     */
+    public CreditCard getViewResourceDetails() {
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber(AndroidUtil.stringify(getNewCreditCard().getNumber(), creditCardNumberEditText.getText().toString().trim()));
+        creditCard.setExpDateFromString(expEditText.getText().toString().trim());
+        creditCard.setCvc(cvvEditText.getText().toString().trim());
+        return creditCard;
+    }
+
+    /**
      * Load component XML layout
      */
     private void initControl(Context context) {
+
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        inflater.inflate(R.layout.one_line_cc_edit_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.one_line_cc_edit_component, this);
+        }
 
         try {
             this.newCreditCard = new CreditCard();
@@ -91,10 +108,10 @@ public class OneLineCCEditComponent extends LinearLayout {
         }
 
         // layout is inflated, assign local variables to components
-        cardIconImageView = (ImageView) findViewById(R.id.cardIconImageView);
-        creditCardNumberEditText = (EditText) findViewById(R.id.creditCardNumberEditText);
-        moveToCcImageButton = (ImageButton) findViewById(R.id.moveToCcImageButton);
-        creditCardNumberErrorTextView = (TextView) findViewById(R.id.creditCardNumberErrorTextView);
+        cardIconImageView = findViewById(R.id.cardIconImageView);
+        creditCardNumberEditText = findViewById(R.id.creditCardNumberEditText);
+        moveToCcImageButton = findViewById(R.id.moveToCcImageButton);
+        creditCardNumberErrorTextView = findViewById(R.id.creditCardNumberErrorTextView);
         creditCardNumberEditText.setOnFocusChangeListener(new creditCardNumberOnFocusChangeListener());
         creditCardNumberEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -111,9 +128,9 @@ public class OneLineCCEditComponent extends LinearLayout {
             }
         });
 
-        expEditText = (EditText) findViewById(R.id.expEditText);
-        expErrorTextView = (TextView) findViewById(R.id.expErrorTextView);
-        expLinearLayout = (LinearLayout) findViewById(R.id.expLinearLayout);
+        expEditText = findViewById(R.id.expEditText);
+        expErrorTextView = findViewById(R.id.expErrorTextView);
+        expLinearLayout = findViewById(R.id.expLinearLayout);
         expEditText.addTextChangedListener(expTextWatcher);
         expEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -135,9 +152,9 @@ public class OneLineCCEditComponent extends LinearLayout {
             }
         });
 
-        cvvEditText = (EditText) findViewById(R.id.cvvEditText);
-        cvvErrorTextView = (TextView) findViewById(R.id.cvvErrorTextView);
-        cvvLinearLayout = (LinearLayout) findViewById(R.id.cvvLinearLayout);
+        cvvEditText = findViewById(R.id.cvvEditText);
+        cvvErrorTextView = findViewById(R.id.cvvErrorTextView);
+        cvvLinearLayout = findViewById(R.id.cvvLinearLayout);
         cvvEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -151,6 +168,25 @@ public class OneLineCCEditComponent extends LinearLayout {
 
         // flag for activation of the next button, relevant only for the second time
         activateMoveToCcImageButton = false;
+    }
+
+    /**
+     * update resource with details
+     *
+     * @param creditCard - {@link CreditCard}
+     */
+    public void updateViewResourceWithDetails(CreditCard creditCard) {
+        newCreditCard = creditCard;
+        if (!TextUtils.isEmpty(creditCard.getNumber())) {
+            creditCardNumberEditText.setText(creditCard.getNumber());
+            changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(creditCard.getNumber()));
+            if (creditCard.getNumber().length() >= getResources().getInteger(R.integer.ccn_max_length_no_spaces))
+                creditCardNumberOnLoseFocus();
+        }
+        if (!TextUtils.isEmpty(creditCard.getExpirationDateForEditTextAndSpinner()))
+            expEditText.setText(creditCard.getExpirationDateForEditTextAndSpinner());
+        if (!TextUtils.isEmpty(creditCard.getCvc()))
+            cvvEditText.setText(creditCard.getCvc());
     }
 
     /**
@@ -394,8 +430,8 @@ public class OneLineCCEditComponent extends LinearLayout {
                         if (!ccType.equals(newCreditCard.getCardType()))
                             changeCardEditTextDrawable(ccType);
                     } catch (NullPointerException | JSONException e) {
-                        Log.e(TAG, "", e);
                         String errorMsg = String.format("Service Error %s", e.getMessage());
+                        Log.e(TAG, errorMsg, e);
                     }
                 }
 

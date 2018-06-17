@@ -48,7 +48,7 @@ public class StateListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
-        return stateListObjects.indexOf(getItem(position));
+        return stateListObjects.indexOf((StateListObject)getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 
@@ -38,9 +39,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
     @Override
     void initControl(final Context context) {
-        super.initControl(context);
-
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        isFullBillingRequiredRequired = sdkRequest.isBillingRequired();
+
+        super.initControl(context);
 
         isEmailRequired = sdkRequest.isEmailRequired();
         if (isEmailRequired) {
@@ -67,7 +69,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             setEmailVisibility(GONE);
         }
 
-        isFullBillingRequiredRequired = sdkRequest.isBillingRequired();
         if (!isFullBillingRequiredRequired) {
             setFullBillingVisibility(GONE);
             inputZip.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -81,10 +82,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      *
      * @param billingInfo - {@link BillingInfo}
      */
-    public void updateResource(BillingInfo billingInfo) {
-        super.updateResource(billingInfo);
+    public void updateViewResourceWithDetails(BillingInfo billingInfo) {
+        super.updateViewResourceWithDetails(billingInfo);
         if (isEmailRequired)
-            inputEmail.setText(billingInfo.getEmail());
+            inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
         setStateVisibilityByUserCountry();
     }
 
@@ -93,8 +94,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      *
      * @return billing info
      */
-    public BillingInfo getResource() {
-        BillingInfo billingInfo = new BillingInfo(super.getResource());
+    public BillingInfo getViewResourceDetails() {
+        BillingInfo billingInfo = new BillingInfo(super.getViewResourceDetails());
         if (isEmailRequired)
             billingInfo.setEmail(inputEmail.getText().toString().trim());
         return billingInfo;

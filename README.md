@@ -54,12 +54,12 @@ BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "m
 });
 ```
 
-**Note:** Since the token is valid for 60 minutes, only initialize the SDK with the token close to the purchase time.
+**Note:**  For each purchase, you'll need to call setup() 
 
 ## Launch the checkout page and collect shopper payment info
 The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
 
-To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` as an Intent Extra.
+To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
 
 ### Create an SdkRequest instance 
 An `SdkRequest` instance is required to pass information about the purchase to the SDK.

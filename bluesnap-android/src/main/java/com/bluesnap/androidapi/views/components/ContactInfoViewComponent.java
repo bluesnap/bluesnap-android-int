@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
@@ -61,22 +62,25 @@ public class ContactInfoViewComponent extends LinearLayout {
         //hasAlreadyRequestedFocus = false;
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        inflater.inflate(R.layout.contact_info_view_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.contact_info_view_component, this);
+        }
 
         // layout is inflated, assign local variables to components
-        inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
-        inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
-        inputLayoutZip = (TextInputLayout) findViewById(R.id.input_layout_zip);
-        inputLayoutState = (TextInputLayout) findViewById(R.id.input_layout_state);
-        inputLayoutCity = (TextInputLayout) findViewById(R.id.input_layout_city);
-        inputLayoutAddress = (TextInputLayout) findViewById(R.id.input_layout_address);
+        inputLayoutName = findViewById(R.id.input_layout_name);
+        inputLayoutEmail = findViewById(R.id.input_layout_email);
+        inputLayoutZip = findViewById(R.id.input_layout_zip);
+        inputLayoutState = findViewById(R.id.input_layout_state);
+        inputLayoutCity = findViewById(R.id.input_layout_city);
+        inputLayoutAddress = findViewById(R.id.input_layout_address);
 
-        inputName = (EditText) findViewById(R.id.input_name);
-        inputEmail = (EditText) findViewById(R.id.input_email);
-        inputZip = (EditText) findViewById(R.id.input_zip);
+        inputName = findViewById(R.id.input_name);
+        inputEmail = findViewById(R.id.input_email);
+        inputZip = findViewById(R.id.input_zip);
 
-        inputState = (EditText) findViewById(R.id.input_state);
+        inputState = findViewById(R.id.input_state);
         inputState.setInputType(InputType.TYPE_NULL);
         inputState.setOnClickListener(new OnClickListener() {
             @Override
@@ -89,10 +93,10 @@ public class ContactInfoViewComponent extends LinearLayout {
         });
         BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
 
-        inputCity = (EditText) findViewById(R.id.input_city);
-        inputAddress = (EditText) findViewById(R.id.input_address);
+        inputCity = findViewById(R.id.input_city);
+        inputAddress = findViewById(R.id.input_address);
 
-        countryImageButton = (ImageButton) findViewById(R.id.countryImageButton);
+        countryImageButton = findViewById(R.id.countryImageButton);
         setUserCountry(BlueSnapService.getInstance().getUserCountry(context));
         // activate all on focus out event listeners
         setOnFocusChangeListenerForInputs();
@@ -122,15 +126,13 @@ public class ContactInfoViewComponent extends LinearLayout {
      *
      * @param contactInfo - {@link ContactInfo}
      */
-    public void updateResource(ContactInfo contactInfo) {
-        inputName.setText(contactInfo.getFullName());
-        //inputEmail.setText(contactInfo.getEmail());
-        inputZip.setText(contactInfo.getZip());
-        inputState.setText(contactInfo.getState());
-        inputCity.setText(contactInfo.getCity());
-        inputAddress.setText(contactInfo.getAddress());
-        inputState.setText(contactInfo.getState());
-        setUserCountry(contactInfo.getCountry());
+    public void updateViewResourceWithDetails(ContactInfo contactInfo) {
+        inputName.setText(AndroidUtil.stringify(contactInfo.getFullName()));
+        inputZip.setText(AndroidUtil.stringify(contactInfo.getZip()));
+        inputCity.setText(AndroidUtil.stringify(contactInfo.getCity()));
+        inputAddress.setText(AndroidUtil.stringify(contactInfo.getAddress()));
+        inputState.setText(AndroidUtil.stringify(contactInfo.getState()));
+        setUserCountry(AndroidUtil.stringify(contactInfo.getCountry()));
     }
 
     /**
@@ -138,7 +140,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      *
      * @return contact info
      */
-    public ContactInfo getResource() {
+    public ContactInfo getViewResourceDetails() {
         ContactInfo contactInfo = new ContactInfo();
         contactInfo.setFullName(inputName.getText().toString().trim());
         //contactInfo.setEmail(inputEmail.getText().toString().trim());
@@ -449,7 +451,6 @@ public class ContactInfoViewComponent extends LinearLayout {
      * check TextInputLayout Visibility Array
      *
      * @param textInputLayouts - array of TextInputLayout to check
-     * @return TextInputLayout or null
      */
     void checkTextInputLayoutVisibilityArray(TextInputLayout[] textInputLayouts) {
         for (TextInputLayout textInputLayout : textInputLayouts) {

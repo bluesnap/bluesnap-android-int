@@ -38,7 +38,7 @@ public class ShippingViewSummarizedComponent extends ContactInfoViewSummarizedCo
     void initControl(final Context context) {
         super.initControl(context);
 
-        editButton = (Button) findViewById(R.id.editButton);
+        editButton = findViewById(R.id.editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

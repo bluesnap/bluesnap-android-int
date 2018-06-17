@@ -35,6 +35,7 @@ android {
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
+
 }
 String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
 

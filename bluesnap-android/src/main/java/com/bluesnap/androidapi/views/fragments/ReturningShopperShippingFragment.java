@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,15 +19,13 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperShippingFragment extends Fragment {
+public class ReturningShopperShippingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperShippingFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private ShippingViewComponent shippingViewComponent;
-    private ButtonComponent buttonComponentView;
     private Shopper shopper;
 
     public static ReturningShopperShippingFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         ReturningShopperShippingFragment bsFragment = (ReturningShopperShippingFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -42,7 +39,6 @@ public class ReturningShopperShippingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
     }
 
     @Override
@@ -54,11 +50,11 @@ public class ReturningShopperShippingFragment extends Fragment {
         shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
 
         // set Shipping Details
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
+        shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
         assert shopper != null;
-        shippingViewComponent.updateResource(shopper.getShippingContactInfo());
+        shippingViewComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
+        ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +77,7 @@ public class ReturningShopperShippingFragment extends Fragment {
     public boolean validateAndUpdate() {
         boolean isValid = shippingViewComponent.validateInfo();
         if (isValid) {
-            shopper.setShippingContactInfo(shippingViewComponent.getResource());
+            shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
         }
         return isValid;
     }

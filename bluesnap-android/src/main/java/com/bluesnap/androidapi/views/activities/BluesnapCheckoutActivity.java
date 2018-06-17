@@ -66,7 +66,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         }
 
         loadShopperFromSDKConfiguration();
-        LinearLayout newCardButton = (LinearLayout) findViewById(R.id.newCardButton);
+        LinearLayout newCardButton = findViewById(R.id.newCardButton);
         newCardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,8 +74,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             }
         });
 
-        LinearLayout payPalButton = (LinearLayout) findViewById(R.id.payPalButton);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        LinearLayout payPalButton = findViewById(R.id.payPalButton);
+        progressBar = findViewById(R.id.progressBar);
         if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
             payPalButton.setVisibility(View.GONE);
         } else {
@@ -139,7 +139,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         ArrayList<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
 
         //create an adapter to describe how the items are displayed.
-        ListView oneLineCCViewComponentsListView = (ListView) findViewById(R.id.oneLineCCViewComponentsListView);
+        ListView oneLineCCViewComponentsListView = findViewById(R.id.oneLineCCViewComponentsListView);
         oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray);
         //set the spinners adapter to the previously created one.
         oneLineCCViewComponentsListView.setAdapter(oneLineCCViewAdapter);
@@ -209,27 +209,48 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 try {
                     JSONObject errorDescription = BlueSnapService.getErrorDescription();
                     Log.e(TAG, errorDescription.toString());
-                    String message;
-                    String title;
+                    String message = null;
+                    String title = null;
                     if (errorDescription.getString("code").equals("20027")) {
-                        // ToDo change to string.xml for translations, use string palceholders
-                        //message = errorDescription.getString("description") + " please change to a PayPal supported Currency or contact Support for additional assistance";
-                        message = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_1)
-                                + " "
-                                + sdkRequest.getPriceDetails().getCurrencyCode()
-                                + " "
-                                + getString(R.string.CURRENCY_NOT_SUPPORTED_PART_2)
-                                + " "
-                                + getString(R.string.SUPPORT_PLEASE)
-                                + " "
-                                + getString(R.string.CURRENCY_NOT_SUPPORTED_PART_3)
-                                + " "
-                                + getString(R.string.SUPPORT_OR)
-                                + " "
-                                + getString(R.string.SUPPORT);
+                        // not supported PayPal currency
+                        String errorCurrency = priceDetails.getCurrencyCode();
+                        // all supported PayPal currencies
+                        ArrayList<String> payPalCurrencies = blueSnapService.getsDKConfiguration().getSupportedPaymentMethods().getPaypalCurrencies();
+                        // check if array is either bigger than one or if equals one than that it is not the already tried currency
+                        if (null != payPalCurrencies && (payPalCurrencies.size() > 1 || !payPalCurrencies.contains(errorCurrency))) {
+                            // get merchant store currency
+                            String currency = blueSnapService.getsDKConfiguration().getRates().getMerchantStoreCurrency();
+                            /* If a store currency is supported in PP - fallback to that currency
+                            Otherwise, if USD is supported in PP - fallback to USD
+                            Otherwise, fallback to any supported PP currency */
+                            currency = payPalCurrencies.contains(currency)
+                                    ? currency
+                                    : (
+                                    payPalCurrencies.contains(SupportedPaymentMethods.USD) && !SupportedPaymentMethods.USD.equals(errorCurrency)
+                                            ? SupportedPaymentMethods.USD
+                                            : payPalCurrencies.get(0)
+                            );
 
-                        title = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_TITLE);
+                            Log.d(TAG, "Given currency not supported with PayPal - changing to PayPal supported Currency: " + currency);
+                            blueSnapService.onCurrencyChange(currency, BluesnapCheckoutActivity.this);
+                            startPayPal();
+                        } else {
+                            message = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_1)
+                                    + " "
+                                    + sdkRequest.getPriceDetails().getCurrencyCode()
+                                    + " "
+                                    + getString(R.string.CURRENCY_NOT_SUPPORTED_PART_2)
+                                    + " "
+                                    + getString(R.string.SUPPORT_PLEASE)
+                                    + " "
+                                    + getString(R.string.CURRENCY_NOT_SUPPORTED_PART_3)
+                                    + " "
+                                    + getString(R.string.SUPPORT_OR)
+                                    + " "
+                                    + getString(R.string.SUPPORT);
 
+                            title = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_TITLE);
+                        }
                     } else {
                         message = getString(R.string.SUPPORT_PLEASE)
                                 + " "
@@ -237,8 +258,9 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
                         title = getString(R.string.ERROR);
                     }
-                    BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this
-                            , message, title);
+                    if (null != message)
+                        BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this
+                                , message, title);
                 } catch (Exception e) {
                     Log.e(TAG, "json parsing exception", e);
                     BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
