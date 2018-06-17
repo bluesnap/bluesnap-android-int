@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
@@ -283,19 +284,8 @@ public class ContactInfoViewComponent extends LinearLayout {
     void setStateVisibilityByUserCountry() {
         if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-            /*inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
-                            updateTaxOnCountryStateChange();
-                        }
-                        //inputCity.requestFocus();
-                    }
-                }
-            });*/
+            changeStateInputAccordingToCountry();
         } else {
-            //inputState.setOnFocusChangeListener(null);
             setStateVisibility(GONE);
         }
     }
@@ -506,6 +496,36 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
+    }
+
+    /**
+     * returns state key array according to country
+     *
+     * @param countryString - country string ISO Alpha-2
+     * @return state key array
+     */
+    private String[] getStateArrays(@NonNull String countryString) {
+        String[] state_key_array = new String[0];
+        if (countryString.equals(BlueSnapValidator.STATE_NEEDED_COUNTRIES[0])) {
+            // check if US, BlueSnapValidator.STATE_NEEDED_COUNTRIES[0] = US
+            state_key_array = getResources().getStringArray(R.array.state_us_key_array);
+        } else if (countryString.equals(BlueSnapValidator.STATE_NEEDED_COUNTRIES[1])) {
+            // check if BR, BlueSnapValidator.STATE_NEEDED_COUNTRIES[1] = BR
+            state_key_array = getResources().getStringArray(R.array.state_br_key_array);
+        } else if (countryString.equals(BlueSnapValidator.STATE_NEEDED_COUNTRIES[2])) {
+            // check if CA, BlueSnapValidator.STATE_NEEDED_COUNTRIES[2] = CA
+            state_key_array = getResources().getStringArray(R.array.state_ca_key_array);
+        }
+        return state_key_array;
+    }
+
+    /**
+     * change State Input According To Country
+     */
+    protected void changeStateInputAccordingToCountry() {
+        String[] state_key_array = getStateArrays(getUserCountry());
+        if (0 < state_key_array.length && -1 == Arrays.asList(state_key_array).indexOf(getState()))
+            setState("");
     }
 }
 

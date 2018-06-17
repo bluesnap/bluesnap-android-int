@@ -63,10 +63,9 @@ public class StateActivity extends Activity {
                 state_values_array = getResources().getStringArray(R.array.state_ca_value_array);
                 state_key_array = getResources().getStringArray(R.array.state_ca_key_array);
             }
-            if (!"".equals(stateString))
-                localeState = state_values_array[Arrays.asList(state_key_array).indexOf(stateString)];
-            else
-                localeState = "";
+
+            Integer index = !"".equals(stateString) ? Arrays.asList(state_key_array).indexOf(stateString) : -1;
+            localeState = index != -1 ? state_values_array[index] : "";
         }
 
         adapter = new StateListAdapter(this, StateListObject.getStateListObject(state_values_array, state_key_array), localeState);
