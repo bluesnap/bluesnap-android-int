@@ -122,11 +122,6 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      */
     private void loadShopperFromSDKConfiguration() {
         final Shopper shopper = sdkConfiguration.getShopper();
-        if (shopper == null) {
-            Log.d(TAG, "SDK configurations contains no shopper, creating new.");
-            sdkConfiguration.setShopper(new Shopper());
-            return;
-        }
         updateShopperCCViews(shopper);
     }
 

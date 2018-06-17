@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -37,7 +38,7 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
      *
      * @param billingInfo - {@link BillingInfo}
      */
-    public void updateViewResourceWithDetails(BillingInfo billingInfo) {
+    public void updateViewResourceWithDetails(@NonNull BillingInfo billingInfo) {
         super.updateViewResourceWithDetails(billingInfo);
 
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
