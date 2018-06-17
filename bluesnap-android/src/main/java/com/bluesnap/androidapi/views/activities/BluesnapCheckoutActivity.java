@@ -191,8 +191,17 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * createsPayPal Token and redirects to Web View Activity
      */
     private void startPayPal() {
+        startPayPal(sdkRequest.getPriceDetails());
+    }
+
+    /**
+     * start PayPal
+     * createsPayPal Token and redirects to Web View Activity
+     *
+     * @param priceDetails {@link PriceDetails}
+     */
+    private void startPayPal(final PriceDetails priceDetails) {
         progressBar.setVisibility(View.VISIBLE);
-        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         BlueSnapService.getInstance().createPayPalToken(priceDetails.getAmount(), priceDetails.getCurrencyCode(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
@@ -232,8 +241,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                             );
 
                             Log.d(TAG, "Given currency not supported with PayPal - changing to PayPal supported Currency: " + currency);
-                            blueSnapService.onCurrencyChange(currency, BluesnapCheckoutActivity.this);
-                            startPayPal();
+                            PriceDetails localPriceDetails = blueSnapService.getConvertedPriceDetails(sdkRequest.getPriceDetails(), currency);
+                            startPayPal(localPriceDetails);
                         } else {
                             message = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_1)
                                     + " "
