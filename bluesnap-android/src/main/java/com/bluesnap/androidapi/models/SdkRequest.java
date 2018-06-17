@@ -10,13 +10,10 @@ import com.bluesnap.androidapi.services.TaxCalculator;
 public class SdkRequest {
 
     private PriceDetails priceDetails;
-    private String customTitle;
-    private String userEmail;
     private boolean shippingRequired;
     private boolean billingRequired;
     private boolean emailRequired;
     private boolean allowCurrencyChange = true;
-    private String shopperID;
     private TaxCalculator taxCalculator;
 
     private SdkRequest() {
@@ -39,22 +36,6 @@ public class SdkRequest {
 
     public PriceDetails getPriceDetails() {
         return priceDetails;
-    }
-
-    public String getCustomTitle() {
-        return customTitle;
-    }
-
-    public void setCustomTitle(String customTitle) {
-        this.customTitle = customTitle;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
     }
 
     public boolean isShippingRequired() {
@@ -87,10 +68,6 @@ public class SdkRequest {
 
     public void setAllowCurrencyChange(boolean allowCurrencyChange) {
         this.allowCurrencyChange = allowCurrencyChange;
-    }
-
-    public String getShopperID() {
-        return shopperID;
     }
 
     public boolean verify() throws BSPaymentRequestException {

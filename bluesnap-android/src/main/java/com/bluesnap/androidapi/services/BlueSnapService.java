@@ -568,7 +568,6 @@ public class BlueSnapService {
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         sdkResult.setAmount(priceDetails.getAmount());
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
-        sdkResult.setShopperID(sdkRequest.getShopperID());
     }
 
     /**
@@ -583,7 +582,6 @@ public class BlueSnapService {
         convertPrice(priceDetails, newCurrencyNameCode);
         sdkResult.setAmount(priceDetails.getAmount());
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
-        sdkResult.setShopperID(sdkRequest.getShopperID());
         BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 

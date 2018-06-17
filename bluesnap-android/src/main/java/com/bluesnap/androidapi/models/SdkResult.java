@@ -31,8 +31,6 @@ public class SdkResult implements Parcelable {
 
     private String paypalInvoiceId;
 
-    private String shopperID;
-
     private BillingInfo billingInfo;
     private ShippingInfo shippingInfo;
 
@@ -43,7 +41,6 @@ public class SdkResult implements Parcelable {
     }
 
     protected SdkResult(Parcel in) {
-        setShopperID(in.readString());
         setLast4Digits(in.readString());
         setAmount(in.readDouble());
         setCurrencyNameCode(in.readString());
@@ -58,7 +55,6 @@ public class SdkResult implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getShopperID());
         dest.writeString(getLast4Digits());
         dest.writeDouble(getAmount());
         dest.writeString(getCurrencyNameCode());
@@ -87,9 +83,7 @@ public class SdkResult implements Parcelable {
         if (!getLast4Digits().equals(that.getLast4Digits())) return false;
         if (!getAmount().equals(that.getAmount())) return false;
         if (!getCurrencyNameCode().equals(that.getCurrencyNameCode())) return false;
-        if (!getShopperID().equals(that.getShopperID())) return false;
         return getCardType().equals(that.getCardType());
-
     }
 
     @Override
@@ -97,7 +91,6 @@ public class SdkResult implements Parcelable {
         int result = getLast4Digits().hashCode();
         result = 31 * result + getAmount().hashCode();
         result = 31 * result + getCurrencyNameCode().hashCode();
-        result = 31 * result + getShopperID().hashCode();
         result = 31 * result + getCardType().hashCode();
         return result;
     }
@@ -118,7 +111,6 @@ public class SdkResult implements Parcelable {
                 ", cardType='" + getCardType() + '\'' +
                 ", expDate='" + getExpDate() + '\'' +
                 ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' +
-                ", shopperID='" + getShopperID() + '\'' +
                 ", token=" + getToken() + '\'' +
                 ", billingInfo" + billingInfo + '\'' +
                 ", shippingInfo" + shippingInfo + '\'' +
@@ -148,14 +140,6 @@ public class SdkResult implements Parcelable {
 
     public void setCurrencyNameCode(String currencyNameCode) {
         this.currencyNameCode = currencyNameCode;
-    }
-
-    public String getShopperID() {
-        return shopperID;
-    }
-
-    public void setShopperID(String shopperID) {
-        this.shopperID = shopperID;
     }
 
     public String getCardType() {
@@ -218,6 +202,5 @@ public class SdkResult implements Parcelable {
     public void setKountSessionId(String kountSessionId) {
         this.kountSessionId = kountSessionId;
     }
-
 
 }

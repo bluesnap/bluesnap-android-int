@@ -272,7 +272,6 @@ public class DemoMainActivity extends AppCompatActivity {
 //        }
 
 
-        sdkRequest.setCustomTitle("Demo Merchant");
         sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
         try {
             sdkRequest.verify();
