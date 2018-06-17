@@ -34,6 +34,9 @@ public class Shopper extends ContactInfo {
     @Nullable
     @SerializedName("lastPaymentInfo")
     private LastPaymentInfo lastPaymentInfo;
+    @Nullable
+    @SerializedName("chosenPaymentMethod")
+    private ChosenPaymentMethod chosenPaymentMethod;
 
     private CreditCardInfo newCreditCardInfo;
 
@@ -132,5 +135,14 @@ public class Shopper extends ContactInfo {
 
     public void setLastPaymentInfo(@Nullable LastPaymentInfo lastPaymentInfo) {
         this.lastPaymentInfo = lastPaymentInfo;
+    }
+
+    @Nullable
+    public ChosenPaymentMethod getChosenPaymentMethod() {
+        return chosenPaymentMethod;
+    }
+
+    public void setChosenPaymentMethod(@Nullable ChosenPaymentMethod chosenPaymentMethod) {
+        this.chosenPaymentMethod = chosenPaymentMethod;
     }
 }
