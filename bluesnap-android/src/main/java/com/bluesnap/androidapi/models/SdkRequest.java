@@ -10,10 +10,8 @@ import com.bluesnap.androidapi.services.TaxCalculator;
 public class SdkRequest {
 
     private PriceDetails priceDetails;
-    private boolean shippingRequired;
-    private boolean billingRequired;
-    private boolean emailRequired;
     private boolean allowCurrencyChange = true;
+    private ShopperInfoConfig shopperInfoConfig = new ShopperInfoConfig(false, false, false);
     private TaxCalculator taxCalculator;
 
     private SdkRequest() {
@@ -21,46 +19,18 @@ public class SdkRequest {
 
     public SdkRequest(Double amount, String currencyNameCode) {
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
-        setBillingRequired(false);
-        setEmailRequired(false);
-        setShippingRequired(false);
     }
 
     public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
 
         priceDetails = new PriceDetails(amount, currencyNameCode, taxAmount);
-        setBillingRequired(billingRequired);
-        setEmailRequired(emailRequired);
-        setShippingRequired(shippingRequired);
+        shopperInfoConfig = new ShopperInfoConfig(shippingRequired, billingRequired, emailRequired);
     }
 
     public PriceDetails getPriceDetails() {
         return priceDetails;
     }
 
-    public boolean isShippingRequired() {
-        return shippingRequired;
-    }
-
-    public void setShippingRequired(boolean shippingRequired) {
-        this.shippingRequired = shippingRequired;
-    }
-
-    public boolean isBillingRequired() {
-        return billingRequired;
-    }
-
-    public boolean isEmailRequired() {
-        return emailRequired;
-    }
-
-    public void setEmailRequired(boolean emailRequired) {
-        this.emailRequired = emailRequired;
-    }
-
-    public void setBillingRequired(boolean billingRequired) {
-        this.billingRequired = billingRequired;
-    }
 
     public boolean isAllowCurrencyChange() {
         return allowCurrencyChange;
@@ -82,4 +52,18 @@ public class SdkRequest {
     public void setTaxCalculator(TaxCalculator taxCalculator) {
         this.taxCalculator = taxCalculator;
     }
+
+
+    public boolean isShippingRequired() {
+        return shopperInfoConfig.isShippingRequired();
+    }
+
+    public boolean isBillingRequired() {
+        return shopperInfoConfig.isBillingRequired();
+    }
+
+    public boolean isEmailRequired() {
+        return shopperInfoConfig.isEmailRequired();
+    }
+
 }
