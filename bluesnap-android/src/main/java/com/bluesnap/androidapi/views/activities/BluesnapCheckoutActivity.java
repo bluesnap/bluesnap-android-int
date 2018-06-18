@@ -143,10 +143,12 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 shopper.setNewCreditCardInfo((CreditCardInfo) oneLineCCViewAdapter.getItem(position));
+                BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
                 if (!sdkRequest.isEmailRequired())
-                    shopper.getNewCreditCardInfo().getBillingContactInfo().setEmail(null);
+                    billingInfo.setEmail(null);
+                else
+                    billingInfo.setEmail(shopper.getEmail());
                 if (!sdkRequest.isBillingRequired()) {
-                    BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
                     billingInfo.setAddress(null);
                     billingInfo.setCity(null);
                     billingInfo.setState(null);
