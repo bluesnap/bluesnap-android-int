@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
@@ -283,19 +284,8 @@ public class ContactInfoViewComponent extends LinearLayout {
     void setStateVisibilityByUserCountry() {
         if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-            /*inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
-                            updateTaxOnCountryStateChange();
-                        }
-                        //inputCity.requestFocus();
-                    }
-                }
-            });*/
+            setState("");
         } else {
-            //inputState.setOnFocusChangeListener(null);
             setStateVisibility(GONE);
         }
     }
