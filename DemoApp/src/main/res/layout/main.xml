@@ -8,21 +8,59 @@
         android:id="@+id/mainLinearLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
 
-        <ZoomButton
-            android:id="@+id/merchantAppSubmitButton"
-            android:layout_width="271dp"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/shopperLinearLayout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="61dp"
-            android:layout_weight="0.11"
-            android:adjustViewBounds="true"
-            android:baselineAlignBottom="false"
-            android:onClick="onPaySubmit"
-            android:src="@drawable/chekout_btn"
-            android:text="Pay Now with BlueSnap" />
+            android:gravity="center"
+            android:paddingBottom="0dp"
+            android:paddingTop="20dp"
+            android:paddingHorizontal="20dp"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/returningShopperSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:allowUndo="true"
+                android:checked="false"
+                android:clickable="true"
+                android:enabled="true"
+                android:text="@string/existing_shopper"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/shopperIdLabel"
+                android:text="@string/shopper_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+            <EditText
+                android:id="@+id/returningShopperEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:hint="12345678"
+                android:inputType="numberDecimal"
+                android:text="22061813" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/shopperDetailsTextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:hint="@string/returning_shopper_details"
+            android:layout_marginBottom="10dp"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TableLayout
             android:layout_width="wrap_content"
@@ -145,7 +183,7 @@
                     android:background="@drawable/line"></LinearLayout>
             </TableRow>
 
-            <TableRow
+            <!--TableRow
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="0dp"
@@ -172,25 +210,8 @@
                     android:inputType="numberDecimal"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <TextView
-                    android:id="@+id/shopperText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:gravity="center"
-                    android:hint="Shopper"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <EditText
-                    android:id="@+id/returningShopperEditText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="12345678"
-                    android:text="22061813"
-                    android:inputType="numberDecimal"
-                    android:layout_marginRight="10dp" />
-
-            </TableRow>
+            </TableRow-->
 
             <TableRow
                 android:layout_width="match_parent"
@@ -206,12 +227,24 @@
             </TableRow>
         </TableLayout>
 
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/switchesLinearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="0dp"
+        android:paddingTop="30dp"
+        android:paddingHorizontal="30dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <Switch
             android:id="@+id/shippingSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp"
+            android:padding="8dp"
             android:allowUndo="true"
             android:checked="false"
             android:clickable="true"
@@ -224,7 +257,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp"
+            android:padding="8dp"
             android:allowUndo="true"
             android:checked="false"
             android:clickable="true"
@@ -237,13 +270,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="15dp"
+            android:padding="8dp"
             android:allowUndo="true"
             android:checked="false"
             android:clickable="true"
             android:enabled="true"
             android:text="@string/emailField"
             android:textSize="14sp" />
+    </LinearLayout>
 
         <Switch
             android:id="@+id/allowCurrencyChangeSwitch"
@@ -257,6 +291,21 @@
             android:enabled="true"
             android:text="@string/allow_currency_change"
             android:textSize="14sp" />
+
+        <ZoomButton
+            android:id="@+id/merchantAppSubmitButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:layout_weight="0.11"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="false"
+            android:onClick="onPaySubmit"
+            android:src="@drawable/chekout_btn"
+            android:text="Pay Now with BlueSnap" />
+
     </LinearLayout>
 
 
@@ -266,6 +315,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_marginBottom="-20dp"
+        android:layout_marginRight="-20dp"
         android:layout_gravity="bottom|center_vertical"
         android:background="@drawable/logo_poweredby_bluesnap" />
 

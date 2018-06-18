@@ -665,8 +665,8 @@ public class BlueSnapService {
         if (shopper != null) {
             BillingInfo billingInfo = new BillingInfo(shopper);
             billingInfo.setEmail(shopper.getEmail());
-            ShippingInfo shippingInfo = new ShippingInfo(shopper.getShippingContactInfo());
-            ChosenPaymentMethod chosenPaymentMethod = null;
+            ShippingInfo shippingInfo = shopper.getShippingContactInfo() == null ? null : new ShippingInfo(shopper.getShippingContactInfo());
+            ChosenPaymentMethod chosenPaymentMethod = shopper.getChosenPaymentMethod() == null ? null : new ChosenPaymentMethod(shopper.getChosenPaymentMethod());
             res = new ShopperConfiguration(billingInfo, shippingInfo, chosenPaymentMethod);
         }
         return res;

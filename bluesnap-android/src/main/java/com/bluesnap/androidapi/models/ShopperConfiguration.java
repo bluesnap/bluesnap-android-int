@@ -1,12 +1,16 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.Nullable;
+
 public class ShopperConfiguration {
 
     private BillingInfo billingInfo;
+    @Nullable
     private ShippingInfo shippingInfo;
+    @Nullable
     private ChosenPaymentMethod chosenPaymentMethod;
 
-    public ShopperConfiguration(BillingInfo billingInfo, ShippingInfo shippingInfo, ChosenPaymentMethod chosenPaymentMethod) {
+    public ShopperConfiguration(BillingInfo billingInfo, @Nullable ShippingInfo shippingInfo, @Nullable ChosenPaymentMethod chosenPaymentMethod) {
         this.billingInfo = billingInfo;
         this.shippingInfo = shippingInfo;
         this.chosenPaymentMethod = chosenPaymentMethod;
@@ -18,6 +22,7 @@ public class ShopperConfiguration {
         this.billingInfo = billingInfo;
     }
 
+    @Nullable
     public ShippingInfo getShippingInfo() {
         return shippingInfo;
     }
@@ -26,6 +31,7 @@ public class ShopperConfiguration {
         this.shippingInfo = shippingInfo;
     }
 
+    @Nullable
     public ChosenPaymentMethod getChosenPaymentMethod() {
         return chosenPaymentMethod;
     }

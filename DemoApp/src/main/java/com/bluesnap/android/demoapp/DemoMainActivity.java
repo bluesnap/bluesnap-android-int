@@ -1,7 +1,6 @@
 package com.bluesnap.android.demoapp;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -20,9 +20,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.ChosenPaymentMethod;
+import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShopperConfiguration;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -57,7 +61,6 @@ public class DemoMainActivity extends AppCompatActivity {
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private Spinner merchantStoreCurrencySpinner;
-    private String returningOrNewShopper = "";
     private EditText productPriceEditText;
     private Currency currency;
     private TextView currencySym;
@@ -73,7 +76,9 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch billingSwitch;
     private Switch emailSwitch;
     private Switch allowCurrencyChangeSwitch;
-    private EditText taxAmountEditText;
+    Switch returningShopperSwitch;
+    EditText returningShopperEditText;
+    private TextView shopperDetailsTextView;
 
     /**
      * Called when the activity is first created.
@@ -94,10 +99,15 @@ public class DemoMainActivity extends AppCompatActivity {
         emailSwitch.setChecked(false);
         allowCurrencyChangeSwitch = findViewById(R.id.allowCurrencyChangeSwitch);
         allowCurrencyChangeSwitch.setChecked(true);
+        returningShopperSwitch = findViewById(R.id.returningShopperSwitch);
+        returningShopperSwitch.setChecked(false);
+        returningShopperEditText = findViewById(R.id.returningShopperEditText);
+        shopperDetailsTextView = findViewById(R.id.shopperDetailsTextView);
+        shopperDetailsTextView.setVisibility(View.INVISIBLE);
+        updateReturningShopperViews(false);
 
         progressBar.setVisibility(View.VISIBLE);
         productPriceEditText = findViewById(R.id.productPriceEditText);
-        taxAmountEditText = findViewById(R.id.demoTaxEditText);
         currencySym = findViewById(R.id.currencySym);
         ratesSpinner = findViewById(R.id.rateSpinner);
         merchantStoreCurrencySpinner = findViewById(R.id.merchantStoreCurrencySpinner);
@@ -112,29 +122,40 @@ public class DemoMainActivity extends AppCompatActivity {
         bluesnapService = BlueSnapService.getInstance();
 
         generateMerchantToken();
-        EditText returningShopperEditText = findViewById(R.id.returningShopperEditText);
-        returningShopperEditText.addTextChangedListener(new TextWatcher() {
+
+
+        returningShopperEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() == 8) {
-                    returningOrNewShopper = "?shopperId=" + s;
-                    generateMerchantToken();
-                } else if (s.length() == 0) {
-                    returningOrNewShopper = "";
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus && returningShopperEditText.getText().toString().length() > 0) {
                     generateMerchantToken();
                 }
             }
         });
+
+        returningShopperSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                updateReturningShopperViews(isChecked);
+                if (isChecked && returningShopperEditText.getText().toString().length() == 0) {
+                    return;
+                }
+                generateMerchantToken();
+            }
+        });
+    }
+
+    private void updateReturningShopperViews(Boolean showReturningShopper) {
+
+        TextView shopperIdLabel = findViewById(R.id.shopperIdLabel);
+        if (showReturningShopper) {
+            shopperIdLabel.setVisibility(View.VISIBLE);
+            returningShopperEditText.setVisibility(View.VISIBLE);
+        } else {
+            shopperIdLabel.setVisibility(View.INVISIBLE);
+            returningShopperEditText.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void showDemoAppVersion() {
@@ -308,6 +329,13 @@ public class DemoMainActivity extends AppCompatActivity {
     }
 
     private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
+
+        String returningOrNewShopper = "";
+        String returningShopperId = returningShopperEditText.getText().toString();
+        if (returningShopperSwitch.isChecked() && returningShopperId.length() >= 4) {
+            returningOrNewShopper = "?shopperId=" + returningShopperId;
+        }
+
         final AsyncHttpClient httpClient = new AsyncHttpClient();
         httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
         httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
@@ -324,8 +352,35 @@ public class DemoMainActivity extends AppCompatActivity {
                 merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
                 tokenServiceInterface.onServiceSuccess();
             }
-
         });
+    }
+
+    /**
+     * This method gets called after we create a token, and we have a returning shopper, we show how
+     * to call bluesnapService.getShopperConfiguration() and get the shopper details.
+     * In this case, we display the name and chosen payment method on the screen.
+     */
+    private void updateReturningShopperDetails() {
+        if (returningShopperSwitch.isChecked()) {
+            ShopperConfiguration shopperInfo = bluesnapService.getShopperConfiguration();
+            String shopperInfoText = "";
+            if (shopperInfo != null) {
+                BillingInfo billingInfo = shopperInfo.getBillingInfo();
+                shopperInfoText = billingInfo.getFullName();
+                ChosenPaymentMethod chosenPaymentMethod = shopperInfo.getChosenPaymentMethod();
+                if (chosenPaymentMethod != null) {
+                    shopperInfoText += "; Payment method: " + chosenPaymentMethod.getChosenPaymentMethodType().name();
+                    CreditCard creditCard = chosenPaymentMethod.getCreditCard();
+                    if (creditCard != null) {
+                        shopperInfoText += " " + creditCard.getCardLastFourDigits();
+                    }
+                }
+            }
+            shopperDetailsTextView.setText(shopperInfoText);
+            shopperDetailsTextView.setVisibility(View.VISIBLE);
+        } else {
+            shopperDetailsTextView.setVisibility(View.INVISIBLE);
+        }
     }
 
     //TODO: Find a mock merchant service t¡o provide this
@@ -369,9 +424,11 @@ public class DemoMainActivity extends AppCompatActivity {
 
                     @Override
                     public void setNegativeDialog() {
-                        generateMerchantToken();
+                        //generateMerchantToken();
+                        progressBar.setVisibility(View.INVISIBLE);
+
                     }
-                }, "Close", "Retry");
+                }, "Close", "Cancel");
             }
         });
     }
@@ -391,6 +448,7 @@ public class DemoMainActivity extends AppCompatActivity {
                 linearLayoutForProgressBar.setVisibility(View.VISIBLE);
                 productPriceEditText.setVisibility(View.VISIBLE);
                 productPriceEditText.requestFocus();
+                updateReturningShopperDetails();
             }
 
             @Override

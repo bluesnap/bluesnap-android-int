@@ -13,5 +13,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="allow_currency_change">Allow Currency Change</string>
+    <string name="returning_shopper_details">Returning shopper details</string>
+    <string name="existing_shopper">Existing Shopper</string>
+    <string name="shopper_id">ID</string>
 
 </resources>
