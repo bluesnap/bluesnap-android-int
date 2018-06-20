@@ -99,9 +99,10 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      * invoked when the activity may be temporarily destroyed, save the instance state here
      */
     @Override
-    public void onActivitySavedInstanceState() {
+    public void onActivitySavedInstanceState(Bundle outState) {
         // get Credit Card Info
         shopper.setNewCreditCardInfo(getViewResourceDetails());
+        outState.putBoolean("isShippingSameAsBilling", amountTaxShippingComponentView.isShippingSameAsBilling());
     }
 
     /**
@@ -111,8 +112,10 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      * The savedInstanceState Bundle is same as the one used in onCreate().
      */
     @Override
-    public void onActivityRestoredInstanceState() {
+    public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
         updateViewResourceWithDetails(shopper.getNewCreditCardInfo());
+        // Returns the value associated with the given key, or false if no mapping of the desired type exists for the given key.
+        amountTaxShippingComponentView.sendShippingSameAsBillingBroadcast(savedInstanceState.getBoolean("isShippingSameAsBilling"));
     }
 
     @Override

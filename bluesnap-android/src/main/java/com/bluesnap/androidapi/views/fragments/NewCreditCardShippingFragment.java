@@ -89,21 +89,21 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        onActivityRestoredInstanceState();
+        onActivityRestoredInstanceState(savedInstanceState);
     }
 
     @Override
     public void onActivityBackPressed() {
-        onActivitySavedInstanceState();
+        // get Shipping Info
+        shopper.setShippingContactInfo(getShippingInfo());
     }
 
     /**
      * invoked when the activity may be temporarily destroyed, save the instance state here
      */
     @Override
-    public void onActivitySavedInstanceState() {
-        // get Shipping Info
-        shopper.setShippingContactInfo(getShippingInfo());
+    public void onActivitySavedInstanceState(Bundle outState) {
+        onActivityBackPressed();
     }
 
     /**
@@ -113,7 +113,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      * The savedInstanceState Bundle is same as the one used in onCreate().
      */
     @Override
-    public void onActivityRestoredInstanceState() {
+    public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
         updateViewResourceWithDetails(shopper.getShippingContactInfo());
     }
 

@@ -107,7 +107,7 @@ public class CreditCardActivity extends AppCompatActivity {
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivityRestoredInstanceState();
+        blueSnapFragment.onActivityRestoredInstanceState(savedInstanceState);
 
     }
 
@@ -120,7 +120,7 @@ public class CreditCardActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("fragmentType", fragmentType);
         BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivitySavedInstanceState();
+        blueSnapFragment.onActivitySavedInstanceState(outState);
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }
@@ -139,8 +139,9 @@ public class CreditCardActivity extends AppCompatActivity {
         super.onBackPressed();
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
-            setHeaderTextView(NewCreditCardFragment.TAG);
             blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+            if (NewCreditCardFragment.class.getSimpleName().equals(blueSnapFragment.getClass().getSimpleName()))
+                setHeaderTextView(NewCreditCardFragment.TAG);
             blueSnapFragment.registerBlueSnapLocalBroadcastReceiver();
         } else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType)) {
             setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
@@ -365,7 +366,7 @@ public class CreditCardActivity extends AppCompatActivity {
      * @param shopper      - {@link Shopper}
      * @param resultIntent - {@link Intent}
      * @throws UnsupportedEncodingException - UnsupportedEncodingException
-     * @throws JSONException - JSONException
+     * @throws JSONException                - JSONException
      */
     private void tokenizeCardOnServer(final Shopper shopper, final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         final PurchaseDetails purchaseDetails = new PurchaseDetails(
