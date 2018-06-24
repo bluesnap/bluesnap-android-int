@@ -127,19 +127,6 @@ public class ContactInfoViewComponent extends LinearLayout {
         super.onViewRemoved(child);
     }
 
-    @Nullable
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        unregisterBlueSnapLocalBroadcastReceiver();
-        return super.onSaveInstanceState();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        registerBlueSnapLocalBroadcastReceiver();
-        super.onRestoreInstanceState(state);
-    }
-
     /**
      * unregister broadcastReceiver for BlueSnap Local Broadcast Manager
      */

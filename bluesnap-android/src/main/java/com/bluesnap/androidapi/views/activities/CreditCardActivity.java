@@ -2,6 +2,7 @@ package com.bluesnap.androidapi.views.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -169,10 +170,8 @@ public class CreditCardActivity extends AppCompatActivity {
 
         if (fragmentType.equals(ReturningShopperBillingFragment.TAG))
             blueSnapFragment = ReturningShopperBillingFragment.newInstance(CreditCardActivity.this, new Bundle());
-            //BlueSnapLocalBroadcastManager.sendMessage(this, BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT, TAG);
         else if (fragmentType.equals(ReturningShopperShippingFragment.TAG))
             blueSnapFragment = ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
-        //BlueSnapLocalBroadcastManager.sendMessage(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, TAG);
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.creditCardFrameLayout, blueSnapFragment).commit();
@@ -236,7 +235,6 @@ public class CreditCardActivity extends AppCompatActivity {
 
             if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event)
                     || BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event)) {
-                //TODO: check if last fragment is returning shopper credit card do pop back stack or replace
                 getFragmentManager().popBackStack();
                 setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
                 setHamburgerMenuButtonVisibility(View.VISIBLE);
