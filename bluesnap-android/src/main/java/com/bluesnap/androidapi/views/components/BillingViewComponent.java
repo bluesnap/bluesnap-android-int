@@ -87,7 +87,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         super.updateViewResourceWithDetails(billingInfo);
         if (isEmailRequired)
             inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
-        setStateVisibilityByUserCountry();
     }
 
     /**

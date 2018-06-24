@@ -235,7 +235,8 @@ public class CreditCardActivity extends AppCompatActivity {
 
             if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event)
                     || BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event)) {
-                getFragmentManager().popBackStack();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.creditCardFrameLayout, ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle())).commit();
                 setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
                 setHamburgerMenuButtonVisibility(View.VISIBLE);
             } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT.equals(event)) {
