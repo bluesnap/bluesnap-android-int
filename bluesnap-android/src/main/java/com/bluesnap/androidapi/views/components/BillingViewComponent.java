@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
@@ -182,4 +183,5 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         } else
             setStateVisibility(GONE);
     }
+
 }

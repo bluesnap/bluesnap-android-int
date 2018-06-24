@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -92,13 +93,15 @@ public class ContactInfoViewComponent extends LinearLayout {
                         TAG);
             }
         });
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
+
+        unregisterBlueSnapLocalBroadcastReceiver();
+        registerBlueSnapLocalBroadcastReceiver();
 
         inputCity = findViewById(R.id.input_city);
         inputAddress = findViewById(R.id.input_address);
 
         countryImageButton = findViewById(R.id.countryImageButton);
-        setUserCountry(BlueSnapService.getInstance().getUserCountry(context));
+        setUserCountry("");
         // activate all on focus out event listeners
         setOnFocusChangeListenerForInputs();
         // activate all on editor action listener IME_ACTION_NEXT
@@ -110,9 +113,6 @@ public class ContactInfoViewComponent extends LinearLayout {
                 BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, getUserCountry(), TAG);
             }
         });
-
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
-
     }
 
     /**
@@ -123,8 +123,21 @@ public class ContactInfoViewComponent extends LinearLayout {
      */
     @Override
     public void onViewRemoved(View child) {
-        super.onViewRemoved(child);
         unregisterBlueSnapLocalBroadcastReceiver();
+        super.onViewRemoved(child);
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        unregisterBlueSnapLocalBroadcastReceiver();
+        return super.onSaveInstanceState();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        registerBlueSnapLocalBroadcastReceiver();
+        super.onRestoreInstanceState(state);
     }
 
     /**
@@ -496,6 +509,7 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
+
     }
 }
 

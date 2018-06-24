@@ -72,7 +72,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         // get Credit Card Info
-        newCreditCardInfo = shopper != null ? shopper.getNewCreditCardInfo() : new CreditCardInfo();
+        newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
 
@@ -103,7 +103,8 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      */
     @Override
     public void onActivitySavedInstanceState(Bundle outState) {
-        onActivityBackPressed();
+        // get Shipping Info
+        shopper.setShippingContactInfo(getShippingInfo());
     }
 
     /**
