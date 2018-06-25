@@ -178,7 +178,7 @@ public class BlueSnapValidator {
      */
     public static boolean checkCountryHasState(String countryText) {
         for (String item : STATE_NEEDED_COUNTRIES) {
-            if (item.equals(countryText)) {
+            if (item.equalsIgnoreCase(countryText)) {
                 return true;
             }
         }
