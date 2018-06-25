@@ -15,4 +15,12 @@ public class BlueSnapFragment extends Fragment {
     public void onActivityBackPressed() {
 
     }
+
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
+
+    }
+
+    public void registerBlueSnapLocalBroadcastReceiver() {
+
+    }
 }

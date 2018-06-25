@@ -138,6 +138,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
             blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+            blueSnapFragment.registerBlueSnapLocalBroadcastReceiver();
             if (NewCreditCardFragment.class.getSimpleName().equals(blueSnapFragment.getClass().getSimpleName()))
                 setHeaderTextView(NewCreditCardFragment.TAG);
         } else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType)) {
