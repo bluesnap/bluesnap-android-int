@@ -71,6 +71,10 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
+
+
         final View inflate = inflater.inflate(R.layout.returning_shopper_credit_card_fragment, container, false);
 
         // get Shopper

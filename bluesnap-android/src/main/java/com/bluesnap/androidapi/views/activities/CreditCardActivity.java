@@ -2,7 +2,6 @@ package com.bluesnap.androidapi.views.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -63,6 +62,14 @@ public class CreditCardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null && BlueSnapService.getInstance().getSdkRequest() == null) {
+            Log.e(TAG, "savedInstanceState missing");
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The checkout process was interrupted."));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.credit_card_activity);
 
         // recovering the instance state
@@ -105,7 +112,6 @@ public class CreditCardActivity extends AppCompatActivity {
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivityRestoredInstanceState(savedInstanceState);
 
     }
 
