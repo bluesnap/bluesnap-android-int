@@ -42,7 +42,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
-    static final int RESULT_SDK_FAILED = -2;
+    public static final int RESULT_SDK_FAILED = -2;
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";
@@ -55,6 +55,14 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null && BlueSnapService.getInstance().getSdkRequest() == null) {
+            Log.e(TAG, "savedInstanceState missing");
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The checkout process was interrupted."));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.choose_payment_method);
         sdkRequest = blueSnapService.getSdkRequest();
         sdkConfiguration = blueSnapService.getsDKConfiguration();

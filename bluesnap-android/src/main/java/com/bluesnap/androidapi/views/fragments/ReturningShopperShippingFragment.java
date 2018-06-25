@@ -45,6 +45,9 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
+
         final View inflate = inflater.inflate(R.layout.returning_shopper_shipping_fragment, container, false);
 
         // get Shopper

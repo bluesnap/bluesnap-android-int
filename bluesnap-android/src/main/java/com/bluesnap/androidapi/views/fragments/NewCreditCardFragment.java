@@ -66,7 +66,8 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
+        if (savedInstanceState != null)
+            return null;
 //        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         final View inflate = inflater.inflate(R.layout.new_credit_card_fragment, container, false);
 
