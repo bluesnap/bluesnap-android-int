@@ -175,6 +175,11 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     }
 
     @Override
+    void setStateVisibilityByUserCountry() {
+        setStateVisibilityByUserCountry("");
+    }
+
+    @Override
     void setStateVisibilityByUserCountry(String state) {
         if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
