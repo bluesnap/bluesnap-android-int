@@ -152,8 +152,8 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputZip.setText(AndroidUtil.stringify(contactInfo.getZip()));
         inputCity.setText(AndroidUtil.stringify(contactInfo.getCity()));
         inputAddress.setText(AndroidUtil.stringify(contactInfo.getAddress()));
-        inputState.setText(AndroidUtil.stringify(contactInfo.getState()));
         setUserCountry(AndroidUtil.stringify(contactInfo.getCountry()));
+        setStateVisibilityByUserCountry(AndroidUtil.stringify(contactInfo.getState()));
     }
 
     /**
@@ -282,9 +282,16 @@ public class ContactInfoViewComponent extends LinearLayout {
      * set On Focus Change Listener For State Input according to Country
      */
     void setStateVisibilityByUserCountry() {
+        setStateVisibilityByUserCountry("");
+    }
+
+    /**
+     * set On Focus Change Listener For State Input according to Country
+     */
+    void setStateVisibilityByUserCountry(String state) {
         if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-            setState("");
+            setState(state);
         } else {
             setStateVisibility(GONE);
         }

@@ -87,7 +87,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         super.updateViewResourceWithDetails(billingInfo);
         if (isEmailRequired)
             inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
-        setStateVisibilityByUserCountry();
     }
 
     /**
@@ -177,9 +176,14 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
     @Override
     void setStateVisibilityByUserCountry() {
+        setStateVisibilityByUserCountry("");
+    }
+
+    @Override
+    void setStateVisibilityByUserCountry(String state) {
         if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-            setState("");
+            setState(state);
         } else
             setStateVisibility(GONE);
     }
