@@ -111,7 +111,6 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
 
     }
 
@@ -123,8 +122,7 @@ public class CreditCardActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("fragmentType", fragmentType);
-        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivitySavedInstanceState(outState);
+        getBlueSnapFragment().onActivitySavedInstanceState(outState);
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }
@@ -137,17 +135,15 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivityBackPressed();
+        getBlueSnapFragment().onActivityBackPressed();
 
         super.onBackPressed();
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
-            blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-            blueSnapFragment.registerBlueSnapLocalBroadcastReceiver();
-            if (NewCreditCardFragment.class.getSimpleName().equals(blueSnapFragment.getClass().getSimpleName()))
+            getBlueSnapFragment().registerBlueSnapLocalBroadcastReceiver();
+            if (NewCreditCardFragment.class.getSimpleName().equals(getBlueSnapFragmentClassSimpleName()))
                 setHeaderTextView(NewCreditCardFragment.TAG);
-        } else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType)) {
+        } else if (ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName())) {
             setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
             setHamburgerMenuButtonVisibility(View.VISIBLE);
         }
@@ -468,5 +464,23 @@ public class CreditCardActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+     * get current BlueSnap Fragment view
+     *
+     * @return BlueSnapFragment current view
+     */
+    private BlueSnapFragment getBlueSnapFragment() {
+        return (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+    }
+
+    /**
+     * get BlueSnap Fragment Class SimpleName
+     *
+     * @return BlueSnapFragment().getClass().getSimpleName();
+     */
+    private String getBlueSnapFragmentClassSimpleName() {
+        return getBlueSnapFragment().getClass().getSimpleName();
     }
 }
