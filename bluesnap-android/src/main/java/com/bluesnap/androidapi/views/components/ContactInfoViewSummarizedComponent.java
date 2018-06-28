@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -70,23 +71,26 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
      *
      * @param contactInfo - {@link ContactInfo}
      */
-    public void updateResource(ContactInfo contactInfo) {
-        updateResource(contactInfo.getFullName(), contactInfo.getAddress(), contactInfo.getCity(), contactInfo.getState(), contactInfo.getZip(), contactInfo.getCountry());
+    public void updateViewResourceWithDetails(@NonNull ContactInfo contactInfo) {
+        updateViewResourceWithDetails(contactInfo.getFullName(), contactInfo.getAddress(), contactInfo.getCity(), contactInfo.getState(), contactInfo.getZip(), contactInfo.getCountry());
     }
 
     /**
      * update resource with details
      *
      * @param fullName - fullName
-     * @param address - address
-     * @param state - state
-     * @param zip - zip
-     * @param country - country
+     * @param address  - address
+     * @param state    - state
+     * @param zip      - zip
+     * @param country  - country
      */
-    private void updateResource(String fullName, String address, String city, String state, String zip, String country) {
+    private void updateViewResourceWithDetails(String fullName, String address, String city, String state, String zip, String country) {
+        fullName = stringify(fullName);
         address = stringify(address);
         city = stringify(city);
         state = stringify(state);
+        zip = stringify(zip);
+        country = stringify(country);
 
         if (!address.isEmpty())
             address += ",";

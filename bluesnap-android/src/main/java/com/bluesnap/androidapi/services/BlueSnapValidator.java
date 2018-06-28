@@ -1,11 +1,17 @@
 package com.bluesnap.androidapi.services;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Patterns;
 
+import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
+import com.bluesnap.androidapi.models.ShippingInfo;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -172,7 +178,7 @@ public class BlueSnapValidator {
      */
     public static boolean checkCountryHasState(String countryText) {
         for (String item : STATE_NEEDED_COUNTRIES) {
-            if (item.equals(countryText)) {
+            if (item.equalsIgnoreCase(countryText)) {
                 return true;
             }
         }
@@ -205,6 +211,54 @@ public class BlueSnapValidator {
         } else {
             return true;
         }
+    }
+
+
+    /**
+     * Billing Info Validation
+     *
+     * @param billingInfo           {@link BillingInfo}
+     * @param isEmailRequired       is Email Required
+     * @param isFullBillingRequired is Full Billing Required
+     */
+    public static boolean billingInfoValidation(@NonNull BillingInfo billingInfo, boolean isEmailRequired, boolean isFullBillingRequired) {
+        boolean validInput = contactInfoValidation(billingInfo, isFullBillingRequired);
+        if (isEmailRequired)
+            validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify((billingInfo.getEmail())), BlueSnapValidator.EditTextFields.EMAIL_FIELD);
+        return validInput;
+    }
+
+    /**
+     * Shipping Info Validation
+     *
+     * @param shippingInfo {@link ShippingInfo}
+     */
+    public static boolean shippingInfoValidation(@NonNull ShippingInfo shippingInfo) {
+        return contactInfoValidation(shippingInfo, true);
+    }
+
+    /**
+     * Contact Info Validation
+     *
+     * @param contactInfo                       {@link ContactInfo}
+     * @param isFullBillingRequiredOrIsShipping - boolean, if shipping or if full billing is required - true
+     */
+    private static boolean contactInfoValidation(@NonNull ContactInfo contactInfo, boolean isFullBillingRequiredOrIsShipping) {
+        boolean validInput = BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getFullName()), BlueSnapValidator.EditTextFields.NAME_FIELD);
+
+        String country = AndroidUtil.stringify(contactInfo.getCountry());
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getZip()), BlueSnapValidator.EditTextFields.ZIP_FIELD);
+
+        if (isFullBillingRequiredOrIsShipping) {
+            if (BlueSnapValidator.checkCountryHasState(country))
+                validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getState()), BlueSnapValidator.EditTextFields.STATE_FIELD);
+
+            validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getCity()), BlueSnapValidator.EditTextFields.CITY_FIELD);
+            validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getAddress()), BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
+        }
+
+        return validInput;
     }
 
 }

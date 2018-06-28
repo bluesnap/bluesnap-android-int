@@ -1,5 +1,6 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -102,8 +103,10 @@ public class Shopper extends ContactInfo {
         this.previousPaymentSources = previousPaymentSources;
     }
 
-    @Nullable
+    @NonNull
     public ShippingInfo getShippingContactInfo() {
+        if (null == shippingContactInfo)
+            shippingContactInfo = new ShippingInfo();
         return shippingContactInfo;
     }
 

@@ -3,6 +3,8 @@ package com.bluesnap.androidapi.views.components;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
@@ -91,13 +93,15 @@ public class ContactInfoViewComponent extends LinearLayout {
                         TAG);
             }
         });
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
+
+        unregisterBlueSnapLocalBroadcastReceiver();
+        registerBlueSnapLocalBroadcastReceiver();
 
         inputCity = findViewById(R.id.input_city);
         inputAddress = findViewById(R.id.input_address);
 
         countryImageButton = findViewById(R.id.countryImageButton);
-        setUserCountry(BlueSnapService.getInstance().getUserCountry(context));
+        setUserCountry("");
         // activate all on focus out event listeners
         setOnFocusChangeListenerForInputs();
         // activate all on editor action listener IME_ACTION_NEXT
@@ -109,17 +113,34 @@ public class ContactInfoViewComponent extends LinearLayout {
                 BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, getUserCountry(), TAG);
             }
         });
-
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
-
     }
 
+    /**
+     * Called when a child view is removed from this ViewGroup. Overrides should always
+     * call super.onViewRemoved.
+     *
+     * @param child the removed child view
+     */
     @Override
     public void onViewRemoved(View child) {
+        unregisterBlueSnapLocalBroadcastReceiver();
         super.onViewRemoved(child);
+    }
+
+    /**
+     * unregister broadcastReceiver for BlueSnap Local Broadcast Manager
+     */
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
         BlueSnapLocalBroadcastManager.unregisterReceiver(getContext(), broadcastReceiver);
     }
 
+    /**
+     * register broadcastReceiver for BlueSnap Local Broadcast Manager
+     */
+    public void registerBlueSnapLocalBroadcastReceiver() {
+        BlueSnapLocalBroadcastManager.registerReceiver(getContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
+    }
 
     /**
      * update resource with details
@@ -131,8 +152,8 @@ public class ContactInfoViewComponent extends LinearLayout {
         inputZip.setText(AndroidUtil.stringify(contactInfo.getZip()));
         inputCity.setText(AndroidUtil.stringify(contactInfo.getCity()));
         inputAddress.setText(AndroidUtil.stringify(contactInfo.getAddress()));
-        inputState.setText(AndroidUtil.stringify(contactInfo.getState()));
         setUserCountry(AndroidUtil.stringify(contactInfo.getCountry()));
+        setStateVisibilityByUserCountry(AndroidUtil.stringify(contactInfo.getState()));
     }
 
     /**
@@ -261,21 +282,17 @@ public class ContactInfoViewComponent extends LinearLayout {
      * set On Focus Change Listener For State Input according to Country
      */
     void setStateVisibilityByUserCountry() {
+        setStateVisibilityByUserCountry("");
+    }
+
+    /**
+     * set On Focus Change Listener For State Input according to Country
+     */
+    void setStateVisibilityByUserCountry(String state) {
         if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-            /*inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
-                            updateTaxOnCountryStateChange();
-                        }
-                        //inputCity.requestFocus();
-                    }
-                }
-            });*/
+            setState(state);
         } else {
-            //inputState.setOnFocusChangeListener(null);
             setStateVisibility(GONE);
         }
     }
@@ -353,7 +370,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      * @param userCountry - country string ISO Alpha-2
      */
     public void setUserCountry(String userCountry) {
-        this.userCountry = userCountry;
+        this.userCountry = AndroidUtil.stringify(userCountry, BlueSnapService.getInstance().getUserCountry(getContext()));
         onCountryChange();
     }
 
@@ -486,6 +503,7 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
+
     }
 }
 

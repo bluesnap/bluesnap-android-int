@@ -63,24 +63,29 @@ public class CreditCardActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // recovering the instance state
-        if (null != savedInstanceState
-                && null != savedInstanceState.getString("fragmentType")
-                && NewCreditCardShippingFragment.TAG.equals(savedInstanceState.getString("fragmentType")))
-            fragmentType = NewCreditCardShippingFragment.TAG;
-        else
-            fragmentType = getIntent().getStringExtra(BluesnapCheckoutActivity.FRAGMENT_TYPE);
+        if (savedInstanceState != null && BlueSnapService.getInstance().getSdkRequest() == null) {
+            Log.e(TAG, "savedInstanceState missing");
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The checkout process was interrupted."));
+            finish();
+            return;
+        }
 
         setContentView(R.layout.credit_card_activity);
 
+        // recovering the instance state
+        if (null != savedInstanceState && null != savedInstanceState.getString("fragmentType"))
+            fragmentType = savedInstanceState.getString("fragmentType");
+        else
+            fragmentType = getIntent().getStringExtra(BluesnapCheckoutActivity.FRAGMENT_TYPE);
+
         if (BluesnapCheckoutActivity.NEW_CC.equals(fragmentType))
             startActivityWithNewCreditCardFragment();
-        else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType))
-            startActivityWithReturningShopperCreditCardFragment();
-        else {
+        else if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
             newCreditCardShippingFragment = NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
             getFragmentManager().beginTransaction()
                     .replace(R.id.creditCardFrameLayout, newCreditCardShippingFragment).commit();
+        } else {
+            startActivityWithReturningShopperCreditCardFragment();
         }
 
         headerTextView = findViewById(R.id.headerTextView);
@@ -106,8 +111,6 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivityRestoredInstanceState();
 
     }
 
@@ -119,8 +122,7 @@ public class CreditCardActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("fragmentType", fragmentType);
-        BlueSnapFragment blueSnapFragment = (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
-        blueSnapFragment.onActivitySavedInstanceState();
+        getBlueSnapFragment().onActivitySavedInstanceState(outState);
         // call superclass to save any view hierarchy
         super.onSaveInstanceState(outState);
     }
@@ -133,11 +135,15 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        getBlueSnapFragment().onActivityBackPressed();
+
         super.onBackPressed();
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
-            setHeaderTextView(NewCreditCardFragment.TAG);
-        } else if (BluesnapCheckoutActivity.RETURNING_CC.equals(fragmentType)) {
+            getBlueSnapFragment().registerBlueSnapLocalBroadcastReceiver();
+            if (NewCreditCardFragment.class.getSimpleName().equals(getBlueSnapFragmentClassSimpleName()))
+                setHeaderTextView(NewCreditCardFragment.TAG);
+        } else if (ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName())) {
             setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
             setHamburgerMenuButtonVisibility(View.VISIBLE);
         }
@@ -163,9 +169,15 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, broadcastReceiver);
 
-        ReturningShopperCreditCardFragment returningShopperCreditCardFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+        BlueSnapFragment blueSnapFragment = ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
+
+        if (fragmentType.equals(ReturningShopperBillingFragment.TAG))
+            blueSnapFragment = ReturningShopperBillingFragment.newInstance(CreditCardActivity.this, new Bundle());
+        else if (fragmentType.equals(ReturningShopperShippingFragment.TAG))
+            blueSnapFragment = ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
+
         getFragmentManager().beginTransaction()
-                .replace(R.id.creditCardFrameLayout, returningShopperCreditCardFragment).commit();
+                .replace(R.id.creditCardFrameLayout, blueSnapFragment).commit();
     }
 
     /**
@@ -202,23 +214,20 @@ public class CreditCardActivity extends AppCompatActivity {
      * @param fragment - {@link Fragment}
      */
     private void replaceFragmentPlacement(Fragment fragment) {
-        String fragmentClassSimpleName = fragment.getClass().getSimpleName();
+        fragmentType = fragment.getClass().getSimpleName();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        if (!fragmentClassSimpleName.equals(NewCreditCardShippingFragment.TAG))
+        if (!fragmentType.equals(NewCreditCardShippingFragment.TAG))
             fragmentTransaction.replace(R.id.creditCardFrameLayout, fragment);
-        else {
+        else
             fragmentTransaction.add(R.id.creditCardFrameLayout, fragment);
-            fragmentType = NewCreditCardShippingFragment.TAG;
-        }
-        fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
+        fragmentTransaction.addToBackStack(fragmentType);
         fragmentTransaction.commit();
 
-        setHeaderTextView(fragmentClassSimpleName);
-
+        setHeaderTextView(fragmentType);
     }
 
     /**
-     * Broadcast Receiver for Credit Card Activity
+     * Broadcast Receiver for Credit Card Activity;
      * Handles actions
      */
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -229,7 +238,8 @@ public class CreditCardActivity extends AppCompatActivity {
 
             if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event)
                     || BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event)) {
-                getFragmentManager().popBackStack();
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.creditCardFrameLayout, ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle())).commit();
                 setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
                 setHamburgerMenuButtonVisibility(View.VISIBLE);
             } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT.equals(event)) {
@@ -360,7 +370,7 @@ public class CreditCardActivity extends AppCompatActivity {
      * @param shopper      - {@link Shopper}
      * @param resultIntent - {@link Intent}
      * @throws UnsupportedEncodingException - UnsupportedEncodingException
-     * @throws JSONException - JSONException
+     * @throws JSONException                - JSONException
      */
     private void tokenizeCardOnServer(final Shopper shopper, final Intent resultIntent) throws UnsupportedEncodingException, JSONException {
         final PurchaseDetails purchaseDetails = new PurchaseDetails(
@@ -454,5 +464,23 @@ public class CreditCardActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+     * get current BlueSnap Fragment view
+     *
+     * @return BlueSnapFragment current view
+     */
+    private BlueSnapFragment getBlueSnapFragment() {
+        return (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+    }
+
+    /**
+     * get BlueSnap Fragment Class SimpleName
+     *
+     * @return BlueSnapFragment().getClass().getSimpleName();
+     */
+    private String getBlueSnapFragmentClassSimpleName() {
+        return getBlueSnapFragment().getClass().getSimpleName();
     }
 }

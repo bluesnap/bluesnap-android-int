@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
@@ -86,7 +87,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         super.updateViewResourceWithDetails(billingInfo);
         if (isEmailRequired)
             inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
-        setStateVisibilityByUserCountry();
     }
 
     /**
@@ -176,9 +176,16 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
     @Override
     void setStateVisibilityByUserCountry() {
-        if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry()))
+        setStateVisibilityByUserCountry("");
+    }
+
+    @Override
+    void setStateVisibilityByUserCountry(String state) {
+        if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-        else
+            setState(state);
+        } else
             setStateVisibility(GONE);
     }
+
 }

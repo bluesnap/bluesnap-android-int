@@ -1,6 +1,8 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.models.Rates;
@@ -28,8 +30,10 @@ public class SDKConfiguration {
         this.kountMerchantId = kountMerchantId;
     }
 
-    @Nullable
-    public Shopper getShopper() {
+    @NonNull
+    public synchronized Shopper getShopper() {
+        if (shopper == null)
+            shopper = new Shopper();
         return shopper;
     }
 

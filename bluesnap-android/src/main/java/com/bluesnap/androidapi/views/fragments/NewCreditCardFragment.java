@@ -66,7 +66,8 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
+        if (savedInstanceState != null)
+            return null;
 //        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         final View inflate = inflater.inflate(R.layout.new_credit_card_fragment, container, false);
 
@@ -99,9 +100,10 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      * invoked when the activity may be temporarily destroyed, save the instance state here
      */
     @Override
-    public void onActivitySavedInstanceState() {
+    public void onActivitySavedInstanceState(Bundle outState) {
         // get Credit Card Info
         shopper.setNewCreditCardInfo(getViewResourceDetails());
+        outState.putBoolean("isShippingSameAsBilling", amountTaxShippingComponentView.isShippingSameAsBilling());
     }
 
     /**
@@ -111,8 +113,20 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      * The savedInstanceState Bundle is same as the one used in onCreate().
      */
     @Override
-    public void onActivityRestoredInstanceState() {
+    public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
         updateViewResourceWithDetails(shopper.getNewCreditCardInfo());
+        // Returns the value associated with the given key, or false if no mapping of the desired type exists for the given key.
+        amountTaxShippingComponentView.sendShippingSameAsBillingBroadcast(savedInstanceState.getBoolean("isShippingSameAsBilling"));
+    }
+
+    @Override
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
+        billingViewComponent.unregisterBlueSnapLocalBroadcastReceiver();
+    }
+
+    @Override
+    public void registerBlueSnapLocalBroadcastReceiver() {
+        billingViewComponent.registerBlueSnapLocalBroadcastReceiver();
     }
 
     /**
@@ -181,6 +195,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                    shopper.setNewCreditCardInfo(newCreditCardInfo);
                     if (sdkRequest.isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
                         shopper.setShippingContactInfo(billingViewComponent.getViewResourceDetails());
                     finishFromFragment();
@@ -205,6 +220,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                    unregisterBlueSnapLocalBroadcastReceiver();
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
                     BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, TAG);
                 }
