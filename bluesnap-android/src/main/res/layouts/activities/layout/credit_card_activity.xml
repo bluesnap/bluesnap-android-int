@@ -48,7 +48,8 @@
             android:id="@+id/creditCardFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/headerRelativeLayout">
+            android:layout_below="@+id/headerRelativeLayout"
+            >
 
         </FrameLayout>
     </RelativeLayout>
