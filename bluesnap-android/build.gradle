@@ -54,7 +54,6 @@ android {
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
-    buildToolsVersion '27.0.3'
 }
 configurations {
 
@@ -117,7 +116,6 @@ task javadocsJar(type: Jar, dependsOn: javadocs) {
 //    from android.sourceSets.main.java.srcDirs
 //}
 
-// the javadocs task requires explicit locale settings. disabled for now.
 artifacts {
     //archives javadocsJar
     //archives sourcesJar
