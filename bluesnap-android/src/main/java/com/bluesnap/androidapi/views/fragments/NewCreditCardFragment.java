@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,15 +27,13 @@ import com.bluesnap.androidapi.views.components.OneLineCCEditComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class NewCreditCardFragment extends Fragment {
+public class NewCreditCardFragment extends BlueSnapFragment {
     public static final String TAG = NewCreditCardFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
     private OneLineCCEditComponent oneLineCCEditComponent;
 
     private SdkRequest sdkRequest;
-
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
@@ -44,7 +41,7 @@ public class NewCreditCardFragment extends Fragment {
     private ButtonComponent buttonComponentView;
 
     public static NewCreditCardFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         NewCreditCardFragment bsFragment = (NewCreditCardFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -69,7 +66,8 @@ public class NewCreditCardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
+        if (savedInstanceState != null)
+            return null;
 //        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         final View inflate = inflater.inflate(R.layout.new_credit_card_fragment, container, false);
 
@@ -82,11 +80,11 @@ public class NewCreditCardFragment extends Fragment {
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
-        billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        oneLineCCEditComponent = (OneLineCCEditComponent) inflate.findViewById(R.id.oneLineCCEditComponent);
+        billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
+        oneLineCCEditComponent = inflate.findViewById(R.id.oneLineCCEditComponent);
 
-        amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
+        amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
+        buttonComponentView = inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
 
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();
@@ -95,6 +93,40 @@ public class NewCreditCardFragment extends Fragment {
         }
 
         return inflate;
+    }
+
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState(Bundle outState) {
+        // get Credit Card Info
+        shopper.setNewCreditCardInfo(getViewResourceDetails());
+        outState.putBoolean("isShippingSameAsBilling", amountTaxShippingComponentView.isShippingSameAsBilling());
+    }
+
+    /**
+     * This callback is called only when there is a saved instance that is previously saved by using
+     * onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
+     * other state here, possibly usable after onStart() has completed.
+     * The savedInstanceState Bundle is same as the one used in onCreate().
+     */
+    @Override
+    public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
+        updateViewResourceWithDetails(shopper.getNewCreditCardInfo());
+        // Returns the value associated with the given key, or false if no mapping of the desired type exists for the given key.
+        amountTaxShippingComponentView.sendShippingSameAsBillingBroadcast(savedInstanceState.getBoolean("isShippingSameAsBilling"));
+    }
+
+    @Override
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
+        billingViewComponent.unregisterBlueSnapLocalBroadcastReceiver();
+    }
+
+    @Override
+    public void registerBlueSnapLocalBroadcastReceiver() {
+        billingViewComponent.registerBlueSnapLocalBroadcastReceiver();
     }
 
     /**
@@ -106,7 +138,7 @@ public class NewCreditCardFragment extends Fragment {
         boolean isValid = oneLineCCEditComponent.validateInfo();
         isValid &= billingViewComponent.validateInfo();
         if (isValid) {
-            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
             newCreditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
         }
         return isValid;
@@ -119,11 +151,21 @@ public class NewCreditCardFragment extends Fragment {
      *
      * @return {@link CreditCardInfo}
      */
-    public CreditCardInfo getCreditCardInfo() {
+    public CreditCardInfo getViewResourceDetails() {
         CreditCardInfo creditCardInfo = new CreditCardInfo();
-        creditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
-        creditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+        creditCardInfo.setCreditCard(oneLineCCEditComponent.getViewResourceDetails());
+        creditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
         return creditCardInfo;
+    }
+
+    /**
+     * set Credit Card in view - {@link OneLineCCEditComponent}, {@link BillingViewComponent}
+     *
+     * @param creditCardInfo - {@link CreditCardInfo}
+     */
+    public void updateViewResourceWithDetails(CreditCardInfo creditCardInfo) {
+        oneLineCCEditComponent.updateViewResourceWithDetails(creditCardInfo.getCreditCard());
+        billingViewComponent.updateViewResourceWithDetails(creditCardInfo.getBillingContactInfo());
     }
 
     /**
@@ -153,8 +195,9 @@ public class NewCreditCardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                    shopper.setNewCreditCardInfo(newCreditCardInfo);
                     if (sdkRequest.isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
-                        shopper.setShippingContactInfo(billingViewComponent.getResource());
+                        shopper.setShippingContactInfo(billingViewComponent.getViewResourceDetails());
                     finishFromFragment();
                 }
             }
@@ -177,6 +220,7 @@ public class NewCreditCardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                    unregisterBlueSnapLocalBroadcastReceiver();
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
                     BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, TAG);
                 }

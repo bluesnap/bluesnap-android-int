@@ -3,6 +3,8 @@ package com.bluesnap.androidapi.views.components;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
@@ -61,22 +64,25 @@ public class ContactInfoViewComponent extends LinearLayout {
         //hasAlreadyRequestedFocus = false;
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        inflater.inflate(R.layout.contact_info_view_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.contact_info_view_component, this);
+        }
 
         // layout is inflated, assign local variables to components
-        inputLayoutName = (TextInputLayout) findViewById(R.id.input_layout_name);
-        inputLayoutEmail = (TextInputLayout) findViewById(R.id.input_layout_email);
-        inputLayoutZip = (TextInputLayout) findViewById(R.id.input_layout_zip);
-        inputLayoutState = (TextInputLayout) findViewById(R.id.input_layout_state);
-        inputLayoutCity = (TextInputLayout) findViewById(R.id.input_layout_city);
-        inputLayoutAddress = (TextInputLayout) findViewById(R.id.input_layout_address);
+        inputLayoutName = findViewById(R.id.input_layout_name);
+        inputLayoutEmail = findViewById(R.id.input_layout_email);
+        inputLayoutZip = findViewById(R.id.input_layout_zip);
+        inputLayoutState = findViewById(R.id.input_layout_state);
+        inputLayoutCity = findViewById(R.id.input_layout_city);
+        inputLayoutAddress = findViewById(R.id.input_layout_address);
 
-        inputName = (EditText) findViewById(R.id.input_name);
-        inputEmail = (EditText) findViewById(R.id.input_email);
-        inputZip = (EditText) findViewById(R.id.input_zip);
+        inputName = findViewById(R.id.input_name);
+        inputEmail = findViewById(R.id.input_email);
+        inputZip = findViewById(R.id.input_zip);
 
-        inputState = (EditText) findViewById(R.id.input_state);
+        inputState = findViewById(R.id.input_state);
         inputState.setInputType(InputType.TYPE_NULL);
         inputState.setOnClickListener(new OnClickListener() {
             @Override
@@ -87,13 +93,15 @@ public class ContactInfoViewComponent extends LinearLayout {
                         TAG);
             }
         });
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
 
-        inputCity = (EditText) findViewById(R.id.input_city);
-        inputAddress = (EditText) findViewById(R.id.input_address);
+        unregisterBlueSnapLocalBroadcastReceiver();
+        registerBlueSnapLocalBroadcastReceiver();
 
-        countryImageButton = (ImageButton) findViewById(R.id.countryImageButton);
-        setUserCountry(BlueSnapService.getInstance().getUserCountry(context));
+        inputCity = findViewById(R.id.input_city);
+        inputAddress = findViewById(R.id.input_address);
+
+        countryImageButton = findViewById(R.id.countryImageButton);
+        setUserCountry("");
         // activate all on focus out event listeners
         setOnFocusChangeListenerForInputs();
         // activate all on editor action listener IME_ACTION_NEXT
@@ -105,32 +113,47 @@ public class ContactInfoViewComponent extends LinearLayout {
                 BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, getUserCountry(), TAG);
             }
         });
-
-        BlueSnapLocalBroadcastManager.registerReceiver(context, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
-
     }
 
+    /**
+     * Called when a child view is removed from this ViewGroup. Overrides should always
+     * call super.onViewRemoved.
+     *
+     * @param child the removed child view
+     */
     @Override
     public void onViewRemoved(View child) {
+        unregisterBlueSnapLocalBroadcastReceiver();
         super.onViewRemoved(child);
+    }
+
+    /**
+     * unregister broadcastReceiver for BlueSnap Local Broadcast Manager
+     */
+    public void unregisterBlueSnapLocalBroadcastReceiver() {
         BlueSnapLocalBroadcastManager.unregisterReceiver(getContext(), broadcastReceiver);
     }
 
+    /**
+     * register broadcastReceiver for BlueSnap Local Broadcast Manager
+     */
+    public void registerBlueSnapLocalBroadcastReceiver() {
+        BlueSnapLocalBroadcastManager.registerReceiver(getContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, broadcastReceiver);
+    }
 
     /**
      * update resource with details
      *
      * @param contactInfo - {@link ContactInfo}
      */
-    public void updateResource(ContactInfo contactInfo) {
-        inputName.setText(contactInfo.getFullName());
-        //inputEmail.setText(contactInfo.getEmail());
-        inputZip.setText(contactInfo.getZip());
-        inputState.setText(contactInfo.getState());
-        inputCity.setText(contactInfo.getCity());
-        inputAddress.setText(contactInfo.getAddress());
-        inputState.setText(contactInfo.getState());
-        setUserCountry(contactInfo.getCountry());
+    public void updateViewResourceWithDetails(ContactInfo contactInfo) {
+        inputName.setText(AndroidUtil.stringify(contactInfo.getFullName()));
+        inputZip.setText(AndroidUtil.stringify(contactInfo.getZip()));
+        inputCity.setText(AndroidUtil.stringify(contactInfo.getCity()));
+        inputAddress.setText(AndroidUtil.stringify(contactInfo.getAddress()));
+        setUserCountry(AndroidUtil.stringify(contactInfo.getCountry()));
+        setStateVisibilityByUserCountry(AndroidUtil.stringify(contactInfo.getState()));
     }
 
     /**
@@ -138,7 +161,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      *
      * @return contact info
      */
-    public ContactInfo getResource() {
+    public ContactInfo getViewResourceDetails() {
         ContactInfo contactInfo = new ContactInfo();
         contactInfo.setFullName(inputName.getText().toString().trim());
         //contactInfo.setEmail(inputEmail.getText().toString().trim());
@@ -259,21 +282,17 @@ public class ContactInfoViewComponent extends LinearLayout {
      * set On Focus Change Listener For State Input according to Country
      */
     void setStateVisibilityByUserCountry() {
+        setStateVisibilityByUserCountry("");
+    }
+
+    /**
+     * set On Focus Change Listener For State Input according to Country
+     */
+    void setStateVisibilityByUserCountry(String state) {
         if (BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-            /*inputState.setOnFocusChangeListener(new OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (!hasFocus) {
-                        if (validateField(inputState, inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD)) {
-                            updateTaxOnCountryStateChange();
-                        }
-                        //inputCity.requestFocus();
-                    }
-                }
-            });*/
+            setState(state);
         } else {
-            //inputState.setOnFocusChangeListener(null);
             setStateVisibility(GONE);
         }
     }
@@ -351,7 +370,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      * @param userCountry - country string ISO Alpha-2
      */
     public void setUserCountry(String userCountry) {
-        this.userCountry = userCountry;
+        this.userCountry = AndroidUtil.stringify(userCountry, BlueSnapService.getInstance().getUserCountry(getContext()));
         onCountryChange();
     }
 
@@ -449,7 +468,6 @@ public class ContactInfoViewComponent extends LinearLayout {
      * check TextInputLayout Visibility Array
      *
      * @param textInputLayouts - array of TextInputLayout to check
-     * @return TextInputLayout or null
      */
     void checkTextInputLayoutVisibilityArray(TextInputLayout[] textInputLayouts) {
         for (TextInputLayout textInputLayout : textInputLayouts) {
@@ -485,6 +503,7 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
+
     }
 }
 

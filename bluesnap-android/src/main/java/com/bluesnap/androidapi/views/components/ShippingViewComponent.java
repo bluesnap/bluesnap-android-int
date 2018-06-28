@@ -37,9 +37,8 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
      *
      * @param shippingInfo - {@link ShippingInfo}
      */
-    public void updateResource(ShippingInfo shippingInfo) {
-        super.updateResource(shippingInfo);
-        setStateVisibilityByUserCountry();
+    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
+        super.updateViewResourceWithDetails(shippingInfo);
     }
 
     /**
@@ -47,8 +46,8 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
      *
      * @return shipping info
      */
-    public ShippingInfo getResource() {
-        return new ShippingInfo(super.getResource());
+    public ShippingInfo getViewResourceDetails() {
+        return new ShippingInfo(super.getViewResourceDetails());
     }
 
     /**

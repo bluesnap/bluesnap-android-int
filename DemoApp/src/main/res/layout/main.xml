@@ -244,6 +244,19 @@
             android:enabled="true"
             android:text="@string/emailField"
             android:textSize="14sp" />
+
+        <Switch
+            android:id="@+id/allowCurrencyChangeSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:allowUndo="true"
+            android:checked="false"
+            android:clickable="true"
+            android:enabled="true"
+            android:text="@string/allow_currency_change"
+            android:textSize="14sp" />
     </LinearLayout>
 
 

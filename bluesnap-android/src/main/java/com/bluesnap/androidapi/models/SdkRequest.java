@@ -15,6 +15,7 @@ public class SdkRequest {
     private boolean shippingRequired;
     private boolean billingRequired;
     private boolean emailRequired;
+    private boolean allowCurrencyChange = true;
     private String shopperID;
     private TaxCalculator taxCalculator;
 
@@ -60,6 +61,10 @@ public class SdkRequest {
         return shippingRequired;
     }
 
+    public void setShippingRequired(boolean shippingRequired) {
+        this.shippingRequired = shippingRequired;
+    }
+
     public boolean isBillingRequired() {
         return billingRequired;
     }
@@ -68,16 +73,20 @@ public class SdkRequest {
         return emailRequired;
     }
 
-    public void setShippingRequired(boolean shippingRequired) {
-        this.shippingRequired = shippingRequired;
+    public void setEmailRequired(boolean emailRequired) {
+        this.emailRequired = emailRequired;
     }
 
     public void setBillingRequired(boolean billingRequired) {
         this.billingRequired = billingRequired;
     }
 
-    public void setEmailRequired(boolean emailRequired) {
-        this.emailRequired = emailRequired;
+    public boolean isAllowCurrencyChange() {
+        return allowCurrencyChange;
+    }
+
+    public void setAllowCurrencyChange(boolean allowCurrencyChange) {
+        this.allowCurrencyChange = allowCurrencyChange;
     }
 
     public String getShopperID() {

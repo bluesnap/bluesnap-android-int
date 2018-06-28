@@ -53,12 +53,10 @@ public class DemoMainActivity extends AppCompatActivity {
     private static final String TAG = "DemoMainActivity";
     private static final int HTTP_MAX_RETRIES = 2;
     private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
-    private static Context context;
     protected BlueSnapService bluesnapService;
     protected TokenProvider tokenProvider;
     private Spinner ratesSpinner;
     private Spinner merchantStoreCurrencySpinner;
-    private EditText returningShopperEditText;
     private String returningOrNewShopper = "";
     private EditText productPriceEditText;
     private Currency currency;
@@ -67,7 +65,6 @@ public class DemoMainActivity extends AppCompatActivity {
     private String initialPrice;
     private String displayedCurrency;
     private String currencyName;
-    private SdkRequest sdkRequest;
     private String merchantToken;
     private Currency currencyByLocale;
     private ProgressBar progressBar;
@@ -75,6 +72,7 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch shippingSwitch;
     private Switch billingSwitch;
     private Switch emailSwitch;
+    private Switch allowCurrencyChangeSwitch;
     private EditText taxAmountEditText;
 
     /**
@@ -85,21 +83,24 @@ public class DemoMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        linearLayoutForProgressBar = (LinearLayout) findViewById(R.id.mainLinearLayout);
+        linearLayoutForProgressBar = findViewById(R.id.mainLinearLayout);
         linearLayoutForProgressBar.setVisibility(View.INVISIBLE);
-        progressBar = (ProgressBar) findViewById(R.id.progressBarMerchant);
-        shippingSwitch = (Switch) findViewById(R.id.shippingSwitch);
+        progressBar = findViewById(R.id.progressBarMerchant);
+        shippingSwitch = findViewById(R.id.shippingSwitch);
         shippingSwitch.setChecked(false);
-        billingSwitch = (Switch) findViewById(R.id.billingSwitch);
+        billingSwitch = findViewById(R.id.billingSwitch);
         billingSwitch.setChecked(false);
-        emailSwitch = (Switch) findViewById(R.id.emailSwitch);
+        emailSwitch = findViewById(R.id.emailSwitch);
         emailSwitch.setChecked(false);
+        allowCurrencyChangeSwitch = findViewById(R.id.allowCurrencyChangeSwitch);
+        allowCurrencyChangeSwitch.setChecked(true);
+
         progressBar.setVisibility(View.VISIBLE);
-        productPriceEditText = (EditText) findViewById(R.id.productPriceEditText);
-        taxAmountEditText = (EditText) findViewById(R.id.demoTaxEditText);
-        currencySym = (TextView) findViewById(R.id.currencySym);
-        ratesSpinner = (Spinner) findViewById(R.id.rateSpinner);
-        merchantStoreCurrencySpinner = (Spinner) findViewById(R.id.merchantStoreCurrencySpinner);
+        productPriceEditText = findViewById(R.id.productPriceEditText);
+        taxAmountEditText = findViewById(R.id.demoTaxEditText);
+        currencySym = findViewById(R.id.currencySym);
+        ratesSpinner = findViewById(R.id.rateSpinner);
+        merchantStoreCurrencySpinner = findViewById(R.id.merchantStoreCurrencySpinner);
         showDemoAppVersion();
         try {
             Locale current = getResources().getConfiguration().locale;
@@ -108,11 +109,10 @@ public class DemoMainActivity extends AppCompatActivity {
             currencyByLocale = Currency.getInstance("USD");
         }
 
-        context = getBaseContext();
         bluesnapService = BlueSnapService.getInstance();
 
         generateMerchantToken();
-        returningShopperEditText = (EditText) findViewById(R.id.returningShopperEditText);
+        EditText returningShopperEditText = findViewById(R.id.returningShopperEditText);
         returningShopperEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -138,7 +138,7 @@ public class DemoMainActivity extends AppCompatActivity {
     }
 
     private void showDemoAppVersion() {
-        TextView demoVersionTextView = (TextView) findViewById(R.id.demoVersionTextView);
+        TextView demoVersionTextView = findViewById(R.id.demoVersionTextView);
         try {
             int versionCode = BuildConfig.VERSION_CODE;
             String versionName = BuildConfig.VERSION_NAME;
@@ -191,14 +191,12 @@ public class DemoMainActivity extends AppCompatActivity {
 
     private String readCurencyFromSpinner(String selectedRateName) {
         currency = Currency.getInstance(selectedRateName);
-        String convertedPrice = "0";
         currencySymbol = currency.getSymbol();
         currencyName = currency.getCurrencyCode();
         if (initialPrice == null) {
             initialPrice = productPriceEditText.getText().toString().trim();
         }
-        convertedPrice = bluesnapService.convertUSD(initialPrice, selectedRateName).trim();
-        return convertedPrice;
+        return bluesnapService.convertUSD(initialPrice, selectedRateName).trim();
     }
 
     private void showDialog(String message) {
@@ -261,14 +259,9 @@ public class DemoMainActivity extends AppCompatActivity {
         }
 
         readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
-        String taxString = taxAmountEditText.getText().toString().trim();
-        Double taxAmountPrecentage = 0D;
-        if (!taxString.isEmpty()) {
-            taxAmountPrecentage = Double.valueOf(taxAmountEditText.getText().toString().trim());
-        }
         Double taxAmount = 0D;
         // You can set the Amouut solely
-        sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
 
 //        // Or you can set the Amount with tax, this will override setAmount()
 //        // The total purchase amount will be the sum of both numbers
@@ -280,16 +273,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
 
         sdkRequest.setCustomTitle("Demo Merchant");
-
-        if (shippingSwitch.isChecked()) {
-            sdkRequest.setShippingRequired(true);
-        }
-        if (billingSwitch.isChecked()) {
-            sdkRequest.setBillingRequired(true);
-        }
-        if (emailSwitch.isChecked()) {
-            sdkRequest.setEmailRequired(true);
-        }
+        sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
         try {
             sdkRequest.verify();
         } catch (BSPaymentRequestException e) {
@@ -394,13 +378,17 @@ public class DemoMainActivity extends AppCompatActivity {
     }
 
     private void initControlsAfterToken() {
-        final String merchantStoreCurrency = (null == currency || null == currency.getCurrencyCode()) ? "USD" : currency.getCurrencyCode();
+        final String merchantStoreCurrency = null != merchantStoreCurrencySpinner && null != merchantStoreCurrencySpinner.getSelectedItem() ? merchantStoreCurrencySpinner.getSelectedItem().toString() : "USD";
+        //final String merchantStoreCurrency = (null == currency || null == currency.getCurrencyCode()) ? "USD" : currency.getCurrencyCode();
         bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                Set<String> supportedRates = bluesnapService.getSupportedRates();
-                if (null == currency || null == currency.getCurrencyCode())
-                    updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                if (null == currency || null == currency.getCurrencyCode()) {
+                    Set<String> supportedRates = bluesnapService.getSupportedRates();
+                    if (supportedRates != null) {
+                        updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                    }
+                }
                 progressBar.setVisibility(View.INVISIBLE);
                 linearLayoutForProgressBar.setVisibility(View.VISIBLE);
                 productPriceEditText.setVisibility(View.VISIBLE);
@@ -430,7 +418,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
         // Here we can access the payment result
         Bundle extras = data.getExtras();
-        SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT); //TODO: why??? the change????? why???
+        SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
 
         //Start a demo activity that shows purchase summary.
         Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
@@ -469,12 +457,12 @@ public class DemoMainActivity extends AppCompatActivity {
     /**
      * We only show a subset of all available rates in our demo app.
      *
-     * @param supportedRates
-     * @return
+     * @param supportedRates - Set<String> supportedRates
+     * @return - TreeSet<String>
      */
 
     private TreeSet<String> demoSupportedRates(Set<String> supportedRates) {
-        TreeSet<String> treeSet = new TreeSet();
+        TreeSet<String> treeSet = new TreeSet<>();
         if (supportedRates.contains("USD")) {
             treeSet.add("USD");
         }
@@ -491,9 +479,5 @@ public class DemoMainActivity extends AppCompatActivity {
             treeSet.add("ILS");
         }
         return treeSet;
-    }
-
-    public BlueSnapService getBluesnapService() {
-        return bluesnapService;
     }
 }

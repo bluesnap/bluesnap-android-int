@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 
@@ -81,11 +83,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      *
      * @param billingInfo - {@link BillingInfo}
      */
-    public void updateResource(BillingInfo billingInfo) {
-        super.updateResource(billingInfo);
+    public void updateViewResourceWithDetails(BillingInfo billingInfo) {
+        super.updateViewResourceWithDetails(billingInfo);
         if (isEmailRequired)
-            inputEmail.setText(billingInfo.getEmail());
-        setStateVisibilityByUserCountry();
+            inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
     }
 
     /**
@@ -93,8 +94,8 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      *
      * @return billing info
      */
-    public BillingInfo getResource() {
-        BillingInfo billingInfo = new BillingInfo(super.getResource());
+    public BillingInfo getViewResourceDetails() {
+        BillingInfo billingInfo = new BillingInfo(super.getViewResourceDetails());
         if (isEmailRequired)
             billingInfo.setEmail(inputEmail.getText().toString().trim());
         return billingInfo;
@@ -175,9 +176,16 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
     @Override
     void setStateVisibilityByUserCountry() {
-        if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry()))
+        setStateVisibilityByUserCountry("");
+    }
+
+    @Override
+    void setStateVisibilityByUserCountry(String state) {
+        if (isFullBillingRequiredRequired && BlueSnapValidator.checkCountryHasState(getUserCountry())) {
             setStateVisibility(VISIBLE);
-        else
+            setState(state);
+        } else
             setStateVisibility(GONE);
     }
+
 }

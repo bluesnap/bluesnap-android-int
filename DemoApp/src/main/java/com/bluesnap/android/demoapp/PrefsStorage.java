@@ -53,8 +53,8 @@ public class PrefsStorage {
 
     public ArrayList<Integer> getListInt(String key) {
         String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
-        ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
-        ArrayList<Integer> newList = new ArrayList<Integer>();
+        ArrayList<String> arrayToList = new ArrayList<>(Arrays.asList(myList));
+        ArrayList<Integer> newList = new ArrayList<>();
 
         for (String item : arrayToList)
             newList.add(Integer.parseInt(item));
@@ -96,8 +96,8 @@ public class PrefsStorage {
      */
     public ArrayList<Double> getListDouble(String key) {
         String[] myList = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
-        ArrayList<String> arrayToList = new ArrayList<String>(Arrays.asList(myList));
-        ArrayList<Double> newList = new ArrayList<Double>();
+        ArrayList<String> arrayToList = new ArrayList<>(Arrays.asList(myList));
+        ArrayList<Double> newList = new ArrayList<>();
 
         for (String item : arrayToList)
             newList.add(Double.parseDouble(item));
@@ -126,7 +126,7 @@ public class PrefsStorage {
      * @return ArrayList of String
      */
     public ArrayList<String> getListString(String key) {
-        return new ArrayList<String>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
+        return new ArrayList<>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
 
     public boolean getBoolean(String key) {
@@ -141,7 +141,7 @@ public class PrefsStorage {
      */
     public ArrayList<Boolean> getListBoolean(String key) {
         ArrayList<String> myList = getListString(key);
-        ArrayList<Boolean> newList = new ArrayList<Boolean>();
+        ArrayList<Boolean> newList = new ArrayList<>();
 
         for (String item : myList) {
             if (item.equals("true")) {
@@ -161,7 +161,7 @@ public class PrefsStorage {
         Gson gson = new Gson();
 
         ArrayList<String> objStrings = getListString(key);
-        ArrayList<Object> objects = new ArrayList<Object>();
+        ArrayList<Object> objects = new ArrayList<>();
 
         for (String jObjString : objStrings) {
             Object value = gson.fromJson(jObjString, mClass);
@@ -288,7 +288,7 @@ public class PrefsStorage {
      */
     public void putListBoolean(String key, ArrayList<Boolean> boolList) {
         checkForNullKey(key);
-        ArrayList<String> newList = new ArrayList<String>();
+        ArrayList<String> newList = new ArrayList<>();
 
         for (Boolean item : boolList) {
             if (item) {
@@ -314,7 +314,7 @@ public class PrefsStorage {
 
     public void putListObject(String key, ArrayList<Object> objArray) {
         checkForNullKey(key);
-        ArrayList<String> objStrings = new ArrayList<String>();
+        ArrayList<String> objStrings = new ArrayList<>();
         for (Object obj : objArray) {
             objStrings.add(gson.toJson(obj));
         }

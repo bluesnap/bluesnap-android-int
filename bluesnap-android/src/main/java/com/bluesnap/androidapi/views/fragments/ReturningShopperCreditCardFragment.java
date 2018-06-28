@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,11 +15,11 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.views.activities.CreditCardActivity;
 import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
 import com.bluesnap.androidapi.views.components.BillingViewSummarizedComponent;
@@ -32,17 +31,12 @@ import com.bluesnap.androidapi.views.components.ShippingViewSummarizedComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperCreditCardFragment extends Fragment {
+public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperCreditCardFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
-    private SdkRequest sdkRequest;
-    private SdkResult sdkResult;
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
-
-    private OneLineCCViewComponent oneLineCCViewComponent;
 
     public BillingViewSummarizedComponent billingViewSummarizedComponent;
     public ShippingViewSummarizedComponent shippingViewSummarizedComponent;
@@ -52,7 +46,7 @@ public class ReturningShopperCreditCardFragment extends Fragment {
     private ButtonComponent buttonComponentView;
 
     public static ReturningShopperCreditCardFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         ReturningShopperCreditCardFragment bsFragment = (ReturningShopperCreditCardFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -66,7 +60,6 @@ public class ReturningShopperCreditCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
     }
 
     @Override
@@ -76,48 +69,61 @@ public class ReturningShopperCreditCardFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
+
+
         final View inflate = inflater.inflate(R.layout.returning_shopper_credit_card_fragment, container, false);
 
         // get Shopper
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         //get SDK Request
-        sdkRequest = blueSnapService.getSdkRequest();
+        final SdkRequest sdkRequest = blueSnapService.getSdkRequest();
 
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         // set Credit Card View Component details
-        oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
-        oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
+        OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
+        oneLineCCViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getCreditCard());
 
-        billingViewSummarizedComponent = (BillingViewSummarizedComponent) inflate.findViewById(R.id.billingViewSummarizedComponent);
-        billingViewSummarizedComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
+        billingViewSummarizedComponent = inflate.findViewById(R.id.billingViewSummarizedComponent);
+        billingViewSummarizedComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
 
         // set Summarized Shipping details or hide Shipping View
-        shippingViewSummarizedTextView = (TextView) inflate.findViewById(R.id.shippingViewSummarizedTextView);
-        shippingViewSummarizedComponent = (ShippingViewSummarizedComponent) inflate.findViewById(R.id.shippingViewSummarizedComponent);
+        shippingViewSummarizedTextView = inflate.findViewById(R.id.shippingViewSummarizedTextView);
+        shippingViewSummarizedComponent = inflate.findViewById(R.id.shippingViewSummarizedComponent);
         final ShippingInfo shippingContactInfo = shopper.getShippingContactInfo();
         if (!sdkRequest.isShippingRequired()) {
             setVisibilityForShippingView(View.INVISIBLE);
         } else {
-            shippingViewSummarizedComponent.updateResource(shippingContactInfo);
+            shippingViewSummarizedComponent.updateViewResourceWithDetails(shippingContactInfo);
             setVisibilityForShippingView(View.VISIBLE);
             BlueSnapLocalBroadcastManager.registerReceiver(inflater.getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         }
 
-        amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.amountTaxShippingComponentView);
+        amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
         amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShppoerCCNFragmentButtonComponentView);
+        buttonComponentView = inflate.findViewById(R.id.returningShppoerCCNFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
-                Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
-                Log.d(TAG, "getShippingContactInfo: " + shippingContactInfo);
+                if (!BlueSnapValidator.billingInfoValidation(newCreditCardInfo.getBillingContactInfo(), sdkRequest.isEmailRequired(), sdkRequest.isBillingRequired())) {
+                    BlueSnapLocalBroadcastManager.sendMessage(inflater.getContext(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT, TAG);
+                    return;
+                }
+                Log.d(TAG, "BillingContactInfo is Valid");
+
+                if (sdkRequest.isShippingRequired() && !BlueSnapValidator.shippingInfoValidation(shippingContactInfo)) {
+                    BlueSnapLocalBroadcastManager.sendMessage(inflater.getContext(), BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, TAG);
+                    return;
+                }
+                Log.d(TAG, "ShippingContactInfo is Valid");
+
                 CreditCardActivity creditCardActivity = (CreditCardActivity) getActivity();
                 creditCardActivity.finishFromFragment(shopper);
 
@@ -157,9 +163,9 @@ public class ReturningShopperCreditCardFragment extends Fragment {
             Log.d(TAG, event);
 
             if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event))
-                billingViewSummarizedComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
+                billingViewSummarizedComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
             else if (BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event))
-                shippingViewSummarizedComponent.updateResource(shopper.getShippingContactInfo());
+                shippingViewSummarizedComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
             else if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);

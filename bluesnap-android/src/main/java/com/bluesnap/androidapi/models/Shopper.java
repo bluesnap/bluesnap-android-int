@@ -1,6 +1,8 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -8,6 +10,8 @@ import com.google.gson.annotations.SerializedName;
  * A representation of server exchange rate.
  */
 public class Shopper extends ContactInfo {
+
+    private static final String TAG = Shopper.class.getSimpleName();
 
     @SerializedName("vaultedShopperId")
     private int vaultedShopperId;
@@ -99,8 +103,10 @@ public class Shopper extends ContactInfo {
         this.previousPaymentSources = previousPaymentSources;
     }
 
-    @Nullable
+    @NonNull
     public ShippingInfo getShippingContactInfo() {
+        if (null == shippingContactInfo)
+            shippingContactInfo = new ShippingInfo();
         return shippingContactInfo;
     }
 
@@ -109,13 +115,17 @@ public class Shopper extends ContactInfo {
     }
 
     public void setShippingContactInfo(@Nullable BillingInfo billingContactInfo) {
-        this.shippingContactInfo.setFullName(billingContactInfo.getFullName());
-        this.shippingContactInfo.setAddress(billingContactInfo.getAddress());
-        this.shippingContactInfo.setAddress2(billingContactInfo.getAddress2());
-        this.shippingContactInfo.setZip(billingContactInfo.getZip());
-        this.shippingContactInfo.setCity(billingContactInfo.getCity());
-        this.shippingContactInfo.setState(billingContactInfo.getState());
-        this.shippingContactInfo.setCountry(billingContactInfo.getCountry());
+        if (shippingContactInfo == null || billingContactInfo == null) {
+            Log.w(TAG, "Cannot setShippingContactInfo, either shipping or billing is null");
+        } else {
+            this.shippingContactInfo.setFullName(billingContactInfo.getFullName());
+            this.shippingContactInfo.setAddress(billingContactInfo.getAddress());
+            this.shippingContactInfo.setAddress2(billingContactInfo.getAddress2());
+            this.shippingContactInfo.setZip(billingContactInfo.getZip());
+            this.shippingContactInfo.setCity(billingContactInfo.getCity());
+            this.shippingContactInfo.setState(billingContactInfo.getState());
+            this.shippingContactInfo.setCountry(billingContactInfo.getCountry());
+        }
     }
 
     @Nullable

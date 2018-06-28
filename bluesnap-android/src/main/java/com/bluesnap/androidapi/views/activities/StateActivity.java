@@ -39,14 +39,16 @@ public class StateActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluesnap_state_selector);
 
-        final ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
-        inputSearch = (EditText) findViewById(R.id.searchView);
-        listView = (ListView) findViewById(R.id.state_list_view);
+        final ImageButton backButton = findViewById(R.id.back_button);
+        inputSearch = findViewById(R.id.searchView);
+        listView = findViewById(R.id.state_list_view);
 
         savedInstanceState = getIntent().getExtras();
         if (savedInstanceState != null) {
-            String countryString = savedInstanceState.getString(getString(R.string.COUNTRY_STRING)).toUpperCase();
-            String stateString = savedInstanceState.getString(getString(R.string.STATE_STRING)).toUpperCase();
+            String countryString = savedInstanceState.getString(getString(R.string.COUNTRY_STRING));
+            countryString = countryString == null ? "" : countryString.toUpperCase();
+            String stateString = savedInstanceState.getString(getString(R.string.STATE_STRING));
+            stateString = stateString == null ? "" : stateString.toUpperCase();
 
             // check if US, BlueSnapValidator.STATE_NEEDED_COUNTRIES[0] = US
             if (countryString.equals(BlueSnapValidator.STATE_NEEDED_COUNTRIES[0])) {
@@ -61,10 +63,9 @@ public class StateActivity extends Activity {
                 state_values_array = getResources().getStringArray(R.array.state_ca_value_array);
                 state_key_array = getResources().getStringArray(R.array.state_ca_key_array);
             }
-            if (!"".equals(stateString))
-                localeState = state_values_array[Arrays.asList(state_key_array).indexOf(stateString)];
-            else
-                localeState = "";
+
+            Integer index = !"".equals(stateString) ? Arrays.asList(state_key_array).indexOf(stateString) : -1;
+            localeState = index != -1 ? state_values_array[index] : "";
         }
 
         adapter = new StateListAdapter(this, StateListObject.getStateListObject(state_values_array, state_key_array), localeState);
@@ -81,7 +82,6 @@ public class StateActivity extends Activity {
             }
         });
 
-        Arrays.asList(state_values_array);
         getIndexList(state_values_array);
         displayIndex();
 
@@ -111,7 +111,7 @@ public class StateActivity extends Activity {
     }
 
     private void getIndexList(String[] lists) {
-        mapIndex = new LinkedHashMap<String, Integer>();
+        mapIndex = new LinkedHashMap<>();
         for (int i = 0; i < lists.length; i++) {
             String list = lists[i];
             String index = list.substring(0, 1);
@@ -125,7 +125,7 @@ public class StateActivity extends Activity {
         LinearLayout indexLayout = (LinearLayout) findViewById(R.id.side_index);
 
         TextView textView;
-        List<String> indexList = new ArrayList<String>(mapIndex.keySet());
+        List<String> indexList = new ArrayList<>(mapIndex.keySet());
         for (String index : indexList) {
             textView = (TextView) getLayoutInflater().inflate(
                     R.layout.side_index_item, null);
@@ -134,7 +134,7 @@ public class StateActivity extends Activity {
                 @Override
                 public void onClick(View view) {
                     TextView selectedIndex = (TextView) view;
-                    listView.setSelection(mapIndex.get(selectedIndex.getText()));
+                    listView.setSelection(mapIndex.get(selectedIndex.getText().toString()));
                 }
             });
             indexLayout.addView(textView);

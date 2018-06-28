@@ -1,8 +1,10 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -46,19 +48,22 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        assert inflater != null;
-        inflater.inflate(R.layout.contact_info_summerized_view_component, this);
+        if (inflater == null) {
+            Log.w(TAG, "inflater is null");
+        } else {
+            inflater.inflate(R.layout.contact_info_summerized_view_component, this);
+        }
 
-        countryTextView = (TextView) findViewById(R.id.countryTextView);
-        zipTextView = (TextView) findViewById(R.id.zipTextView);
-        stateTextView = (TextView) findViewById(R.id.stateTextView);
-        cityTextView = (TextView) findViewById(R.id.cityTextView);
-        addressTextView = (TextView) findViewById(R.id.addressTextView);
-        emailTextView = (TextView) findViewById(R.id.emailTextView);
-        nameTextView = (TextView) findViewById(R.id.nameTextView);
+        countryTextView = findViewById(R.id.countryTextView);
+        zipTextView = findViewById(R.id.zipTextView);
+        stateTextView = findViewById(R.id.stateTextView);
+        cityTextView = findViewById(R.id.cityTextView);
+        addressTextView = findViewById(R.id.addressTextView);
+        emailTextView = findViewById(R.id.emailTextView);
+        nameTextView = findViewById(R.id.nameTextView);
 
-        forFullBillingLinearLayout = (LinearLayout) findViewById(R.id.forFullBillingLinearLayout);
-        zipAndCountryLinearLayout = (LinearLayout) findViewById(R.id.zipAndCountryLinearLayout);
+        forFullBillingLinearLayout = findViewById(R.id.forFullBillingLinearLayout);
+        zipAndCountryLinearLayout = findViewById(R.id.zipAndCountryLinearLayout);
     }
 
     /**
@@ -66,27 +71,30 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
      *
      * @param contactInfo - {@link ContactInfo}
      */
-    public void updateResource(ContactInfo contactInfo) {
-        updateResource(contactInfo.getFullName(), contactInfo.getAddress(), contactInfo.getCity(), contactInfo.getState(), contactInfo.getZip(), contactInfo.getCountry());
+    public void updateViewResourceWithDetails(@NonNull ContactInfo contactInfo) {
+        updateViewResourceWithDetails(contactInfo.getFullName(), contactInfo.getAddress(), contactInfo.getCity(), contactInfo.getState(), contactInfo.getZip(), contactInfo.getCountry());
     }
 
     /**
      * update resource with details
      *
-     * @param fullName
-     * @param address
-     * @param state
-     * @param zip
-     * @param country
+     * @param fullName - fullName
+     * @param address  - address
+     * @param state    - state
+     * @param zip      - zip
+     * @param country  - country
      */
-    private void updateResource(String fullName, String address, String city, String state, String zip, String country) {
+    private void updateViewResourceWithDetails(String fullName, String address, String city, String state, String zip, String country) {
+        fullName = stringify(fullName);
         address = stringify(address);
         city = stringify(city);
         state = stringify(state);
+        zip = stringify(zip);
+        country = stringify(country);
 
         if (!address.isEmpty())
             address += ",";
-        else if (address.isEmpty() && city.isEmpty() && state.isEmpty())
+        else if (city.isEmpty() && state.isEmpty())
             forFullBillingLinearLayout.setVisibility(GONE);
 
         setCountryText(country);

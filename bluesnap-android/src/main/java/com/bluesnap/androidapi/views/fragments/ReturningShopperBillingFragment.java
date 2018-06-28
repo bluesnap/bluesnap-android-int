@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.components.BillingViewComponent;
@@ -20,15 +21,13 @@ import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperBillingFragment extends Fragment {
+public class ReturningShopperBillingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperBillingFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private BillingViewComponent billingViewComponent;
-    private ButtonComponent buttonComponentView;
     private CreditCardInfo newCreditCardInfo;
 
     public static ReturningShopperBillingFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         ReturningShopperBillingFragment bsFragment = (ReturningShopperBillingFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -48,29 +47,52 @@ public class ReturningShopperBillingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
         final View inflate = inflater.inflate(R.layout.returning_shopper_billing_fragment, container, false);
 
         // get Credit Card Info
-        newCreditCardInfo = BlueSnapService.getInstance().getsDKConfiguration().getShopper().getNewCreditCardInfo();
+        Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
+        newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         // set Billing Details
-        billingViewComponent = (BillingViewComponent) inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponent.updateResource(newCreditCardInfo.getBillingContactInfo());
+        billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
+        billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
 
         // set Credit Card View Component details
-        OneLineCCViewComponent oneLineCCViewComponent = (OneLineCCViewComponent) inflate.findViewById(R.id.oneLineCCViewComponent);
-        oneLineCCViewComponent.updateResource(newCreditCardInfo.getCreditCard());
+        OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
+        oneLineCCViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getCreditCard());
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
+        ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperBillingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateAndUpdate())
+                if (validateAndUpdate())
                     BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE, TAG);
             }
         });
 
         return inflate;
+    }
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState(Bundle outState) {
+        // get Credit Card Info
+        Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
+        shopper.getNewCreditCardInfo().setBillingContactInfo(getViewResourceDetails());
+    }
+
+    /**
+     * get Credit Card Info from
+     * {@link BillingViewComponent}
+     *
+     * @return {@link BillingInfo}
+     */
+    public BillingInfo getViewResourceDetails() {
+        return billingViewComponent.getViewResourceDetails();
     }
 
     /**
@@ -81,7 +103,7 @@ public class ReturningShopperBillingFragment extends Fragment {
     public boolean validateAndUpdate() {
         boolean isValid = billingViewComponent.validateInfo();
         if (isValid) {
-            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getResource());
+            newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
         }
         return isValid;
     }

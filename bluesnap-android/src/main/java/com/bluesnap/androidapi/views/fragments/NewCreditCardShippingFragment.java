@@ -1,22 +1,20 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -29,15 +27,10 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class NewCreditCardShippingFragment extends Fragment {
+public class NewCreditCardShippingFragment extends BlueSnapFragment {
     public static final String TAG = NewCreditCardShippingFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private ShippingViewComponent shippingViewComponent;
-    private LinearLayout shippingViewComponentLinearLayout;
-
-    private SdkRequest sdkRequest;
-    private SdkResult sdkResult;
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
@@ -45,7 +38,7 @@ public class NewCreditCardShippingFragment extends Fragment {
     private ButtonComponent buttonComponentView;
 
     public static NewCreditCardShippingFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         NewCreditCardShippingFragment bsFragment = (NewCreditCardShippingFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -71,6 +64,8 @@ public class NewCreditCardShippingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
 
 //        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         final View inflate = inflater.inflate(R.layout.new_credit_card_shipping_fragment, container, false);
@@ -78,23 +73,70 @@ public class NewCreditCardShippingFragment extends Fragment {
         // get Shopper
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
-        //get SDK Request
-        sdkRequest = blueSnapService.getSdkRequest();
-
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
-        shippingViewComponentLinearLayout = (LinearLayout) inflate.findViewById(R.id.shippingViewComponentLinearLayout);
+        shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
 
-        amountTaxShippingComponentView = (AmountTaxShippingComponent) inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.shippingButtonComponentView);
+        amountTaxShippingComponentView = inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);
+        buttonComponentView = inflate.findViewById(R.id.shippingButtonComponentView);
 
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
 
         finishFromFragmentWithShipping();
 
         return inflate;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        onActivityRestoredInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityBackPressed() {
+        // get Shipping Info
+        shopper.setShippingContactInfo(getShippingInfo());
+    }
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState(Bundle outState) {
+        // get Shipping Info
+        shopper.setShippingContactInfo(getShippingInfo());
+    }
+
+    /**
+     * This callback is called only when there is a saved instance that is previously saved by using
+     * onSaveInstanceState(). We restore some state in onCreate(), while we can optionally restore
+     * other state here, possibly usable after onStart() has completed.
+     * The savedInstanceState Bundle is same as the one used in onCreate().
+     */
+    @Override
+    public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
+        updateViewResourceWithDetails(shopper.getShippingContactInfo());
+    }
+
+    /**
+     * get ShippingInfo from
+     * {@link ShippingViewComponent}
+     *
+     * @return {@link ShippingInfo}
+     */
+    public ShippingInfo getShippingInfo() {
+        return shippingViewComponent.getViewResourceDetails();
+    }
+
+    /**
+     * set Shipping Info in view - {@link ShippingViewComponent}
+     *
+     * @param shippingInfo - {@link ShippingInfo}
+     */
+    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
+        shippingViewComponent.updateViewResourceWithDetails(shippingInfo);
     }
 
     /**
@@ -105,7 +147,12 @@ public class NewCreditCardShippingFragment extends Fragment {
         Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
         Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
         Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
-        ((CreditCardActivity) getActivity()).finishFromFragment(shopper);
+        Activity activity = getActivity();
+        if (activity instanceof CreditCardActivity) {
+            ((CreditCardActivity) activity).finishFromFragment(shopper);
+        } else {
+            Log.w(TAG, "activity is NOT instanceof CreditCardActivity");
+        }
     }
 
     /**
@@ -120,7 +167,7 @@ public class NewCreditCardShippingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (shippingViewComponent.validateInfo()) {
-                    shopper.setShippingContactInfo(shippingViewComponent.getResource());
+                    shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
                     finishFromFragment();
                 }
             }

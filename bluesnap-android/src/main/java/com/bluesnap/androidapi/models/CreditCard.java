@@ -239,9 +239,11 @@ public class CreditCard {
      * @return MM/YY
      */
     public String getExpirationDateForEditTextAndSpinner() {
-        return changeExpirationMonthIntegerToTwoDigitsString()
+        return (null != expirationMonth && null != expirationYear && !(expirationMonth.equals(0) || expirationYear.equals(0)))
+                ? changeExpirationMonthIntegerToTwoDigitsString()
                 + "/"
-                + ((expirationYear > 2000) ? expirationYear - 2000 : expirationYear);
+                + ((expirationYear > 2000) ? expirationYear - 2000 : expirationYear)
+                : null;
     }
 
     /**

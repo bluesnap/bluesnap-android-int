@@ -52,7 +52,7 @@ public class ButtonComponent extends LinearLayout {
         assert inflater != null;
         inflater.inflate(R.layout.button_component, this);
 
-        buyNowButton = (Button) findViewById(R.id.buyNowButton);
+        buyNowButton = findViewById(R.id.buyNowButton);
     }
 
     /**

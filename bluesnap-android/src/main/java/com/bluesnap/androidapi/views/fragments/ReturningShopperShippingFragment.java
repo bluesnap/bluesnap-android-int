@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -20,15 +20,13 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
  * Created by roy.biber on 20/02/2018.
  */
 
-public class ReturningShopperShippingFragment extends Fragment {
+public class ReturningShopperShippingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperShippingFragment.class.getSimpleName();
-    private static FragmentManager fragmentManager;
     private ShippingViewComponent shippingViewComponent;
-    private ButtonComponent buttonComponentView;
     private Shopper shopper;
 
     public static ReturningShopperShippingFragment newInstance(Activity activity, Bundle bundle) {
-        fragmentManager = activity.getFragmentManager();
+        FragmentManager fragmentManager = activity.getFragmentManager();
         ReturningShopperShippingFragment bsFragment = (ReturningShopperShippingFragment) fragmentManager.findFragmentByTag(TAG);
 
         if (bsFragment == null) {
@@ -42,23 +40,24 @@ public class ReturningShopperShippingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
+
         final View inflate = inflater.inflate(R.layout.returning_shopper_shipping_fragment, container, false);
 
         // get Shopper
         shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
 
         // set Shipping Details
-        shippingViewComponent = (ShippingViewComponent) inflate.findViewById(R.id.returningShoppershippingViewComponent);
-        assert shopper != null;
-        shippingViewComponent.updateResource(shopper.getShippingContactInfo());
+        shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
+        shippingViewComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
 
-        buttonComponentView = (ButtonComponent) inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
+        ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +73,25 @@ public class ReturningShopperShippingFragment extends Fragment {
     }
 
     /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState(Bundle outState) {
+        // get Credit Card Info
+        shopper.setShippingContactInfo(getViewResourceDetails());
+    }
+
+    /**
+     * get Credit Card Info from
+     * {@link ShippingViewComponent}
+     *
+     * @return {@link ShippingInfo}
+     */
+    public ShippingInfo getViewResourceDetails() {
+        return shippingViewComponent.getViewResourceDetails();
+    }
+
+    /**
      * validate and Update ShippingViewComponent
      *
      * @return boolean
@@ -81,7 +99,7 @@ public class ReturningShopperShippingFragment extends Fragment {
     public boolean validateAndUpdate() {
         boolean isValid = shippingViewComponent.validateInfo();
         if (isValid) {
-            shopper.setShippingContactInfo(shippingViewComponent.getResource());
+            shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
         }
         return isValid;
     }

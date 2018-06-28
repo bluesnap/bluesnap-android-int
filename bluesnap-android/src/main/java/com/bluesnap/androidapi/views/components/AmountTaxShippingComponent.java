@@ -3,6 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -22,12 +23,13 @@ import com.bluesnap.androidapi.services.BlueSnapService;
  */
 
 public class AmountTaxShippingComponent extends LinearLayout {
+
     private static final String TAG = AmountTaxShippingComponent.class.getSimpleName();
     private RelativeLayout shippingSameAsBillingRelativeLayout;
-    private Switch shippingSameAsBillingSwitch;
     private LinearLayout amountTaxLinearLayout;
     private TextView amountTextView, taxTextView;
     private SdkRequest sdkRequest;
+    private Switch shippingSameAsBillingSwitch;
     private boolean isShippingSameAsBilling = false;
 
     public AmountTaxShippingComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -49,16 +51,20 @@ public class AmountTaxShippingComponent extends LinearLayout {
      * Load component XML layout
      */
     private void initControl(final Context context) {
+
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (inflater == null) {
+            Log.w(TAG, "Cannot get inflater from context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)");
+        } else {
+            inflater.inflate(R.layout.amount_tax_shipping_component, this);
+        }
 
-        inflater.inflate(R.layout.amount_tax_shipping_component, this);
-
-        shippingSameAsBillingRelativeLayout = (RelativeLayout) findViewById(R.id.shippingSameAsBillingRelativeLayout);
-        shippingSameAsBillingSwitch = (Switch) findViewById(R.id.shippingSameAsBillingSwitch);
-        amountTaxLinearLayout = (LinearLayout) findViewById(R.id.amountTaxLinearLayout);
-        amountTextView = (TextView) findViewById(R.id.amountTextView);
-        taxTextView = (TextView) findViewById(R.id.taxTextView);
+        shippingSameAsBillingRelativeLayout = findViewById(R.id.shippingSameAsBillingRelativeLayout);
+        shippingSameAsBillingSwitch = findViewById(R.id.shippingSameAsBillingSwitch);
+        amountTaxLinearLayout = findViewById(R.id.amountTaxLinearLayout);
+        amountTextView = findViewById(R.id.amountTextView);
+        taxTextView = findViewById(R.id.taxTextView);
 
         setAmountTaxShipping();
 
@@ -66,7 +72,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isShippingSameAsBilling = isChecked;
-                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, isChecked, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, isChecked, TAG);
             }
         });
     }
@@ -78,7 +84,6 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxShipping() {
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        assert sdkRequest != null;
         if (sdkRequest.isShippingRequired())
             shippingSameAsBillingRelativeLayout.setVisibility(VISIBLE);
         else
@@ -124,5 +129,9 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxVisibility(int visibility) {
         if (GONE == visibility || INVISIBLE == visibility || sdkRequest.getPriceDetails().isSubtotalTaxSet())
             this.amountTaxLinearLayout.setVisibility(visibility);
+    }
+
+    public void sendShippingSameAsBillingBroadcast(boolean isShippingSameAsBilling) {
+        shippingSameAsBillingSwitch.setChecked(isShippingSameAsBilling);
     }
 }

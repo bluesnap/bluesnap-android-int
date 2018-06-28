@@ -21,8 +21,7 @@ import java.util.ArrayList;
  */
 
 public class OneLineCCViewAdapter extends BaseAdapter {
-    private TextView expTextView, ccLastFourDigitsTextView;
-    private ImageView cardIconImageView;
+
     private final Activity context;
     private ArrayList<CreditCardInfo> creditCardInfos;
 
@@ -43,7 +42,7 @@ public class OneLineCCViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return creditCardInfos.indexOf(getItem(position));
+        return creditCardInfos.indexOf((CreditCardInfo)getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -54,9 +53,9 @@ public class OneLineCCViewAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.one_line_cc_view_component, null);
         }
 
-        ccLastFourDigitsTextView = (TextView) convertView.findViewById(R.id.ccLastFourDigitsTextView);
-        expTextView = (TextView) convertView.findViewById(R.id.expTextView);
-        cardIconImageView = (ImageView) convertView.findViewById(R.id.cardIconImageView);
+        TextView ccLastFourDigitsTextView = (TextView) convertView.findViewById(R.id.ccLastFourDigitsTextView);
+        TextView expTextView = (TextView) convertView.findViewById(R.id.expTextView);
+        ImageView cardIconImageView = (ImageView) convertView.findViewById(R.id.cardIconImageView);
         CreditCard creditCard = creditCardInfos.get(position).getCreditCard();
 
         CreditCardTypeResolver creditCardTypeResolver = CreditCardTypeResolver.getInstance();
