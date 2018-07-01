@@ -39,7 +39,6 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
      */
     public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
         super.updateViewResourceWithDetails(shippingInfo);
-        setStateVisibilityByUserCountry();
     }
 
     /**

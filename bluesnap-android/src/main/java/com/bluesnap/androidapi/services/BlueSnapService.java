@@ -502,14 +502,16 @@ public class BlueSnapService {
     }
 
     /**
-     * Convert a price in currentCurrencyNameCode to newCurrencyNameCode
+     * Convert a price in currentCurrencyNameCode to newCurrencyNameCode locally and return it
      *
-     * @param priceDetails    The price details before conversion
-     * @param newCurrencyCode The ISO 4217 currency name
+     * @param receivedPriceDetails The price details before conversion
+     * @param newCurrencyCode      The ISO 4217 currency name
+     * @return priceDetails {@link PriceDetails}
      */
-    public void convertPrice(PriceDetails priceDetails, String newCurrencyCode) {
+    public PriceDetails getConvertedPriceDetails(PriceDetails receivedPriceDetails, String newCurrencyCode) {
+        PriceDetails localPriceDetails = new PriceDetails(receivedPriceDetails.getSubtotalAmount(), receivedPriceDetails.getCurrencyCode(), receivedPriceDetails.getTaxAmount());
 
-        String currentCurrencyCode = priceDetails.getCurrencyCode();
+        String currentCurrencyCode = localPriceDetails.getCurrencyCode();
         if (!checkCurrencyCompatibility(currentCurrencyCode) || !checkCurrencyCompatibility(newCurrencyCode))
             throw new IllegalArgumentException("not an ISO 4217 compatible 3 letter currency representation");
 
@@ -520,11 +522,24 @@ public class BlueSnapService {
         Double currentRate = rates.getCurrencyByCode(currentCurrencyCode).getConversionRate();
         Double newRate = rates.getCurrencyByCode(newCurrencyCode).getConversionRate() / currentRate;
 
-        Double newSubtotal = priceDetails.getSubtotalAmount() * newRate;
-        Double taxAmount = priceDetails.getTaxAmount();
+        Double newSubtotal = localPriceDetails.getSubtotalAmount() * newRate;
+        Double taxAmount = localPriceDetails.getTaxAmount();
         Double newTaxAmount = (taxAmount == null) ? null : taxAmount * newRate;
 
-        priceDetails.set(newSubtotal, newCurrencyCode, newTaxAmount);
+        localPriceDetails.set(newSubtotal, newCurrencyCode, newTaxAmount);
+        return localPriceDetails;
+    }
+
+    /**
+     * Convert a price in currentCurrencyNameCode to newCurrencyNameCode
+     *
+     * @param priceDetails    The price details before conversion
+     * @param newCurrencyCode The ISO 4217 currency name
+     */
+    public void convertPrice(PriceDetails priceDetails, String newCurrencyCode) {
+        PriceDetails localPriceDetails = getConvertedPriceDetails(priceDetails, newCurrencyCode);
+        priceDetails.set(localPriceDetails.getSubtotalAmount(), localPriceDetails.getCurrencyCode(), localPriceDetails.getTaxAmount());
+
     }
 
     /**
@@ -624,7 +639,7 @@ public class BlueSnapService {
                     }
                 }
             }
-         } catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "TelephonyManager, getSimCountryIso or getNetworkCountryIso failed");
         }
 

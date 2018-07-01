@@ -29,6 +29,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     private LinearLayout amountTaxLinearLayout;
     private TextView amountTextView, taxTextView;
     private SdkRequest sdkRequest;
+    private Switch shippingSameAsBillingSwitch;
     private boolean isShippingSameAsBilling = false;
 
     public AmountTaxShippingComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -60,7 +61,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
         }
 
         shippingSameAsBillingRelativeLayout = findViewById(R.id.shippingSameAsBillingRelativeLayout);
-        Switch shippingSameAsBillingSwitch = findViewById(R.id.shippingSameAsBillingSwitch);
+        shippingSameAsBillingSwitch = findViewById(R.id.shippingSameAsBillingSwitch);
         amountTaxLinearLayout = findViewById(R.id.amountTaxLinearLayout);
         amountTextView = findViewById(R.id.amountTextView);
         taxTextView = findViewById(R.id.taxTextView);
@@ -71,7 +72,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isShippingSameAsBilling = isChecked;
-                BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, isChecked, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, isChecked, TAG);
             }
         });
     }
@@ -128,5 +129,9 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxVisibility(int visibility) {
         if (GONE == visibility || INVISIBLE == visibility || sdkRequest.getPriceDetails().isSubtotalTaxSet())
             this.amountTaxLinearLayout.setVisibility(visibility);
+    }
+
+    public void sendShippingSameAsBillingBroadcast(boolean isShippingSameAsBilling) {
+        shippingSameAsBillingSwitch.setChecked(isShippingSameAsBilling);
     }
 }

@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -29,8 +30,8 @@ public class ShippingViewSummarizedComponent extends ContactInfoViewSummarizedCo
         super(context);
     }
 
-    public void updateResource(ShippingInfo shippingInfo) {
-        super.updateResource(shippingInfo);
+    public void updateViewResourceWithDetails(@NonNull ShippingInfo shippingInfo) {
+        super.updateViewResourceWithDetails(shippingInfo);
         setEmailVisibility(GONE);
     }
 

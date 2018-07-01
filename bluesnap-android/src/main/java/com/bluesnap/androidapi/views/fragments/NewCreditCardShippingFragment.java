@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,8 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
 
 //        BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
         final View inflate = inflater.inflate(R.layout.new_credit_card_shipping_fragment, container, false);
@@ -85,11 +88,23 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         return inflate;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        onActivityRestoredInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityBackPressed() {
+        // get Shipping Info
+        shopper.setShippingContactInfo(getShippingInfo());
+    }
+
     /**
      * invoked when the activity may be temporarily destroyed, save the instance state here
      */
     @Override
-    public void onActivitySavedInstanceState() {
+    public void onActivitySavedInstanceState(Bundle outState) {
         // get Shipping Info
         shopper.setShippingContactInfo(getShippingInfo());
     }
@@ -101,8 +116,8 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      * The savedInstanceState Bundle is same as the one used in onCreate().
      */
     @Override
-    public void onActivityRestoredInstanceState() {
-        updateResource(shopper.getShippingContactInfo());
+    public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
+        updateViewResourceWithDetails(shopper.getShippingContactInfo());
     }
 
     /**
@@ -120,7 +135,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
      *
      * @param shippingInfo - {@link ShippingInfo}
      */
-    public void updateResource(ShippingInfo shippingInfo) {
+    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
         shippingViewComponent.updateViewResourceWithDetails(shippingInfo);
     }
 

@@ -74,6 +74,10 @@ The instance must include:
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
+An `SdkRequest` instance contain also an `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By defult it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
+```
+sdkRequest.setAllowCurrencyChange(false);
+```
 
 #### Handling tax updates (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 

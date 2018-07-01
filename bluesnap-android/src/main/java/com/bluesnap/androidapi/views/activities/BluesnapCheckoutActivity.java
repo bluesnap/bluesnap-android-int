@@ -42,7 +42,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
-    static final int RESULT_SDK_FAILED = -2;
+    public static final int RESULT_SDK_FAILED = -2;
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";
@@ -55,6 +55,14 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null && BlueSnapService.getInstance().getSdkRequest() == null) {
+            Log.e(TAG, "savedInstanceState missing");
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The checkout process was interrupted."));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.choose_payment_method);
         sdkRequest = blueSnapService.getSdkRequest();
         sdkConfiguration = blueSnapService.getsDKConfiguration();
@@ -122,11 +130,6 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      */
     private void loadShopperFromSDKConfiguration() {
         final Shopper shopper = sdkConfiguration.getShopper();
-        if (shopper == null) {
-            Log.d(TAG, "SDK configurations contains no shopper, creating new.");
-            sdkConfiguration.setShopper(new Shopper());
-            return;
-        }
         updateShopperCCViews(shopper);
     }
 
@@ -148,10 +151,12 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 shopper.setNewCreditCardInfo((CreditCardInfo) oneLineCCViewAdapter.getItem(position));
+                BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
                 if (!sdkRequest.isEmailRequired())
-                    shopper.getNewCreditCardInfo().getBillingContactInfo().setEmail(null);
+                    billingInfo.setEmail(null);
+                else
+                    billingInfo.setEmail(shopper.getEmail());
                 if (!sdkRequest.isBillingRequired()) {
-                    BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
                     billingInfo.setAddress(null);
                     billingInfo.setCity(null);
                     billingInfo.setState(null);
@@ -191,8 +196,17 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * createsPayPal Token and redirects to Web View Activity
      */
     private void startPayPal() {
+        startPayPal(sdkRequest.getPriceDetails());
+    }
+
+    /**
+     * start PayPal
+     * createsPayPal Token and redirects to Web View Activity
+     *
+     * @param priceDetails {@link PriceDetails}
+     */
+    private void startPayPal(final PriceDetails priceDetails) {
         progressBar.setVisibility(View.VISIBLE);
-        final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         BlueSnapService.getInstance().createPayPalToken(priceDetails.getAmount(), priceDetails.getCurrencyCode(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
@@ -232,8 +246,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                             );
 
                             Log.d(TAG, "Given currency not supported with PayPal - changing to PayPal supported Currency: " + currency);
-                            blueSnapService.onCurrencyChange(currency, BluesnapCheckoutActivity.this);
-                            startPayPal();
+                            PriceDetails localPriceDetails = blueSnapService.getConvertedPriceDetails(sdkRequest.getPriceDetails(), currency);
+                            startPayPal(localPriceDetails);
                         } else {
                             message = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_1)
                                     + " "

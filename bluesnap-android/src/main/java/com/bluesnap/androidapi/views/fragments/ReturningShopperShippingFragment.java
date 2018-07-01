@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.models.ShippingInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -44,6 +45,9 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (savedInstanceState != null)
+            return null;
+
         final View inflate = inflater.inflate(R.layout.returning_shopper_shipping_fragment, container, false);
 
         // get Shopper
@@ -51,7 +55,6 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
 
         // set Shipping Details
         shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
-        assert shopper != null;
         shippingViewComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
 
         ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
@@ -67,6 +70,25 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
         });
 
         return inflate;
+    }
+
+    /**
+     * invoked when the activity may be temporarily destroyed, save the instance state here
+     */
+    @Override
+    public void onActivitySavedInstanceState(Bundle outState) {
+        // get Credit Card Info
+        shopper.setShippingContactInfo(getViewResourceDetails());
+    }
+
+    /**
+     * get Credit Card Info from
+     * {@link ShippingViewComponent}
+     *
+     * @return {@link ShippingInfo}
+     */
+    public ShippingInfo getViewResourceDetails() {
+        return shippingViewComponent.getViewResourceDetails();
     }
 
     /**
