@@ -63,8 +63,7 @@ public class SdkViewTest extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
-        sdkRequest.setBillingRequired(true);
+        SdkRequest sdkRequest = new SdkRequest(55.5, "USD", true, false, false);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
 

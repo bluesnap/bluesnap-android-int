@@ -21,9 +21,9 @@ public class SdkRequest {
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
     }
 
-    public SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
+    public SdkRequest(Double amount, String currencyNameCode, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
 
-        priceDetails = new PriceDetails(amount, currencyNameCode, taxAmount);
+        priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
         shopperInfoConfig = new ShopperInfoConfig(shippingRequired, billingRequired, emailRequired);
     }
 
