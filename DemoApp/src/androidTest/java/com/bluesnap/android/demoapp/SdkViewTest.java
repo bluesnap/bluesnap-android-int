@@ -1,12 +1,17 @@
 package com.bluesnap.android.demoapp;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.FailureHandler;
 import android.support.test.espresso.NoMatchingViewException;
 //import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -17,6 +22,8 @@ import com.bluesnap.androidapi.models.SdkRequest;
 //import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.views.components.ContactInfoViewComponent;
+import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -26,19 +33,27 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static android.support.test.espresso.Espresso.getIdlingResources;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 //import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 //import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 //import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 //import static android.support.test.espresso.matcher.ViewMatchers.withText;
 //import static com.bluesnap.android.demoapp.CardFormTesterCommon.cardNumberGeneratorTest;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
+import static android.support.test.espresso.matcher.ViewMatchers.withResourceName;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.bluesnap.android.demoapp.CardFormTesterCommon.invalidCardNumberGeneratorTest;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
@@ -56,7 +71,6 @@ public class SdkViewTest extends EspressoBasedTest {
 
     @After
     public void keepRunning() throws InterruptedException {
-        //        while (true) { Thread.sleep(2000); } //Remove this
         Thread.sleep(1000);
     }
 
@@ -65,6 +79,7 @@ public class SdkViewTest extends EspressoBasedTest {
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
         sdkRequest.setBillingRequired(true);
+        sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
 
@@ -90,7 +105,7 @@ public class SdkViewTest extends EspressoBasedTest {
                 onView(withId(R.id.input_layout_state)).check(matches(not(ViewMatchers.isDisplayed())));
             }
         })
-                .check(matches(anyOf(withDrawable(R.drawable.us), withDrawable(R.drawable.ca), withDrawable(R.drawable.br))));
+                .check(matches(anyOf(TestUtils.withDrawable(R.drawable.us), TestUtils.withDrawable(R.drawable.ca), TestUtils.withDrawable(R.drawable.br))));
 
         onView(countryImageButtonImageBottunVM).withFailureHandler(new FailureHandler() {
             @Override
@@ -100,7 +115,7 @@ public class SdkViewTest extends EspressoBasedTest {
                 onView(withId(R.id.input_layout_state)).check(matches(ViewMatchers.isDisplayed()));
             }
         })
-                .check(matches(not(anyOf(withDrawable(R.drawable.us), withDrawable(R.drawable.ca), withDrawable(R.drawable.br)))));
+                .check(matches(not(anyOf(TestUtils.withDrawable(R.drawable.us), TestUtils.withDrawable(R.drawable.ca), TestUtils.withDrawable(R.drawable.br)))));
 
     }
 
@@ -111,7 +126,7 @@ public class SdkViewTest extends EspressoBasedTest {
      * o.w. it doesn't.
      */
     @Test
-    public void new_card_state_view_validation_after_changing_country() throws InterruptedException {
+    public void state_view_validation_after_changing_country() throws InterruptedException {
         //------------------------------------------
         // Country Image
         //------------------------------------------
@@ -124,85 +139,71 @@ public class SdkViewTest extends EspressoBasedTest {
         //Test validation of state appearance. changing to USA
         onView(countryImageButtonImageBottunVM).perform(click());
         onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(countryImageButtonImageBottunVM).check(matches(withDrawable(R.drawable.us)));
+        onView(countryImageButtonImageBottunVM).check(matches(TestUtils.withDrawable(R.drawable.us)));
         onView(stateLayoutVM).check(matches(ViewMatchers.isDisplayed()));
 
         //changing to Italy (without state)
         onView(countryImageButtonImageBottunVM).perform(click());
         onData(hasToString(containsString("Italy"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(countryImageButtonImageBottunVM).check(matches(withDrawable(R.drawable.it)));
+        onView(countryImageButtonImageBottunVM).check(matches(TestUtils.withDrawable(R.drawable.it)));
         onView(stateLayoutVM).check(matches(not(ViewMatchers.isDisplayed())));
 
         //Test validation of state appearance. changing to Canada
         onView(countryImageButtonImageBottunVM).perform(click());
         onData(hasToString(containsString("Canada"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(countryImageButtonImageBottunVM).check(matches(withDrawable(R.drawable.ca)));
+        onView(countryImageButtonImageBottunVM).check(matches(TestUtils.withDrawable(R.drawable.ca)));
         onView(stateLayoutVM).check(matches(ViewMatchers.isDisplayed()));
 
         //changing to Spain (without state)
         onView(countryImageButtonImageBottunVM).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(countryImageButtonImageBottunVM).check(matches(withDrawable(R.drawable.es)));
+        onView(countryImageButtonImageBottunVM).check(matches(TestUtils.withDrawable(R.drawable.es)));
         onView(stateLayoutVM).check(matches(not(ViewMatchers.isDisplayed())));
 
         //Test validation of state appearance. changing to Brazil
         onView(countryImageButtonImageBottunVM).perform(click());
         onData(hasToString(containsString("Brazil"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(countryImageButtonImageBottunVM).check(matches(withDrawable(R.drawable.br)));
+        onView(countryImageButtonImageBottunVM).check(matches(TestUtils.withDrawable(R.drawable.br)));
         onView(stateLayoutVM).check(matches(ViewMatchers.isDisplayed()));
 
     }
 
+    @Test
+    public void state_invalid_error() throws InterruptedException {
 
-    public Matcher<View> withDrawable(final int resourceId) {
-        return new DrawableMatcher(resourceId);
-    }
 
-    public Matcher<View> noDrawable() {
-        return new DrawableMatcher(-1);
     }
 
 
-    public class DrawableMatcher extends TypeSafeMatcher<View> {
-        private final int expectedId;
+    @Test
+    public void country_changes_in_billing_and_shipping() throws InterruptedException {
+        //Matcher<View> countryImageButtonImageBottunVM = withId(R.id.countryImageButton);
+        //Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
+        //Changing country to Spain
+        onView(withId(R.id.countryImageButton)).perform(click());
+        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
-        public DrawableMatcher(int resourceId) {
-            super(View.class);
-            this.expectedId = resourceId;
-        }
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfo(this.mActivity.getApplicationContext(), true, false);
 
-        @Override
-        protected boolean matchesSafely(View target) {
-            if (!(target instanceof ImageButton)) {
-                return false;
-            }
-            ImageButton imageButton = (ImageButton) target;
-            if (expectedId < 0) {
-                return imageButton.getDrawable() == null;
-            }
-            Resources resources = target.getContext().getResources();
-            Drawable expectedDrawable = resources.getDrawable(expectedId);
-            if (expectedDrawable == null) {
-                return false;
-            }
-            Bitmap bitmap = getBitmap(imageButton.getDrawable());
-            Bitmap otherBitmap = getBitmap(expectedDrawable);
-            return bitmap.sameAs(otherBitmap);
-        }
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
 
-        private Bitmap getBitmap(Drawable drawable) {
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        }
+        //Verify country hasn't change in shipping
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(TestUtils.withDrawable(R.drawable.es))));
 
-        @Override
-        public void describeTo(Description description) {
-            description.appendText("with drawable from resource id: ");
-            description.appendValue(expectedId);
-        }
+        //Changing Country to Italy
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onData(hasToString(containsString("Italy"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+
+        //Go back to billing
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+
+        //Verify country hasn't change in billing
+        onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(R.drawable.es)));
+
     }
+
+
 }

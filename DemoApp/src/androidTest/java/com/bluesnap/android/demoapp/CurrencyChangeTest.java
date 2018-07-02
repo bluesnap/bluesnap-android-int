@@ -65,7 +65,8 @@ public class CurrencyChangeTest extends EspressoBasedTest {
 
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
 
-        CardFormTesterCommon.fillInAllFieldsWithValidCard();
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfo(this.mActivity.getApplicationContext(), false, false);
 
         CardFormTesterCommon.changeCurrency("CAD");
         onView(withId(R.id.buyNowButton))
