@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp;
 
+import android.app.Activity;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.action.ViewActions;
@@ -13,6 +14,7 @@ import android.view.View;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import junit.framework.Assert;
 
@@ -116,8 +118,10 @@ public class DemoFlowTest extends EspressoBasedTest {
     public void A_valid_CC_without_Shipping_Transaction_Test() throws InterruptedException {
         startDemoPurchase();
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
+        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
+        String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(this.mActivity.getApplicationContext(), false, false);
+        CardFormTesterCommon.fillInContactInfo(billingCountry, false, false);
         onView(withId(R.id.buyNowButton)).perform(click());
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
         finishDemoPurchase("USD", demoPurchaseAmount, sdkResult);
@@ -145,8 +149,10 @@ public class DemoFlowTest extends EspressoBasedTest {
         Double startDemoPurchaseAmount = startDemoPurchase();
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
+        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
+        String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(this.mActivity.getApplicationContext(), false, false);
+        CardFormTesterCommon.fillInContactInfo(billingCountry, false, false);
         onView(withId(R.id.hamburger_button)).perform(click());
         onView(withText(containsString("Currency"))).perform(click());
         onData(hasToString(containsString("CAD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
@@ -176,8 +182,10 @@ public class DemoFlowTest extends EspressoBasedTest {
         Double startDemoPurchaseAmount = startDemoPurchase();
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
+        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
+        String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(this.mActivity.getApplicationContext(), false, false);
+        CardFormTesterCommon.fillInContactInfo(billingCountry, false, false);
         onView(withId(R.id.hamburger_button)).perform(click());
         onView(withText(containsString("Currency"))).perform(click());
         onData(hasToString(containsString("CAD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());

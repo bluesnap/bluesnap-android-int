@@ -11,6 +11,8 @@ import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -136,6 +138,79 @@ public class TestUtils {
             description.appendText("with drawable from resource id: ");
             description.appendValue(expectedId);
         }
+    }
+
+    /**
+     * @param resourceDrawable
+     * @return
+     */
+    public static Matcher<View> withRawDrawable(final Drawable resourceDrawable) {
+        return new RawDrawableMatcher(resourceDrawable);
+    }
+
+    /**
+     *
+     */
+    public static class RawDrawableMatcher extends TypeSafeMatcher<View> {
+        private final Drawable expectedDrawable;
+
+        public RawDrawableMatcher(Drawable resourceDrawable) {
+            super(View.class);
+            this.expectedDrawable = resourceDrawable;
+        }
+
+        @Override
+        protected boolean matchesSafely(View target) {
+            if (!(target instanceof ImageButton)) {
+                return false;
+            }
+
+            if (expectedDrawable == null) {
+                return false;
+            }
+
+            ImageButton imageButton = (ImageButton) target;
+
+            Resources resources = target.getContext().getResources();
+
+            Bitmap bitmap = getBitmap(imageButton.getDrawable());
+            Bitmap otherBitmap = getBitmap(expectedDrawable);
+            return bitmap.sameAs(otherBitmap);
+        }
+
+        private Bitmap getBitmap(Drawable drawable) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("with raw drawable: ");
+            description.appendValue(expectedDrawable);
+        }
+    }
+
+    public static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
     }
 
 }

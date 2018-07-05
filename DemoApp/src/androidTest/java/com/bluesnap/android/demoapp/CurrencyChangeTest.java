@@ -65,8 +65,10 @@ public class CurrencyChangeTest extends EspressoBasedTest {
 
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
 
+        String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(this.mActivity.getApplicationContext(), false, false);
+        CardFormTesterCommon.fillInContactInfo(billingCountry, false, false);
 
         CardFormTesterCommon.changeCurrency("CAD");
         onView(withId(R.id.buyNowButton))

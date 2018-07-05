@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
@@ -24,6 +25,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -57,34 +59,36 @@ public class CardFormTesterCommon {
         //------------------------------------------
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.expEditText)).perform(typeText(""));
-        onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
+        //onView(withId(R.id.expEditText)).perform(typeText(""));
+        //onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
 
         onView(expEditTextVM)
-                .perform(click(), clearText(), typeText("12 26"), ViewActions.closeSoftKeyboard());
+                .perform(click(), clearText(), typeText("12 26"));
 
         onView(cvvEditTextVM)
-                .perform(click(), clearText(), typeText("123"), ViewActions.closeSoftKeyboard());
+                .perform(click(), clearText(), typeText("123"));
 
     }
 
-    public static void fillInContactInfo(Context context, boolean fullInfo, boolean withEmail) {
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(context);
-        onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"), pressImeActionButton());
-        if (withEmail)
-            onView(withId(R.id.input_email)).perform(clearText(), typeText("test@sdk.com"), ViewActions.pressImeActionButton());
+    public static void fillInContactInfo(String country, boolean fullInfo, boolean withEmail) {
+        onView(withId(R.id.input_name)).perform(typeText("La Fleur"), pressImeActionButton());
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(billingCountry))
+        if (withEmail)
+            onView(withId(R.id.input_email)).perform(clearText(), typeText("test@sdk.com"), pressImeActionButton());
+
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
             onView(withId(R.id.input_zip)).perform(clearText(), typeText("3abc 324a"), pressImeActionButton());
 
         if (fullInfo) {
             onView(withId(R.id.input_city)).perform(clearText(), typeText("Tel Aviv"), pressImeActionButton());
-            onView(withId(R.id.input_address)).perform(clearText(), typeText("Rotchild street"), pressImeActionButton());
-            if (billingCountry == "us" || billingCountry == "ca" || billingCountry == "br") {
+            onView(withId(R.id.input_address)).perform(clearText(), typeText("Rotchild street"));
+            //Espresso.closeSoftKeyboard();
+            if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
+                onView(withId(R.id.input_layout_state)).perform(scrollTo());
                 onView(withId(R.id.input_state)).perform(click());
-                if (billingCountry == "us")
+                if (country.equals("US"))
                     onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-                else if (billingCountry == "ca")
+                else if (country.equals("CA"))
                     onData(hasToString(containsString("Quebec"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
                 else
                     onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
