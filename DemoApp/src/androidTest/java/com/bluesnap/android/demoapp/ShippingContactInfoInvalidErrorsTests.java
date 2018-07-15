@@ -14,7 +14,11 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -84,7 +88,7 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
 
     /**
      * This test verifies the invalid error appearance for the name
-     * input field in billing.
+     * input field in shipping.
      * In all cases we check validity by clicking on another field
      * It covers the following:
      * Click the field and leave it empty
@@ -94,13 +98,80 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
      */
     @Test
     public void name_invalid_error_validation() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfo("IL", false, false); //passing IL as default
 
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- only one word
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(typeText("Sawyer"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- less than 2 characters
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("L Fleur"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- less than 2 characters. BUG! waiting for it to be fixed
+//        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("La F"));
+//        onView(withId(R.id.creditCardNumberEditText)).perform(click());
+
+        //Verify error message is displayed
+//        onView(allOf(withId(R.id.textinput_error),
+//                isDescendantOfA(withId(R.id.input_layout_name)),
+//                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- spaces
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("Sawyer     "));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering a valid name
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("La Fleur"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering an invalid name again- less than 2 characters
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("L Fleur"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
     }
 
     /**
      * This test verifies the invalid error appearance for the name
-     * input field in billing.
-     * In all cases we check validity by pressing Ime button
+     * input field in shipping.
+     * In all cases we check validity by pressing the Ime button
      * It covers the following:
      * Click the field and leave it empty
      * Entering an invalid name- less than 2 words or less than 2 characters
@@ -108,8 +179,75 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
      * Entering an invalid name after entering a valid one
      */
     @Test
-    public void name_invalid_error_validation_ime_button() throws InterruptedException {
+    public void name_invalid_error_validation_using_ime_button() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfo("IL", false, false); //passing IL as default
 
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(click(), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- only one word
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("Sawyer"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- less than 2 characters
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("L Fleur"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- less than 2 characters. BUG! waiting for it to be fixed
+//        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+//              .perform(clearText(), typeText("La F"), pressImeActionButton());
+
+        //Verify error message is displayed
+//        onView(allOf(withId(R.id.textinput_error),
+//                isDescendantOfA(withId(R.id.input_layout_name)),
+//                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid name- spaces
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("Sawyer     "), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering a valid name
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("La Fleur"), pressImeActionButton());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering an invalid name again- less than 2 characters
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("L Fleur"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_name)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
     }
 
     //Waiting for this bug to be fixed

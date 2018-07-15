@@ -75,6 +75,9 @@ public class BillingContactInfoInvalidErrorsTests extends EspressoBasedTest {
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_name))))
                 .check(matches(isDisplayed()));
 
+        onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_email))))
+                .check(matches(isDisplayed()));
+
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_zip))))
                 .check(matches(isDisplayed()));
 
@@ -87,7 +90,11 @@ public class BillingContactInfoInvalidErrorsTests extends EspressoBasedTest {
         //onView(withId(R.id.input_address)).perform(scrollTo());
 
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_address))))
+                .perform(scrollTo())
                 .check(matches(isDisplayed()));
+
+//        onView(withId(R.id.buyNowButton)).perform(click());
+
     }
 
     /**
@@ -163,7 +170,7 @@ public class BillingContactInfoInvalidErrorsTests extends EspressoBasedTest {
     /**
      * This test verifies the invalid error appearance for the name
      * input field in billing.
-     * In all cases we check validity by pressing Ime button
+     * In all cases we check validity by pressing the Ime button
      * It covers the following:
      * Click the field and leave it empty
      * Entering an invalid name- less than 2 words or less than 2 characters
@@ -171,7 +178,7 @@ public class BillingContactInfoInvalidErrorsTests extends EspressoBasedTest {
      * Entering an invalid name after entering a valid one
      */
     @Test
-    public void name_invalid_error_validation_ime_button() throws InterruptedException {
+    public void name_invalid_error_validation_using_ime_button() throws InterruptedException {
         //Click the field and leave it empty
         onView(withId(R.id.input_name)).perform(click());
         onView(withId(R.id.input_name)).perform(pressImeActionButton());
@@ -201,8 +208,8 @@ public class BillingContactInfoInvalidErrorsTests extends EspressoBasedTest {
 //        onView(withId(R.id.input_name)).perform(pressImeActionButton());
 
         //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)))).check(matches(isDisplayed()));
+//        onView(allOf(withId(R.id.textinput_error),
+//                isDescendantOfA(withId(R.id.input_layout_name)))).check(matches(isDisplayed()));
 
         //Entering an invalid name- spaces
         onView(withId(R.id.input_name)).perform(clearText(), typeText("Sawyer     "));
