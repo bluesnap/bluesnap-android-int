@@ -64,7 +64,7 @@ public class HideCurrencyHamburgerButtonTest extends EspressoBasedTest {
         onView(withId(R.id.hamburger_button)).check(matches(not(ViewMatchers.isDisplayed())));
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("SP", true, false);
+        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
 
         //check hamburger button is not displayed in shipping
         onView(withId(R.id.buyNowButton)).perform(click());

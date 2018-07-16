@@ -3,7 +3,6 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.support.test.espresso.Espresso;
 
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -23,15 +22,12 @@ import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -78,7 +74,7 @@ public class SdkViewTest extends EspressoBasedTest {
         onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(resourceId)));
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(defaultCountry, true, false);
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, false);
 
         //check image is as expected in shipping
         onView(withId(R.id.buyNowButton)).perform(click());
@@ -111,7 +107,7 @@ public class SdkViewTest extends EspressoBasedTest {
     public void country_view_changes_validation_in_shipping() throws InterruptedException, IOException {
         String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(defaultCountry, true, false);
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, false);
         onView(withId(R.id.buyNowButton)).perform(click());
 
         //Test validation of country image- changing to Israel
@@ -143,7 +139,7 @@ public class SdkViewTest extends EspressoBasedTest {
         onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("SP", true, false);
+        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
 
         //check hamburger button is displayed in shipping
         onView(withId(R.id.buyNowButton)).perform(click());
@@ -183,7 +179,7 @@ public class SdkViewTest extends EspressoBasedTest {
         }
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(defaultCountry, true, false);
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, false);
         onView(withId(R.id.buyNowButton)).perform(click());
 
         //Test validation of zip appearance in shipping
@@ -237,7 +233,7 @@ public class SdkViewTest extends EspressoBasedTest {
         String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(billingCountry, true, false);
+        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, true, false);
         onView(withId(R.id.buyNowButton)).perform(click());
 
         //Test validation of zip appearance. changing to USA
@@ -279,7 +275,7 @@ public class SdkViewTest extends EspressoBasedTest {
         }
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(billingCountry, true, false);
+        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, true, false);
 
         //Test validation of state appearance in shipping
         onView(withId(R.id.buyNowButton)).perform(click());
@@ -354,7 +350,7 @@ public class SdkViewTest extends EspressoBasedTest {
         String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo(billingCountry, true, false);
+        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, true, false);
         onView(withId(R.id.buyNowButton)).perform(click());
 
         //Test validation of state appearance. changing to USA
@@ -396,7 +392,7 @@ public class SdkViewTest extends EspressoBasedTest {
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("SP", true, false);
+        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
 
         //Continue to Shipping
         onView(withId(R.id.buyNowButton)).perform(click());

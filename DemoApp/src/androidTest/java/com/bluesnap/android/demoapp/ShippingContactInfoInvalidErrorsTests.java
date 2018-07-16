@@ -17,6 +17,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -55,7 +56,7 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
     @Test
     public void empty_fields_invalid_error_validation() throws InterruptedException {
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("IL", false, false); //passing IL as default
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
 
         //Continue to Shipping
         onView(withId(R.id.buyNowButton)).perform(click());
@@ -99,7 +100,7 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
     @Test
     public void name_invalid_error_validation() throws InterruptedException {
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("IL", false, false); //passing IL as default
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
 
         //Continue to Shipping
         onView(withId(R.id.buyNowButton)).perform(click());
@@ -181,7 +182,7 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
     @Test
     public void name_invalid_error_validation_using_ime_button() throws InterruptedException {
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("IL", false, false); //passing IL as default
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default- don't need state
 
         //Continue to Shipping
         onView(withId(R.id.buyNowButton)).perform(click());
@@ -250,6 +251,381 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
                 isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
     }
 
+    /**
+     * This test verifies the invalid error appearance for the zip
+     * input field in shipping.
+     * In all cases we check validity by clicking on another field
+     * It covers the following:
+     * Click the field and leave it empty
+     * Entering an invalid zip- invalid characters
+     * Entering a valid zip
+     * Entering an invalid zip after entering a valid one
+     */
+    @Test
+    public void zip_invalid_error_validation() throws InterruptedException {
+        //ViewInteraction shippingZipVI = onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))));
+
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //fill in country with zip
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid zip- invalid characters
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("12345*"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering a valid zip- only numbers
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("12345"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering a valid zip- with characters
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("12345abcde"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering a valid zip- with spaces
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("12345 abcde"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering an invalid zip again- invalid characters
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("12345%"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the zip
+     * input field in shipping.
+     * In all cases we check validity by pressing the Ime button
+     * It covers the following:
+     * Click the field and leave it empty
+     * Entering an invalid zip- invalid characters
+     * Entering a valid zip
+     * Entering an invalid zip after entering a valid one
+     */
+    @Test
+    public void zip_invalid_error_validation_using_ime_button() throws InterruptedException {
+        //ViewInteraction shippingZipVI = onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))));
+
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //fill in country with zip
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(click(), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid zip- invalid characters
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("12345*"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering a valid zip- only numbers
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("12345"), pressImeActionButton());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering a valid zip- with characters
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("12345abcde"), pressImeActionButton());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering a valid zip- with spaces
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("12345 abcde"), pressImeActionButton());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering an invalid zip again- invalid characters
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("12345%"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_zip)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the city
+     * input field in shipping.
+     * In all cases we check validity by clicking on another field
+     * It covers the following:
+     * Click the field and leave it empty
+     * Entering an invalid city- less than 2 characters
+     * Entering a valid city
+     * Entering an invalid city after entering a valid one
+     */
+    @Test
+    public void city_invalid_error_validation() throws InterruptedException {
+        //ViewInteraction shippingZipVI = onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))));
+
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid city- less then 2 characters
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("a"));
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid zip- spaces
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("        "));
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering a valid zip- with characters
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("New York"));
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering an invalid city- less then 2 characters
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("a"));
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the city
+     * input field in shipping.
+     * In all cases we check validity by pressing the Ime button
+     * It covers the following:
+     * Click the field and leave it empty
+     * Entering an invalid zip- invalid characters
+     * Entering a valid zip
+     * Entering an invalid zip after entering a valid one
+     */
+    @Test
+    public void city_invalid_error_validation_using_ime_button() throws InterruptedException {
+        //ViewInteraction shippingZipVI = onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))));
+
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(click(), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid city- less then 2 characters
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("a"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering an invalid zip- spaces
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("        "), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+
+        //Entering a valid zip- with characters
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("New York"), pressImeActionButton());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(doesNotExist());
+
+        //Entering an invalid city- less then 2 characters
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("a"), pressImeActionButton());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_city)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the address
+     * input field in shipping.
+     * In all cases we check validity by clicking on another field
+     * It covers the following:
+     * Click the field and leave it empty
+     * Entering an invalid city- less than 2 characters
+     * Entering a valid city
+     * Entering an invalid city after entering a valid one
+     */
+    @Test
+    public void address_invalid_error_validation() throws InterruptedException {
+        //ViewInteraction shippingZipVI = onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))));
+
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //Click the field and leave it empty
+        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_address)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(scrollTo()).check(matches(isDisplayed()));
+
+        //Entering an invalid city- less then 2 characters
+        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(typeText("a"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_address)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(scrollTo()).check(matches(isDisplayed()));
+
+        //Entering an invalid zip- spaces
+        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("        "));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_address)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(scrollTo()).check(matches(isDisplayed()));
+
+        //Entering a valid zip- with characters
+        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("New York"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is not displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_address)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .check(doesNotExist());
+
+        //Entering an invalid city- less then 2 characters
+        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(clearText(), typeText("a"));
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+
+        //Verify error message is displayed
+        onView(allOf(withId(R.id.textinput_error),
+                isDescendantOfA(withId(R.id.input_layout_address)),
+                isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .perform(scrollTo()).check(matches(isDisplayed()));
+    }
+
+
     //Waiting for this bug to be fixed
 
     /**
@@ -259,7 +635,7 @@ public class ShippingContactInfoInvalidErrorsTests extends EspressoBasedTest {
     @Test
     public void state_invalid_error() throws InterruptedException {
         CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfo("IL", false, false); //passing IL as default
+        CardFormTesterCommon.fillInContactInfoBilling("IL", false, false); //passing IL as default
 
         Espresso.closeSoftKeyboard();
         //Continue to Shipping

@@ -31,10 +31,12 @@ import static android.support.test.espresso.action.ViewActions.typeTextIntoFocus
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasFocus;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isFocusable;
 import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.not;
@@ -58,19 +60,19 @@ public class CardFormTesterCommon {
 
         //------------------------------------------
         onView(withId(R.id.creditCardNumberEditText))
-                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
+                .perform(typeText(cardNumberGeneratorTest()));
         //onView(withId(R.id.expEditText)).perform(typeText(""));
         //onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
 
         onView(expEditTextVM)
-                .perform(click(), clearText(), typeText("12 26"));
+                .perform(typeText("12 26"));
 
         onView(cvvEditTextVM)
-                .perform(click(), clearText(), typeText("123"));
+                .perform(typeText("123"));
 
     }
 
-    public static void fillInContactInfo(String country, boolean fullInfo, boolean withEmail) {
+    public static void fillInContactInfoBilling(String country, boolean fullInfo, boolean withEmail) {
         onView(withId(R.id.input_name)).perform(typeText("La Fleur"), pressImeActionButton());
 
         if (withEmail)
@@ -93,6 +95,27 @@ public class CardFormTesterCommon {
                 else
                     onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
             }
+        }
+    }
+
+    public static void fillInContactInfoShipping(String country) {
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(typeText("La Fleur"), pressImeActionButton());
+
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("3abc 324a"), pressImeActionButton());
+
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("Tel Aviv"), pressImeActionButton());
+        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("Rotchild street"));
+        if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
+            //onView(withId(R.id.input_layout_state)).perform(scrollTo());
+            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(scrollTo(), click());
+            if (country.equals("US"))
+                onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+            else if (country.equals("CA"))
+                onData(hasToString(containsString("Quebec"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+            else
+                onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+
         }
     }
 
