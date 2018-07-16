@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/input_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/input_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/input_zip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,16 +76,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/input_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/state"
-            android:singleLine="true"
-            android:inputType="none"
+            android:cursorVisible="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:cursorVisible="false"
+            android:hint="@string/state"
+            android:inputType="none"
+            android:singleLine="true"
             android:textSize="@dimen/contact_info_text_size" />
     </android.support.design.widget.TextInputLayout>
 
@@ -94,7 +94,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/input_city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -108,12 +108,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <EditText
+        <android.support.design.widget.TextInputEditText
             android:id="@+id/input_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
             android:hint="@string/address"
+            android:imeOptions="actionDone"
             android:singleLine="true"
             android:textSize="@dimen/contact_info_text_size" />
     </android.support.design.widget.TextInputLayout>
