@@ -19,6 +19,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  */
 
 @RunWith(AndroidJUnit4.class)
+
 public class MinimalBillingTests extends EspressoBasedTest {
     @After
     public void keepRunning() throws InterruptedException {
@@ -38,8 +39,8 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * field when leaving it empty (without entering at all)
      */
     @Test
-    public void empty_fields_invalid_error_validation() throws InterruptedException {
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, false, false);
+    public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, false, false, R.id.billingButtonComponentView);
     }
 
     /**
@@ -53,7 +54,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * Entering an invalid name after entering a valid one
      */
     @Test
-    public void name_invalid_error_validation() throws InterruptedException {
+    public void name_invalid_error_validation_in_billing() throws InterruptedException {
         ContactInfoTesterCommon.name_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_zip);
     }
 
@@ -68,7 +69,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * Entering an invalid name after entering a valid one
      */
     @Test
-    public void name_invalid_error_validation_using_ime_button() throws InterruptedException {
+    public void name_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
         ContactInfoTesterCommon.name_invalid_error_validation(R.id.billingViewComponent, true, 0);
 
     }
@@ -84,7 +85,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * Entering an invalid zip after entering a valid one
      */
     @Test
-    public void zip_invalid_error_validation() throws InterruptedException {
+    public void zip_invalid_error_validation_in_billing() throws InterruptedException {
         ContactInfoTesterCommon.zip_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_name);
     }
 

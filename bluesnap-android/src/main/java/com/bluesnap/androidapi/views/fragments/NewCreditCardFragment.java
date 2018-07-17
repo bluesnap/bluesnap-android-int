@@ -84,7 +84,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         oneLineCCEditComponent = inflate.findViewById(R.id.oneLineCCEditComponent);
 
         amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
-        buttonComponentView = inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
+        buttonComponentView = inflate.findViewById(R.id.billingButtonComponentView);
 
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();

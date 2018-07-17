@@ -152,7 +152,7 @@ public class SavedInfoValidityTests extends EspressoBasedTest {
         Espresso.pressBack();
 
         //Verify cc number has been saved in billing
-        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText("5572758886015288")));
+        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText("5288")));
 
         //Verify cc number has been saved in billing
         onView(withId(R.id.expEditText)).check(matches(withText("12/26")));

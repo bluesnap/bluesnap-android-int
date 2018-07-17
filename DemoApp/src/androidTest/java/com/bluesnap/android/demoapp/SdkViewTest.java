@@ -378,7 +378,6 @@ public class SdkViewTest extends EspressoBasedTest {
         onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed()));
     }
 
-
     /**
      * This test verifies that changing the country in billing doesn't change the country in
      * shipping as well, and vice versa.
