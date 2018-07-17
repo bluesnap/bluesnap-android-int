@@ -139,27 +139,6 @@ public class CardFormTesterCommon {
         return "557275888112233";
     }
 
-//    public static String getText(final Matcher<View> matcher){
-//        final String[] stringHolder = { null };
-//        onView(matcher).perform(new ViewAction(){
-//            @Override
-//            public Matcher<View> getConstraints() {
-//                return isAssignableFrom(TextView.class);
-//            }
-//
-//            @Override
-//            public String getDescription() {
-//                return "getting text from a TextView";
-//            }
-//
-//            @Override
-//            public void perform(UiController uiController, View view) {
-//                ImageButton tv = (ImageButton)view; //Save, because of check in getConstraints()
-//                stringHolder[0] = tv.getDrawable().toString();
-//            }
-//        });
-//        return stringHolder[0];
-//    }
 
 
 }

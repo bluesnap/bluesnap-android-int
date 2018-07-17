@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.hasToString;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class SavedInfoValidityTests extends EspressoBasedTest {
+
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -52,6 +53,11 @@ public class SavedInfoValidityTests extends EspressoBasedTest {
 
     }
 
+    /**
+     * This test verifies that the billing contact info is saved when
+     * continuing to shipping and going back to billing,
+     * while using the back button
+     */
     @Test
     public void contact_info_saved_validation_billing() throws InterruptedException {
         //Changing country to USA
@@ -89,6 +95,10 @@ public class SavedInfoValidityTests extends EspressoBasedTest {
 
     }
 
+    /**
+     * This test verifies that the shipping contact info is saved when
+     * going back to billing and entering the shipping once again.
+     */
     @Test
     public void contact_info_saved_validation_shipping() throws InterruptedException {
         String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
@@ -124,24 +134,30 @@ public class SavedInfoValidityTests extends EspressoBasedTest {
 
     }
 
-//    //fix!!!!!!!
-//    @Test
-//    public void cc_card_info_saved_validation() throws InterruptedException {
-//        String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-//
-//        CardFormTesterCommon.fillInCCLineWithValidCard();
-//        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, true);
-//
-//        //Continue to Shipping and back to billing
-//        onView(withId(R.id.buyNowButton)).perform(click());
-//        Espresso.closeSoftKeyboard();
-//        Espresso.pressBack();
-//
-//        //Verify cc number has been saved in billing
-//        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText("NY")));
-//
-//        //Verify cc number has been saved in billing
-//        onView(withId(R.id.input_state)).check(matches(withText("NY")));
-//
-//    }
+    /**
+     * This test verifies that the credit card line info is saved when
+     * continuing to shipping and going back to billing,
+     * while using the back button.
+     */
+    @Test
+    public void cc_card_info_saved_validation() throws InterruptedException {
+        String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, true);
+        //String creditCardNumber = TestUtils.getText(withId(R.id.creditCardNumberEditText));
+
+        //Continue to Shipping and back to billing
+        onView(withId(R.id.buyNowButton)).perform(click());
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+
+        //Verify cc number has been saved in billing
+        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText("5572758886015288")));
+
+        //Verify cc number has been saved in billing
+        onView(withId(R.id.expEditText)).check(matches(withText("12/26")));
+
+        //Verify cvv number has been saved in billing
+        onView(withId(R.id.cvvEditText)).check(matches(withText("123")));
+    }
 }

@@ -58,6 +58,39 @@ public class SdkViewTest extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the currency hamburger button is visible to the shopper,
+     * as we allowed currency change.
+     * It covers visibility in billing, shipping and after changing activities
+     */
+    @Test
+    public void allow_currency_change_validation() throws InterruptedException {
+        //check hamburger button is displayed in billing
+        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+
+        //check hamburger button is displayed after opening country activity
+        onView(withId(R.id.countryImageButton)).perform(click());
+        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
+
+        //check hamburger button is displayed in shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+
+        //check hamburger button is displayed after opening country activity
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+
+        //check hamburger button is displayed back in billing
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+    }
+
+    /**
      * This test verifies that the country image matches the shopper's country
      * when first entering both billing and shipping info.
      * (according to its location, or us by default)
@@ -121,40 +154,6 @@ public class SdkViewTest extends EspressoBasedTest {
         onData(hasToString(containsString("Canada"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
                 .check(matches(TestUtils.withDrawable(R.drawable.ca)));
-    }
-
-    /**
-     * This test verifies that the currency hamburger button is visible to the shopper,
-     * as we allowed currency change.
-     * It covers visibility in billing, shipping and after changing activities
-     */
-    @Test
-    public void allow_currency_change_validation() throws InterruptedException {
-        //check hamburger button is displayed in billing
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        //check hamburger button is displayed after opening country activity
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
-
-        //check hamburger button is displayed in shipping
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        //check hamburger button is displayed after opening country activity
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        //check hamburger button is displayed back in billing
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
     }
 
     /**
@@ -385,8 +384,7 @@ public class SdkViewTest extends EspressoBasedTest {
      * shipping as well, and vice versa.
      */
     @Test
-    public void country_changes_in_billing_and_shipping() throws InterruptedException {
-
+    public void country_changes_per_fragment_validation() throws InterruptedException {
         //Changing country to Spain
         onView(withId(R.id.countryImageButton)).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
