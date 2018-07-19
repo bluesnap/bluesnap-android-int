@@ -33,6 +33,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
+        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
     }
 
 
@@ -42,7 +43,6 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void empty_fields_invalid_error_validation_in_shipping() throws InterruptedException {
-        String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
         CardFormTesterCommon.fillInCCLineWithValidCard();
         CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
 
@@ -64,6 +64,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void name_invalid_error_validation_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.name_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_zip);
     }
 
@@ -79,6 +85,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void name_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.name_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
 
     }
@@ -95,6 +107,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void zip_invalid_error_validation_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.zip_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_name);
     }
 
@@ -110,6 +128,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void zip_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.zip_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
     }
 
@@ -125,6 +149,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void city_invalid_error_validation_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.city_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_address);
     }
 
@@ -140,6 +170,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void city_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.city_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
     }
 
@@ -155,6 +191,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void address_invalid_error_validation_in_shipping() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         ContactInfoTesterCommon.address_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_city);
     }
 
@@ -164,6 +206,28 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void state_invalid_error_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.state_invalid_error(R.id.newShoppershippingViewComponent);
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        ContactInfoTesterCommon.state_invalid_error(R.id.newShoppershippingViewComponent, R.id.shippingButtonComponentView);
     }
+
+    /**
+     * This test verifies the ime action button works as it should
+     * in shipping contact info
+     */
+    @Test
+    public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, false, false);
+
+        //Continue to Shipping
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.newShoppershippingViewComponent, true, false);
+    }
+
 }

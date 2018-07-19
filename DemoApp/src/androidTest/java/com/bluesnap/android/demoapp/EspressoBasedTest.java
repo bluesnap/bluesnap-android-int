@@ -64,6 +64,7 @@ public class EspressoBasedTest {
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
     private boolean isSdkRequestIsNull = false;
+    public String defaultCountry;
 
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(

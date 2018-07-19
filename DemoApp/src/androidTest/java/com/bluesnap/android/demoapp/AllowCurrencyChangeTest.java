@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class AllowCurrencyChangeTest extends EspressoBasedTest {
-    boolean isAllowed = true;
+    protected boolean isAllowed = true;
 
     @After
     public void keepRunning() throws InterruptedException {

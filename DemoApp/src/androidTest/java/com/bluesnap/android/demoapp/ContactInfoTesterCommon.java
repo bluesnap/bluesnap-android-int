@@ -1,10 +1,11 @@
 package com.bluesnap.android.demoapp;
 
 
-import android.content.Context;
 import android.support.test.espresso.Espresso;
 
-import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.Constants;
+
+import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -384,13 +385,13 @@ public class ContactInfoTesterCommon {
                 .perform(scrollTo()).check(matches(isDisplayed()));
     }
 
-    public static void state_invalid_error(int componentResourceId) throws InterruptedException {
+    public static void state_invalid_error(int componentResourceId, int buttonComponent) throws InterruptedException {
         //Choosing brazil (that has state)
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Brazil"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         //Try to pay without filling in state
-        onView(allOf(withId(R.id.buyNowButton))).perform(click());
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
         //Espresso.closeSoftKeyboard();
         //verify error message is displayed
@@ -408,6 +409,7 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
     }
 
+    //Fix this. check if it is possible to handle all cases in this one general function
     public void contact_info_saved_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
         //Changing country to USA to have state
         change_country(componentResourceId, "United States");
@@ -436,6 +438,30 @@ public class ContactInfoTesterCommon {
             //Verify address has been saved in billing
             onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Rotchild street")));
         }
+    }
+
+    public static void check_ime_action_button_in_CC_info() {
+        onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
+//        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+//        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        onView(withId(R.id.input_name)).check(matches(TestUtils.isViesFocused()));
+    }
+
+    public static void check_ime_action_button_in_contact_info(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click(), pressImeActionButton());
+        if (withEmail)
+            onView(withId(R.id.input_email)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+
+        if (fullInfo) {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        }
+    }
+
+    //implement and move this to visibility tester
+    public static void new_credit_contact_info_visibility_validation(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
     }
 
     private static void move_to_next_field(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {

@@ -31,7 +31,6 @@ public class FullBillingTests extends EspressoBasedTest {
         sdkRequest.setBillingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-
     }
 
     /**
@@ -155,6 +154,15 @@ public class FullBillingTests extends EspressoBasedTest {
      */
     @Test
     public void state_invalid_error_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.state_invalid_error(R.id.billingViewComponent);
+        ContactInfoTesterCommon.state_invalid_error(R.id.billingViewComponent, R.id.billingButtonComponentView);
+    }
+
+    /**
+     * This test verifies the ime action button works as it should
+     * in full billing contact info
+     */
+    @Test
+    public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, true, false);
     }
 }

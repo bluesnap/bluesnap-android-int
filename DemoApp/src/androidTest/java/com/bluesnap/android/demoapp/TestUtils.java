@@ -15,8 +15,11 @@ import android.support.test.runner.lifecycle.Stage;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.bluesnap.androidapi.services.AndroidUtil;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -199,6 +202,23 @@ public class TestUtils {
         }
     }
 
+
+    public static Matcher<View> isViesFocused() {
+        return new TypeSafeMatcher<View>() {
+
+            @Override
+            public boolean matchesSafely(View view) {
+//
+                return (view).isFocused();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is-selected=true");
+            }
+        };
+    }
+
     public static String getText(final Matcher<View> matcher) {
         final String[] stringHolder = {null};
         onView(matcher).perform(new ViewAction() {
@@ -214,11 +234,25 @@ public class TestUtils {
 
             @Override
             public void perform(UiController uiController, View view) {
-                TextView tv = (TextView) view; //Save, because of check in getConstraints()
-                stringHolder[0] = tv.getText().toString();
+                if (view instanceof Button) {
+                    Button bv = (Button) view; //Save, because of check in getConstraints()
+                    stringHolder[0] = bv.getText().toString();
+                } else {
+                    TextView tv = (TextView) view; //Save, because of check in getConstraints()
+                    stringHolder[0] = tv.getText().toString();
+                }
             }
         });
         return stringHolder[0];
     }
+
+    public static String getStringFormatAmount(String text, String currencyNameCode, Double amount) {
+        return String.format("%s %s %s",
+                text,
+                AndroidUtil.getCurrencySymbol(currencyNameCode),
+                AndroidUtil.getDecimalFormat().format(amount)
+        );
+    }
+
 
 }

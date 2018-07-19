@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
         SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-
+        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
     }
 
     /**
@@ -87,6 +88,24 @@ public class MinimalBillingTests extends EspressoBasedTest {
     @Test
     public void zip_invalid_error_validation_in_billing() throws InterruptedException {
         ContactInfoTesterCommon.zip_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_name);
+    }
+
+    /**
+     * This test verifies the ime action button works as it should
+     * in credit card info
+     */
+    @Test
+    public void check_ime_action_button_in_CC_info() throws InterruptedException {
+        ContactInfoTesterCommon.check_ime_action_button_in_CC_info();
+    }
+
+    /**
+     * This test verifies the ime action button works as it should
+     * in billing contact info
+     */
+    @Test
+    public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, false, false);
     }
 
 }
