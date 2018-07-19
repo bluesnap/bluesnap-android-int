@@ -22,11 +22,13 @@ import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -39,7 +41,7 @@ import static org.hamcrest.Matchers.not;
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class SdkViewTest extends EspressoBasedTest {
+public class NewCardVisibilityTesterCommon extends EspressoBasedTest {
 
     @After
     public void keepRunning() throws InterruptedException {
@@ -56,200 +58,66 @@ public class SdkViewTest extends EspressoBasedTest {
         onView(withId(R.id.newCardButton)).perform(click());
 
     }
-
-    /**
-     * This test verifies that the currency hamburger button is visible to the shopper,
-     * as we allowed currency change.
-     * It covers visibility in billing, shipping and after changing activities
-     */
-    @Test
-    public void allow_currency_change_validation() throws InterruptedException {
-        //check hamburger button is displayed in billing
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        //check hamburger button is displayed after opening country activity
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
-
-        //check hamburger button is displayed in shipping
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        //check hamburger button is displayed after opening country activity
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-
-        //check hamburger button is displayed back in billing
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
-        onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
-    }
-
     /**
      * This test verifies that the country image matches the shopper's country
-     * when first entering both billing and shipping info.
+     * when first entering billing or shipping info.
      * (according to its location, or us by default)
      */
-    @Test
-    public void country_view_validation() throws InterruptedException, IOException {
-        Context context = this.mActivity.getApplicationContext();
-        String defaultCountry = BlueSnapService.getInstance().getUserCountry(context);
-
+    public static void default_country_view_validation(Context context, String defaultCountry, int componentResourceId) throws InterruptedException, IOException {
         //get the expected drawable id
         Integer resourceId = context.getResources().getIdentifier(defaultCountry.toLowerCase(), "drawable", context.getPackageName());
 
-        //check image is as expected in billing
-        onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(resourceId)));
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, false);
-
-        //check image is as expected in shipping
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
-                .check(matches(TestUtils.withDrawable(resourceId)));
+        //check image is as expected
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(resourceId)));
     }
 
     /**
      * This test verifies that the country image changes as expected, according
-     * to different choices in billing info.
+     * to different choices in billing or shipping info.
      */
-    @Test
-    public void country_view_changes_validation_in_billing() throws InterruptedException, IOException {
-        //Test validation of country image- changing to United States
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(R.drawable.us)));
+    public static void changing_country_view_validation(int componentResourceId) throws InterruptedException {
+        //Test validation of country image- changing to Canada
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
+        onData(hasToString(containsString("Canada"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.ca)));
 
         //Test validation of country image- changing to Argentina
-        onView(withId(R.id.countryImageButton)).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Argentina"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(R.drawable.ar)));
-    }
-
-    /**
-     * This test verifies that the country image changes as expected, according
-     * to different choices in shipping info.
-     */
-    @Test
-    public void country_view_changes_validation_in_shipping() throws InterruptedException, IOException {
-        String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, false);
-        onView(withId(R.id.buyNowButton)).perform(click());
-
-        //Test validation of country image- changing to Israel
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
-                .check(matches(TestUtils.withDrawable(R.drawable.il)));
-
-        //Test validation of country image- changing to Canada
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("Canada"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
-                .check(matches(TestUtils.withDrawable(R.drawable.ca)));
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.ar)));
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing and shipping).
-     * If the country is USA, Canada or Brazil, then it should be visible,
-     * o.w. it doesn't.
-     * It covers both billing and shipping.
      */
-    @Test
-    public void zip_view_validation() throws InterruptedException {
-        String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-        boolean withZip;
-
-        //Test validation of zip appearance in billing
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(defaultCountry)) { //Country with zip
-            onView(withId(R.id.input_layout_zip)).check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed
-            withZip = true;
-        } else {//Country without zip
-            onView(withId(R.id.input_layout_zip)).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the zip view is not displayed
-            withZip = false;
-        }
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(defaultCountry, true, false);
-        onView(withId(R.id.buyNowButton)).perform(click());
-
-        //Test validation of zip appearance in shipping
-        if (withZip) //Country with zip
-            onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed
-
+    public static void default_country_zip_view_validation(String defaultCountry, int componentResourceId) throws InterruptedException {
+        //Test validation of zip appearance according to the country
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(defaultCountry)) //Country with zip
+            onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed
         else //Country without zip
-            onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the zip view is displayed
-
-        //Go back to billing
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
-
-        //Test validation of zip appearance in billing
-        if (withZip) //Country with zip
-            onView(withId(R.id.input_layout_zip)).check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed
-
-        else //Country without zip
-            onView(withId(R.id.input_layout_zip)).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the zip view is not displayed
-
+            onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the zip view is displayed
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
-     * to different choices of countries in billing info.
+     * to different choices of countries in billing or shipping info.
      */
-    @Test
-    public void zip_view_validation_after_changing_country_in_billing() throws InterruptedException {
+    public static void changing_country_zip_view_validation(int componentResourceId) throws InterruptedException {
         //Test validation of zip appearance. changing to USA
-        onView(withId(R.id.countryImageButton)).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_zip)).check(matches(ViewMatchers.isDisplayed()));
+        onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed
 
         //changing to Angola (without zip)
-        onView(withId(R.id.countryImageButton)).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Angola"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_zip)).check(matches(not(ViewMatchers.isDisplayed())));
+        onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the zip view is displayed
 
         //Test validation of zip appearance. changing to Israel
-        onView(withId(R.id.countryImageButton)).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_zip)).check(matches(ViewMatchers.isDisplayed()));
-    }
-
-    /**
-     * This test checks whether the state field is visible to the user or not, according
-     * to different choices of countries in shipping info.
-     */
-    @Test
-    public void zip_view_validation_after_changing_country_in_Shipping() throws InterruptedException {
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, true, false);
-        onView(withId(R.id.buyNowButton)).perform(click());
-
-        //Test validation of zip appearance. changing to USA
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed()));
-
-        //changing to Angola (without zip)
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("Angola"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(ViewMatchers.isDisplayed())));
-
-        //Test validation of zip appearance. changing to Israel
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
-        onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed()));
-
+        onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed
     }
 
     /**
@@ -407,6 +275,34 @@ public class SdkViewTest extends EspressoBasedTest {
 
         //Verify country hasn't change in billing
         onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(R.drawable.es)));
+
+    }
+
+    public static void new_credit_cc_info_visibility_validation() {
+        onView(withId(R.id.creditCardNumberEditText)).check(matches(isDisplayed()));
+        onView(withId(R.id.expEditText)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.cvvEditText)).check(matches(not(isDisplayed())));
+    }
+
+    public static void new_credit_contact_info_visibility_validation(int componentResourceId, boolean fullInfo, boolean withEmail) {
+        //verifies that the right component(billing/shipping) is displayed- is this necessary?
+        onView(withId(componentResourceId)).check(matches(isDisplayed()));
+
+        Espresso.closeSoftKeyboard();
+        //verifies that all right fields are displayed in the component
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        if (withEmail)
+            onView(withId(R.id.input_email)).check(matches(isDisplayed()));
+        else if (componentResourceId == R.id.billingViewComponent)
+            onView(withId(R.id.input_email)).check(matches(not(isDisplayed())));
+
+        if (fullInfo) {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        } else {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
+        }
 
     }
 

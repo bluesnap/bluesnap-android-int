@@ -61,14 +61,10 @@ public class CardFormTesterCommon {
         //------------------------------------------
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(typeText(cardNumberGeneratorTest()));
-        //onView(withId(R.id.expEditText)).perform(typeText(""));
-        //onView(withId(R.id.cvvEditText)).perform(typeText("")).perform(ViewActions.closeSoftKeyboard());
 
-        onView(expEditTextVM)
-                .perform(typeText("12 26"));
+        onView(expEditTextVM).perform(typeText("12 26"));
 
-        onView(cvvEditTextVM)
-                .perform(typeText("123"));
+        onView(cvvEditTextVM).perform(typeText("123"));
 
     }
 

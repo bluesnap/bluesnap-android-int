@@ -47,6 +47,34 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the all credit card fields are displayed as they should
+     * when choosing new credit card.
+     */
+    @Test
+    public void new_credit_cc_info_visibility_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.new_credit_cc_info_visibility_validation();
+    }
+
+    /**
+     * This test verifies that the all billing contact info fields are displayed
+     * according to full billing when choosing new credit card.
+     */
+    @Test
+    public void new_credit_billing_contact_info_visibility_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.billingViewComponent, true, false);
+    }
+
+    /**
+     * This test verifies that the all shipping contact info fields are displayed
+     * according to shipping enabled when choosing new credit card.
+     */
+    @Test
+    public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
+        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, true, false);
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
+    }
+
+    /**
      * This test verifies that the shipping same as billing switch works as
      * it should.
      * It checks that the shipping button changed to pay, and that the tax

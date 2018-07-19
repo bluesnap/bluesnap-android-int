@@ -20,6 +20,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.bluesnap.android.demoapp.CardFormTesterCommon.cardNumberGeneratorTest;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
@@ -440,7 +441,17 @@ public class ContactInfoTesterCommon {
         }
     }
 
-    public static void check_ime_action_button_in_CC_info() {
+    public static void check_filling_in_cc_info_flow() {
+        onView(withId(R.id.creditCardNumberEditText)).perform(typeText(cardNumberGeneratorTest()));
+        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused()));
+
+        onView(withId(R.id.expEditText)).perform(typeText("12 26"));
+        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused()));
+
+        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
+    }
+
+    public static void check_ime_action_button_in_cc_info() {
         onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
 //        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
 //        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
@@ -460,8 +471,11 @@ public class ContactInfoTesterCommon {
         }
     }
 
-    //implement and move this to visibility tester
-    public static void new_credit_contact_info_visibility_validation(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
+    public static void continue_to_shipping(String country, boolean fullInfo, boolean withEmail) {
+        CardFormTesterCommon.fillInCCLineWithValidCard();
+        CardFormTesterCommon.fillInContactInfoBilling(country, fullInfo, withEmail);
+
+        onView(withId(R.id.buyNowButton)).perform(click());
     }
 
     private static void move_to_next_field(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {

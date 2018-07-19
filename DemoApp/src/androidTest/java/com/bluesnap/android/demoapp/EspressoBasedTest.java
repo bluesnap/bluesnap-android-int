@@ -1,6 +1,7 @@
 package com.bluesnap.android.demoapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -64,7 +65,8 @@ public class EspressoBasedTest {
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
     private boolean isSdkRequestIsNull = false;
-    public String defaultCountry;
+    protected String defaultCountry;
+    public Context applicationContext;
 
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
@@ -93,7 +95,6 @@ public class EspressoBasedTest {
     }
 
     public void setupAndLaunch(SdkRequest sdkRequest) throws InterruptedException, BSPaymentRequestException {
-
         doSetup();
 
         setSDKToken();
@@ -101,7 +102,7 @@ public class EspressoBasedTest {
         BlueSnapService.getInstance().setSdkRequest(sdkRequest);
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
-
+        applicationContext = mActivity.getApplicationContext();
     }
 
     public void setSDKToken() throws InterruptedException {
