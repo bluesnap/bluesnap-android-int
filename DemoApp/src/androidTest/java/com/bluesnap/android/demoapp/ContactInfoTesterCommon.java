@@ -478,6 +478,11 @@ public class ContactInfoTesterCommon {
         onView(withId(R.id.buyNowButton)).perform(click());
     }
 
+    public static void go_back_to_billing() {
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+    }
+
     private static void move_to_next_field(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {
         if (withImeButton)
             onView(allOf(withId(currFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(pressImeActionButton());

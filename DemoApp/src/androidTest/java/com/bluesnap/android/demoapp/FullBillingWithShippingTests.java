@@ -89,4 +89,23 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
 
     }
+
+    /**
+     * This test verifies that changing the country in billing
+     * doesn't change the country in shipping as well.
+     */
+    @Test
+    public void country_changes_per_billing_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(true, true, false);
+    }
+
+    /**
+     * This test verifies that changing the country in shipping
+     * doesn't change the country in billing as well.
+     */
+    @Test
+    public void country_changes_per_shipping_validation() throws InterruptedException {
+        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, true, false);
+        NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
+    }
 }

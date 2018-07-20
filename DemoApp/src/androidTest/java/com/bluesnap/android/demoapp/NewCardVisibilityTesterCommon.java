@@ -39,25 +39,7 @@ import static org.hamcrest.Matchers.not;
 /**
  * Created by sivani on 04/06/2018.
  */
-@RunWith(AndroidJUnit4.class)
-@SmallTest
-public class NewCardVisibilityTesterCommon extends EspressoBasedTest {
-
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
-
-
-    @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
-        sdkRequest.setBillingRequired(true);
-        sdkRequest.setShippingRequired(true);
-        setupAndLaunch(sdkRequest);
-        onView(withId(R.id.newCardButton)).perform(click());
-
-    }
+public class NewCardVisibilityTesterCommon {
     /**
      * This test verifies that the country image matches the shopper's country
      * when first entering billing or shipping info.
@@ -125,157 +107,80 @@ public class NewCardVisibilityTesterCommon extends EspressoBasedTest {
      * to the default Country (the one that is chosen when entering billing and shipping).
      * If the country is USA, Canada or Brazil, then it should be visible,
      * o.w. it doesn't.
-     * It covers both billing and shipping.
      */
-    @Test
-    public void state_view_validation() throws InterruptedException {
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-        boolean withState;
-
-        //Test validation of state appearance in billing
-        if (billingCountry.equals("US") || billingCountry.equals("CA") || billingCountry.equals("BR")) { //Country is one of US CA BR- has state
-            onView(withId(R.id.input_layout_state)).check(matches(ViewMatchers.isDisplayed())); //Check that the state view is displayed
-            withState = true;
-        } else { //Country is not one of US CA BR- doesn't have state
-            onView(withId(R.id.input_layout_state)).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the state view is not displayed
-            withState = false;
-        }
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, true, false);
-
-        //Test validation of state appearance in shipping
-        onView(withId(R.id.buyNowButton)).perform(click());
-        if (withState) //Country is one of US CA BR- has state
-            onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed())); //Check that the state view is displayed
-
-        else //Country is not one of US CA BR- doesn't have state
-            onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the state view is displayed
-
-        //Go back to billing
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
-
-        //Test validation of state appearance in billing
-        if (withState) //Country is one of US CA BR- has state
-            onView(withId(R.id.input_layout_state)).check(matches(ViewMatchers.isDisplayed())); //Check that the state view is displayed
-
-        else //Country is not one of US CA BR- doesn't have state
-            onView(withId(R.id.input_layout_state)).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the state view is not displayed
-    }
-
-
-    /**
-     * This test checks whether the state field is visible to the user or not, according
-     * to different choices of countries in billing info.
-     * If the country is USA, Canada or Brazil, then it should be visible,
-     * o.w. it doesn't.
-     */
-    @Test
-    public void state_view_validation_after_changing_country_in_billing() throws InterruptedException {
-        //------------------------------------------
-        // Country Image
-        //------------------------------------------
-
-        //Test validation of state appearance. changing to USA
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_state)).check(matches(ViewMatchers.isDisplayed()));
-
-        //changing to Italy (without state)
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("Italy"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_state)).check(matches(not(ViewMatchers.isDisplayed())));
-
-        //Test validation of state appearance. changing to Canada
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("Canada"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_state)).check(matches(ViewMatchers.isDisplayed()));
-
-        //changing to Spain (without state)
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_state)).check(matches(not(ViewMatchers.isDisplayed())));
-
-        //Test validation of state appearance. changing to Brazil
-        onView(withId(R.id.countryImageButton)).perform(click());
-        onData(hasToString(containsString("Brazil"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(withId(R.id.input_layout_state)).check(matches(ViewMatchers.isDisplayed()));
+    public static void default_country_state_view_validation(int componentResourceId, String country) throws InterruptedException {
+        //Test validation of state appearance
+        if (country.equals("US") || country.equals("CA") || country.equals("BR"))  //Country is one of US CA BR- has state
+            onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed())); //Check that the state view is displayed
+        else  //Country is not one of US CA BR- doesn't have state
+            onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(not(ViewMatchers.isDisplayed()))); //Check that the state view is displayed
     }
 
     /**
      * This test checks whether the state field is visible to the user or not, according
-     * to different choices of countries in shipping info.
+     * to different choices of countries in billing or shipping info.
      * If the country is USA, Canada or Brazil, then it should be visible,
      * o.w. it doesn't.
      */
-    @Test
-    public void state_view_validation_after_changing_country_in_Shipping() throws InterruptedException {
-        //------------------------------------------
-        // Country Image
-        //------------------------------------------
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, true, false);
-        onView(withId(R.id.buyNowButton)).perform(click());
-
+    public static void changing_country_state_view_validation(int componentResourceId) throws InterruptedException {
         //Test validation of state appearance. changing to USA
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed()));
+        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed()));
 
         //changing to Italy (without state)
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Italy"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(ViewMatchers.isDisplayed())));
+        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(not(ViewMatchers.isDisplayed())));
 
         //Test validation of state appearance. changing to Canada
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Canada"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed()));
+        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed()));
 
         //changing to Spain (without state)
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(ViewMatchers.isDisplayed())));
+        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(not(ViewMatchers.isDisplayed())));
 
         //Test validation of state appearance. changing to Brazil
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString("Brazil"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(ViewMatchers.isDisplayed()));
+        onView(allOf(withId(R.id.input_layout_state), isDescendantOfA(withId(componentResourceId)))).check(matches(ViewMatchers.isDisplayed()));
     }
 
     /**
-     * This test verifies that changing the country in billing doesn't change the country in
-     * shipping as well, and vice versa.
+     * This test verifies that changing the country in one fragment (billing/shipping contact
+     * info) doesn't change the country in the other.
      */
-    @Test
-    public void country_changes_per_fragment_validation() throws InterruptedException {
-        //Changing country to Spain
-        onView(withId(R.id.countryImageButton)).perform(click());
+    public static void country_changes_per_fragment_validation(boolean inBilling, boolean fullInfo, boolean withEmail) throws InterruptedException {
+        int firstComponentResourceId, secondComponentResourceId;
+        firstComponentResourceId = inBilling ? R.id.billingViewComponent : R.id.newShoppershippingViewComponent;
+        secondComponentResourceId = inBilling ? R.id.newShoppershippingViewComponent : R.id.billingViewComponent;
+
+        //Changing country to Spain in first fragment
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(firstComponentResourceId)))).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
+        if (inBilling) //continue to shipping
+            ContactInfoTesterCommon.continue_to_shipping("SP", fullInfo, withEmail);
 
-        //Continue to Shipping
-        onView(withId(R.id.buyNowButton)).perform(click());
+        else //go back to billing
+            ContactInfoTesterCommon.go_back_to_billing();
 
-        //Verify country hasn't change in shipping
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(not(TestUtils.withDrawable(R.drawable.es))));
 
-        //Changing Country to Italy
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
+        //Changing Country to Italy in second fragment
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(secondComponentResourceId)))).perform(click());
         onData(hasToString(containsString("Italy"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
-        //Go back to billing
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
+        if (inBilling) //go back to billing
+            ContactInfoTesterCommon.go_back_to_billing();
 
-        //Verify country hasn't change in billing
-        onView(withId(R.id.countryImageButton)).check(matches(TestUtils.withDrawable(R.drawable.es)));
+        else //continue to shipping
+            onView(withId(R.id.buyNowButton)).perform(click());
 
+        //Verify country hasn't change in first fragment
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(firstComponentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.es)));
     }
 
     public static void new_credit_cc_info_visibility_validation() {

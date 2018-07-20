@@ -93,6 +93,28 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test checks whether the state field is visible to the user or not, according
+     * to the default Country (the one that is chosen when entering billing).
+     * If the country is USA, Canada or Brazil, then it should be visible,
+     * o.w. it doesn't.
+     */
+    @Test
+    public void default_country_state_view_validation_in_billing() throws InterruptedException {
+        NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.billingViewComponent, defaultCountry);
+    }
+
+    /**
+     * This test checks whether the state field is visible to the user or not, according
+     * to different choices of countries in billing info.
+     * If the country is USA, Canada or Brazil, then it should be visible,
+     * o.w. it doesn't.
+     */
+    @Test
+    public void changing_country_state_view_validation_in_billing() throws InterruptedException {
+        NewCardVisibilityTesterCommon.changing_country_state_view_validation(R.id.billingViewComponent);
+    }
+
+    /**
      * This test verifies that an invalid error appears for every
      * field when leaving it empty (without entering at all)
      */
@@ -225,3 +247,4 @@ public class FullBillingTests extends EspressoBasedTest {
         ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, true, false);
     }
 }
+
