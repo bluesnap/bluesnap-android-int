@@ -98,7 +98,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      */
     @Test
     public void check_filling_in_cc_info_flow() throws InterruptedException {
-        ContactInfoTesterCommon.check_filling_in_cc_info_flow();
+        CreditCardLineTesterCommon.check_filling_in_cc_info_flow();
     }
 
     /**
@@ -162,7 +162,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      */
     @Test
     public void check_ime_action_button_in_CC_info() throws InterruptedException {
-        ContactInfoTesterCommon.check_ime_action_button_in_cc_info();
+        CreditCardLineTesterCommon.check_ime_action_button_in_cc_info();
     }
 
     /**
@@ -173,5 +173,6 @@ public class MinimalBillingTests extends EspressoBasedTest {
     public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
         ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, false, false);
     }
+
 
 }

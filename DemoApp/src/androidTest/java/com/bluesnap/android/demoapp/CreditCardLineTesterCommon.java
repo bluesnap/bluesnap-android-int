@@ -46,7 +46,7 @@ import static org.hamcrest.Matchers.not;
  *
  * Created by oz on 5/30/16.
  */
-public class CardFormTesterCommon {
+public class CreditCardLineTesterCommon {
 
     static Matcher<View> creditCardNumberErrorTextVM = withId(R.id.creditCardNumberErrorTextView);
     static Matcher<View> ccNumberEditTextVM = withId(R.id.creditCardNumberEditText);
@@ -68,54 +68,6 @@ public class CardFormTesterCommon {
 
     }
 
-    public static void fillInContactInfoBilling(String country, boolean fullInfo, boolean withEmail) {
-        onView(withId(R.id.input_name)).perform(typeText("La Fleur"), pressImeActionButton());
-
-        if (withEmail)
-            onView(withId(R.id.input_email)).perform(clearText(), typeText("test@sdk.com"), pressImeActionButton());
-
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
-            onView(withId(R.id.input_zip)).perform(clearText(), typeText("3abc 324a"), pressImeActionButton());
-
-        if (fullInfo) {
-            onView(withId(R.id.input_city)).perform(clearText(), typeText("Tel Aviv"), pressImeActionButton());
-            onView(withId(R.id.input_address)).perform(clearText(), typeText("Rotchild street"));
-            //Espresso.closeSoftKeyboard();
-            if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
-                onView(withId(R.id.input_layout_state)).perform(scrollTo());
-                onView(withId(R.id.input_state)).perform(click());
-                if (country.equals("US"))
-                    onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-                else if (country.equals("CA"))
-                    onData(hasToString(containsString("Quebec"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-                else
-                    onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-            }
-        }
-    }
-
-    public static void fillInContactInfoShipping(String country) {
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(typeText("La Fleur"), pressImeActionButton());
-
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
-            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("3abc 324a"), pressImeActionButton());
-
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("Tel Aviv"), pressImeActionButton());
-        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("Rotchild street"));
-        if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
-            //onView(withId(R.id.input_layout_state)).perform(scrollTo());
-            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(scrollTo(), click());
-            if (country.equals("US"))
-                onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-            else if (country.equals("CA"))
-                onData(hasToString(containsString("Quebec"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-            else
-                onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-
-        }
-    }
-
-
     public static void changeCurrency(String currencyCode) {
         onView(withId(R.id.hamburger_button)).perform(click());
         onView(withText(containsString("Currency"))).perform(click());
@@ -127,6 +79,48 @@ public class CardFormTesterCommon {
         }
     }
 
+    public static void check_filling_in_cc_info_flow() {
+        onView(withId(R.id.creditCardNumberEditText)).perform(typeText(cardNumberGeneratorTest()));
+        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused()));
+
+        onView(withId(R.id.expEditText)).perform(typeText("12 26"));
+        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused()));
+
+        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
+    }
+
+    public static void check_ime_action_button_in_cc_info() {
+        onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
+//        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+//        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        onView(withId(R.id.input_name)).check(matches(TestUtils.isViesFocused()));
+    }
+
+    /**
+     * This test verifies that the credit card line info is saved when
+     * continuing to shipping and going back to billing,
+     * while using the back button.
+     */
+    public static void cc_card_info_saved_validation(String defaultCountry, boolean fullInfo, boolean withEmail) throws InterruptedException {
+        fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, defaultCountry, fullInfo, withEmail);
+        //String creditCardNumber = TestUtils.getText(withId(R.id.creditCardNumberEditText));
+
+        //Continue to Shipping and back to billing
+        onView(withId(R.id.buyNowButton)).perform(click());
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+
+        //Verify cc number has been saved in billing
+        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText("5288")));
+
+        //Verify cc number has been saved in billing
+        onView(withId(R.id.expEditText)).check(matches(withText("12/26")));
+
+        //Verify cvv number has been saved in billing
+        onView(withId(R.id.cvvEditText)).check(matches(withText("123")));
+    }
+
     public static String cardNumberGeneratorTest() {
         return "5572758886015288";
     }
@@ -134,7 +128,6 @@ public class CardFormTesterCommon {
     public static String invalidCardNumberGeneratorTest() {
         return "557275888112233";
     }
-
 
 
 }

@@ -108,4 +108,24 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
         ContactInfoTesterCommon.continue_to_shipping(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
     }
+
+    /**
+     * This test verifies that the billing contact info is saved when
+     * continuing to shipping and going back to billing,
+     * while using the back button
+     */
+    @Test
+    public void contact_info_saved_validation_in_billing() throws InterruptedException {
+        ContactInfoTesterCommon.contact_info_saved_validation(true, R.id.billingViewComponent, true, false);
+    }
+
+    /**
+     * This test verifies that the shipping contact info is saved when
+     * going back to billing and entering the shipping once again.
+     */
+    @Test
+    public void contact_info_saved_validation_in_shipping() throws InterruptedException {
+        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, true, false);
+        ContactInfoTesterCommon.contact_info_saved_validation(false, R.id.newShoppershippingViewComponent, true, false);
+    }
 }

@@ -62,8 +62,8 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
         check_currency_hamburger_button_visibility();
 
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling("SP", true, false);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "SP", true, false);
 
         //check hamburger button is not displayed in shipping
         onView(withId(R.id.buyNowButton)).perform(click());

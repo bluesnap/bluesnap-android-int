@@ -275,4 +275,15 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.newShoppershippingViewComponent, true, false);
     }
 
+    /**
+     * This test verifies that the credit card line info is saved when
+     * continuing to shipping and going back to billing,
+     * while using the back button.
+     */
+    @Test
+    public void cc_card_info_saved_validation() throws InterruptedException {
+        CreditCardLineTesterCommon.cc_card_info_saved_validation(defaultCountry, false, false);
+
+    }
+
 }

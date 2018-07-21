@@ -67,18 +67,18 @@ public class CurrencyChangeTest extends EspressoBasedTest {
 
         String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
 
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, false, false);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
 
-        CardFormTesterCommon.changeCurrency("CAD");
+        CreditCardLineTesterCommon.changeCurrency("CAD");
         onView(withId(R.id.buyNowButton))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("CAD")))));
 
-        CardFormTesterCommon.changeCurrency("ILS");
+        CreditCardLineTesterCommon.changeCurrency("ILS");
         onView(withId(R.id.buyNowButton))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("ILS")))));
 
-        CardFormTesterCommon.changeCurrency("USD");
+        CreditCardLineTesterCommon.changeCurrency("USD");
         onView(withId(R.id.buyNowButton))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
 

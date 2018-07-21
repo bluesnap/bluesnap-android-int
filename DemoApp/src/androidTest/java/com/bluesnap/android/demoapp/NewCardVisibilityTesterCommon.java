@@ -4,33 +4,17 @@ import android.content.Context;
 import android.support.test.espresso.Espresso;
 
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.filters.SmallTest;
-import android.support.test.runner.AndroidJUnit4;
-
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import java.io.IOException;
 import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;

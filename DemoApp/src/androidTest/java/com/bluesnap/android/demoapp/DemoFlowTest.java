@@ -118,8 +118,8 @@ public class DemoFlowTest extends EspressoBasedTest {
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         DemoMainActivity demoMainActivity = mActivityRule.getActivity();
         String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, false, false);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
         onView(withId(R.id.buyNowButton)).perform(click());
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
         finishDemoPurchase("USD", demoPurchaseAmount, sdkResult);
@@ -149,8 +149,8 @@ public class DemoFlowTest extends EspressoBasedTest {
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
         DemoMainActivity demoMainActivity = mActivityRule.getActivity();
         String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, false, false);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
         onView(withId(R.id.hamburger_button)).perform(click());
         onView(withText(containsString("Currency"))).perform(click());
         onData(hasToString(containsString("CAD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
@@ -182,8 +182,8 @@ public class DemoFlowTest extends EspressoBasedTest {
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
         DemoMainActivity demoMainActivity = mActivityRule.getActivity();
         String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(billingCountry, false, false);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
         onView(withId(R.id.hamburger_button)).perform(click());
         onView(withText(containsString("Currency"))).perform(click());
         onData(hasToString(containsString("CAD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());

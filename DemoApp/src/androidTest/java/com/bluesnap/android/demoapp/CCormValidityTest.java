@@ -21,8 +21,8 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static com.bluesnap.android.demoapp.CardFormTesterCommon.cardNumberGeneratorTest;
-import static com.bluesnap.android.demoapp.CardFormTesterCommon.invalidCardNumberGeneratorTest;
+import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.cardNumberGeneratorTest;
+import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.invalidCardNumberGeneratorTest;
 import static org.hamcrest.Matchers.not;
 
 

@@ -246,5 +246,6 @@ public class FullBillingTests extends EspressoBasedTest {
     public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
         ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, true, false);
     }
+
 }
 

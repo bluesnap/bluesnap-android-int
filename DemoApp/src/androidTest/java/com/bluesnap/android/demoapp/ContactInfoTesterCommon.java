@@ -20,7 +20,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bluesnap.android.demoapp.CardFormTesterCommon.cardNumberGeneratorTest;
+import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.cardNumberGeneratorTest;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
@@ -410,54 +410,6 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
     }
 
-    //Fix this. check if it is possible to handle all cases in this one general function
-    public void contact_info_saved_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
-        //Changing country to USA to have state
-        change_country(componentResourceId, "United States");
-
-        CardFormTesterCommon.fillInContactInfoShipping("US");
-
-        //Verify country has been saved in billing
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
-
-        //Verify full name has been saved in billing
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("La Fleur")));
-
-        if (withEmail)//Verify email has been saved in billing
-            onView(withId(R.id.input_email)).check(matches(withText("test@sdk.com")));
-
-        //Verify zip has been saved in billing
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("3abc 324a")));
-
-        if (fullInfo) {
-            //Verify state has been saved in billing
-            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("NY")));
-
-            //Verify city has been saved in billing
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Tel Aviv")));
-
-            //Verify address has been saved in billing
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Rotchild street")));
-        }
-    }
-
-    public static void check_filling_in_cc_info_flow() {
-        onView(withId(R.id.creditCardNumberEditText)).perform(typeText(cardNumberGeneratorTest()));
-        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused()));
-
-        onView(withId(R.id.expEditText)).perform(typeText("12 26"));
-        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused()));
-
-        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
-    }
-
-    public static void check_ime_action_button_in_cc_info() {
-        onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
-//        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-//        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-        onView(withId(R.id.input_name)).check(matches(TestUtils.isViesFocused()));
-    }
-
     public static void check_ime_action_button_in_contact_info(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click(), pressImeActionButton());
         if (withEmail)
@@ -471,11 +423,80 @@ public class ContactInfoTesterCommon {
         }
     }
 
+    /**
+     * This test verifies that the billing contact info is saved when
+     * continuing to shipping and going back to billing,
+     * while using the back button
+     */
+    public static void contact_info_saved_validation(boolean inBilling, int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
+        //Changing country to USA for state and zip appearance
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
+        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+
+        if (inBilling) { //fill in info. continue to shipping and back to billing
+            ContactInfoTesterCommon.continue_to_shipping("US", fullInfo, withEmail);
+            ContactInfoTesterCommon.go_back_to_billing();
+        } else { //fill in info. go back to billing and again continue to shipping
+            fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
+            ContactInfoTesterCommon.go_back_to_billing();
+            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        }
+
+        Espresso.closeSoftKeyboard();
+
+        //Verify country has been saved in current component
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
+
+        //Verify full name has been saved in current component
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("La Fleur")));
+
+        if (withEmail) //Verify email has been saved in billing component
+            onView(withId(R.id.input_email)).check(matches(withText("test@sdk.com")));
+
+        //Verify zip has been saved in current component
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("3abc 324a")));
+
+        if (fullInfo) {
+            //Verify city has been saved in current component
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Tel Aviv")));
+            //Verify address has been saved in current component
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Rotchild street")));
+            //Verify state has been saved in current component
+            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("NY")));
+        }
+    }
+
+
     public static void continue_to_shipping(String country, boolean fullInfo, boolean withEmail) {
-        CardFormTesterCommon.fillInCCLineWithValidCard();
-        CardFormTesterCommon.fillInContactInfoBilling(country, fullInfo, withEmail);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
 
         onView(withId(R.id.buyNowButton)).perform(click());
+    }
+
+
+    public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("La Fleur"), pressImeActionButton());
+
+        if (withEmail)
+            onView(withId(R.id.input_email)).perform(clearText(), typeText("test@sdk.com"), pressImeActionButton());
+
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("3abc 324a"), pressImeActionButton());
+
+        if (fullInfo) {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("New York"), pressImeActionButton());
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("555 Broadway street"));
+            if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
+                onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(scrollTo(), click());
+                if (country.equals("US"))
+                    onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+                else if (country.equals("CA"))
+                    onData(hasToString(containsString("Quebec"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+                else
+                    onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+            }
+        }
     }
 
     public static void go_back_to_billing() {
