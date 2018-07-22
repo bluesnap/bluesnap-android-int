@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Looper;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.BoundedMatcher;
@@ -29,8 +30,10 @@ import java.util.Collection;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.is;
 
 public class TestUtils {
@@ -252,6 +255,18 @@ public class TestUtils {
                 AndroidUtil.getCurrencySymbol(currencyNameCode),
                 AndroidUtil.getDecimalFormat().format(amount)
         );
+    }
+
+    public static void continue_to_shipping_in_new_card(String country, boolean fullInfo, boolean withEmail) {
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
+
+        onView(withId(R.id.buyNowButton)).perform(click());
+    }
+
+    public static void go_back_to_billing_in_new_card() {
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
     }
 
 

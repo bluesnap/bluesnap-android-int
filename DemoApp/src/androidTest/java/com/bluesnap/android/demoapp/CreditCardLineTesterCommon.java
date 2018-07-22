@@ -79,6 +79,13 @@ public class CreditCardLineTesterCommon {
         }
     }
 
+    public static void check_ime_action_button_in_cc_info() {
+        onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
+//        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+//        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        onView(withId(R.id.input_name)).check(matches(TestUtils.isViesFocused()));
+    }
+
     public static void check_filling_in_cc_info_flow() {
         onView(withId(R.id.creditCardNumberEditText)).perform(typeText(cardNumberGeneratorTest()));
         onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused()));
@@ -87,13 +94,6 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused()));
 
         onView(withId(R.id.cvvEditText)).perform(typeText("123"));
-    }
-
-    public static void check_ime_action_button_in_cc_info() {
-        onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
-//        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-//        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-        onView(withId(R.id.input_name)).check(matches(TestUtils.isViesFocused()));
     }
 
     /**

@@ -18,12 +18,12 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
- * Created by sivani on 17/07/2018.
+ * Created by sivani on 21/07/2018.
  */
 
 @RunWith(AndroidJUnit4.class)
 
-public class MinimalBillingTests extends EspressoBasedTest {
+public class MinimalBillingWithEmailTests extends EspressoBasedTest {
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -32,9 +32,10 @@ public class MinimalBillingTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
+        sdkRequest.setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.applicationContext);
     }
 
     /**
@@ -66,15 +67,6 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that the country image changes as expected, according
-     * to different choices in billing info.
-     */
-    @Test
-    public void changing_country_view_validation_in_billing() throws InterruptedException {
-        NewCardVisibilityTesterCommon.changing_country_view_validation(R.id.billingViewComponent);
-    }
-
-    /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
@@ -84,12 +76,12 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test checks whether the zip field is visible to the user or not, according
-     * to different choices of countries in billing info.
+     * This test verifies that an invalid error appears for every
+     * field when leaving it empty (without entering at all)
      */
     @Test
-    public void changing_country_zip_view_validation_in_billing() throws InterruptedException {
-        NewCardVisibilityTesterCommon.changing_country_zip_view_validation(R.id.billingViewComponent);
+    public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, false, true, R.id.billingButtonComponentView);
     }
 
     /**
@@ -98,24 +90,8 @@ public class MinimalBillingTests extends EspressoBasedTest {
      */
     @Test
     public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
-        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, false, false);
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, false, true);
     }
 
-    /**
-     * This test verifies the ime action button works as it should
-     * in credit card info
-     */
-    @Test
-    public void check_ime_action_button_in_cc_info() throws InterruptedException {
-        CreditCardLineTesterCommon.check_ime_action_button_in_cc_info();
-    }
-
-    /**
-     * This test verifies the flow of filling in credit card fields happens as it should.
-     */
-    @Test
-    public void check_filling_in_cc_info_flow() throws InterruptedException {
-        CreditCardLineTesterCommon.check_filling_in_cc_info_flow();
-    }
 
 }

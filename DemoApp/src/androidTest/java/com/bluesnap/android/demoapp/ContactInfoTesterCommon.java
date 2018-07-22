@@ -20,7 +20,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.cardNumberGeneratorTest;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
@@ -30,6 +29,19 @@ import static org.hamcrest.Matchers.hasToString;
  */
 
 public class ContactInfoTesterCommon {
+    public static void check_ime_action_button_in_contact_info(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click(), pressImeActionButton());
+        if (withEmail)
+            onView(withId(R.id.input_email)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+
+        if (fullInfo) {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+        }
+    }
+
     public static void empty_fields_invalid_error_validation(int componentResourceId, boolean fullInfo, boolean withEmail, int buttonComponent) throws InterruptedException {
         //String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
 
@@ -132,10 +144,10 @@ public class ContactInfoTesterCommon {
 
     }
 
-    public void email_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
+    public static void email_invalid_error_validation(boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //Click the field and leave it empty
         onView(withId(R.id.input_email)).perform(click());
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -143,7 +155,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email- without '@'
         onView(withId(R.id.input_email)).perform(typeText("broadwaydancecenter.com"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -151,7 +163,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email- without '.' finish
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -160,7 +172,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid email- too long suffix
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmailgmailgmailgmailgmailgmail" +
                 "gmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmail.com"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -171,16 +183,16 @@ public class ContactInfoTesterCommon {
                 "broadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
                 "broadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
                 "broadwaydancecenterbroadwaydancecenter@gmail.com"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
                 isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
 
-        //Entering an invalid email- too long prefix1
+        //Entering an invalid email- too long prefix2
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail.comcom" +
                 "comcomcomcomcomcomcom"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -188,7 +200,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email- illegal characters
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter*@gmail.com"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -196,7 +208,7 @@ public class ContactInfoTesterCommon {
 
         //Entering a valid email
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail.com"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -204,7 +216,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email again- without '@'
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter.com"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_email);
+        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -214,7 +226,7 @@ public class ContactInfoTesterCommon {
 
     public static void zip_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //fill in country with zip
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
         onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         //Click the field and leave it empty
@@ -224,7 +236,7 @@ public class ContactInfoTesterCommon {
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
                 isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                isDescendantOfA(withId(componentResourceId)))).perform(scrollTo()).check(matches(isDisplayed()));
 
         //Entering an invalid zip- invalid characters
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
@@ -279,7 +291,7 @@ public class ContactInfoTesterCommon {
 
     public static void city_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //Click the field and leave it empty
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(click());
+        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
         move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
 
         //Verify error message is displayed
@@ -410,19 +422,6 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
     }
 
-    public static void check_ime_action_button_in_contact_info(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click(), pressImeActionButton());
-        if (withEmail)
-            onView(withId(R.id.input_email)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
-            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-
-        if (fullInfo) {
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-        }
-    }
-
     /**
      * This test verifies that the billing contact info is saved when
      * continuing to shipping and going back to billing,
@@ -434,11 +433,11 @@ public class ContactInfoTesterCommon {
         onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         if (inBilling) { //fill in info. continue to shipping and back to billing
-            ContactInfoTesterCommon.continue_to_shipping("US", fullInfo, withEmail);
-            ContactInfoTesterCommon.go_back_to_billing();
+            TestUtils.continue_to_shipping_in_new_card("US", fullInfo, withEmail);
+            TestUtils.go_back_to_billing_in_new_card();
         } else { //fill in info. go back to billing and again continue to shipping
             fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
-            ContactInfoTesterCommon.go_back_to_billing();
+            TestUtils.go_back_to_billing_in_new_card();
             onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
         }
 
@@ -458,22 +457,13 @@ public class ContactInfoTesterCommon {
 
         if (fullInfo) {
             //Verify city has been saved in current component
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Tel Aviv")));
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("New York")));
             //Verify address has been saved in current component
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("Rotchild street")));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("555 Broadway street")));
             //Verify state has been saved in current component
             onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("NY")));
         }
     }
-
-
-    public static void continue_to_shipping(String country, boolean fullInfo, boolean withEmail) {
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
-
-        onView(withId(R.id.buyNowButton)).perform(click());
-    }
-
 
     public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("La Fleur"), pressImeActionButton());
@@ -488,7 +478,7 @@ public class ContactInfoTesterCommon {
             onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("New York"), pressImeActionButton());
             onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("555 Broadway street"));
             if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
-                onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(scrollTo(), click());
+                onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
                 if (country.equals("US"))
                     onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
                 else if (country.equals("CA"))
@@ -497,11 +487,6 @@ public class ContactInfoTesterCommon {
                     onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
             }
         }
-    }
-
-    public static void go_back_to_billing() {
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
     }
 
     private static void move_to_next_field(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {

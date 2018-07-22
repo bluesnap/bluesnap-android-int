@@ -38,7 +38,7 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that the all credit card fields are displayed as they should
+     * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.
      */
     @Test
@@ -47,7 +47,7 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that the all billing contact info fields are displayed
+     * This test verifies that all the billing contact info fields are displayed
      * according to full billing when choosing new credit card.
      */
     @Test
@@ -115,130 +115,6 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that an invalid error appears for every
-     * field when leaving it empty (without entering at all)
-     */
-    @Test
-    public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, true, false, R.id.billingButtonComponentView);
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the name
-     * input field in billing.
-     * In all cases we check validity by clicking on another field
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid name- less than 2 words or less than 2 characters
-     * Entering a valid name
-     * Entering an invalid name after entering a valid one
-     */
-    @Test
-    public void name_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.name_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_zip);
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the name
-     * input field in billing.
-     * In all cases we check validity by pressing the Ime button
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid name- less than 2 words or less than 2 characters
-     * Entering a valid name
-     * Entering an invalid name after entering a valid one
-     */
-    @Test
-    public void name_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.name_invalid_error_validation(R.id.billingViewComponent, true, 0);
-
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the zip
-     * input field in billing.
-     * In all cases we check validity by clicking on another field
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid zip- invalid characters
-     * Entering a valid zip
-     * Entering an invalid zip after entering a valid one
-     */
-    @Test
-    public void zip_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.zip_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_name);
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the zip
-     * input field in billing.
-     * In all cases we check validity by pressing the Ime button
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid zip- invalid characters
-     * Entering a valid zip
-     * Entering an invalid zip after entering a valid one
-     */
-    @Test
-    public void zip_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.zip_invalid_error_validation(R.id.billingViewComponent, true, 0);
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the city
-     * input field in billing.
-     * In all cases we check validity by clicking on another field
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid city- less than 2 characters
-     * Entering a valid city
-     * Entering an invalid city after entering a valid one
-     */
-    @Test
-    public void city_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.city_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_address);
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the city
-     * input field in billing.
-     * In all cases we check validity by pressing the Ime button
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid city- less than 2 characters
-     * Entering a valid city
-     * Entering an invalid city after entering a valid one
-     */
-    @Test
-    public void city_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.city_invalid_error_validation(R.id.billingViewComponent, true, 0);
-    }
-
-    /**
-     * This test verifies the invalid error appearance for the address
-     * input field in billing.
-     * In all cases we check validity by clicking on another field
-     * It covers the following:
-     * Click the field and leave it empty
-     * Entering an invalid address- invalid characters
-     * Entering a valid address
-     * Entering an invalid address after entering a valid one
-     */
-    @Test
-    public void address_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.address_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_city);
-    }
-
-    /**
-     * This test verifies that the invalid state error disappears
-     * after entering a state.
-     */
-    @Test
-    public void state_invalid_error_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.state_invalid_error(R.id.billingViewComponent, R.id.billingButtonComponentView);
-    }
-
-    /**
      * This test verifies the ime action button works as it should
      * in full billing contact info
      */
@@ -246,6 +122,7 @@ public class FullBillingTests extends EspressoBasedTest {
     public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
         ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, true, false);
     }
+
 
 }
 

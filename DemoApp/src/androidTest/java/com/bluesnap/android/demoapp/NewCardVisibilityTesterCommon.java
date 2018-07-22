@@ -24,6 +24,34 @@ import static org.hamcrest.Matchers.not;
  * Created by sivani on 04/06/2018.
  */
 public class NewCardVisibilityTesterCommon {
+    public static void new_credit_cc_info_visibility_validation() {
+        onView(withId(R.id.creditCardNumberEditText)).check(matches(isDisplayed()));
+        onView(withId(R.id.expEditText)).check(matches(not(isDisplayed())));
+        onView(withId(R.id.cvvEditText)).check(matches(not(isDisplayed())));
+    }
+
+    public static void new_credit_contact_info_visibility_validation(int componentResourceId, boolean fullInfo, boolean withEmail) {
+        //verifies that the right component(billing/shipping) is displayed- is this necessary?
+        onView(withId(componentResourceId)).check(matches(isDisplayed()));
+
+        Espresso.closeSoftKeyboard();
+        //verifies that all right fields are displayed in the component
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        if (withEmail)
+            onView(withId(R.id.input_email)).check(matches(isDisplayed()));
+        else if (componentResourceId == R.id.billingViewComponent)
+            onView(withId(R.id.input_email)).check(matches(not(isDisplayed())));
+
+        if (fullInfo) {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        } else {
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
+        }
+
+    }
+
     /**
      * This test verifies that the country image matches the shopper's country
      * when first entering billing or shipping info.
@@ -147,10 +175,10 @@ public class NewCardVisibilityTesterCommon {
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         if (inBilling) //continue to shipping
-            ContactInfoTesterCommon.continue_to_shipping("SP", fullInfo, withEmail);
+            TestUtils.continue_to_shipping_in_new_card("SP", fullInfo, withEmail);
 
         else //go back to billing
-            ContactInfoTesterCommon.go_back_to_billing();
+            TestUtils.go_back_to_billing_in_new_card();
 
 
         //Changing Country to Italy in second fragment
@@ -158,7 +186,7 @@ public class NewCardVisibilityTesterCommon {
         onData(hasToString(containsString("Italy"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         if (inBilling) //go back to billing
-            ContactInfoTesterCommon.go_back_to_billing();
+            TestUtils.go_back_to_billing_in_new_card();
 
         else //continue to shipping
             onView(withId(R.id.buyNowButton)).perform(click());
@@ -166,34 +194,5 @@ public class NewCardVisibilityTesterCommon {
         //Verify country hasn't change in first fragment
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(firstComponentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.es)));
     }
-
-    public static void new_credit_cc_info_visibility_validation() {
-        onView(withId(R.id.creditCardNumberEditText)).check(matches(isDisplayed()));
-        onView(withId(R.id.expEditText)).check(matches(not(isDisplayed())));
-        onView(withId(R.id.cvvEditText)).check(matches(not(isDisplayed())));
-    }
-
-    public static void new_credit_contact_info_visibility_validation(int componentResourceId, boolean fullInfo, boolean withEmail) {
-        //verifies that the right component(billing/shipping) is displayed- is this necessary?
-        onView(withId(componentResourceId)).check(matches(isDisplayed()));
-
-        Espresso.closeSoftKeyboard();
-        //verifies that all right fields are displayed in the component
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-        if (withEmail)
-            onView(withId(R.id.input_email)).check(matches(isDisplayed()));
-        else if (componentResourceId == R.id.billingViewComponent)
-            onView(withId(R.id.input_email)).check(matches(not(isDisplayed())));
-
-        if (fullInfo) {
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-        } else {
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
-        }
-
-    }
-
 
 }

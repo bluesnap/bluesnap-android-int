@@ -62,8 +62,27 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
+    }
+
+    /**
+     * This test verifies that the country image matches the shopper's country
+     * when first entering billing info.
+     * (according to its location, or us by default)
+     */
+    @Test
+    public void default_country_view_validation_in_billing() throws InterruptedException, IOException {
+        NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.billingViewComponent);
+    }
+
+    /**
+     * This test checks whether the zip field is visible to the user or not, according
+     * to the default Country (the one that is chosen when entering billing).
+     */
+    @Test
+    public void default_country_zip_view_validation_in_billing() throws InterruptedException {
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.billingViewComponent);
     }
 
     /**
@@ -72,8 +91,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * (according to its location, or us by default)
      */
     @Test
-    public void default_country_view_in_shipping_validation() throws InterruptedException, IOException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+    public void default_country_view_validation_in_shipping() throws InterruptedException, IOException {
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
@@ -83,7 +102,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void changing_country_view_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.changing_country_view_validation(R.id.newShoppershippingViewComponent);
     }
 
@@ -93,7 +112,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_zip_view_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
@@ -103,7 +122,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void changing_country_zip_view_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.changing_country_zip_view_validation(R.id.newShoppershippingViewComponent);
     }
 
@@ -115,7 +134,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_state_view_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.newShoppershippingViewComponent, defaultCountry);
     }
 
@@ -127,8 +146,27 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void changing_country_state_view_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.changing_country_state_view_validation(R.id.newShoppershippingViewComponent);
+    }
+
+    /**
+     * This test verifies that changing the country in billing
+     * doesn't change the country in shipping as well.
+     */
+    @Test
+    public void country_changes_per_billing_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(true, false, false);
+    }
+
+    /**
+     * This test verifies that changing the country in shipping
+     * doesn't change the country in billing as well.
+     */
+    @Test
+    public void country_changes_per_shipping_validation() throws InterruptedException {
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
+        NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
     }
 
     /**
@@ -138,9 +176,10 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     @Test
     public void empty_fields_invalid_error_validation_in_shipping() throws InterruptedException {
         //Continue to shipping
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.newShoppershippingViewComponent, true, false, R.id.shippingButtonComponentView);
     }
+
 
     /**
      * This test verifies the invalid error appearance for the name
@@ -154,7 +193,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void name_invalid_error_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.name_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_zip);
     }
 
@@ -170,7 +209,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void name_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.name_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
 
     }
@@ -187,7 +226,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void zip_invalid_error_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.zip_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_name);
     }
 
@@ -203,7 +242,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void zip_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.zip_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
     }
 
@@ -219,7 +258,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void city_invalid_error_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.city_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_address);
     }
 
@@ -235,7 +274,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void city_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.city_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
     }
 
@@ -251,7 +290,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void address_invalid_error_validation_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.address_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_city);
     }
 
@@ -261,7 +300,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void state_invalid_error_in_shipping() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.state_invalid_error(R.id.newShoppershippingViewComponent, R.id.shippingButtonComponentView);
     }
 
@@ -270,9 +309,19 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * in shipping contact info
      */
     @Test
-    public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
-        ContactInfoTesterCommon.continue_to_shipping(defaultCountry, false, false);
+    public void check_ime_action_button_in_shipping_contact_info() throws InterruptedException {
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.newShoppershippingViewComponent, true, false);
+    }
+
+    /**
+     * This test verifies that the shipping contact info is saved when
+     * going back to billing and entering the shipping once again.
+     */
+    @Test
+    public void contact_info_saved_validation_in_shipping() throws InterruptedException {
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
+        ContactInfoTesterCommon.contact_info_saved_validation(false, R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
@@ -283,7 +332,6 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     @Test
     public void cc_card_info_saved_validation() throws InterruptedException {
         CreditCardLineTesterCommon.cc_card_info_saved_validation(defaultCountry, false, false);
-
     }
 
 }

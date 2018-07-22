@@ -33,8 +33,8 @@ import static org.hamcrest.Matchers.not;
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class CCormValidityTest extends EspressoBasedTest {
-    private static final String TAG = CCormValidityTest.class.getSimpleName();
+public class CCFormValidityTest extends EspressoBasedTest {
+    private static final String TAG = CCFormValidityTest.class.getSimpleName();
 
     @After
     public void keepRunning() throws InterruptedException {
