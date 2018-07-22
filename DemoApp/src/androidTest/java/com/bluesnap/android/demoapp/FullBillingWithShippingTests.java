@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -27,9 +28,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithShippingTests extends EspressoBasedTest {
+    private String checkoutCurrency = "USD";
     private Double purchaseAmount = 55.5;
-    private Double taxAmount = 0.0;
-
+    //private Double taxAmount = 0.0;
 
     @After
     public void keepRunning() throws InterruptedException {
@@ -38,7 +39,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, "USD");
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setBillingRequired(true);
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
@@ -154,21 +155,6 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     public void country_changes_per_shipping_validation() throws InterruptedException {
         TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
-    }
-
-    /**
-     * This test verifies that the shipping same as billing switch works as
-     * it should.
-     * It checks that the shipping button changed to pay, and that the tax
-     * and subtotal are presented if they supposed to.
-     */
-    @Test
-    public void shipping_same_as_billing_view_validation() throws InterruptedException {
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
-//        String buyNowButtonText = TestUtils.getText(withId(R.id.buyNowButton));
-        onView(withId(R.id.buyNowButton)).check(matches(withText(TestUtils.getStringFormatAmount("Pay",
-                AndroidUtil.getCurrencySymbol("USD"), purchaseAmount + taxAmount))));
-
     }
 
 }

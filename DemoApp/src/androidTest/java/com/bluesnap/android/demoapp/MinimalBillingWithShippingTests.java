@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp;
 
+import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -15,7 +16,9 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.Matchers.allOf;
 
 /**
  * Created by sivani on 17/07/2018.
@@ -177,7 +180,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void empty_fields_invalid_error_validation_in_shipping() throws InterruptedException {
         //Continue to shipping
         TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.newShoppershippingViewComponent, true, false, R.id.shippingButtonComponentView);
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.newShoppershippingViewComponent, true, false);
     }
 
 
@@ -320,8 +323,19 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void contact_info_saved_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.contact_info_saved_validation(false, R.id.newShoppershippingViewComponent, true, false);
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false); //continue to shipping
+
+        //Changing country to USA for state and zip appearance
+        ContactInfoTesterCommon.change_country(R.id.newShoppershippingViewComponent, "United States");
+        //fill in info
+        ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
+
+        //go back and forward
+        TestUtils.go_back_to_billing_in_new_card();
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+
+        //verify info has been saved
+        ContactInfoTesterCommon.contact_info_saved_validation(R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
@@ -331,7 +345,12 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void cc_card_info_saved_validation() throws InterruptedException {
-        CreditCardLineTesterCommon.cc_card_info_saved_validation(defaultCountry, false, false);
+        //Continue to Shipping and back to billing
+
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
+        TestUtils.go_back_to_billing_in_new_card();
+
+        CreditCardLineTesterCommon.cc_card_info_saved_validation("5288", "12/26", "123");
     }
 
 }

@@ -53,7 +53,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void new_credit_billing_contact_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.billingViewComponent, false, false);
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.billingViewComponent, false, true);
     }
 
     /**
@@ -81,7 +81,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, false, true, R.id.billingButtonComponentView);
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, false, true);
     }
 
     /**

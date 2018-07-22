@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -15,7 +16,14 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static java.lang.Thread.sleep;
+import static org.hamcrest.Matchers.allOf;
 
 /**
  * Created by sivani on 21/07/2018.
@@ -24,9 +32,13 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
+    private String checkoutCurrency = "USD";
+    private Double purchaseAmount = 55.5;
+    private Double taxAmount = 0.0;
+
     @After
     public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
+        sleep(1000);
     }
 
     @Before
@@ -138,7 +150,81 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void contact_info_saved_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.contact_info_saved_validation(true, R.id.billingViewComponent, true, true);
+        //Changing country to USA for state and zip appearance
+        ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
+        //fill in info, continue to shipping and back to billing
+        TestUtils.continue_to_shipping_in_new_card("US", true, true);
+        TestUtils.go_back_to_billing_in_new_card();
+
+        //verify info has been saved
+        ContactInfoTesterCommon.contact_info_saved_validation(R.id.billingViewComponent, true, true);
     }
 
+    /**
+     * This test verifies that the shipping same as billing switch works as
+     * it should.
+     * It checks that the shipping button changed to pay, and that the tax
+     * and subtotal are presented if they supposed to.
+     */
+    @Test
+    public void shipping_same_as_billing_view_validation() throws InterruptedException {
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
+//        String buyNowButtonText = TestUtils.getText(withId(R.id.buyNowButton));
+        //verify that the "Shipping" button has changed to "Pay ..."
+        onView(withId(R.id.buyNowButton)).check(matches(withText(TestUtils.getStringFormatAmount("Pay",
+                AndroidUtil.getCurrencySymbol(checkoutCurrency), purchaseAmount + taxAmount))));
+
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //rewind the choice
+
+        //verify that the shipping button has changed back "Shipping"
+        onView(withId(R.id.buyNowButton)).check(matches(withText("Shipping")));
+    }
+
+    /**
+     * This test verifies that the shipping same as billing switch works as
+     * it should.
+     * It checks that the shipping button changed to pay, and that the tax
+     * and subtotal are presented if they supposed to.
+     */
+    @Test
+    public void shipping_same_as_billing_info_saved_in_billing_validation() throws InterruptedException {
+        ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "US", true, true);
+
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
+
+        //verify that the credit card info remained the same
+        CreditCardLineTesterCommon.cc_card_info_saved_validation("5288", "12/26", "123");
+
+        //verify that the contact card info remained the same
+        ContactInfoTesterCommon.contact_info_saved_validation(R.id.billingViewComponent, true, true);
+
+    }
+
+    /**
+     * This test verifies that the shipping same as billing switch works as
+     * it should.
+     * It checks that the shipping button changed to pay, and that the tax
+     * and subtotal are presented if they supposed to.
+     */
+    @Test
+    public void shipping_same_as_billing_info_saved_in_shipping_validation() throws InterruptedException {
+        //continue to shipping
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, true);
+        //fill in info in shipping
+        ContactInfoTesterCommon.change_country(R.id.newShoppershippingViewComponent, "United States");
+        ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
+        //return to billing
+        TestUtils.go_back_to_billing_in_new_card();
+
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        sleep(2000);
+        //verify that the contact card info remained the same
+        ContactInfoTesterCommon.contact_info_saved_validation(R.id.newShoppershippingViewComponent, true, false);
+
+    }
 }

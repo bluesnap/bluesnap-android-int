@@ -42,8 +42,9 @@ public class ContactInfoTesterCommon {
         }
     }
 
-    public static void empty_fields_invalid_error_validation(int componentResourceId, boolean fullInfo, boolean withEmail, int buttonComponent) throws InterruptedException {
+    public static void empty_fields_invalid_error_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
         //String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+        int buttonComponent = (componentResourceId == R.id.billingViewComponent) ? R.id.billingButtonComponentView : R.id.shippingButtonComponentView;
 
         //Choosing brazil (that has state and zip)
         change_country(componentResourceId, "United States");
@@ -427,19 +428,19 @@ public class ContactInfoTesterCommon {
      * continuing to shipping and going back to billing,
      * while using the back button
      */
-    public static void contact_info_saved_validation(boolean inBilling, int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
-        //Changing country to USA for state and zip appearance
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-
-        if (inBilling) { //fill in info. continue to shipping and back to billing
-            TestUtils.continue_to_shipping_in_new_card("US", fullInfo, withEmail);
-            TestUtils.go_back_to_billing_in_new_card();
-        } else { //fill in info. go back to billing and again continue to shipping
-            fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
-            TestUtils.go_back_to_billing_in_new_card();
-            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
-        }
+    public static void contact_info_saved_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
+//        //Changing country to USA for state and zip appearance
+//        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
+//        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+//
+//        if (inBilling) { //fill in info. continue to shipping and back to billing
+//            TestUtils.continue_to_shipping_in_new_card("US", fullInfo, withEmail);
+//            TestUtils.go_back_to_billing_in_new_card();
+//        } else { //fill in info. go back to billing and again continue to shipping
+//            fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
+//            TestUtils.go_back_to_billing_in_new_card();
+//            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+//        }
 
         Espresso.closeSoftKeyboard();
 
@@ -465,7 +466,16 @@ public class ContactInfoTesterCommon {
         }
     }
 
+    //add this overloading for choosing country
+//    public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
+//            fillInContactInfo(componentResourceId, country, fullInfo, withEmail, false);
+//    }
+
+    //if changeCountry is true than country is the country to change to
+    //o.w. county is the chosen country and we dont change it
     public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
+//        if (changeCountry)
+//            change_country(componentResourceId, country);
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("La Fleur"), pressImeActionButton());
 
         if (withEmail)
@@ -496,7 +506,7 @@ public class ContactInfoTesterCommon {
             onView(allOf(withId(nextFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
     }
 
-    private static void change_country(int componentResourceId, String country) {
+    public static void change_country(int componentResourceId, String country) {
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString(country))).inAdapterView(withId(R.id.country_list_view)).perform(click());
     }

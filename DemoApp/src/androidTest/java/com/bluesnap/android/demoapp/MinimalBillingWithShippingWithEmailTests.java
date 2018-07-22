@@ -126,7 +126,13 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
      */
     @Test
     public void contact_info_saved_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.contact_info_saved_validation(true, R.id.billingViewComponent, false, true);
-    }
+        //Changing country to USA for state and zip appearance
+        ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
+        //fill in info, continue to shipping and back to billing
+        TestUtils.continue_to_shipping_in_new_card("US", false, true);
+        TestUtils.go_back_to_billing_in_new_card();
 
+        //verify info has been saved
+        ContactInfoTesterCommon.contact_info_saved_validation(R.id.billingViewComponent, false, true);
+    }
 }

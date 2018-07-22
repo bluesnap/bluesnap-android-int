@@ -101,24 +101,24 @@ public class CreditCardLineTesterCommon {
      * continuing to shipping and going back to billing,
      * while using the back button.
      */
-    public static void cc_card_info_saved_validation(String defaultCountry, boolean fullInfo, boolean withEmail) throws InterruptedException {
-        fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, defaultCountry, fullInfo, withEmail);
-        //String creditCardNumber = TestUtils.getText(withId(R.id.creditCardNumberEditText));
+    public static void cc_card_info_saved_validation(String creditCardNum, String expDate, String cvvNum) throws InterruptedException {
+//        fillInCCLineWithValidCard();
+//        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, defaultCountry, fullInfo, withEmail);
+//        //String creditCardNumber = TestUtils.getText(withId(R.id.creditCardNumberEditText));
+//
+//        //Continue to Shipping and back to billing
+//        onView(withId(R.id.buyNowButton)).perform(click());
+//        Espresso.closeSoftKeyboard();
+//        Espresso.pressBack();
 
-        //Continue to Shipping and back to billing
-        onView(withId(R.id.buyNowButton)).perform(click());
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
+        //Verify cc number has been saved
+        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText(creditCardNum)));
 
-        //Verify cc number has been saved in billing
-        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText("5288")));
+        //Verify exp date has been saved
+        onView(withId(R.id.expEditText)).check(matches(withText(expDate)));
 
-        //Verify cc number has been saved in billing
-        onView(withId(R.id.expEditText)).check(matches(withText("12/26")));
-
-        //Verify cvv number has been saved in billing
-        onView(withId(R.id.cvvEditText)).check(matches(withText("123")));
+        //Verify cvv number has been saved
+        onView(withId(R.id.cvvEditText)).check(matches(withText(cvvNum)));
     }
 
     public static String cardNumberGeneratorTest() {

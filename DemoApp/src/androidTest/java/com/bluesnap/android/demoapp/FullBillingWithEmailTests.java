@@ -93,7 +93,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, true, true, R.id.billingButtonComponentView);
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, true, true);
     }
 
     /**
