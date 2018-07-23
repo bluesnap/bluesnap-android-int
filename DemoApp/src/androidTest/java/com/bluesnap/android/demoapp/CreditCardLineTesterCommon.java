@@ -13,9 +13,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.hamcrest.Matcher;
+import org.junit.Test;
 
 import java.util.Arrays;
 
@@ -79,6 +81,21 @@ public class CreditCardLineTesterCommon {
         }
     }
 
+    public static void check_currency_in_hamburger_button(String currencyCode) {
+        //verify hamburger button displays the correct currency when clicking on it
+        onView(withId(R.id.hamburger_button)).perform(click());
+        //String buyNowButtonText = TestUtils.getText(withText(containsString("Currency")));
+
+        onView(withText(containsString("Currency"))).check(matches(withText(containsString(currencyCode))));
+        Espresso.pressBack();
+    }
+
+    public static void check_currency_in_buy_button(int buttonComponent, String currencyCode) {
+        //verify "Pay" button displays the correct currency when clicking on it
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
+    }
+
     public static void check_ime_action_button_in_cc_info() {
         onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
 //        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
@@ -120,6 +137,7 @@ public class CreditCardLineTesterCommon {
         //Verify cvv number has been saved
         onView(withId(R.id.cvvEditText)).check(matches(withText(cvvNum)));
     }
+
 
     public static String cardNumberGeneratorTest() {
         return "5572758886015288";

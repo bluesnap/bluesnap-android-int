@@ -24,6 +24,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 
 public class MinimalBillingTests extends EspressoBasedTest {
+    private String checkoutCurrency = "USD";
+    private Double purchaseAmount = 55.5;
+    private Double taxAmount = 0.0;
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -93,6 +96,14 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the "Pay" button is visible and contains
+     * the correct currency symbol and amount
+     */
+    @Test
+    public void pay_button_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.pay_button_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, taxAmount);
+    }
+    /**
      * This test verifies the ime action button works as it should
      * in billing contact info
      */
@@ -116,6 +127,16 @@ public class MinimalBillingTests extends EspressoBasedTest {
     @Test
     public void check_filling_in_cc_info_flow() throws InterruptedException {
         CreditCardLineTesterCommon.check_filling_in_cc_info_flow();
+    }
+
+    /**
+     * This test verifies that changing the currency in billing
+     * changes as it should in billing.
+     */
+    @Test
+    public void change_currency_in_billing_validation() throws InterruptedException {
+        CreditCardLineTesterCommon.changeCurrency("GBP");
+        CurrencyChangeTest.change_currency_validation(R.id.billingButtonComponentView, "GBP");
     }
 
 }

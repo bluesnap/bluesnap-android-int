@@ -5,6 +5,8 @@ import android.support.test.espresso.Espresso;
 
 import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.services.AndroidUtil;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -15,6 +17,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
@@ -193,6 +196,28 @@ public class NewCardVisibilityTesterCommon {
 
         //Verify country hasn't change in first fragment
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(firstComponentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.es)));
+    }
+
+    /**
+     * This test verifies that the "Pay" button is visible and contains
+     * the correct currency symbol and amount
+     */
+    public static void pay_button_validation(int buttonComponent, String checkoutCurrency, Double purchaseAmount, Double taxAmount) throws InterruptedException {
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(ViewMatchers.isDisplayed()));
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(withText(TestUtils.getStringFormatAmount("Pay",
+                        AndroidUtil.getCurrencySymbol(checkoutCurrency), purchaseAmount + taxAmount))));
+    }
+
+    /**
+     * This test verifies that the "Shipping" button is visible
+     */
+    public static void shipping_button_validation(int buttonComponent) throws InterruptedException {
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(ViewMatchers.isDisplayed()));
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(withText("Shipping")));
     }
 
 }

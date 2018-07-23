@@ -1,6 +1,7 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -16,8 +17,10 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 /**
@@ -170,6 +173,14 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void country_changes_per_shipping_validation() throws InterruptedException {
         TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
+    }
+
+    /**
+     * This test verifies that the "Shipping" button is visible
+     */
+    @Test
+    public void shipping_button_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.shipping_button_validation(R.id.billingButtonComponentView);
     }
 
     /**
@@ -351,6 +362,28 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         TestUtils.go_back_to_billing_in_new_card();
 
         CreditCardLineTesterCommon.cc_card_info_saved_validation("5288", "12/26", "123");
+    }
+
+    /**
+     * This test verifies that changing the currency in billing
+     * changes as it should in shipping.
+     */
+    @Test
+    public void change_currency_in_shipping_with_validation() throws InterruptedException {
+        CreditCardLineTesterCommon.changeCurrency("CAD");
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
+        CurrencyChangeTest.change_currency_validation(R.id.shippingButtonComponentView, "CAD");
+    }
+
+    /**
+     * This test verifies that changing the currency in billing, while shipping is enabled,
+     * changes as it should in shipping.
+     */
+    @Test
+    public void change_currency_in_billing_with_shipping_validation() throws InterruptedException {
+        CreditCardLineTesterCommon.changeCurrency("CAD");
+        TestUtils.continue_to_shipping_in_new_card(defaultCountry, false, false);
+        CurrencyChangeTest.change_currency_validation(R.id.shippingButtonComponentView, "CAD");
     }
 
 }

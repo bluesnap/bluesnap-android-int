@@ -43,7 +43,6 @@ public class ContactInfoTesterCommon {
     }
 
     public static void empty_fields_invalid_error_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
-        //String defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
         int buttonComponent = (componentResourceId == R.id.billingViewComponent) ? R.id.billingButtonComponentView : R.id.shippingButtonComponentView;
 
         //Choosing brazil (that has state and zip)
@@ -69,12 +68,12 @@ public class ContactInfoTesterCommon {
                     isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_city)),
-                    isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                    isDescendantOfA(withId(componentResourceId)))).perform(scrollTo()).check(matches(isDisplayed()));
 
             //onView(withId(R.id.input_address)).perform(scrollTo());
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_address)),
-                    isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                    isDescendantOfA(withId(componentResourceId)))).perform(scrollTo()).check(matches(isDisplayed()));
         }
 
     }

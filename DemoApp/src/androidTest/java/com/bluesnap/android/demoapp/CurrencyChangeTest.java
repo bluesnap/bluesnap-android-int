@@ -17,9 +17,11 @@ import org.junit.Test;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.fail;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 
 
@@ -84,6 +86,15 @@ public class CurrencyChangeTest extends EspressoBasedTest {
 
         onView(withId(R.id.buyNowButton))
                 .check(matches(withText(containsString(AMOUNT.toString()))));
+    }
+
+    /**
+     * This test verifies that changing the currency in billing, while shipping is enabled,
+     * changes as it should.
+     */
+    public static void change_currency_validation(int buttonComponent, String currencyCode) throws InterruptedException {
+        CreditCardLineTesterCommon.check_currency_in_hamburger_button(currencyCode);
+        CreditCardLineTesterCommon.check_currency_in_buy_button(buttonComponent, currencyCode);
     }
 
 }
