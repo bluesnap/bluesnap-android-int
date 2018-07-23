@@ -3,7 +3,6 @@ package com.bluesnap.android.demoapp;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -16,9 +15,6 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -71,7 +67,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, false);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
     }
 
@@ -112,7 +108,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_view_validation_in_shipping() throws InterruptedException, IOException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, false);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
@@ -122,7 +118,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_zip_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, false);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
@@ -134,7 +130,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_state_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, false);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.newShoppershippingViewComponent, defaultCountry);
     }
 
@@ -153,7 +149,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void country_changes_per_shipping_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, false);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
     }
 

@@ -433,7 +433,7 @@ public class ContactInfoTesterCommon {
 //        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 //
 //        if (inBilling) { //fill in info. continue to shipping and back to billing
-//            TestUtils.continue_to_shipping_in_new_card("US", fullInfo, withEmail);
+//            TestUtils.continue_to_shipping_or_pay_in_new_card("US", fullInfo, withEmail);
 //            TestUtils.go_back_to_billing_in_new_card();
 //        } else { //fill in info. go back to billing and again continue to shipping
 //            fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);

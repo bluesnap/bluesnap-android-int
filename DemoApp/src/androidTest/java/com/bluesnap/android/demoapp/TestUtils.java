@@ -257,7 +257,7 @@ public class TestUtils {
         );
     }
 
-    public static void continue_to_shipping_in_new_card(String country, boolean fullInfo, boolean withEmail) {
+    public static void continue_to_shipping_or_pay_in_new_card(String country, boolean fullInfo, boolean withEmail) {
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
 

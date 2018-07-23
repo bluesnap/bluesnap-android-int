@@ -178,7 +178,7 @@ public class NewCardVisibilityTesterCommon {
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
 
         if (inBilling) //continue to shipping
-            TestUtils.continue_to_shipping_in_new_card("SP", fullInfo, withEmail);
+            TestUtils.continue_to_shipping_or_pay_in_new_card("SP", fullInfo, withEmail);
 
         else //go back to billing
             TestUtils.go_back_to_billing_in_new_card();

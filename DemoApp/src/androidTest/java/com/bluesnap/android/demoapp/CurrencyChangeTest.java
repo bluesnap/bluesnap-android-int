@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.support.test.espresso.Espresso;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
@@ -31,25 +32,14 @@ import static org.hamcrest.Matchers.containsString;
  * Runs the app and uses the menu to change currency several times, checking that the new
  * currency is reflected in the Buy button.
  */
-@LargeTest
-public class CurrencyChangeTest extends EspressoBasedTest {
-    private static final Double AMOUNT = 23.4;
+public class CurrencyChangeTest {
     private static final String TAG = CurrencyChangeTest.class.getSimpleName();
 
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(5000);
-    }
-
-    @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-
-        SdkRequest sdkRequest = new SdkRequest(AMOUNT, "USD", 0D, false, false, false);
-        setupAndLaunch(sdkRequest);
-    }
-
-    @Test
-    public void changeCurrencyOnceCheck() throws InterruptedException {
+    /**
+     * This test verifies that changing the currency changes
+     * the hamburger button and buy button as it should.
+     */
+    public static void change_currency_validation(int buttonComponent, String currencyCode) throws InterruptedException {
         new Handler(Looper.getMainLooper())
                 .post(new Runnable() {
                     @Override
@@ -62,39 +52,37 @@ public class CurrencyChangeTest extends EspressoBasedTest {
                         }
                     }
                 });
-
-        onView(withId(R.id.newCardButton)).perform(click());
-
-        onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
-
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
-
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
-
-        CreditCardLineTesterCommon.changeCurrency("CAD");
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("CAD")))));
-
-        CreditCardLineTesterCommon.changeCurrency("ILS");
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("ILS")))));
-
-        CreditCardLineTesterCommon.changeCurrency("USD");
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
-
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AMOUNT.toString()))));
+        check_currency_in_hamburger_button(currencyCode);
+        check_currency_in_buy_button(buttonComponent, currencyCode);
     }
 
     /**
-     * This test verifies that changing the currency in billing, while shipping is enabled,
-     * changes as it should.
+     * This test verifies that after changing to different currencies
+     * and back to the origin one, the amount remains the same
      */
-    public static void change_currency_validation(int buttonComponent, String currencyCode) throws InterruptedException {
-        CreditCardLineTesterCommon.check_currency_in_hamburger_button(currencyCode);
-        CreditCardLineTesterCommon.check_currency_in_buy_button(buttonComponent, currencyCode);
+    public static void change_currency_amount_validation(int buttonComponent, String initialCurrency, String initialAmount) throws InterruptedException {
+        CreditCardLineTesterCommon.changeCurrency("CAD");
+        CreditCardLineTesterCommon.changeCurrency("ILS");
+        CreditCardLineTesterCommon.changeCurrency(initialCurrency);
+
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(withText(containsString(initialAmount))));
+
+    }
+
+    public static void check_currency_in_hamburger_button(String currencyCode) {
+        //verify hamburger button displays the correct currency when clicking on it
+        onView(withId(R.id.hamburger_button)).perform(click());
+        //String buyNowButtonText = TestUtils.getText(withText(containsString("Currency")));
+
+        onView(withText(containsString("Currency"))).check(matches(withText(containsString(currencyCode))));
+        Espresso.pressBack();
+    }
+
+    public static void check_currency_in_buy_button(int buttonComponent, String currencyCode) {
+        //verify "Pay" button displays the correct currency when clicking on it
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
     }
 
 }

@@ -81,20 +81,7 @@ public class CreditCardLineTesterCommon {
         }
     }
 
-    public static void check_currency_in_hamburger_button(String currencyCode) {
-        //verify hamburger button displays the correct currency when clicking on it
-        onView(withId(R.id.hamburger_button)).perform(click());
-        //String buyNowButtonText = TestUtils.getText(withText(containsString("Currency")));
 
-        onView(withText(containsString("Currency"))).check(matches(withText(containsString(currencyCode))));
-        Espresso.pressBack();
-    }
-
-    public static void check_currency_in_buy_button(int buttonComponent, String currencyCode) {
-        //verify "Pay" button displays the correct currency when clicking on it
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
-    }
 
     public static void check_ime_action_button_in_cc_info() {
         onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());

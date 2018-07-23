@@ -76,7 +76,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, true);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, true);
         NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
     }
 
@@ -117,7 +117,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_view_validation_in_shipping() throws InterruptedException, IOException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, true);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, true);
         NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
@@ -127,7 +127,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_zip_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, true);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, true);
         NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
@@ -139,7 +139,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_state_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, true);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, true);
         NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.newShoppershippingViewComponent, defaultCountry);
     }
 
@@ -153,7 +153,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         //Changing country to USA for state and zip appearance
         ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
         //fill in info, continue to shipping and back to billing
-        TestUtils.continue_to_shipping_in_new_card("US", true, true);
+        TestUtils.continue_to_shipping_or_pay_in_new_card("US", true, true);
         TestUtils.go_back_to_billing_in_new_card();
 
         //verify info has been saved
@@ -211,7 +211,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
     @Test
     public void shipping_same_as_billing_info_saved_in_shipping_validation() throws InterruptedException {
         //continue to shipping
-        TestUtils.continue_to_shipping_in_new_card(defaultCountry, true, true);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, true);
         //fill in info in shipping
         ContactInfoTesterCommon.change_country(R.id.newShoppershippingViewComponent, "United States");
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);

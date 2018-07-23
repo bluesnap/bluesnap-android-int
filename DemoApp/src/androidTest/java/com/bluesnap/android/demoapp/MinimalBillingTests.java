@@ -37,7 +37,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
         SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+        //defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
     }
 
     /**
@@ -137,6 +137,15 @@ public class MinimalBillingTests extends EspressoBasedTest {
     public void change_currency_in_billing_validation() throws InterruptedException {
         CreditCardLineTesterCommon.changeCurrency("GBP");
         CurrencyChangeTest.change_currency_validation(R.id.billingButtonComponentView, "GBP");
+    }
+
+    /**
+     * This test verifies that after changing to different currencies
+     * and back to the origin one in billing, the amount remains the same
+     */
+    @Test
+    public void change_currency_in_billing_amount_validation() throws InterruptedException {
+        CurrencyChangeTest.change_currency_amount_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount.toString());
     }
 
 }

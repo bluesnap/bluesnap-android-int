@@ -66,7 +66,9 @@ public class EspressoBasedTest {
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
     private boolean isSdkRequestIsNull = false;
     protected String defaultCountry;
+
     public Context applicationContext;
+//    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
 
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
@@ -103,6 +105,7 @@ public class EspressoBasedTest {
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         applicationContext = mActivity.getApplicationContext();
+        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
     }
 
     public void setSDKToken() throws InterruptedException {
