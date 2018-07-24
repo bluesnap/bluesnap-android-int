@@ -68,6 +68,8 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     private boolean fullInfo = false;
     private boolean withShipping = false;
     private boolean withEmail = false;
+    private boolean shippingSameAsBilling = false;
+
     private static final int HTTP_MAX_RETRIES = 2;
     private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
     public static final String SANDBOX_GET_SHOPPER = "vaulted-shoppers/";
@@ -311,7 +313,18 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
                     check_if_field_identify(true, "state", state);
                 }
             }
+            if (hasState)
+                check_if_field_identify(true, "state", state);
 
+            check_if_field_identify(true, "city", "New York");
+            check_if_field_identify(true, "address", "555 Broadway street");
+
+
+        }
+
+
+        //verify shipping info has been saved correctly
+        if (withShipping) {
             check_if_field_identify(false, "country", defaultCountry);
             check_if_field_identify(false, "first-name", "La");
             check_if_field_identify(false, "last-name", "Fleur");
@@ -325,17 +338,37 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         }
 
 
-        //verify shipping info has been saved correctly
-        if (withShipping) {
-            check_if_field_identify(false, "first-name", "La");
-            check_if_field_identify(false, "last-name", "Fleur");
-        }
-
-
     }
 
-    private void check_if_field_identify(boolean billingInfo, String fieldName, String expectedResult) {
-        String shopperInfo = (billingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
+    private void new_shopper_componant_info_saved_validation(boolean isBillingInfo) {
+        String address = isBillingInfo ? "address" : "address1";
+        check_if_field_identify(isBillingInfo, "country", defaultCountry);
+
+        check_if_field_identify(isBillingInfo, "first-name", "La");
+        check_if_field_identify(isBillingInfo, "last-name", "Fleur");
+
+        if (isBillingInfo && withEmail)
+            check_if_field_identify(true, "email", "test@sdk.com");
+
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(defaultCountry))
+            check_if_field_identify(isBillingInfo, "zip", "3abc 324a");
+
+        if (fullInfo || !isBillingInfo) { //full info or shipping
+            if (defaultCountry.equals("US") || defaultCountry.equals("CA") || defaultCountry.equals("BR")) {
+                if (defaultCountry.equals("US"))
+                    check_if_field_identify(isBillingInfo, "state", "New York");
+                else if (defaultCountry.equals("CA"))
+                    check_if_field_identify(isBillingInfo, "state", "Quebec");
+                else
+                    check_if_field_identify(isBillingInfo, "state", "Rio de Janeiro");
+            }
+            check_if_field_identify(isBillingInfo, "city", "New York");
+            check_if_field_identify(isBillingInfo, address, "555 Broadway street");
+        }
+    }
+
+    private void check_if_field_identify(boolean isBillingInfo, String fieldName, String expectedResult) {
+        String shopperInfo = (isBillingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
                 ("<vaulted-shopper-id>").length(), getShopperResponse.indexOf("</" + fieldName + ">")) :
                 getShopperResponse.substring(getShopperResponse.indexOf("<shipping-contact-info>") +
                         ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
