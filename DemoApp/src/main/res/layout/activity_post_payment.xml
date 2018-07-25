@@ -42,6 +42,24 @@
         android:padding="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <TextView
+        android:id="@+id/shopperId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/transactionResult"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/tokenSuffix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shopperId"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
 
     <ImageView
         android:id="@+id/imageView4"

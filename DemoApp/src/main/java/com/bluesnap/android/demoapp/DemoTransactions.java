@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -29,6 +30,9 @@ public class DemoTransactions {
     private String message;
     private String title;
     private Context context;
+    private String transactionId;
+    private String tokenSuffix = "";
+
 
     public static DemoTransactions getInstance() {
         return INSTANCE;
@@ -86,15 +90,20 @@ public class DemoTransactions {
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 setShopperId(responseString.substring(responseString.indexOf("<vaulted-shopper-id>") +
                         "<vaulted-shopper-id>".length(), responseString.indexOf("</vaulted-shopper-id>")));
+                setTransactionId(responseString.substring(responseString.indexOf("<transaction-id>") +
+                        "<transaction-id>".length(), responseString.indexOf("</transaction-id>")));
+
+                String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
+                setTokenSuffix(merchantToken.substring(merchantToken.length() - 6));
                 Log.d(TAG, responseString);
-                setMessage("Transaction Success " + getShopperId());
+                setMessage("Transaction Success " + getTransactionId());
                 setTitle("Merchant Server");
                 callback.onSuccess();
             }
         });
     }
 
-    private String getShopperId() {
+    public String getShopperId() {
         PrefsStorage prefsStorage = new PrefsStorage(getContext());
         return prefsStorage.getString(SHOPPER_ID, "");
     }
@@ -102,6 +111,22 @@ public class DemoTransactions {
     private void setShopperId(String shopperId) {
         PrefsStorage prefsStorage = new PrefsStorage(getContext());
         prefsStorage.putString(SHOPPER_ID, shopperId);
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    private void setTransactionId(String id) {
+        this.transactionId = id;
+    }
+
+    public String getTokenSuffix() {
+        return tokenSuffix;
+    }
+
+    private void setTokenSuffix(String token) {
+        this.tokenSuffix = token;
     }
 
     public String getMessage() {

@@ -28,6 +28,9 @@ public class PostPaymentActivity extends Activity {
     private TextView continueShippingView;
     private DemoTransactions transactions;
     private TextView transactionResultTextView;
+    private TextView shopperIdTextView;
+    private TextView tokenSuffixTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,10 @@ public class PostPaymentActivity extends Activity {
         continueShippingView.setVisibility(View.GONE);
         transactionResultTextView = (TextView) findViewById(R.id.transactionResult);
         transactionResultTextView.setVisibility(View.INVISIBLE);
+        shopperIdTextView = (TextView) findViewById(R.id.shopperId);
+        shopperIdTextView.setVisibility(View.INVISIBLE);
+        tokenSuffixTextView = (TextView) findViewById(R.id.tokenSuffix);
+        tokenSuffixTextView.setVisibility(View.INVISIBLE);
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
         paymentResultTextView2.setText("Your payment of  " + sdkResult.getCurrencyNameCode() + " " + decimalFormat.format(sdkResult.getAmount()) + " has been sent.");
         Bundle extras = getIntent().getExtras();
@@ -108,8 +115,12 @@ public class PostPaymentActivity extends Activity {
 
     @MainThread
     public void setContinueButton(String message, String title) {
-        transactionResultTextView.setText(String.format("%s \n %s", title,message));
+        transactionResultTextView.setText(String.format("%s \n %s", title, message));
         transactionResultTextView.setVisibility(View.VISIBLE);
+        shopperIdTextView.setText(String.format("Shopper ID:\t %s", transactions.getShopperId()));
+        shopperIdTextView.setVisibility(View.VISIBLE);
+        tokenSuffixTextView.setText(String.format("Token Suffix:\t %s", transactions.getTokenSuffix()));
+        tokenSuffixTextView.setVisibility(View.VISIBLE);
         continueShippingView.setVisibility(View.VISIBLE);
         continueShippingView.setOnClickListener(new View.OnClickListener() {
             @Override
