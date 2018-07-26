@@ -25,10 +25,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 
+import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
@@ -39,8 +41,11 @@ import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -59,6 +64,7 @@ import static org.hamcrest.Matchers.containsString;
  *
  */
 public class EspressoBasedTest {
+    NumberFormat df;
     public String merchantToken;
     protected RandomTestValuesGenerator randomTestValuesGeneretor = new RandomTestValuesGenerator();
     protected IdlingResource tokenProgressBarIR;
@@ -98,6 +104,21 @@ public class EspressoBasedTest {
 
     public void setupAndLaunch(SdkRequest sdkRequest) throws InterruptedException, BSPaymentRequestException {
         doSetup();
+        setNumberFormat();
+        sdkRequest.setTaxCalculator(new TaxCalculator() {
+            @Override
+            public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
+                if ("us".equalsIgnoreCase(shippingCountry)) {
+                    Double taxRate = 0.05;
+                    if ("ma".equalsIgnoreCase(shippingState)) {
+                        taxRate = 0.1;
+                    }
+                    priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
+                } else {
+                    priceDetails.setTaxAmount(0D);
+                }
+            }
+        });
 
         setSDKToken();
         Intent intent = new Intent();
@@ -210,6 +231,13 @@ public class EspressoBasedTest {
                 // }
             }
         });
+    }
+
+    public void setNumberFormat() {
+        df = DecimalFormat.getInstance();
+        df.setMinimumFractionDigits(2);
+        df.setMaximumFractionDigits(4);
+        df.setRoundingMode(RoundingMode.DOWN);
     }
 
 }

@@ -220,4 +220,27 @@ public class NewCardVisibilityTesterCommon {
                 .check(matches(withText("Shipping")));
     }
 
+    /**
+     * This test verifies that the amount tax shipping component is visible
+     */
+    public static void amount_tax_shipping_view_validation(int amountTaxShippingComponent, String currency, String amount, String tax) throws InterruptedException {
+        //verify component is visible
+        onView(withId(amountTaxShippingComponent)).check(matches(ViewMatchers.isDisplayed()));
+
+        //verify amount and tax is visible
+        onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(amountTaxShippingComponent))))
+                .check(matches(ViewMatchers.isDisplayed()));
+
+        String amountText = TestUtils.getText(withId(R.id.amountTextView));
+
+
+        //verify that the presented amount and tax are correct
+        onView(allOf(withId(R.id.amountTextView), isDescendantOfA(withId(amountTaxShippingComponent))))
+                .check(matches(withText(AndroidUtil.getCurrencySymbol(currency) + " " + amount)));
+//                .check(matches(withText(containsString(amount))));
+        onView(allOf(withId(R.id.taxTextView), isDescendantOfA(withId(amountTaxShippingComponent))))
+                .check(matches(withText(AndroidUtil.getCurrencySymbol(currency) + " " + tax)));
+    }
+
+
 }

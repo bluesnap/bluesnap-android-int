@@ -67,7 +67,6 @@ public class CurrencyChangeTest {
 
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
                 .check(matches(withText(containsString(initialAmount))));
-
     }
 
     public static void check_currency_in_hamburger_button(String currencyCode) {
@@ -84,6 +83,7 @@ public class CurrencyChangeTest {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
     }
+
 
 }
 

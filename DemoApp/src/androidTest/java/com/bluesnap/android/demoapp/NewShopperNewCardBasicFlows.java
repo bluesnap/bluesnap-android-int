@@ -62,7 +62,6 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     private static final String TAG = "NewShopperBasicFlow";
     private String demoPurchaseCurrency = "USD";
     private Double demoPurchaseAmount = 55.5;
-    private Double taxAmount = demoPurchaseAmount * 0.05;
     private boolean fullInfo = false;
     private boolean withShipping = false;
     private boolean withEmail = false;
@@ -196,7 +195,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
         if (withShipping) {
             if (defaultCountry.equals("US")) //updating demoPurchaseAmount to include tax
-                demoPurchaseAmount *= 1.05;
+                demoPurchaseAmount *= 1.05; //TODO: add comment
             if (!shippingSameAsBilling) {
                 ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, defaultCountry, true, false);
                 onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.shippingButtonComponentView)))).perform(click());
@@ -204,7 +203,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         }
 
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
-        merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
+        // merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
 
         finish_demo_purchase(sdkResult);
     }
@@ -222,7 +221,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         onView(withId(R.id.productPriceEditText)).check(matches(isCompletelyDisplayed()));
 
         onView(withId(R.id.rateSpinner)).check(matches(isDisplayed())).perform(closeSoftKeyboard(), click());
-        onData(allOf(is(instanceOf(String.class)), itemListMatcher(containsString("USD"))))
+        onData(allOf(is(instanceOf(String.class)), itemListMatcher(containsString(demoPurchaseCurrency))))
                 .perform(click());
 
         // onView(withId(R.id.rateSpinner)).perform(click(), closeSoftKeyboard());
@@ -257,7 +256,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - demoPurchaseAmount) < 0.00000000001);
-        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), "USD");
+        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), demoPurchaseCurrency);
     }
 
     private void get_shopper_after_transaction() {

@@ -26,6 +26,9 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Collection;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -267,6 +270,14 @@ public class TestUtils {
     public static void go_back_to_billing_in_new_card() {
         Espresso.closeSoftKeyboard();
         Espresso.pressBack();
+    }
+
+    public static double round_amount(double amount) {
+        return Math.round(amount * 100.0) / 100.0;
+    }
+
+    public static String get_amount_in_string(NumberFormat df, double amount) {
+        return df.format(amount);
     }
 
 

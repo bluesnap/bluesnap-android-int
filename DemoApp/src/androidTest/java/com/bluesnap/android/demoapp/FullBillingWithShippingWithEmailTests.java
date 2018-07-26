@@ -43,13 +43,14 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setBillingRequired(true);
         sdkRequest.setShippingRequired(true);
         sdkRequest.setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
         defaultCountry = BlueSnapService.getInstance().getUserCountry(this.applicationContext);
+        taxAmount = defaultCountry.equals("US") ? TestUtils.round_amount(purchaseAmount * 0.05) : 0.0;
     }
 
     /**
@@ -168,11 +169,17 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void shipping_same_as_billing_view_validation() throws InterruptedException {
+        Double amountAfterTax = TestUtils.round_amount(purchaseAmount + taxAmount);
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
 //        String buyNowButtonText = TestUtils.getText(withId(R.id.buyNowButton));
         //verify that the "Shipping" button has changed to "Pay ..."
         onView(withId(R.id.buyNowButton)).check(matches(withText(TestUtils.getStringFormatAmount("Pay",
                 AndroidUtil.getCurrencySymbol(checkoutCurrency), purchaseAmount + taxAmount))));
+
+        if (defaultCountry.equals("US"))
+            //verify that the amount tax shipping component is presented
+            NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.amountTaxShippingComponentView, checkoutCurrency,
+                    TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
 
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //rewind the choice
 
@@ -183,8 +190,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
     /**
      * This test verifies that the shipping same as billing switch works as
      * it should.
-     * It checks that the shipping button changed to pay, and that the tax
-     * and subtotal are presented if they supposed to.
+     * It verifies that the billing info has been saved after the swipe.
      */
     @Test
     public void shipping_same_as_billing_info_saved_in_billing_validation() throws InterruptedException {
@@ -205,8 +211,8 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
     /**
      * This test verifies that the shipping same as billing switch works as
      * it should.
-     * It checks that the shipping button changed to pay, and that the tax
-     * and subtotal are presented if they supposed to.
+     * It verifies that the shipping info has been saved after choosing billing same as billing,
+     * and than rewind the choice.
      */
     @Test
     public void shipping_same_as_billing_info_saved_in_shipping_validation() throws InterruptedException {
@@ -221,10 +227,9 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
 
+        //continue to shipping
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
-        sleep(2000);
-        //verify that the contact card info remained the same
+        //verify that the shipping contact card info remained the same
         ContactInfoTesterCommon.contact_info_saved_validation(R.id.newShoppershippingViewComponent, true, false);
-
     }
 }

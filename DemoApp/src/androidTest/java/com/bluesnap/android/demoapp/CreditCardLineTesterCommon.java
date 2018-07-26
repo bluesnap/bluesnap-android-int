@@ -74,13 +74,7 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.hamburger_button)).perform(click());
         onView(withText(containsString("Currency"))).perform(click());
         onData(hasToString(containsString(currencyCode))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
-
 
 
     public static void check_ime_action_button_in_cc_info() {
