@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -19,8 +20,11 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by sivani on 19/07/2018.
@@ -154,18 +158,55 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
     /**
      * This test verifies that the amount tax shipping component is visible when
-     * using shipping same as billing, and that it presents the right amount and tax.
+     * using shipping same as billing, after choosing USA (which has shipping tax),
+     * and that it presents the right amount and tax.
+     * It also verifies that the component isn't presented any longer after changing
+     * to a country without tax.
      */
     @Test
-    public void amount_tax_view_in_shipping_same_as_billing_validation() throws InterruptedException {
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
-
-        if (!defaultCountry.equals("US"))
+    public void amount_tax_view_before_choosing_shipping_same_as_billing() throws InterruptedException {
+        if (!defaultCountry.equals("US")) //choose United States for shipping tax
             ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
+
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
 
         //verify that the amount tax shipping component is presented
         NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.amountTaxShippingComponentView, checkoutCurrency,
                 TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+
+        //change to Spain- a country without shipping tax
+        ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "Spain");
+
+        //verify that the amount tax shipping component isn't presented
+        onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(R.id.amountTaxShippingComponentView))))
+                .check(matches(not(ViewMatchers.isDisplayed())));
+    }
+
+    /**
+     * This test verifies that the amount tax shipping component is visible when
+     * using shipping same as billing, after choosing USA (which has shipping tax),
+     * and that it presents the right amount and tax.
+     * It also verifies that the component isn't presented any longer after changing
+     * to a country without tax.
+     */
+    @Test
+    public void amount_tax_view_after_choosing_shipping_same_as_billing() throws InterruptedException {
+        //change to Costa Rica- a country without shipping tax
+        ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "Costa Rica");
+
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
+
+        //verify that the amount tax shipping component isn't presented
+        onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(R.id.amountTaxShippingComponentView))))
+                .check(matches(not(ViewMatchers.isDisplayed())));
+
+        //change to United States, which has shipping tax
+        ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
+
+        //verify that the amount tax shipping component is presented
+        NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.amountTaxShippingComponentView, checkoutCurrency,
+                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+
     }
 
 }

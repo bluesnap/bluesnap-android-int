@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -174,11 +175,10 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         onView(withId(R.id.buyNowButton)).check(matches(withText(TestUtils.getStringFormatAmount("Pay",
                 AndroidUtil.getCurrencySymbol(checkoutCurrency), purchaseAmount + tax))));
 
-        //TODO: move thia to a specific "tax" test
         if (defaultCountry.equals("US"))
-            //verify that the amount tax shipping component is presented
-            NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.amountTaxShippingComponentView, checkoutCurrency,
-                    TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+            //verify that the amount tax shipping component is displayed
+            onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(R.id.amountTaxShippingComponentView))))
+                    .check(matches(ViewMatchers.isDisplayed()));
 
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //rewind the choice
 
