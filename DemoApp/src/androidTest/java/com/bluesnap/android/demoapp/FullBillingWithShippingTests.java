@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
@@ -15,6 +16,9 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
@@ -24,10 +28,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithShippingTests extends EspressoBasedTest {
-    private String checkoutCurrency = "USD";
-    private Double purchaseAmount = 55.5;
-    //private Double taxAmount = 0.0;
-
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -40,7 +40,6 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
     }
 
     /**
@@ -151,6 +150,22 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     public void country_changes_per_shipping_validation() throws InterruptedException {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
         NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
+    }
+
+    /**
+     * This test verifies that the amount tax shipping component is visible when
+     * using shipping same as billing, and that it presents the right amount and tax.
+     */
+    @Test
+    public void amount_tax_view_in_shipping_same_as_billing_validation() throws InterruptedException {
+        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
+
+        if (!defaultCountry.equals("US"))
+            ContactInfoTesterCommon.change_country(R.id.billingViewComponent, "United States");
+
+        //verify that the amount tax shipping component is presented
+        NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.amountTaxShippingComponentView, checkoutCurrency,
+                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
     }
 
 }

@@ -31,12 +31,11 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setShippingRequired(true);
         sdkRequest.setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.applicationContext);
     }
 
     /**

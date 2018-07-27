@@ -3,10 +3,6 @@ package com.bluesnap.android.demoapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
@@ -21,9 +17,7 @@ import android.support.test.runner.lifecycle.Stage;
 import android.support.test.uiautomator.UiDevice;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -35,9 +29,6 @@ import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 
 import java.io.IOException;
@@ -66,12 +57,16 @@ import static org.hamcrest.Matchers.containsString;
 public class EspressoBasedTest {
     NumberFormat df;
     public String merchantToken;
-    protected RandomTestValuesGenerator randomTestValuesGeneretor = new RandomTestValuesGenerator();
+    protected RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
     protected IdlingResource tokenProgressBarIR;
     protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
     private boolean isSdkRequestIsNull = false;
     protected String defaultCountry;
+    protected String checkoutCurrency = "USD";
+    protected double purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
+    private double taxPercent = randomTestValuesGenerator.randomTaxPrecentage() / 100;
+    protected double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
 
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
@@ -89,7 +84,7 @@ public class EspressoBasedTest {
             fail("Could not wake up device");
             e.printStackTrace();
         }
-        randomTestValuesGeneretor = new RandomTestValuesGenerator();
+        randomTestValuesGenerator = new RandomTestValuesGenerator();
         IdlingPolicies.setMasterPolicyTimeout(60, TimeUnit.SECONDS);
         IdlingPolicies.setIdlingResourceTimeout(60, TimeUnit.SECONDS);
 
@@ -109,7 +104,7 @@ public class EspressoBasedTest {
             @Override
             public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
                 if ("us".equalsIgnoreCase(shippingCountry)) {
-                    Double taxRate = 0.05;
+                    Double taxRate = taxPercent;
                     if ("ma".equalsIgnoreCase(shippingState)) {
                         taxRate = 0.1;
                     }
@@ -236,7 +231,7 @@ public class EspressoBasedTest {
     public void setNumberFormat() {
         df = DecimalFormat.getInstance();
         df.setMinimumFractionDigits(2);
-        df.setMaximumFractionDigits(4);
+        df.setMaximumFractionDigits(2);
         df.setRoundingMode(RoundingMode.DOWN);
     }
 

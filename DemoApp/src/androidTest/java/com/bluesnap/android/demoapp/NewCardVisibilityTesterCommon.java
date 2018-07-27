@@ -231,9 +231,6 @@ public class NewCardVisibilityTesterCommon {
         onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(amountTaxShippingComponent))))
                 .check(matches(ViewMatchers.isDisplayed()));
 
-        String amountText = TestUtils.getText(withId(R.id.amountTextView));
-
-
         //verify that the presented amount and tax are correct
         onView(allOf(withId(R.id.amountTextView), isDescendantOfA(withId(amountTaxShippingComponent))))
                 .check(matches(withText(AndroidUtil.getCurrencySymbol(currency) + " " + amount)));

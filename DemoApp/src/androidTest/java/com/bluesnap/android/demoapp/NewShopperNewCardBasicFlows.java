@@ -212,7 +212,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         demoMainActivity = mActivityRule.getActivity();
         defaultCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
 
-        //demoPurchaseAmount = randomTestValuesGeneretor.randomDemoAppPrice();
+        //demoPurchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
         tokenProgressBarIR = new VisibleViewIdlingResource(R.id.progressBarMerchant, View.INVISIBLE, "merchant token progress bar");
         transactionMessageIR = new VisibleViewIdlingResource(R.id.transactionResult, View.VISIBLE, "merchant transaction completed text");
 

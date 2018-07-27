@@ -24,9 +24,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 
 public class MinimalBillingTests extends EspressoBasedTest {
-    private String checkoutCurrency = "USD";
-    private Double purchaseAmount = 55.5;
-    private Double taxAmount = 0.0;
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -37,7 +34,6 @@ public class MinimalBillingTests extends EspressoBasedTest {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-        //defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
     }
 
     /**
@@ -99,10 +95,12 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * This test verifies that the "Pay" button is visible and contains
      * the correct currency symbol and amount
      */
+
     @Test
-    public void pay_button_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.pay_button_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, taxAmount);
+    public void pay_button_in_billing_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.pay_button_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
     }
+
     /**
      * This test verifies the ime action button works as it should
      * in billing contact info
@@ -145,7 +143,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      */
     @Test
     public void change_currency_in_billing_amount_validation() throws InterruptedException {
-        CurrencyChangeTest.change_currency_amount_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount.toString());
+        CurrencyChangeTest.change_currency_amount_validation(R.id.billingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
     }
 
 }

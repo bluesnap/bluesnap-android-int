@@ -19,9 +19,14 @@ public class RandomTestValuesGenerator {
     }
 
     public Double randomTaxPrecentage() {
-        double result = MINIMUM_AMOUNT + (random.nextInt() * (100 - MINIMUM_TAX_PRECENT_AMOUNT));
+        double result = random.nextInt(20);
         return result;
     }
+
+//    public Double randomTaxPrecentage() {
+//        double result = MINIMUM_AMOUNT + (random.nextInt() * (100 - MINIMUM_TAX_PRECENT_AMOUNT));
+//        return result;
+//    }
 
     public String getAmountWithTaxString(Double amount, Double taxPrecentage) {
         double total = amount + amount * (taxPrecentage / 100);

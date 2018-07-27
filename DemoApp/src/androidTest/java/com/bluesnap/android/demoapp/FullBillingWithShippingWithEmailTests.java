@@ -32,9 +32,6 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
-    private String checkoutCurrency = "USD";
-    private Double purchaseAmount = 55.5;
-    private Double taxAmount = 0.0;
 
     @After
     public void keepRunning() throws InterruptedException {
@@ -50,7 +47,6 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
         defaultCountry = BlueSnapService.getInstance().getUserCountry(this.applicationContext);
-        taxAmount = defaultCountry.equals("US") ? TestUtils.round_amount(purchaseAmount * 0.05) : 0.0;
     }
 
     /**
@@ -169,13 +165,16 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     @Test
     public void shipping_same_as_billing_view_validation() throws InterruptedException {
-        Double amountAfterTax = TestUtils.round_amount(purchaseAmount + taxAmount);
+//        Double amountAfterTax = TestUtils.round_amount(purchaseAmount + taxAmount);
+        double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
+
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
 //        String buyNowButtonText = TestUtils.getText(withId(R.id.buyNowButton));
         //verify that the "Shipping" button has changed to "Pay ..."
         onView(withId(R.id.buyNowButton)).check(matches(withText(TestUtils.getStringFormatAmount("Pay",
-                AndroidUtil.getCurrencySymbol(checkoutCurrency), purchaseAmount + taxAmount))));
+                AndroidUtil.getCurrencySymbol(checkoutCurrency), purchaseAmount + tax))));
 
+        //TODO: move thia to a specific "tax" test
         if (defaultCountry.equals("US"))
             //verify that the amount tax shipping component is presented
             NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.amountTaxShippingComponentView, checkoutCurrency,

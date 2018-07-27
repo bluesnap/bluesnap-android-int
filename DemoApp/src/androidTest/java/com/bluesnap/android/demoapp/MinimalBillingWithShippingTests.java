@@ -15,6 +15,8 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.doubleClick;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -27,9 +29,6 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 
 public class MinimalBillingWithShippingTests extends EspressoBasedTest {
-    private Double purchaseAmount = 55.5;
-    private String checkoutCurrency = "USD";
-
     @After
     public void keepRunning() throws InterruptedException {
         Thread.sleep(1000);
@@ -37,11 +36,11 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
-        //defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+
     }
 
     /**
@@ -319,6 +318,18 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the "Pay" button is visible and contains
+     * the correct currency symbol and amount
+     */
+
+    @Test
+    public void pay_button_in_shipping_validation() throws InterruptedException {
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+        double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
+        NewCardVisibilityTesterCommon.pay_button_validation(R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+    }
+
+    /**
      * This test verifies the ime action button works as it should
      * in shipping contact info
      */
@@ -392,8 +403,25 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      */
     @Test
     public void change_currency_in_shipping_amount_validation() throws InterruptedException {
+        double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        CurrencyChangeTest.change_currency_amount_validation(R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount.toString());
+        CurrencyChangeTest.change_currency_amount_validation(R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount + tax));
+    }
+
+    /**
+     * This test verifies that the amount tax shipping component is visible
+     * in shipping, and that it presents the right amount and tax.
+     */
+    @Test
+    public void amount_tax_view_in_shipping_validation() throws InterruptedException {
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+
+        if (!defaultCountry.equals("US"))
+            ContactInfoTesterCommon.change_country(R.id.newShoppershippingViewComponent, "United States");
+
+        //verify that the amount tax shipping component is presented
+        NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,
+                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
     }
 
 }
