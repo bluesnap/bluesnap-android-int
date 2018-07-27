@@ -57,16 +57,6 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that the country image matches the shopper's country
-     * when first entering billing info.
-     * (according to its location, or us by default)
-     */
-    @Test
-    public void default_country_view_validation_in_billing() throws InterruptedException, IOException {
-        NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.billingViewComponent);
-    }
-
-    /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
@@ -76,12 +66,13 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that an invalid error appears for every
-     * field when leaving it empty (without entering at all)
+     * This test verifies that the "Pay" button is visible and contains
+     * the correct currency symbol and amount
      */
+
     @Test
-    public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, false, true);
+    public void pay_button_in_billing_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
     }
 
     /**

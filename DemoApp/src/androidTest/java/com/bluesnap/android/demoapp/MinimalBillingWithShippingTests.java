@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,8 +14,6 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.doubleClick;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -69,16 +66,6 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
         NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
-    }
-
-    /**
-     * This test verifies that the country image matches the shopper's country
-     * when first entering billing info.
-     * (according to its location, or us by default)
-     */
-    @Test
-    public void default_country_view_validation_in_billing() throws InterruptedException, IOException {
-        NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.billingViewComponent);
     }
 
     /**
@@ -156,30 +143,11 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that changing the country in billing
-     * doesn't change the country in shipping as well.
-     */
-    @Test
-    public void country_changes_per_billing_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(true, false, false);
-    }
-
-    /**
-     * This test verifies that changing the country in shipping
-     * doesn't change the country in billing as well.
-     */
-    @Test
-    public void country_changes_per_shipping_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.country_changes_per_fragment_validation(false, true, false);
-    }
-
-    /**
      * This test verifies that the "Shipping" button is visible
      */
     @Test
     public void shipping_button_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.shipping_button_validation(R.id.billingButtonComponentView);
+        NewCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation(R.id.billingButtonComponentView);
     }
 
     /**
@@ -326,7 +294,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void pay_button_in_shipping_validation() throws InterruptedException {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
         double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
-        NewCardVisibilityTesterCommon.pay_button_validation(R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation(R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
     }
 
     /**
@@ -348,7 +316,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false); //continue to shipping
 
         //Changing country to USA for state and zip appearance
-        ContactInfoTesterCommon.change_country(R.id.newShoppershippingViewComponent, "United States");
+        ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "United States");
         //fill in info
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
 
@@ -417,7 +385,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
 
         if (!defaultCountry.equals("US"))
-            ContactInfoTesterCommon.change_country(R.id.newShoppershippingViewComponent, "United States");
+            ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "United States");
 
         //verify that the amount tax shipping component is presented
         NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,

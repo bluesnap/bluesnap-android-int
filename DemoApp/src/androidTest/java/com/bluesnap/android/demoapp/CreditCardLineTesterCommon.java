@@ -58,25 +58,6 @@ public class CreditCardLineTesterCommon {
     static Matcher<View> cvvEditTextVM = withId(R.id.cvvEditText);
 
 
-    public static void fillInCCLineWithValidCard() {
-
-        //------------------------------------------
-        onView(withId(R.id.creditCardNumberEditText))
-                .perform(typeText(cardNumberGeneratorTest()));
-
-        onView(expEditTextVM).perform(typeText("12 26"));
-
-        onView(cvvEditTextVM).perform(typeText("123"));
-
-    }
-
-    public static void changeCurrency(String currencyCode) {
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString(currencyCode))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-    }
-
-
     public static void check_ime_action_button_in_cc_info() {
         onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
 //        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
@@ -119,6 +100,23 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.cvvEditText)).check(matches(withText(cvvNum)));
     }
 
+    public static void fillInCCLineWithValidCard() {
+
+        //------------------------------------------
+        onView(withId(R.id.creditCardNumberEditText))
+                .perform(typeText(cardNumberGeneratorTest()));
+
+        onView(expEditTextVM).perform(typeText("12 26"));
+
+        onView(cvvEditTextVM).perform(typeText("123"));
+
+    }
+
+    public static void changeCurrency(String currencyCode) {
+        onView(withId(R.id.hamburger_button)).perform(click());
+        onView(withText(containsString("Currency"))).perform(click());
+        onData(hasToString(containsString(currencyCode))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
+    }
 
     public static String cardNumberGeneratorTest() {
         return "5572758886015288";

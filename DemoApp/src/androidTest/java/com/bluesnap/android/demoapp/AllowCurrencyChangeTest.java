@@ -40,7 +40,7 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(55.5, "USD");
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setBillingRequired(true);
         sdkRequest.setShippingRequired(true);
         sdkRequest.setAllowCurrencyChange(isAllowed);
@@ -54,10 +54,11 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
      * It covers visibility in billing, shipping and after changing activities
      */
     @Test
-    public void hide_currency_change_hamburger_validation() throws InterruptedException {
-        //check hamburger button is not displayed in billing
+    public void currency_change_hamburger_view_validation() throws InterruptedException {
+        //check hamburger button visibility in billing
         check_currency_hamburger_button_visibility();
-        //check hamburger button is not displayed after opening country activity
+
+        //check hamburger button visibility after opening country activity
         onView(withId(R.id.countryImageButton)).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
         check_currency_hamburger_button_visibility();
@@ -65,16 +66,16 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "SP", true, false);
 
-        //check hamburger button is not displayed in shipping
+        //check hamburger button visibility in shipping
         onView(withId(R.id.buyNowButton)).perform(click());
         check_currency_hamburger_button_visibility();
 
-        //check hamburger button is not displayed after opening country activity
+        //check hamburger button visibility after opening country activity
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
         check_currency_hamburger_button_visibility();
 
-        //check hamburger button is not displayed back in billing
+        //check hamburger button visibility back in billing
         Espresso.closeSoftKeyboard();
         Espresso.pressBack();
         check_currency_hamburger_button_visibility();

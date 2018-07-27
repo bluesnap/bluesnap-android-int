@@ -202,7 +202,7 @@ public class NewCardVisibilityTesterCommon {
      * This test verifies that the "Pay" button is visible and contains
      * the correct currency symbol and amount
      */
-    public static void pay_button_validation(int buttonComponent, String checkoutCurrency, Double purchaseAmount, Double taxAmount) throws InterruptedException {
+    public static void pay_button_visibility_and_content_validation(int buttonComponent, String checkoutCurrency, Double purchaseAmount, Double taxAmount) throws InterruptedException {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
                 .check(matches(ViewMatchers.isDisplayed()));
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
@@ -213,7 +213,7 @@ public class NewCardVisibilityTesterCommon {
     /**
      * This test verifies that the "Shipping" button is visible
      */
-    public static void shipping_button_validation(int buttonComponent) throws InterruptedException {
+    public static void shipping_button_visibility_and_content_validation(int buttonComponent) throws InterruptedException {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
                 .check(matches(ViewMatchers.isDisplayed()));
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))

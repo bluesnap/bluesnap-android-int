@@ -46,7 +46,7 @@ public class ContactInfoTesterCommon {
         int buttonComponent = (componentResourceId == R.id.billingViewComponent) ? R.id.billingButtonComponentView : R.id.shippingButtonComponentView;
 
         //Choosing brazil (that has state and zip)
-        change_country(componentResourceId, "United States");
+        changeCountry(componentResourceId, "United States");
 
         //fix this- generalize to match shipping as well
         //Continue- leaving all fields empty
@@ -81,7 +81,7 @@ public class ContactInfoTesterCommon {
     public static void name_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //Click the field and leave it empty
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -90,7 +90,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid name- only one word
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("Sawyer"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -99,7 +99,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid name- less than 2 characters
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("L Fleur"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -108,7 +108,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid name- less than 2 characters. BUG! waiting for it to be fixed
 //        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("La F"));
-//        move_to_next_field(componentResourceId, false, nextFieldResourceId, 0);
+//        moveToNextField(componentResourceId, false, nextFieldResourceId, 0);
 
         //Verify error message is displayed
 //        onView(allOf(withId(R.id.textinput_error),
@@ -117,7 +117,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid name- spaces
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("Sawyer     "));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -126,7 +126,7 @@ public class ContactInfoTesterCommon {
 
         //Entering a valid name
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("La Fleur"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -135,7 +135,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid name again- less than 2 characters
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("L Fleur"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -147,7 +147,7 @@ public class ContactInfoTesterCommon {
     public static void email_invalid_error_validation(boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //Click the field and leave it empty
         onView(withId(R.id.input_email)).perform(click());
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -155,7 +155,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email- without '@'
         onView(withId(R.id.input_email)).perform(typeText("broadwaydancecenter.com"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -163,7 +163,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email- without '.' finish
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -172,7 +172,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid email- too long suffix
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmailgmailgmailgmailgmailgmail" +
                 "gmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmail.com"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -183,7 +183,7 @@ public class ContactInfoTesterCommon {
                 "broadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
                 "broadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
                 "broadwaydancecenterbroadwaydancecenter@gmail.com"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -192,7 +192,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid email- too long prefix2
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail.comcom" +
                 "comcomcomcomcomcomcom"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -200,7 +200,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email- illegal characters
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter*@gmail.com"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -208,7 +208,7 @@ public class ContactInfoTesterCommon {
 
         //Entering a valid email
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail.com"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -216,7 +216,7 @@ public class ContactInfoTesterCommon {
 
         //Entering an invalid email again- without '@'
         onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter.com"));
-        move_to_next_field(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -231,7 +231,7 @@ public class ContactInfoTesterCommon {
 
         //Click the field and leave it empty
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -241,7 +241,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid zip- invalid characters
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                 .perform(typeText("12345*"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -251,7 +251,7 @@ public class ContactInfoTesterCommon {
         //Entering a valid zip- only numbers
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("12345"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -261,7 +261,7 @@ public class ContactInfoTesterCommon {
         //Entering a valid zip- with characters
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("12345abcde"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -271,7 +271,7 @@ public class ContactInfoTesterCommon {
         //Entering a valid zip- with spaces
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("12345 abcde"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -281,7 +281,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid zip again- invalid characters
         onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                 .perform(typeText("12345%"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -292,7 +292,7 @@ public class ContactInfoTesterCommon {
     public static void city_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //Click the field and leave it empty
         onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -303,7 +303,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid city- less then 2 characters
         onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
                 .perform(typeText("a"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -313,7 +313,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid zip- spaces
         onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("        "));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -323,7 +323,7 @@ public class ContactInfoTesterCommon {
         //Entering a valid zip- with characters
         onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("New York"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -333,7 +333,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid city- less then 2 characters
         onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("a"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -345,7 +345,7 @@ public class ContactInfoTesterCommon {
     public static void address_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
         //Click the field and leave it empty
         onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -356,7 +356,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid city- less then 2 characters
         onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
                 .perform(typeText("a"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -367,7 +367,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid zip- spaces
         onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("        "));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -378,7 +378,7 @@ public class ContactInfoTesterCommon {
         //Entering a valid zip- with characters
         onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("New York"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
 
         //Verify error message is not displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -389,7 +389,7 @@ public class ContactInfoTesterCommon {
         //Entering an invalid city- less then 2 characters
         onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
                 .perform(clearText(), typeText("a"));
-        move_to_next_field(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
 
         //Verify error message is displayed
         onView(allOf(withId(R.id.textinput_error),
@@ -474,7 +474,7 @@ public class ContactInfoTesterCommon {
     //o.w. county is the chosen country and we dont change it
     public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
 //        if (changeCountry)
-//            change_country(componentResourceId, country);
+//            changeCountry(componentResourceId, country);
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("La Fleur"), pressImeActionButton());
 
         if (withEmail)
@@ -498,14 +498,14 @@ public class ContactInfoTesterCommon {
         }
     }
 
-    private static void move_to_next_field(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {
+    private static void moveToNextField(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {
         if (withImeButton)
             onView(allOf(withId(currFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(pressImeActionButton());
         else
             onView(allOf(withId(nextFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
     }
 
-    public static void change_country(int componentResourceId, String country) {
+    public static void changeCountry(int componentResourceId, String country) {
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString(country))).inAdapterView(withId(R.id.country_list_view)).perform(click());
     }

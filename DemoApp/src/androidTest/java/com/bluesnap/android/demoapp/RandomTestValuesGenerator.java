@@ -1,5 +1,8 @@
 package com.bluesnap.android.demoapp;
 
+import android.content.Context;
+
+import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import java.util.Random;
@@ -18,12 +21,21 @@ public class RandomTestValuesGenerator {
         return result;
     }
 
-    public Double randomTaxPrecentage() {
+    public Double randomTaxPercentage() {
         double result = random.nextInt(20);
         return result;
     }
 
-//    public Double randomTaxPrecentage() {
+    //TODO: check if can be implemented
+
+//    public String randomCheckoutCurrency(Context context) {
+//        String[] currency_key_array = context.getResources().getStringArray(com.bluesnap.androidapi.R.array.currency_key_array);
+//
+//        String result = currency_key_array[random.nextInt(currency_key_array.length)];
+//        return result;
+//    }
+
+//    public Double randomTaxPercentage() {
 //        double result = MINIMUM_AMOUNT + (random.nextInt() * (100 - MINIMUM_TAX_PRECENT_AMOUNT));
 //        return result;
 //    }

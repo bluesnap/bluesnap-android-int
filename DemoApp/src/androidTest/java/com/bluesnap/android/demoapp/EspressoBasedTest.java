@@ -65,11 +65,25 @@ public class EspressoBasedTest {
     protected String defaultCountry;
     protected String checkoutCurrency = "USD";
     protected double purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
-    private double taxPercent = randomTestValuesGenerator.randomTaxPrecentage() / 100;
+    private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
     protected double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
+
+
+    URL myURL;
+    HttpURLConnection myURLConnection;
 
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
+
+    public EspressoBasedTest() {
+        try {
+            myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION);
+            myURLConnection = (HttpURLConnection) myURL.openConnection();
+        } catch (IOException e) {
+            fail("Network error open server connection:" + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
@@ -126,8 +140,6 @@ public class EspressoBasedTest {
 
     public void setSDKToken() throws InterruptedException {
         try {
-            URL myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION);
-            HttpURLConnection myURLConnection = (HttpURLConnection) myURL.openConnection();
             String userCredentials = SANDBOX_USER + ":" + SANDBOX_PASS;
             String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), 0));
             myURLConnection.setRequestProperty("Authorization", basicAuth);
@@ -179,18 +191,18 @@ public class EspressoBasedTest {
                 });
         while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
             Log.d(TAG, "Waiting for token setup");
-            Thread.sleep(2000);
+            Thread.sleep(1000);
 
         }
 
         while (BlueSnapService.getInstance().getsDKConfiguration() == null) {
             Log.d(TAG, "Waiting for SDK configuration to finish");
-            Thread.sleep(2000);
+            Thread.sleep(500);
 
         }
 
         while (!isSdkRequestIsNull) {
-            Log.d(TAG, "Waiting for SDK configuration to finish");
+            Log.d(TAG, "Waiting for SDK request to finish");
             Thread.sleep(500);
 
         }

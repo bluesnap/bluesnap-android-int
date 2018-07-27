@@ -83,7 +83,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
     public Double startDemoPurchase() {
         demoPurchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
-        //Double demoTaxPrecent = randomTestValuesGenerator.randomTaxPrecentage();
+        //Double demoTaxPrecent = randomTestValuesGenerator.randomTaxPercentage();
         tokenProgressBarIR = new VisibleViewIdlingResource(R.id.progressBarMerchant, View.INVISIBLE, "merchant token progress bar");
         transactionMessageIR = new VisibleViewIdlingResource(R.id.transactionResult, View.VISIBLE, "merchant transaction completed text");
 

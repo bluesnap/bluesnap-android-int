@@ -114,6 +114,16 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the "Pay" button is visible and contains
+     * the correct currency symbol and amount
+     */
+
+    @Test
+    public void pay_button_in_billing_validation() throws InterruptedException {
+        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
+    }
+
+    /**
      * This test verifies the ime action button works as it should
      * in full billing contact info
      */
