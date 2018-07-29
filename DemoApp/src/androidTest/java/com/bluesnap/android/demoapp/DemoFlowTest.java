@@ -60,10 +60,6 @@ public class DemoFlowTest extends EspressoBasedTest {
         //Thread.sleep(1000);
     }
 
-//    public void setup() throws InterruptedException, BSPaymentRequestException {
-//        super.doSetup();
-//
-//    }
 
     public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
         Checks.checkNotNull(itemListText);
@@ -207,6 +203,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
 
         onView(withId(R.id.buyNowButton)).perform(click());
+
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
         finishDemoPurchase("USD", startDemoPurchaseAmount, sdkResult);
     }

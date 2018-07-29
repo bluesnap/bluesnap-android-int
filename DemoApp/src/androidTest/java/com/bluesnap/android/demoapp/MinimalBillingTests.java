@@ -23,7 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class MinimalBillingTests extends EspressoBasedTest {
     @After
     public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(200);
     }
 
     @Before
@@ -97,13 +97,22 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the initial currency in billing is presented
+     * as it should in the hamburger buy buttons.
+     */
+    @Test
+    public void initial_currency_view_validation_in_billing() throws InterruptedException {
+        CurrencyChangeTest.currency_view_validation(R.id.billingButtonComponentView, checkoutCurrency);
+    }
+
+    /**
      * This test verifies that changing the currency in billing
      * changes as it should in billing.
      */
     @Test
     public void change_currency_in_billing_validation() throws InterruptedException {
         CreditCardLineTesterCommon.changeCurrency("GBP");
-        CurrencyChangeTest.change_currency_validation(R.id.billingButtonComponentView, "GBP");
+        CurrencyChangeTest.currency_view_validation(R.id.billingButtonComponentView, "GBP");
     }
 
     /**

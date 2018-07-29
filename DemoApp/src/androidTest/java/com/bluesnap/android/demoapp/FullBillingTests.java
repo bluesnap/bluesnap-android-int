@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,11 +22,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 public class FullBillingTests extends EspressoBasedTest {
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
-
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
@@ -61,7 +55,7 @@ public class FullBillingTests extends EspressoBasedTest {
      */
     @Test
     public void default_country_view_validation_in_billing() throws InterruptedException, IOException {
-        NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.billingViewComponent);
+        NewCardVisibilityTesterCommon.country_view_validation(applicationContext, defaultCountry, R.id.billingViewComponent);
     }
 
     /**

@@ -55,29 +55,36 @@ import static org.hamcrest.Matchers.containsString;
  *
  */
 public class EspressoBasedTest {
-    NumberFormat df;
-    public String merchantToken;
-    protected RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
-    protected IdlingResource tokenProgressBarIR;
-    protected IdlingResource transactionMessageIR;
     private static final String TAG = EspressoBasedTest.class.getSimpleName();
-    private boolean isSdkRequestIsNull = false;
+
+    NumberFormat df;
+    RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
+
     protected String defaultCountry;
     protected String checkoutCurrency = "USD";
     protected double purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
-    protected double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
+    double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
 
+    IdlingResource tokenProgressBarIR;
+    IdlingResource transactionMessageIR;
+    private boolean isSdkRequestNull = false;
 
-    URL myURL;
-    HttpURLConnection myURLConnection;
+    private URL myURL;
+    private HttpURLConnection myURLConnection;
+    private String merchantToken;
+
 
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
 
     public EspressoBasedTest() {
+        this(" ");
+    }
+
+    public EspressoBasedTest(String returningOrNewShopper) {
         try {
-            myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION);
+            myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper);
             myURLConnection = (HttpURLConnection) myURL.openConnection();
         } catch (IOException e) {
             fail("Network error open server connection:" + e.getMessage());
@@ -98,7 +105,7 @@ public class EspressoBasedTest {
             fail("Could not wake up device");
             e.printStackTrace();
         }
-        randomTestValuesGenerator = new RandomTestValuesGenerator();
+        //randomTestValuesGenerator = new RandomTestValuesGenerator();
         IdlingPolicies.setMasterPolicyTimeout(60, TimeUnit.SECONDS);
         IdlingPolicies.setIdlingResourceTimeout(60, TimeUnit.SECONDS);
 
@@ -177,13 +184,13 @@ public class EspressoBasedTest {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");
-                                isSdkRequestIsNull = true;
+                                isSdkRequestNull = true;
                             }
 
                             @Override
                             public void onFailure() {
                                 fail("Service could not finish setup");
-                                isSdkRequestIsNull = true;
+                                isSdkRequestNull = true;
                             }
                         });
 
@@ -191,7 +198,7 @@ public class EspressoBasedTest {
                 });
         while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
             Log.d(TAG, "Waiting for token setup");
-            Thread.sleep(1000);
+            Thread.sleep(200);
 
         }
 
@@ -201,7 +208,7 @@ public class EspressoBasedTest {
 
         }
 
-        while (!isSdkRequestIsNull) {
+        while (!isSdkRequestNull) {
             Log.d(TAG, "Waiting for SDK request to finish");
             Thread.sleep(500);
 

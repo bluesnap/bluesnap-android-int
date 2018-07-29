@@ -3,21 +3,31 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.support.test.espresso.Espresso;
 
+import android.support.test.espresso.FailureHandler;
 import android.support.test.espresso.matcher.ViewMatchers;
+import android.util.Log;
+import android.view.View;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.services.AndroidUtil;
+
+import org.hamcrest.Matcher;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
@@ -28,6 +38,7 @@ import static org.hamcrest.Matchers.not;
  */
 public class NewCardVisibilityTesterCommon {
     public static void new_credit_cc_info_visibility_validation() {
+        onView(withId(R.id.oneLineCCEditComponent)).check(matches(isDisplayed()));
         onView(withId(R.id.creditCardNumberEditText)).check(matches(isDisplayed()));
         onView(withId(R.id.expEditText)).check(matches(not(isDisplayed())));
         onView(withId(R.id.cvvEditText)).check(matches(not(isDisplayed())));
@@ -52,15 +63,12 @@ public class NewCardVisibilityTesterCommon {
             onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
             onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
         }
-
     }
 
     /**
-     * This test verifies that the country image matches the shopper's country
-     * when first entering billing or shipping info.
-     * (according to its location, or us by default)
+     * This test verifies that the country image matches the parameter country
      */
-    public static void default_country_view_validation(Context context, String defaultCountry, int componentResourceId) throws InterruptedException, IOException {
+    public static void country_view_validation(Context context, String defaultCountry, int componentResourceId) throws InterruptedException, IOException {
         //get the expected drawable id
         Integer resourceId = context.getResources().getIdentifier(defaultCountry.toLowerCase(), "drawable", context.getPackageName());
 

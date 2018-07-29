@@ -3,17 +3,10 @@ package com.bluesnap.android.demoapp;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.test.espresso.Espresso;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
-import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -39,21 +32,9 @@ public class CurrencyChangeTest {
      * This test verifies that changing the currency changes
      * the hamburger button and buy button as it should.
      */
-    public static void change_currency_validation(int buttonComponent, String currencyCode) throws InterruptedException {
-        new Handler(Looper.getMainLooper())
-                .post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            BlueSnapService.getInstance().getRatesArray();
-                            Log.d(TAG, "Service go rates");
-                        } catch (Exception e) {
-                            fail("Service could not update rates");
-                        }
-                    }
-                });
-        check_currency_in_hamburger_button(currencyCode);
-        check_currency_in_buy_button(buttonComponent, currencyCode);
+    public static void currency_view_validation(int buttonComponent, String currencyCode) throws InterruptedException {
+        checkCurrencyInHamburgerButton(currencyCode);
+        checkCurrencyInBuyButton(buttonComponent, currencyCode);
     }
 
     /**
@@ -69,7 +50,7 @@ public class CurrencyChangeTest {
                 .check(matches(withText(containsString(initialAmount))));
     }
 
-    public static void check_currency_in_hamburger_button(String currencyCode) {
+    private static void checkCurrencyInHamburgerButton(String currencyCode) {
         //verify hamburger button displays the correct currency when clicking on it
         onView(withId(R.id.hamburger_button)).perform(click());
         //String buyNowButtonText = TestUtils.getText(withText(containsString("Currency")));
@@ -78,10 +59,26 @@ public class CurrencyChangeTest {
         Espresso.pressBack();
     }
 
-    public static void check_currency_in_buy_button(int buttonComponent, String currencyCode) {
+    private static void checkCurrencyInBuyButton(int buttonComponent, String currencyCode) {
         //verify "Pay" button displays the correct currency when clicking on it
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
+    }
+
+    //TODO:
+    public static void rates_validation(int buttonComponent, String currencyCode) throws InterruptedException {
+        new Handler(Looper.getMainLooper())
+                .post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            BlueSnapService.getInstance().getRatesArray();
+                            Log.d(TAG, "Service go rates");
+                        } catch (Exception e) {
+                            fail("Service could not update rates");
+                        }
+                    }
+                });
     }
 
 

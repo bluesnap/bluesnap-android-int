@@ -17,6 +17,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
 
 /**
@@ -28,7 +29,7 @@ import static org.hamcrest.Matchers.allOf;
 public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     @After
     public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
+        sleep(1000);
     }
 
     @Before
@@ -85,7 +86,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     @Test
     public void default_country_view_validation_in_shipping() throws InterruptedException, IOException {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.default_country_view_validation(applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
+        NewCardVisibilityTesterCommon.country_view_validation(applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
     /**
@@ -312,7 +313,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * going back to billing and entering the shipping once again.
      */
     @Test
-    public void contact_info_saved_validation_in_shipping() throws InterruptedException {
+    public void contact_info_saved_validation_in_shipping() throws InterruptedException, IOException {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false); //continue to shipping
 
         //Changing country to USA for state and zip appearance
@@ -325,7 +326,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
 
         //verify info has been saved
-        ContactInfoTesterCommon.contact_info_saved_validation(R.id.newShoppershippingViewComponent, true, false);
+        ContactInfoTesterCommon.contact_info_content_validation(applicationContext, R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
@@ -344,14 +345,24 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that the initial currency in shipping is presented
+     * as it should in the hamburger buy buttons.
+     */
+    @Test
+    public void initial_currency_view_validation_in_shipping() throws InterruptedException {
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+        CurrencyChangeTest.currency_view_validation(R.id.shippingButtonComponentView, checkoutCurrency);
+    }
+
+    /**
      * This test verifies that changing the currency in billing
      * changes as it should in shipping.
      */
     @Test
-    public void change_currency_in_shipping_with_validation() throws InterruptedException {
-        CreditCardLineTesterCommon.changeCurrency("CAD");
+    public void change_currency_in_shipping_validation() throws InterruptedException {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        CurrencyChangeTest.change_currency_validation(R.id.shippingButtonComponentView, "CAD");
+        CreditCardLineTesterCommon.changeCurrency("CAD");
+        CurrencyChangeTest.currency_view_validation(R.id.shippingButtonComponentView, "CAD");
     }
 
     /**
@@ -361,8 +372,9 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     @Test
     public void change_currency_in_billing_with_shipping_validation() throws InterruptedException {
         CreditCardLineTesterCommon.changeCurrency("CAD");
+        sleep(1000);
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        CurrencyChangeTest.change_currency_validation(R.id.shippingButtonComponentView, "CAD");
+        CurrencyChangeTest.currency_view_validation(R.id.shippingButtonComponentView, "CAD");
     }
 
     /**

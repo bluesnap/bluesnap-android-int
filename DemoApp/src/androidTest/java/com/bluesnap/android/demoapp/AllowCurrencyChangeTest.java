@@ -56,36 +56,36 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
     @Test
     public void currency_change_hamburger_view_validation() throws InterruptedException {
         //check hamburger button visibility in billing
-        check_currency_hamburger_button_visibility();
+        checkCurrencyHamburgerButtonVisibility();
 
         //check hamburger button visibility after opening country activity
         onView(withId(R.id.countryImageButton)).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        check_currency_hamburger_button_visibility();
+        checkCurrencyHamburgerButtonVisibility();
 
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "SP", true, false);
 
         //check hamburger button visibility in shipping
         onView(withId(R.id.buyNowButton)).perform(click());
-        check_currency_hamburger_button_visibility();
+        checkCurrencyHamburgerButtonVisibility();
 
         //check hamburger button visibility after opening country activity
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(click());
         onData(hasToString(containsString("Spain"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-        check_currency_hamburger_button_visibility();
+        checkCurrencyHamburgerButtonVisibility();
 
         //check hamburger button visibility back in billing
         Espresso.closeSoftKeyboard();
         Espresso.pressBack();
-        check_currency_hamburger_button_visibility();
+        checkCurrencyHamburgerButtonVisibility();
     }
 
-    private void check_currency_hamburger_button_visibility() throws InterruptedException {
+    private void checkCurrencyHamburgerButtonVisibility() throws InterruptedException {
         if (isAllowed)
             onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
         else
-            onView(withId(R.id.hamburger_button)).check(matches(not(ViewMatchers.isDisplayed())));
+            onView(withId(R.id.hamburger_button)).withFailureHandler(new CustomFailureHandler("currency hamburger button is not visible")).check(matches((ViewMatchers.isDisplayed())));
 
     }
 }

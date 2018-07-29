@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp;
 
+import android.os.RemoteException;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.action.ViewActions;
@@ -11,7 +12,6 @@ import android.view.View;
 
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,6 +45,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -60,8 +62,6 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
     DemoMainActivity demoMainActivity;
     private static final String TAG = "NewShopperBasicFlow";
-    private String demoPurchaseCurrency = "USD";
-    private Double demoPurchaseAmount = 55.5;
     private boolean fullInfo = false;
     private boolean withShipping = false;
     private boolean withEmail = false;
@@ -79,11 +79,17 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         //Thread.sleep(1000);
     }
 
-//    @Before
-//    public void setup() throws InterruptedException, BSPaymentRequestException {
-//        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
-//        defaultCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-//    }
+    @Before
+    public void setup() throws InterruptedException {
+        demoMainActivity = mActivityRule.getActivity();
+        defaultCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
+        try {
+            wakeUpDeviceScreen();
+        } catch (RemoteException e) {
+            fail("Could not wake up device");
+            e.printStackTrace();
+        }
+    }
 
     public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
         Checks.checkNotNull(itemListText);
@@ -182,7 +188,6 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
      * with/without full billing, shipping, email.
      */
     public void new_card_basic_flow_transaction() {
-        //defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
         start_demo_purchase();
         onView(withId(R.id.newCardButton)).perform(click());
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
@@ -194,8 +199,8 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, fullInfo, withEmail);
 
         if (withShipping) {
-            if (defaultCountry.equals("US")) //updating demoPurchaseAmount to include tax
-                demoPurchaseAmount *= 1.05; //TODO: add comment
+            if (defaultCountry.equals("US")) //updating purchaseAmount to include tax
+                purchaseAmount *= 1.05; //TODO: add comment
             if (!shippingSameAsBilling) {
                 ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, defaultCountry, true, false);
                 onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.shippingButtonComponentView)))).perform(click());
@@ -209,10 +214,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     }
 
     public Double start_demo_purchase() {
-        demoMainActivity = mActivityRule.getActivity();
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-
-        //demoPurchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
+        //purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
         tokenProgressBarIR = new VisibleViewIdlingResource(R.id.progressBarMerchant, View.INVISIBLE, "merchant token progress bar");
         transactionMessageIR = new VisibleViewIdlingResource(R.id.transactionResult, View.VISIBLE, "merchant transaction completed text");
 
@@ -221,12 +223,12 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         onView(withId(R.id.productPriceEditText)).check(matches(isCompletelyDisplayed()));
 
         onView(withId(R.id.rateSpinner)).check(matches(isDisplayed())).perform(closeSoftKeyboard(), click());
-        onData(allOf(is(instanceOf(String.class)), itemListMatcher(containsString(demoPurchaseCurrency))))
+        onData(allOf(is(instanceOf(String.class)), itemListMatcher(containsString(checkoutCurrency))))
                 .perform(click());
 
         // onView(withId(R.id.rateSpinner)).perform(click(), closeSoftKeyboard());
         onView(withId(R.id.productPriceEditText))
-                .perform(typeText(demoPurchaseAmount.toString()), ViewActions.closeSoftKeyboard());
+                .perform(typeText(Double.toString(purchaseAmount)), ViewActions.closeSoftKeyboard());
 
         if (fullInfo)
             onView(withId(R.id.billingSwitch)).perform(swipeRight());
@@ -238,7 +240,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
             onView(withId(R.id.emailSwitch)).perform(swipeRight());
 
         onView(withId(R.id.merchantAppSubmitButton)).perform(click());
-        return demoPurchaseAmount;
+        return purchaseAmount;
     }
 
 
@@ -255,8 +257,8 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         Espresso.unregisterIdlingResources(transactionMessageIR);
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - demoPurchaseAmount) < 0.00000000001);
-        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), demoPurchaseCurrency);
+        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
+        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
     }
 
     private void get_shopper_after_transaction() {

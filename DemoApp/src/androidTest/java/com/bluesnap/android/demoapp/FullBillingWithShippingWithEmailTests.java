@@ -13,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -144,7 +146,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * while using the back button
      */
     @Test
-    public void contact_info_saved_validation_in_billing() throws InterruptedException {
+    public void contact_info_saved_validation_in_billing() throws InterruptedException, IOException {
         //Changing country to USA for state and zip appearance
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "United States");
         //fill in info, continue to shipping and back to billing
@@ -152,7 +154,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         TestUtils.go_back_to_billing_in_new_card();
 
         //verify info has been saved
-        ContactInfoTesterCommon.contact_info_saved_validation(R.id.billingViewComponent, true, true);
+        ContactInfoTesterCommon.contact_info_content_validation(applicationContext, R.id.billingViewComponent, true, true);
     }
 
     /**
@@ -189,7 +191,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * It verifies that the billing info has been saved after the swipe.
      */
     @Test
-    public void shipping_same_as_billing_info_saved_in_billing_validation() throws InterruptedException {
+    public void shipping_same_as_billing_info_saved_in_billing_validation() throws InterruptedException, IOException {
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "United States");
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "US", true, true);
@@ -200,7 +202,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         CreditCardLineTesterCommon.cc_card_info_saved_validation("5288", "12/26", "123");
 
         //verify that the contact card info remained the same
-        ContactInfoTesterCommon.contact_info_saved_validation(R.id.billingViewComponent, true, true);
+        ContactInfoTesterCommon.contact_info_content_validation(applicationContext, R.id.billingViewComponent, true, true);
 
     }
 
@@ -211,7 +213,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * and than rewind the choice.
      */
     @Test
-    public void shipping_same_as_billing_info_saved_in_shipping_validation() throws InterruptedException {
+    public void shipping_same_as_billing_info_saved_in_shipping_validation() throws InterruptedException, IOException {
         //continue to shipping
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, true);
         //fill in info in shipping
@@ -226,6 +228,6 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         //continue to shipping
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
         //verify that the shipping contact card info remained the same
-        ContactInfoTesterCommon.contact_info_saved_validation(R.id.newShoppershippingViewComponent, true, false);
+        ContactInfoTesterCommon.contact_info_content_validation(applicationContext, R.id.newShoppershippingViewComponent, true, false);
     }
 }

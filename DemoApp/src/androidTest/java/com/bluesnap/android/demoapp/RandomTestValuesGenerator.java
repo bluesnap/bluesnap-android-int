@@ -26,6 +26,11 @@ public class RandomTestValuesGenerator {
         return result;
     }
 
+    public int randomReturningShopperCardPosition() {
+        int result = random.nextInt(7);
+        return result;
+    }
+
     //TODO: check if can be implemented
 
 //    public String randomCheckoutCurrency(Context context) {

@@ -1,10 +1,13 @@
 package com.bluesnap.android.demoapp;
 
 
+import android.content.Context;
 import android.support.test.espresso.Espresso;
 
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.models.ContactInfo;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
@@ -422,46 +425,41 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
     }
 
+    public static void contact_info_content_validation(Context context, int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException, IOException {
+        ShopperContactInfo contactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
+                "New York", "555 Broadway street", "NY", "3abc 324a", "US");
+        contact_info_content_validation(context, componentResourceId, fullInfo, withEmail, contactInfo);
+    }
+
     /**
      * This test verifies that the billing contact info is saved when
      * continuing to shipping and going back to billing,
-     * while using the back button
+     * while using the back button summarized_contact_info_visibility_validation
      */
-    public static void contact_info_saved_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
-//        //Changing country to USA for state and zip appearance
-//        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
-//        onData(hasToString(containsString("United States"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
-//
-//        if (inBilling) { //fill in info. continue to shipping and back to billing
-//            TestUtils.continue_to_shipping_or_pay_in_new_card("US", fullInfo, withEmail);
-//            TestUtils.go_back_to_billing_in_new_card();
-//        } else { //fill in info. go back to billing and again continue to shipping
-//            fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
-//            TestUtils.go_back_to_billing_in_new_card();
-//            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
-//        }
-
+    public static void contact_info_content_validation(Context context, int componentResourceId, boolean fullInfo, boolean withEmail,
+                                                       ShopperContactInfo contactInfo) throws InterruptedException, IOException {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
+        NewCardVisibilityTesterCommon.country_view_validation(context, contactInfo.getCountry(), componentResourceId);
+        //onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
 
         //Verify full name has been saved in current component
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("La Fleur")));
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getName())));
 
         if (withEmail) //Verify email has been saved in billing component
-            onView(withId(R.id.input_email)).check(matches(withText("test@sdk.com")));
+            onView(withId(R.id.input_email)).check(matches(withText(contactInfo.getEmail())));
 
         //Verify zip has been saved in current component
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("3abc 324a")));
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getZip())));
 
         if (fullInfo) {
             //Verify city has been saved in current component
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("New York")));
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getCity())));
             //Verify address has been saved in current component
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("555 Broadway street")));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getAddress())));
             //Verify state has been saved in current component
-            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).check(matches(withText("NY")));
+            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getState())));
         }
     }
 
@@ -472,6 +470,8 @@ public class ContactInfoTesterCommon {
 
     //if changeCountry is true than country is the country to change to
     //o.w. county is the chosen country and we dont change it
+
+
     public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
 //        if (changeCountry)
 //            changeCountry(componentResourceId, country);

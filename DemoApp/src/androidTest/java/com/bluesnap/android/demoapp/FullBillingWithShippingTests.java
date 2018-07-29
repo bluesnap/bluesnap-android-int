@@ -27,10 +27,6 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithShippingTests extends EspressoBasedTest {
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
@@ -46,7 +42,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      * when choosing new credit card.
      */
     @Test
-    public void new_credit_cc_info_visibility_validation() throws InterruptedException {
+    public void new_cc_info_visibility_validation() throws InterruptedException {
         NewCardVisibilityTesterCommon.new_credit_cc_info_visibility_validation();
     }
 

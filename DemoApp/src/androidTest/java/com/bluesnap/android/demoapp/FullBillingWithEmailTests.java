@@ -24,10 +24,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithEmailTests extends EspressoBasedTest {
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
