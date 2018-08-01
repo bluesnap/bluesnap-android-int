@@ -1,41 +1,15 @@
 package com.bluesnap.android.demoapp;
 
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.UiController;
-import android.support.test.espresso.ViewAction;
-import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.action.ViewActions;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.hamcrest.Matcher;
-import org.junit.Test;
 
-import java.util.Arrays;
-
-import static android.support.test.espresso.Espresso.getIdlingResources;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.hasFocus;
-import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static android.support.test.espresso.matcher.ViewMatchers.isFocusable;
-import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -58,19 +32,23 @@ public class CreditCardLineTesterCommon {
     static Matcher<View> cvvEditTextVM = withId(R.id.cvvEditText);
 
 
-    public static void check_ime_action_button_in_cc_info() {
+    public static void check_ime_action_button_in_cc_info(String testName) {
         onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
-//        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-//        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-        onView(withId(R.id.input_name)).check(matches(TestUtils.isViesFocused()));
+        onView(withId(R.id.input_name))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input name editText is not focused, after pressing the ime button"))
+                .check(matches(TestUtils.isViewFocused()));
     }
 
-    public static void check_filling_in_cc_info_flow() {
+    public static void check_filling_in_cc_info_flow(String testName) {
         onView(withId(R.id.creditCardNumberEditText)).perform(typeText(cardNumberGeneratorTest()));
-        onView(withId(R.id.expEditText)).check(matches(TestUtils.isViesFocused()));
+        onView(withId(R.id.expEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Exp date editText is not focused, after pressing the ime button"))
+                .check(matches(TestUtils.isViewFocused()));
 
         onView(withId(R.id.expEditText)).perform(typeText("12 26"));
-        onView(withId(R.id.cvvEditText)).check(matches(TestUtils.isViesFocused()));
+        onView(withId(R.id.cvvEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Cvv number editText is not focused, after pressing the ime button"))
+                .check(matches(TestUtils.isViewFocused()));
 
         onView(withId(R.id.cvvEditText)).perform(typeText("123"));
     }
@@ -80,24 +58,21 @@ public class CreditCardLineTesterCommon {
      * continuing to shipping and going back to billing,
      * while using the back button.
      */
-    public static void cc_card_info_saved_validation(String creditCardNum, String expDate, String cvvNum) throws InterruptedException {
-//        fillInCCLineWithValidCard();
-//        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, defaultCountry, fullInfo, withEmail);
-//        //String creditCardNumber = TestUtils.getText(withId(R.id.creditCardNumberEditText));
-//
-//        //Continue to Shipping and back to billing
-//        onView(withId(R.id.buyNowButton)).perform(click());
-//        Espresso.closeSoftKeyboard();
-//        Espresso.pressBack();
-
+    public static void credit_card_info_saved_validation(String testName, String creditCardNum, String expDate, String cvvNum) {
         //Verify cc number has been saved
-        onView(withId(R.id.creditCardNumberEditText)).check(matches(withText(creditCardNum)));
+        onView(withId(R.id.creditCardNumberEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Credit Card number wasn't saved"))
+                .check(matches(withText(containsString(creditCardNum))));
 
         //Verify exp date has been saved
-        onView(withId(R.id.expEditText)).check(matches(withText(expDate)));
+        onView(withId(R.id.expEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Expiration date wasn't saved"))
+                .check(matches(withText(expDate)));
 
         //Verify cvv number has been saved
-        onView(withId(R.id.cvvEditText)).check(matches(withText(cvvNum)));
+        onView(withId(R.id.cvvEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Cvv number wasn't saved"))
+                .check(matches(withText(cvvNum)));
     }
 
     public static void fillInCCLineWithValidCard() {

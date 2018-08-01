@@ -37,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -61,6 +62,7 @@ public class EspressoBasedTest {
     RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
 
     protected String defaultCountry;
+    String defaultCountryFull;
     protected String checkoutCurrency = "USD";
     protected double purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
@@ -73,7 +75,6 @@ public class EspressoBasedTest {
     private URL myURL;
     private HttpURLConnection myURLConnection;
     private String merchantToken;
-
 
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
@@ -143,6 +144,10 @@ public class EspressoBasedTest {
         mActivity = mActivityRule.getActivity();
         applicationContext = mActivity.getApplicationContext();
         defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+        String[] countryKeyArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
+        String[] countryValueArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
+
+        defaultCountryFull = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountry)];
     }
 
     public void setSDKToken() throws InterruptedException {

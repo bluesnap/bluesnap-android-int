@@ -32,41 +32,45 @@ public class CurrencyChangeTest {
      * This test verifies that changing the currency changes
      * the hamburger button and buy button as it should.
      */
-    public static void currency_view_validation(int buttonComponent, String currencyCode) throws InterruptedException {
-        checkCurrencyInHamburgerButton(currencyCode);
-        checkCurrencyInBuyButton(buttonComponent, currencyCode);
+    public static void currency_view_validation(String testName, int buttonComponent, String currencyCode) {
+        checkCurrencyInHamburgerButton(testName, currencyCode);
+        checkCurrencyInBuyButton(testName, buttonComponent, currencyCode);
     }
 
     /**
      * This test verifies that after changing to different currencies
      * and back to the origin one, the amount remains the same
      */
-    public static void change_currency_amount_validation(int buttonComponent, String initialCurrency, String initialAmount) throws InterruptedException {
+    public static void change_currency_amount_validation(String testName, int buttonComponent, String initialCurrency, String initialAmount) {
         CreditCardLineTesterCommon.changeCurrency("CAD");
         CreditCardLineTesterCommon.changeCurrency("ILS");
         CreditCardLineTesterCommon.changeCurrency(initialCurrency);
 
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Amount changed"))
                 .check(matches(withText(containsString(initialAmount))));
     }
 
-    private static void checkCurrencyInHamburgerButton(String currencyCode) {
+    private static void checkCurrencyInHamburgerButton(String testName, String currencyCode) {
         //verify hamburger button displays the correct currency when clicking on it
         onView(withId(R.id.hamburger_button)).perform(click());
         //String buyNowButtonText = TestUtils.getText(withText(containsString("Currency")));
 
-        onView(withText(containsString("Currency"))).check(matches(withText(containsString(currencyCode))));
+        onView(withText(containsString("Currency")))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Hamburger button doesn't present the correct currency"))
+                .check(matches(withText(containsString(currencyCode))));
         Espresso.pressBack();
     }
 
-    private static void checkCurrencyInBuyButton(int buttonComponent, String currencyCode) {
+    private static void checkCurrencyInBuyButton(String testName, int buttonComponent, String currencyCode) {
         //verify "Pay" button displays the correct currency when clicking on it
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't present the correct currency"))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
     }
 
     //TODO:
-    public static void rates_validation(int buttonComponent, String currencyCode) throws InterruptedException {
+    public static void rates_validation(int buttonComponent, String currencyCode) {
         new Handler(Looper.getMainLooper())
                 .post(new Runnable() {
                     @Override

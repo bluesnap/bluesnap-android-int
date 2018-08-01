@@ -31,11 +31,6 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class HideCurrencyHamburgerButtonTest extends AllowCurrencyChangeTest {
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
-
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {

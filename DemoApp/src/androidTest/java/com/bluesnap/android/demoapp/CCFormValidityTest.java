@@ -37,9 +37,9 @@ public class CCFormValidityTest extends EspressoBasedTest {
     private static final String TAG = CCFormValidityTest.class.getSimpleName();
 
     @After
-    public void keepRunning() throws InterruptedException {
+    public void keepRunning() {
         //        while (true) { Thread.sleep(2000); } //Remove this
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
     }
 
 
@@ -51,7 +51,7 @@ public class CCFormValidityTest extends EspressoBasedTest {
     }
 
     @Test
-    public void ccn_new_card_validation_messages() throws InterruptedException {
+    public void ccn_new_card_validation_messages() {
 
         //------------------------------------------
         // CC number
@@ -152,7 +152,7 @@ public class CCFormValidityTest extends EspressoBasedTest {
      * @throws InterruptedException
      */
     @Test
-    public void cc_new_Card_ccn_first() throws InterruptedException {
+    public void cc_new_Card_ccn_first() {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
         onView(withId(R.id.creditCardNumberEditText))
@@ -169,7 +169,7 @@ public class CCFormValidityTest extends EspressoBasedTest {
      * @throws InterruptedException
      */
     @Test
-    public void cc_new_card_empty_name_then_ccn() throws InterruptedException {
+    public void cc_new_card_empty_name_then_ccn() {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
         onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));

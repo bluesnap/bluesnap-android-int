@@ -66,7 +66,7 @@ public class ReturningShopperMinimalBilling extends EspressoBasedTest {
      * when choosing an existing credit card in returning shopper.
      */
     @Test
-    public void credit_card_view_visibility_validation() throws InterruptedException {
+    public void credit_card_view_visibility_validation() {
         ReturningShopperVisibilityTesterCommon.credit_card_view_visibility_validation("5288", "12/26");
     }
 
@@ -75,7 +75,7 @@ public class ReturningShopperMinimalBilling extends EspressoBasedTest {
      * according to minimal billing with shipping when choosing an existing credit card in returning shopper.
      */
     @Test
-    public void billing_summarized_contact_info_visibility_validation() throws InterruptedException {
+    public void billing_summarized_contact_info_visibility_validation() {
         ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(R.id.billingViewSummarizedComponent,
                 false, false, billingContactInfo);
     }
@@ -85,11 +85,11 @@ public class ReturningShopperMinimalBilling extends EspressoBasedTest {
      * content when pressing the billing edit button in returning shopper.
      */
     @Test
-    public void billing_contfo_content_validation() throws InterruptedException, IOException {
+    public void billing_contact_info_content_validation() throws InterruptedException, IOException {
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
 
         //verify info has been saved
-        ContactInfoTesterCommon.contact_info_content_validation(applicationContext, R.id.billingViewComponent, false, false);
+        ContactInfoTesterCommon.contact_info_content_validation("billing_contact_info_content_validation", applicationContext, R.id.billingViewComponent, false, false);
     }
 
 //    /**
@@ -97,7 +97,7 @@ public class ReturningShopperMinimalBilling extends EspressoBasedTest {
 //     * according to minimal billing with shipping when choosing an existing credit card in returning shopper.
 //     */
 //    @Test
-//    public void shipping_summarized_contact_info_visibility_validation() throws InterruptedException {
+//    public void shipping_summarized_contact_info_visibility_validation() {
 //        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(R.id.shippingViewSummarizedComponent,
 //                true, false, shippingContactInfo);
 //    }

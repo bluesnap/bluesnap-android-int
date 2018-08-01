@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.test.espresso.Espresso;
 
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.ContactInfo;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -23,29 +22,35 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by sivani on 17/07/2018.
  */
 
 public class ContactInfoTesterCommon {
-    public static void check_ime_action_button_in_contact_info(String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click(), pressImeActionButton());
+    public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), pressImeActionButton());
         if (withEmail)
-            onView(withId(R.id.input_email)).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+            onView(withId(R.id.input_email)).withFailureHandler(new CustomFailureHandler(testName + ": Input email editText is not focused, after pressing the ime button"))
+                    .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
         if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
-            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input zip editText is not focused, after pressing the ime button"))
+                    .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
 
         if (fullInfo) {
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.isViesFocused())).perform(pressImeActionButton());
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city editText is not focused, after pressing the ime button"))
+                    .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address editText is not focused, after pressing the ime button"))
+                    .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
         }
     }
 
-    public static void empty_fields_invalid_error_validation(int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException {
+    public static void empty_fields_invalid_error_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
         int buttonComponent = (componentResourceId == R.id.billingViewComponent) ? R.id.billingButtonComponentView : R.id.shippingButtonComponentView;
 
         //Choosing brazil (that has state and zip)
@@ -57,57 +62,54 @@ public class ContactInfoTesterCommon {
 
         //verify error messages are displayed
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input name errorText is not visible"))
+                .check(matches(isDisplayed()));
 
         if (withEmail)
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_email)),
-                    isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input email errorText is not visible"))
+                    .check(matches(isDisplayed()));
 
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input zip errorText is not visible"))
+                .check(matches(isDisplayed()));
 
         if (fullInfo) {
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_state)),
-                    isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input state errorText is not visible"))
+                    .check(matches(isDisplayed()));
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_city)),
-                    isDescendantOfA(withId(componentResourceId)))).perform(scrollTo()).check(matches(isDisplayed()));
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city errorText is not visible"))
+                    .perform(scrollTo()).check(matches(isDisplayed()));
 
             //onView(withId(R.id.input_address)).perform(scrollTo());
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_address)),
-                    isDescendantOfA(withId(componentResourceId)))).perform(scrollTo()).check(matches(isDisplayed()));
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address errorText is not visible"))
+                    .perform(scrollTo()).check(matches(isDisplayed()));
         }
 
     }
 
-    public static void name_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
-        //Click the field and leave it empty
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+    public static void name_invalid_error_validation(String testName, int componentResourceId, boolean withImeButton, int nextFieldResourceId) {
+        //Click the field and leave it empty and verify error message is displayed
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        //enter a valid name and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Fanny Brice", false);
 
-        //Entering an invalid name- only one word
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("Sawyer"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        //Entering an invalid name- only one word and verify error message is displayed
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Sawyer", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        //enter a valid name and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Fanny Brice", false);
 
-        //Entering an invalid name- less than 2 characters
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("L Fleur"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        //Entering an invalid name- less than 2 characters and verify error message is displayed
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "L Fleur", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        //enter a valid name and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Fanny Brice", false);
 
         //Entering an invalid name- less than 2 characters. BUG! waiting for it to be fixed
 //        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("La F"));
@@ -118,301 +120,129 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_name)),
 //                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
 
-        //Entering an invalid name- spaces
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("Sawyer     "));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
+        //Entering an invalid name- spaces and verify error message is displayed
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Sawyer     ", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-
-        //Entering a valid name
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("La Fleur"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(doesNotExist());
-
-        //Entering an invalid name again- less than 2 characters
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("L Fleur"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_name);
-
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        //enter a valid name and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Fanny Brice", false);
 
     }
 
-    public static void email_invalid_error_validation(boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
-        //Click the field and leave it empty
-        onView(withId(R.id.input_email)).perform(click());
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+    public static void email_invalid_error_validation(String testName, boolean withImeButton, int nextFieldResourceId) {
+        //Click the field and leave it empty and verify error message is displayed
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
-        //Entering an invalid email- without '@'
-        onView(withId(R.id.input_email)).perform(typeText("broadwaydancecenter.com"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        //Entering an invalid email- without '@' and verify error message is displayed
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter.com", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
-        //Entering an invalid email- without '.' finish
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        //Entering an invalid email- without '.' finish and verify error message is displayed
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
-        //Entering an invalid email- too long suffix
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmailgmailgmailgmailgmailgmail" +
-                "gmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmail.com"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        //Entering an invalid email- too long suffix and verify error message is displayed
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmailgmailgmailgmailgmailgmail" +
+                "gmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmailgmail.com", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
-        //Entering an invalid email- too long prefix1
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
+        //Entering an invalid email- too long prefix1 and verify error message is displayed
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
                 "broadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
                 "broadwaydancecenterbroadwaydancecenterbroadwaydancecenterbroadwaydancecenter" +
-                "broadwaydancecenterbroadwaydancecenter@gmail.com"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+                "broadwaydancecenterbroadwaydancecenter@gmail.com", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
-        //Entering an invalid email- too long prefix2
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail.comcom" +
-                "comcomcomcomcomcomcom"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        //Entering an invalid email- too long prefix2 and verify error message is displayed
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.comcom" +
+                "comcomcomcomcomcomcom", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
         //Entering an invalid email- illegal characters
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter*@gmail.com"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter*@gmail.com", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
-
-        //Entering a valid email
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter@gmail.com"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(doesNotExist());
-
-        //Entering an invalid email again- without '@'
-        onView(withId(R.id.input_email)).perform(clearText(), typeText("broadwaydancecenter.com"));
-        moveToNextField(R.id.billingViewComponent, withImeButton, nextFieldResourceId, R.id.input_email);
-
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_email)))).check(matches(isDisplayed()));
+        //Entering a valid email and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_email, R.id.input_layout_email, R.id.billingViewComponent, withImeButton, nextFieldResourceId, "broadwaydancecenter@gmail.com", false);
 
     }
 
-    public static void zip_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
+    public static void zip_invalid_error_validation(String testName, int componentResourceId, boolean withImeButton, int nextFieldResourceId) {
         //fill in country with zip
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
-        onData(hasToString(containsString("Israel"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+        ContactInfoTesterCommon.changeCountry(componentResourceId, "Israel");
 
-        //Click the field and leave it empty
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        //Click the field and leave it empty and verify error message is displayed
+        check_input_validation(testName, R.id.input_zip, R.id.input_layout_zip, componentResourceId, withImeButton, nextFieldResourceId, "", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).perform(scrollTo()).check(matches(isDisplayed()));
+        //enter a valid zip and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_zip, R.id.input_layout_zip, componentResourceId, withImeButton, nextFieldResourceId, "12345", false);
 
-        //Entering an invalid zip- invalid characters
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .perform(typeText("12345*"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
+        //Entering an invalid zip- invalid characters and verify error message is displayed
+        check_input_validation(testName, R.id.input_zip, R.id.input_layout_zip, componentResourceId, withImeButton, nextFieldResourceId, "12345*", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-
-        //Entering a valid zip- only numbers
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("12345"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(doesNotExist());
-
-        //Entering a valid zip- with characters
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("12345abcde"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(doesNotExist());
-
-        //Entering a valid zip- with spaces
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("12345 abcde"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(doesNotExist());
-
-        //Entering an invalid zip again- invalid characters
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .perform(typeText("12345%"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_zip);
-
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        //enter a valid zip and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_zip, R.id.input_layout_zip, componentResourceId, withImeButton, nextFieldResourceId, "12345 abcde", false);
     }
 
-    public static void city_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
-        //Click the field and leave it empty
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+    public static void city_invalid_error_validation(String testName, int componentResourceId, boolean withImeButton, int nextFieldResourceId) {
+        //Click the field and leave it empty and verify error message is displayed
+        check_input_validation(testName, R.id.input_city, R.id.input_layout_city, componentResourceId, withImeButton, nextFieldResourceId, "", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_city)),
-                isDescendantOfA(withId(componentResourceId))))
-                .perform(scrollTo()).check(matches(isDisplayed()));
+        //enter a valid city and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_city, R.id.input_layout_city, componentResourceId, withImeButton, nextFieldResourceId, "New York", false);
 
-        //Entering an invalid city- less then 2 characters
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
-                .perform(typeText("a"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        //Entering an invalid city- less then 2 characters and verify error message is displayed
+        check_input_validation(testName, R.id.input_city, R.id.input_layout_city, componentResourceId, withImeButton, nextFieldResourceId, "a", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_city)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
+        //enter a valid city and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_city, R.id.input_layout_city, componentResourceId, withImeButton, nextFieldResourceId, "Tel Aviv", false);
 
-        //Entering an invalid zip- spaces
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("        "));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
+        //Entering an invalid zip- spaces and verify error message is displayed
+        check_input_validation(testName, R.id.input_city, R.id.input_layout_city, componentResourceId, withImeButton, nextFieldResourceId, "            ", true);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_city)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-
-        //Entering a valid zip- with characters
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("New York"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_city)),
-                isDescendantOfA(withId(componentResourceId)))).check(doesNotExist());
-
-        //Entering an invalid city- less then 2 characters
-        onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("a"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_city);
-
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_city)),
-                isDescendantOfA(withId(componentResourceId)))).check(matches(isDisplayed()));
-
+        //enter a valid city and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_city, R.id.input_layout_city, componentResourceId, withImeButton, nextFieldResourceId, "Tel Aviv", false);
     }
 
-    public static void address_invalid_error_validation(int componentResourceId, boolean withImeButton, int nextFieldResourceId) throws InterruptedException {
-        //Click the field and leave it empty
-        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+    public static void address_invalid_error_validation(String testName, int componentResourceId, boolean withImeButton, int nextFieldResourceId) {
+        //Click the field and leave it empty and verify error message is displayed
+        check_input_validation(testName, R.id.input_address, R.id.input_layout_address, componentResourceId, withImeButton, nextFieldResourceId, "a", true);
+        //enter a valid address and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_address, R.id.input_layout_address, componentResourceId, withImeButton, nextFieldResourceId, "Broadway 777", false);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_address)),
-                isDescendantOfA(withId(componentResourceId))))
-                .perform(scrollTo()).check(matches(isDisplayed()));
+        //Entering an invalid address- less then 2 characters and verify error message is displayed
+        check_input_validation(testName, R.id.input_address, R.id.input_layout_address, componentResourceId, withImeButton, nextFieldResourceId, "a", true);
 
-        //Entering an invalid city- less then 2 characters
-        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
-                .perform(typeText("a"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
+        //enter a valid address and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_address, R.id.input_layout_address, componentResourceId, withImeButton, nextFieldResourceId, "Broadway", false);
 
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_address)),
-                isDescendantOfA(withId(componentResourceId))))
-                .perform(scrollTo()).check(matches(isDisplayed()));
+        //Entering an invalid address- spaces and verify error message is displayed
+        check_input_validation(testName, R.id.input_address, R.id.input_layout_address, componentResourceId, withImeButton, nextFieldResourceId, "         ", true);
 
-        //Entering an invalid zip- spaces
-        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("        "));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
-
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_address)),
-                isDescendantOfA(withId(componentResourceId))))
-                .perform(scrollTo()).check(matches(isDisplayed()));
-
-        //Entering a valid zip- with characters
-        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("New York"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
-
-        //Verify error message is not displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_address)),
-                isDescendantOfA(withId(componentResourceId))))
-                .check(doesNotExist());
-
-        //Entering an invalid city- less then 2 characters
-        onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
-                .perform(clearText(), typeText("a"));
-        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, R.id.input_address);
-
-        //Verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_address)),
-                isDescendantOfA(withId(componentResourceId))))
-                .perform(scrollTo()).check(matches(isDisplayed()));
+        //enter a valid address and verify error message is not displayed anymore
+        check_input_validation(testName, R.id.input_address, R.id.input_layout_address, componentResourceId, withImeButton, nextFieldResourceId, "Broadway", false);
     }
 
-    public static void state_invalid_error(int componentResourceId, int buttonComponent) throws InterruptedException {
+    public static void state_invalid_error(String testName, int componentResourceId, int buttonComponent) {
         //Choosing brazil (that has state)
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        onData(hasToString(containsString("Brazil"))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+        ContactInfoTesterCommon.changeCountry(componentResourceId, "Brazil");
 
         //Try to pay without filling in state
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
-        //Espresso.closeSoftKeyboard();
         //verify error message is displayed
-        onView(allOf(withId(R.id.textinput_error),
-                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(isDisplayed()));
+        check_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
 
         //filling in Rio de Janeiro
         onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(click());
@@ -425,10 +255,10 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
     }
 
-    public static void contact_info_content_validation(Context context, int componentResourceId, boolean fullInfo, boolean withEmail) throws InterruptedException, IOException {
+    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, boolean fullInfo, boolean withEmail) throws IOException {
         ShopperContactInfo contactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
                 "New York", "555 Broadway street", "NY", "3abc 324a", "US");
-        contact_info_content_validation(context, componentResourceId, fullInfo, withEmail, contactInfo);
+        contact_info_content_validation(testName, context, componentResourceId, fullInfo, withEmail, contactInfo);
     }
 
     /**
@@ -436,30 +266,42 @@ public class ContactInfoTesterCommon {
      * continuing to shipping and going back to billing,
      * while using the back button summarized_contact_info_visibility_validation
      */
-    public static void contact_info_content_validation(Context context, int componentResourceId, boolean fullInfo, boolean withEmail,
-                                                       ShopperContactInfo contactInfo) throws InterruptedException, IOException {
+    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, boolean fullInfo, boolean withEmail,
+                                                       ShopperContactInfo contactInfo) throws IOException {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
-        NewCardVisibilityTesterCommon.country_view_validation(context, contactInfo.getCountry(), componentResourceId);
+        NewCardVisibilityTesterCommon.country_view_validation(testName, context, contactInfo.getCountry(), componentResourceId);
         //onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
 
         //Verify full name has been saved in current component
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getName())));
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Full name wasn't saved"))
+                .check(matches(withText(contactInfo.getName())));
 
         if (withEmail) //Verify email has been saved in billing component
-            onView(withId(R.id.input_email)).check(matches(withText(contactInfo.getEmail())));
+            onView(withId(R.id.input_email))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Email wasn't saved"))
+                    .check(matches(withText(contactInfo.getEmail())));
 
         //Verify zip has been saved in current component
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getZip())));
+        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Zip wasn't saved"))
+                .check(matches(withText(contactInfo.getZip())));
 
         if (fullInfo) {
             //Verify city has been saved in current component
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getCity())));
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": City wasn't saved"))
+                    .check(matches(withText(contactInfo.getCity())));
             //Verify address has been saved in current component
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getAddress())));
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Address wasn't saved"))
+                    .check(matches(withText(contactInfo.getAddress())));
             //Verify state has been saved in current component
-            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).check(matches(withText(contactInfo.getState())));
+            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": State wasn't saved"))
+                    .check(matches(withText(contactInfo.getState())));
         }
     }
 
@@ -506,8 +348,29 @@ public class ContactInfoTesterCommon {
     }
 
     public static void changeCountry(int componentResourceId, String country) {
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(click());
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
         onData(hasToString(containsString(country))).inAdapterView(withId(R.id.country_list_view)).perform(click());
     }
 
+    public static void check_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, boolean isDisplayed) {
+        if (isDisplayed) //Verify error message is displayed
+            onView(allOf(withId(R.id.textinput_error),
+                    isDescendantOfA(withId(layoutResourceId)),
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not visible"))
+                    .perform(scrollTo()).check(matches(isDisplayed()));
+
+        else //Verify error message is not displayed
+            onView(allOf(withId(R.id.textinput_error),
+                    isDescendantOfA(withId(layoutResourceId)),
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is visible"))
+                    .check(doesNotExist());
+    }
+
+    public static void check_input_validation(String testName, int fieldResourceId, int layoutResourceId, int componentResourceId, boolean withImeButton, int nextFieldResourceId, String input, boolean isInvalid) {
+        onView(allOf(withId(fieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), clearText(), typeText(input));
+        moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, fieldResourceId);
+        check_invalid_error_visibility(testName, layoutResourceId, componentResourceId, isInvalid);
+    }
 }

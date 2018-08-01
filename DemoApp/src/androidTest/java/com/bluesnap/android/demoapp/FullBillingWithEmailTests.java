@@ -1,12 +1,11 @@
 package com.bluesnap.android.demoapp;
 
+import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,31 +33,53 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
         onView(withId(R.id.newCardButton)).perform(click());
     }
 
+    @Test
+    public void full_billing_with_email_test() throws IOException {
+        new_credit_cc_info_visibility_validation();
+        new_credit_billing_contact_info_visibility_validation();
+        default_country_zip_view_validation_in_billing();
+        default_country_state_view_validation_in_billing();
+        pay_button_in_billing_validation();
+        check_ime_action_button_in_billing_contact_info();
+        Espresso.closeSoftKeyboard();
+        empty_fields_invalid_error_validation_in_billing();
+    }
+
+    @Test
+    public void full_billing_with_email_test_inputs() throws IOException {
+        name_invalid_error_validation_in_billing();
+        name_invalid_error_validation_using_ime_button_in_billing();
+        email_invalid_error_validation_in_billing();
+        email_invalid_error_validation_using_ime_button_in_billing();
+        zip_invalid_error_validation_in_billing();
+        zip_invalid_error_validation_using_ime_button_in_billing();
+        city_invalid_error_validation_in_billing();
+        city_invalid_error_validation_using_ime_button_in_billing();
+        address_invalid_error_validation_in_billing();
+        state_invalid_error_in_billing();
+    }
     /**
      * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.
      */
-    @Test
-    public void new_credit_cc_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_cc_info_visibility_validation();
+    public void new_credit_cc_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_cc_info_visibility_validation");
     }
 
     /**
      * This test verifies that all the billing contact info fields are displayed
      * according to full billing with email when choosing new credit card.
      */
-    @Test
-    public void new_credit_billing_contact_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.billingViewComponent, true, true);
+    public void new_credit_billing_contact_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_billing_contact_info_visibility_validation", R.id.billingViewComponent, true, true);
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
-    @Test
-    public void default_country_zip_view_validation_in_billing() throws InterruptedException {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.billingViewComponent);
+    public void default_country_zip_view_validation_in_billing() {
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
     }
 
     /**
@@ -67,9 +88,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * If the country is USA, Canada or Brazil, then it should be visible,
      * o.w. it doesn't.
      */
-    @Test
-    public void default_country_state_view_validation_in_billing() throws InterruptedException {
-        NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.billingViewComponent, defaultCountry);
+    public void default_country_state_view_validation_in_billing() {
+        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountry);
     }
 
     /**
@@ -77,27 +97,24 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * the correct currency symbol and amount
      */
 
-    @Test
-    public void pay_button_in_billing_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation(R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
-    }
-
-    /**
-     * This test verifies that an invalid error appears for every
-     * field when leaving it empty (without entering at all)
-     */
-    @Test
-    public void empty_fields_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.billingViewComponent, true, true);
+    public void pay_button_in_billing_validation() {
+        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
     }
 
     /**
      * This test verifies the ime action button works as it should
      * in full billing contact info
      */
-    @Test
-    public void check_ime_action_button_in_billing_contact_info() throws InterruptedException {
-        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.billingViewComponent, true, true);
+    public void check_ime_action_button_in_billing_contact_info() {
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info("check_ime_action_button_in_billing_contact_info", defaultCountry, R.id.billingViewComponent, true, true);
+    }
+
+    /**
+     * This test verifies that an invalid error appears for every
+     * field when leaving it empty (without entering at all)
+     */
+    public void empty_fields_invalid_error_validation_in_billing() {
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation("empty_fields_invalid_error_validation_in_billing", R.id.billingViewComponent, true, true);
     }
 
     /**
@@ -110,9 +127,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid name
      * Entering an invalid name after entering a valid one
      */
-    @Test
-    public void name_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.name_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_zip);
+    public void name_invalid_error_validation_in_billing() {
+        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_in_billing", R.id.billingViewComponent, false, R.id.input_zip);
     }
 
 
@@ -126,12 +142,10 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid name
      * Entering an invalid name after entering a valid one
      */
-    @Test
-    public void name_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.name_invalid_error_validation(R.id.billingViewComponent, true, 0);
+    public void name_invalid_error_validation_using_ime_button_in_billing() {
+        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, 0);
 
     }
-
 
     /**
      * This test verifies the invalid error appearance for the email
@@ -143,9 +157,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid email
      * Entering an invalid email after entering a valid one
      */
-    @Test
-    public void email_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.email_invalid_error_validation(false, R.id.input_zip);
+    public void email_invalid_error_validation_in_billing() {
+        ContactInfoTesterCommon.email_invalid_error_validation("email_invalid_error_validation_in_billing", false, R.id.input_zip);
     }
 
     /**
@@ -158,9 +171,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid email
      * Entering an invalid email after entering a valid one
      */
-    @Test
-    public void email_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.email_invalid_error_validation(true, 0);
+    public void email_invalid_error_validation_using_ime_button_in_billing() {
+        ContactInfoTesterCommon.email_invalid_error_validation("email_invalid_error_validation_using_ime_button_in_billing", true, 0);
 
     }
 
@@ -174,9 +186,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid zip
      * Entering an invalid zip after entering a valid one
      */
-    @Test
-    public void zip_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.zip_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_city);
+    public void zip_invalid_error_validation_in_billing() {
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_in_billing", R.id.billingViewComponent, false, R.id.input_city);
     }
 
     /**
@@ -189,9 +200,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid zip
      * Entering an invalid zip after entering a valid one
      */
-    @Test
-    public void zip_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.zip_invalid_error_validation(R.id.billingViewComponent, true, 0);
+    public void zip_invalid_error_validation_using_ime_button_in_billing() {
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, 0);
     }
 
     /**
@@ -204,9 +214,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid city
      * Entering an invalid city after entering a valid one
      */
-    @Test
-    public void city_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.city_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_address);
+    public void city_invalid_error_validation_in_billing() {
+        ContactInfoTesterCommon.city_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, false, R.id.input_address);
     }
 
     /**
@@ -219,9 +228,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid city
      * Entering an invalid city after entering a valid one
      */
-    @Test
-    public void city_invalid_error_validation_using_ime_button_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.city_invalid_error_validation(R.id.billingViewComponent, true, 0);
+    public void city_invalid_error_validation_using_ime_button_in_billing() {
+        ContactInfoTesterCommon.city_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, 0);
     }
 
     /**
@@ -234,18 +242,16 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * Entering a valid address
      * Entering an invalid address after entering a valid one
      */
-    @Test
-    public void address_invalid_error_validation_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.address_invalid_error_validation(R.id.billingViewComponent, false, R.id.input_city);
+    public void address_invalid_error_validation_in_billing() {
+        ContactInfoTesterCommon.address_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, false, R.id.input_city);
     }
 
     /**
      * This test verifies that the invalid state error disappears
      * after entering a state.
      */
-    @Test
-    public void state_invalid_error_in_billing() throws InterruptedException {
-        ContactInfoTesterCommon.state_invalid_error(R.id.billingViewComponent, R.id.billingButtonComponentView);
+    public void state_invalid_error_in_billing() {
+        ContactInfoTesterCommon.state_invalid_error("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, R.id.billingButtonComponentView);
     }
 
 

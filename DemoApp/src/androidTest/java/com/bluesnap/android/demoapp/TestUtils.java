@@ -209,7 +209,7 @@ public class TestUtils {
     }
 
 
-    public static Matcher<View> isViesFocused() {
+    public static Matcher<View> isViewFocused() {
         return new TypeSafeMatcher<View>() {
 
             @Override

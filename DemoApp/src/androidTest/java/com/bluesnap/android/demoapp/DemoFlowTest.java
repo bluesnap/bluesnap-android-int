@@ -55,7 +55,7 @@ public class DemoFlowTest extends EspressoBasedTest {
 
 
     @After
-    public void keepRunning() throws InterruptedException {
+    public void keepRunning() {
         mActivityRule.getActivity().finish();
         //Thread.sleep(1000);
     }
@@ -109,7 +109,7 @@ public class DemoFlowTest extends EspressoBasedTest {
     }
 
     @Test
-    public void A_valid_CC_without_Shipping_Transaction_Test() throws InterruptedException {
+    public void A_valid_CC_without_Shipping_Transaction_Test() {
         startDemoPurchase();
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         DemoMainActivity demoMainActivity = mActivityRule.getActivity();
@@ -139,7 +139,7 @@ public class DemoFlowTest extends EspressoBasedTest {
     }
 
     @Test
-    public void change_currency_once_back_to_usd_espresso_test() throws InterruptedException {
+    public void change_currency_once_back_to_usd_espresso_test() {
         Double startDemoPurchaseAmount = startDemoPurchase();
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
@@ -172,7 +172,7 @@ public class DemoFlowTest extends EspressoBasedTest {
     }
 
     @Test
-    public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException {
+    public void change_currency_twice_back_to_usd_espresso_test() {
         Double startDemoPurchaseAmount = startDemoPurchase();
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
         onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));

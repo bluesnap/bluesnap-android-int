@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp;
 
+import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -41,41 +42,80 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
     }
 
+    @Test
+    public void minimal_billing_with_shipping_test() throws IOException {
+        new_credit_card_info_visibility_validation();
+        new_credit_billing_contact_info_visibility_validation();
+        default_country_zip_view_validation_in_billing();
+        shipping_button_validation();
+
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+        new_credit_shipping_contact_info_visibility_validation();
+        default_country_view_validation_in_shipping();
+        default_country_zip_view_validation_in_shipping();
+        default_country_state_view_validation_in_shipping();
+        changing_country_view_validation_in_shipping();
+        changing_country_zip_view_validation_in_shipping();
+        changing_country_state_view_validation_in_shipping();
+
+        pay_button_in_shipping_validation();
+        check_ime_action_button_in_shipping_contact_info();
+        contact_info_saved_validation_in_shipping();
+        initial_currency_view_validation_in_shipping();
+        change_currency_in_shipping_validation();
+        change_currency_in_shipping_amount_validation();
+        amount_tax_view_in_shipping_validation();
+
+        Espresso.pressBack();
+        credit_card_info_saved_validation();
+        change_currency_in_billing_with_shipping_validation();
+    }
+
+    @Test
+    public void minimal_billing_with_shipping_test_inputs() throws IOException {
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+        empty_fields_invalid_error_validation_in_shipping();
+        name_invalid_error_validation_in_shipping();
+        name_invalid_error_validation_using_ime_button_in_shipping();
+        zip_invalid_error_validation_in_shipping();
+        zip_invalid_error_validation_using_ime_button_in_shipping();
+        city_invalid_error_validation_in_shipping();
+        city_invalid_error_validation_using_ime_button_in_shipping();
+        address_invalid_error_validation_in_shipping();
+        state_invalid_error_in_shipping();
+
+    }
+
     /**
      * This test verifies that the all credit card fields are displayed as they should
      * when choosing new credit card.
      */
-    @Test
-    public void new_credit_cc_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_cc_info_visibility_validation();
+    public void new_credit_card_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_card_info_visibility_validation");
     }
 
     /**
      * This test verifies that the all billing contact info fields are displayed
      * according to full billing when choosing new credit card.
      */
-    @Test
-    public void new_credit_billing_contact_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.billingViewComponent, false, false);
+    public void new_credit_billing_contact_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_billing_contact_info_visibility_validation", R.id.billingViewComponent, false, false);
     }
 
     /**
      * This test verifies that the all shipping contact info fields are displayed
      * according to shipping enabled when choosing new credit card.
      */
-    @Test
-    public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
+    public void new_credit_shipping_contact_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_shipping_contact_info_visibility_validation", R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
-    @Test
-    public void default_country_zip_view_validation_in_billing() throws InterruptedException {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.billingViewComponent);
+    public void default_country_zip_view_validation_in_billing() {
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
     }
 
     /**
@@ -83,40 +123,32 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * when first entering shipping info.
      * (according to its location, or us by default)
      */
-    @Test
-    public void default_country_view_validation_in_shipping() throws InterruptedException, IOException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.country_view_validation(applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
+    public void default_country_view_validation_in_shipping() throws IOException {
+        NewCardVisibilityTesterCommon.country_view_validation("default_country_view_validation_in_shipping", applicationContext, defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
     /**
      * This test verifies that the country image changes as expected, according
      * to different choices in shipping info.
      */
-    @Test
-    public void changing_country_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.changing_country_view_validation(R.id.newShoppershippingViewComponent);
+    public void changing_country_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.changing_country_view_validation("changing_country_view_validation_in_shipping", R.id.newShoppershippingViewComponent);
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering shipping).
      */
-    @Test
-    public void default_country_zip_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.newShoppershippingViewComponent);
+    public void default_country_zip_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_shipping", defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to different choices of countries in shipping info.
      */
-    @Test
-    public void changing_country_zip_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.changing_country_zip_view_validation(R.id.newShoppershippingViewComponent);
+    public void changing_country_zip_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.changing_country_zip_view_validation("changing_country_zip_view_validation_in_shipping", R.id.newShoppershippingViewComponent);
     }
 
     /**
@@ -125,10 +157,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * If the country is USA, Canada or Brazil, then it should be visible,
      * o.w. it doesn't.
      */
-    @Test
-    public void default_country_state_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.newShoppershippingViewComponent, defaultCountry);
+    public void default_country_state_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_shipping", R.id.newShoppershippingViewComponent, defaultCountry);
     }
 
     /**
@@ -137,29 +167,23 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * If the country is USA, Canada or Brazil, then it should be visible,
      * o.w. it doesn't.
      */
-    @Test
-    public void changing_country_state_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        NewCardVisibilityTesterCommon.changing_country_state_view_validation(R.id.newShoppershippingViewComponent);
+    public void changing_country_state_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.changing_country_state_view_validation("changing_country_state_view_validation_in_shipping", R.id.newShoppershippingViewComponent);
     }
 
     /**
      * This test verifies that the "Shipping" button is visible
      */
-    @Test
-    public void shipping_button_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation(R.id.billingButtonComponentView);
+    public void shipping_button_validation() {
+        NewCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation", R.id.billingButtonComponentView);
     }
 
     /**
      * This test verifies that an invalid error appears for every
      * field when leaving it empty (without entering at all)
      */
-    @Test
-    public void empty_fields_invalid_error_validation_in_shipping() throws InterruptedException {
-        //Continue to shipping
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.empty_fields_invalid_error_validation(R.id.newShoppershippingViewComponent, true, false);
+    public void empty_fields_invalid_error_validation_in_shipping() {
+        ContactInfoTesterCommon.empty_fields_invalid_error_validation("empty_fields_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, true, false);
     }
 
 
@@ -173,10 +197,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid name
      * Entering an invalid name after entering a valid one
      */
-    @Test
-    public void name_invalid_error_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.name_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_zip);
+    public void name_invalid_error_validation_in_shipping() {
+        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, false, R.id.input_zip);
     }
 
     /**
@@ -189,10 +211,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid name
      * Entering an invalid name after entering a valid one
      */
-    @Test
-    public void name_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.name_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
+    public void name_invalid_error_validation_using_ime_button_in_shipping() {
+        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, 0);
 
     }
 
@@ -206,10 +226,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid zip
      * Entering an invalid zip after entering a valid one
      */
-    @Test
-    public void zip_invalid_error_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.zip_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_name);
+    public void zip_invalid_error_validation_in_shipping() {
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, false, R.id.input_name);
     }
 
     /**
@@ -222,10 +240,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid zip
      * Entering an invalid zip after entering a valid one
      */
-    @Test
-    public void zip_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.zip_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
+    public void zip_invalid_error_validation_using_ime_button_in_shipping() {
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, 0);
     }
 
     /**
@@ -238,10 +254,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid city
      * Entering an invalid city after entering a valid one
      */
-    @Test
-    public void city_invalid_error_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.city_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_address);
+    public void city_invalid_error_validation_in_shipping() {
+        ContactInfoTesterCommon.city_invalid_error_validation("city_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, false, R.id.input_address);
     }
 
     /**
@@ -254,10 +268,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid city
      * Entering an invalid city after entering a valid one
      */
-    @Test
-    public void city_invalid_error_validation_using_ime_button_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.city_invalid_error_validation(R.id.newShoppershippingViewComponent, true, 0);
+    public void city_invalid_error_validation_using_ime_button_in_shipping() {
+        ContactInfoTesterCommon.city_invalid_error_validation("city_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, 0);
     }
 
     /**
@@ -270,20 +282,16 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * Entering a valid address
      * Entering an invalid address after entering a valid one
      */
-    @Test
-    public void address_invalid_error_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.address_invalid_error_validation(R.id.newShoppershippingViewComponent, false, R.id.input_city);
+    public void address_invalid_error_validation_in_shipping() {
+        ContactInfoTesterCommon.address_invalid_error_validation("address_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, false, R.id.input_city);
     }
 
     /**
      * This test verifies that the invalid state error disappears
      * after entering a state.
      */
-    @Test
-    public void state_invalid_error_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.state_invalid_error(R.id.newShoppershippingViewComponent, R.id.shippingButtonComponentView);
+    public void state_invalid_error_in_shipping() {
+        ContactInfoTesterCommon.state_invalid_error("state_invalid_error_in_shipping", R.id.newShoppershippingViewComponent, R.id.shippingButtonComponentView);
     }
 
     /**
@@ -291,31 +299,25 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * the correct currency symbol and amount
      */
 
-    @Test
-    public void pay_button_in_shipping_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+    public void pay_button_in_shipping_validation() {
+        ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, defaultCountryFull);
         double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
-        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation(R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
     }
 
     /**
      * This test verifies the ime action button works as it should
      * in shipping contact info
      */
-    @Test
-    public void check_ime_action_button_in_shipping_contact_info() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        ContactInfoTesterCommon.check_ime_action_button_in_contact_info(defaultCountry, R.id.newShoppershippingViewComponent, true, false);
+    public void check_ime_action_button_in_shipping_contact_info() {
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info("check_ime_action_button_in_shipping_contact_info", defaultCountry, R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
      * This test verifies that the shipping contact info is saved when
      * going back to billing and entering the shipping once again.
      */
-    @Test
-    public void contact_info_saved_validation_in_shipping() throws InterruptedException, IOException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false); //continue to shipping
-
+    public void contact_info_saved_validation_in_shipping() throws IOException {
         //Changing country to USA for state and zip appearance
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "United States");
         //fill in info
@@ -326,7 +328,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
 
         //verify info has been saved
-        ContactInfoTesterCommon.contact_info_content_validation(applicationContext, R.id.newShoppershippingViewComponent, true, false);
+        ContactInfoTesterCommon.contact_info_content_validation("contact_info_saved_validation_in_shipping", applicationContext, R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
@@ -334,73 +336,56 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * continuing to shipping and going back to billing,
      * while using the back button.
      */
-    @Test
-    public void cc_card_info_saved_validation() throws InterruptedException {
-        //Continue to Shipping and back to billing
-
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        TestUtils.go_back_to_billing_in_new_card();
-
-        CreditCardLineTesterCommon.cc_card_info_saved_validation("5288", "12/26", "123");
+    public void credit_card_info_saved_validation() {
+        CreditCardLineTesterCommon.credit_card_info_saved_validation("credit_card_info_saved_validation", "5288", "12/26", "123");
     }
 
     /**
      * This test verifies that the initial currency in shipping is presented
      * as it should in the hamburger buy buttons.
      */
-    @Test
-    public void initial_currency_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        CurrencyChangeTest.currency_view_validation(R.id.shippingButtonComponentView, checkoutCurrency);
+    public void initial_currency_view_validation_in_shipping() {
+        CurrencyChangeTest.currency_view_validation("initial_currency_view_validation_in_shipping", R.id.shippingButtonComponentView, checkoutCurrency);
     }
 
     /**
      * This test verifies that changing the currency in billing
      * changes as it should in shipping.
      */
-    @Test
-    public void change_currency_in_shipping_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
+    public void change_currency_in_shipping_validation() {
         CreditCardLineTesterCommon.changeCurrency("CAD");
-        CurrencyChangeTest.currency_view_validation(R.id.shippingButtonComponentView, "CAD");
+        CurrencyChangeTest.currency_view_validation("change_currency_in_shipping_validation", R.id.shippingButtonComponentView, "CAD");
     }
 
     /**
      * This test verifies that changing the currency in billing, while shipping is enabled,
      * changes as it should in shipping.
      */
-    @Test
-    public void change_currency_in_billing_with_shipping_validation() throws InterruptedException {
+    public void change_currency_in_billing_with_shipping_validation() {
         CreditCardLineTesterCommon.changeCurrency("CAD");
-        sleep(1000);
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        CurrencyChangeTest.currency_view_validation(R.id.shippingButtonComponentView, "CAD");
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        CurrencyChangeTest.currency_view_validation("change_currency_in_billing_with_shipping_validation", R.id.shippingButtonComponentView, "CAD");
     }
 
     /**
      * This test verifies that after changing to different currencies
      * and back to the origin one, the amount remains the same
      */
-    @Test
-    public void change_currency_in_shipping_amount_validation() throws InterruptedException {
+    public void change_currency_in_shipping_amount_validation() {
         double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-        CurrencyChangeTest.change_currency_amount_validation(R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount + tax));
+        CurrencyChangeTest.change_currency_amount_validation("change_currency_in_shipping_amount_validation", R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount + tax));
     }
 
     /**
      * This test verifies that the amount tax shipping component is visible
      * in shipping, and that it presents the right amount and tax.
      */
-    @Test
-    public void amount_tax_view_in_shipping_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, false);
-
+    public void amount_tax_view_in_shipping_validation() {
         if (!defaultCountry.equals("US"))
             ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "United States");
 
         //verify that the amount tax shipping component is presented
-        NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation(R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,
+        NewCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_in_shipping_validation", R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,
                 TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
     }
 

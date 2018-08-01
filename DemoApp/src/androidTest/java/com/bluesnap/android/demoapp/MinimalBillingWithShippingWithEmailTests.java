@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,51 +37,58 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
         onView(withId(R.id.newCardButton)).perform(click());
     }
 
+    @Test
+    public void minimal_billing_with_shipping_with_email_test() throws IOException {
+        new_credit_card_info_visibility_validation();
+        new_credit_billing_contact_info_visibility_validation();
+        default_country_zip_view_validation_in_billing();
+        shipping_button_validation();
+
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, true);
+        new_credit_shipping_contact_info_visibility_validation();
+        default_country_zip_view_validation_in_shipping();
+        default_country_state_view_validation_in_shipping();
+        pay_button_in_shipping_validation();
+    }
+
     /**
      * This test verifies that the all credit card fields are displayed as they should
      * when choosing new credit card.
      */
-    @Test
-    public void new_credit_cc_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_cc_info_visibility_validation();
+    public void new_credit_card_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_card_info_visibility_validation");
     }
 
     /**
      * This test verifies that the all billing contact info fields are displayed
      * according to full billing when choosing new credit card.
      */
-    @Test
-    public void new_credit_billing_contact_info_visibility_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.billingViewComponent, false, true);
+    public void new_credit_billing_contact_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_billing_contact_info_visibility_validation", R.id.billingViewComponent, false, true);
     }
 
     /**
      * This test verifies that the all shipping contact info fields are displayed
      * according to shipping enabled when choosing new credit card.
      */
-    @Test
-    public void new_credit_shipping_contact_info_visibility_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, true);
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation(R.id.newShoppershippingViewComponent, true, false);
+    public void new_credit_shipping_contact_info_visibility_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_shipping_contact_info_visibility_validation", R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
-    @Test
-    public void default_country_zip_view_validation_in_billing() throws InterruptedException {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.billingViewComponent);
+    public void default_country_zip_view_validation_in_billing() {
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
     }
 
     /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering shipping).
      */
-    @Test
-    public void default_country_zip_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, true);
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation(defaultCountry, R.id.newShoppershippingViewComponent);
+    public void default_country_zip_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_shipping", defaultCountry, R.id.newShoppershippingViewComponent);
     }
 
     /**
@@ -91,30 +97,24 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
      * If the country is USA, Canada or Brazil, then it should be visible,
      * o.w. it doesn't.
      */
-    @Test
-    public void default_country_state_view_validation_in_shipping() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, true);
-        NewCardVisibilityTesterCommon.default_country_state_view_validation(R.id.newShoppershippingViewComponent, defaultCountry);
+    public void default_country_state_view_validation_in_shipping() {
+        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_shipping", R.id.newShoppershippingViewComponent, defaultCountry);
     }
 
     /**
      * This test verifies that the "Pay" button is visible and contains
      * the correct currency symbol and amount
      */
-
-    @Test
-    public void pay_button_in_shipping_validation() throws InterruptedException {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, false, true);
+    public void pay_button_in_shipping_validation() {
         double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
-        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation(R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
     }
 
     /**
      * This test verifies that the "Shipping" button is visible
      */
-    @Test
-    public void shipping_button_validation() throws InterruptedException {
-        NewCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation(R.id.billingButtonComponentView);
+    public void shipping_button_validation() {
+        NewCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation", R.id.billingButtonComponentView);
     }
 
 }

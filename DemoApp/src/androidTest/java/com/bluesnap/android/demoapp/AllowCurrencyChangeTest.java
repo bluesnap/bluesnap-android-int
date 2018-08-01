@@ -33,11 +33,6 @@ import static org.hamcrest.Matchers.not;
 public class AllowCurrencyChangeTest extends EspressoBasedTest {
     protected boolean isAllowed = true;
 
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
-    }
-
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
@@ -54,7 +49,7 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
      * It covers visibility in billing, shipping and after changing activities
      */
     @Test
-    public void currency_change_hamburger_view_validation() throws InterruptedException {
+    public void currency_change_hamburger_view_validation() {
         //check hamburger button visibility in billing
         checkCurrencyHamburgerButtonVisibility();
 
@@ -81,11 +76,11 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
         checkCurrencyHamburgerButtonVisibility();
     }
 
-    private void checkCurrencyHamburgerButtonVisibility() throws InterruptedException {
+    private void checkCurrencyHamburgerButtonVisibility() {
         if (isAllowed)
             onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
         else
-            onView(withId(R.id.hamburger_button)).withFailureHandler(new CustomFailureHandler("currency hamburger button is not visible")).check(matches((ViewMatchers.isDisplayed())));
+            onView(withId(R.id.hamburger_button)).check(matches(not(ViewMatchers.isDisplayed())));
 
     }
 }

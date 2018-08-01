@@ -74,13 +74,13 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     private String getShopperResponse;
 
     @After
-    public void keepRunning() throws InterruptedException {
+    public void keepRunning() {
         mActivityRule.getActivity().finish();
         //Thread.sleep(1000);
     }
 
     @Before
-    public void setup() throws InterruptedException {
+    public void setup() {
         demoMainActivity = mActivityRule.getActivity();
         defaultCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
         try {
@@ -114,59 +114,27 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
      * and subtotal are presented if they supposed to.
      */
     @Test
-    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
+    public void minimal_billing_basic_flow_transaction() {
         new_card_basic_flow_transaction();
         get_shopper_after_transaction();
     }
 
     @Test
-    public void minimal_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
+    public void minimal_billing_with_shipping_basic_flow_transaction() {
         withShipping = true;
         new_card_basic_flow_transaction();
         get_shopper_after_transaction();
     }
 
     @Test
-    public void minimal_billing_with_email_basic_flow_transaction() throws InterruptedException {
+    public void minimal_billing_with_email_basic_flow_transaction() {
         withEmail = true;
         new_card_basic_flow_transaction();
         get_shopper_after_transaction();
     }
 
     @Test
-    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
-        withShipping = true;
-        withEmail = true;
-        new_card_basic_flow_transaction();
-        get_shopper_after_transaction();
-    }
-
-    @Test
-    public void full_billing_basic_flow_transaction() throws InterruptedException {
-        fullInfo = true;
-        new_card_basic_flow_transaction();
-        get_shopper_after_transaction();
-    }
-
-    @Test
-    public void full_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
-        fullInfo = true;
-        withShipping = true;
-        new_card_basic_flow_transaction();
-        get_shopper_after_transaction();
-    }
-
-    @Test
-    public void full_billing_with_email_basic_flow_transaction() throws InterruptedException {
-        fullInfo = true;
-        withEmail = true;
-        new_card_basic_flow_transaction();
-        get_shopper_after_transaction();
-    }
-
-    @Test
-    public void full_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
-        fullInfo = true;
+    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() {
         withShipping = true;
         withEmail = true;
         new_card_basic_flow_transaction();
@@ -174,7 +142,39 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     }
 
     @Test
-    public void shipping_same_as_billing_basic_flow_transaction() throws InterruptedException {
+    public void full_billing_basic_flow_transaction() {
+        fullInfo = true;
+        new_card_basic_flow_transaction();
+        get_shopper_after_transaction();
+    }
+
+    @Test
+    public void full_billing_with_shipping_basic_flow_transaction() {
+        fullInfo = true;
+        withShipping = true;
+        new_card_basic_flow_transaction();
+        get_shopper_after_transaction();
+    }
+
+    @Test
+    public void full_billing_with_email_basic_flow_transaction() {
+        fullInfo = true;
+        withEmail = true;
+        new_card_basic_flow_transaction();
+        get_shopper_after_transaction();
+    }
+
+    @Test
+    public void full_billing_with_shipping_with_email_basic_flow_transaction() {
+        fullInfo = true;
+        withShipping = true;
+        withEmail = true;
+        new_card_basic_flow_transaction();
+        get_shopper_after_transaction();
+    }
+
+    @Test
+    public void shipping_same_as_billing_basic_flow_transaction() {
         fullInfo = true;
         withShipping = true;
         withEmail = true;
