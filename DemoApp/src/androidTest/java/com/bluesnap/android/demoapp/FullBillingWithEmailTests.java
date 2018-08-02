@@ -37,6 +37,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     public void full_billing_with_email_test() throws IOException {
         new_credit_card_info_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
+        new_credit_billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
@@ -49,6 +50,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     @Test
     public void full_billing_with_email_test_inputs() throws IOException {
         name_invalid_error_validation_in_billing();
+        new_credit_card_info_error_messages_validation();
         name_invalid_error_validation_using_ime_button_in_billing();
         email_invalid_error_validation_in_billing();
         email_invalid_error_validation_using_ime_button_in_billing();
@@ -68,6 +70,14 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that all invalid error messages of credit card info
+     * fields are not displayed.
+     */
+    public void new_credit_card_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
+    }
+
+    /**
      * This test verifies that all the billing contact info fields are displayed
      * according to full billing with email when choosing new credit card.
      */
@@ -76,11 +86,19 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that all invalid error messages of billing contact info
+     * fields are not displayed.
+     */
+    public void new_credit_billing_contact_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_error_messages_validation("new_credit_contact_info_error_messages_validation", R.id.billingViewComponent, true, true);
+    }
+
+    /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
     public void default_country_zip_view_validation_in_billing() {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountryKey, R.id.billingViewComponent);
     }
 
     /**
@@ -90,7 +108,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * o.w. it doesn't.
      */
     public void default_country_state_view_validation_in_billing() {
-        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountry);
+        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountryKey);
     }
 
     /**
@@ -107,7 +125,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * in full billing contact info
      */
     public void check_ime_action_button_in_billing_contact_info() {
-        ContactInfoTesterCommon.check_ime_action_button_in_contact_info("check_ime_action_button_in_billing_contact_info", defaultCountry, R.id.billingViewComponent, true, true);
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info("check_ime_action_button_in_billing_contact_info", defaultCountryKey, R.id.billingViewComponent, true, true);
     }
 
     /**

@@ -18,14 +18,21 @@ import static org.hamcrest.Matchers.not;
  */
 
 public class ReturningShopperVisibilityTesterCommon {
+    static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
+            "New York", "555 Broadway street", "New York", "3abc 324a", "US");
+
+    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
+            "CityTest", "AddressTest", "RJ", "12345", "BR");
+
+
     public static void credit_card_view_visibility_validation(String lastFourDigits, String expDate) {
         onView(withId(R.id.oneLineCCViewComponent)).check(matches(isDisplayed()));
         onView(withId(R.id.ccLastFourDigitsTextView)).check(matches(withText(lastFourDigits)));
         onView(withId(R.id.expTextView)).check(matches(withText(expDate)));
     }
 
-    public static void summarized_contact_info_visibility_validation(int componentResourceId, boolean fullInfo, boolean withEmail,
-                                                                     ShopperContactInfo contactInfo) {
+    public static void summarized_contact_info_visibility_validation(int componentResourceId, boolean fullInfo, boolean withEmail) {
+        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewSummarizedComponent) ? billingContactInfo : shippingContactInfo;
         //verifies that the right component(billing/shipping) is displayed
         onView(withId(componentResourceId)).check(matches(isDisplayed()));
 
@@ -36,10 +43,10 @@ public class ReturningShopperVisibilityTesterCommon {
         if (withEmail) {
             onView(withId(R.id.emailTextView))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getEmail()))));
-        } else if (componentResourceId == R.id.billingViewSummarizedTextView)
+        } else if (componentResourceId == R.id.billingViewSummarizedComponent)
             onView(withId(R.id.emailTextView)).check(matches(not(isDisplayed())));
 
-        String country = contactInfo.getCountry();
+        String country = contactInfo.getCountry(); //TODO: fix th. should be the random country
 
         if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country)) {
             onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(componentResourceId))))
@@ -57,18 +64,13 @@ public class ReturningShopperVisibilityTesterCommon {
             onView(allOf(withId(R.id.cityTextView), isDescendantOfA(withId(componentResourceId))))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getCity()))));
 
-            String address = TestUtils.getText(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(componentResourceId))));
+            //String address = TestUtils.getText(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(componentResourceId))));
             onView(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(componentResourceId))))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getAddress()))));
         } else {
             onView(allOf(withId(R.id.cityTextView), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
             onView(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(componentResourceId)))).check(matches(not(isDisplayed())));
         }
-
-    }
-
-    public static void contact_info_visibility_validation(int componentResourceId, boolean fullInfo, boolean withEmail,
-                                                          ShopperContactInfo contactInfo) {
 
     }
 

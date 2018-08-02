@@ -5,12 +5,9 @@ import android.support.test.runner.AndroidJUnit4;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -35,7 +32,9 @@ public class MinimalBillingTests extends EspressoBasedTest {
     @Test
     public void minimal_billing_test() {
         new_credit_card_info_visibility_validation();
+        new_credit_card_info_error_messages_validation();
         new_credit_billing_contact_info_visibility_validation();
+        new_credit_billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_cc_info();
@@ -55,6 +54,14 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that all invalid error messages of credit card info
+     * fields are not displayed.
+     */
+    public void new_credit_card_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
+    }
+
+    /**
      * This test verifies that the all billing contact info fields are displayed
      * according to minimal billing when choosing new credit card.
      */
@@ -63,11 +70,19 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that all invalid error messages of billing contact info
+     * fields are not displayed.
+     */
+    public void new_credit_billing_contact_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_error_messages_validation("new_credit_contact_info_error_messages_validation", R.id.billingViewComponent, false, false);
+    }
+
+    /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
     public void default_country_zip_view_validation_in_billing() {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountryKey, R.id.billingViewComponent);
     }
 
     /**
@@ -98,7 +113,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * in billing contact info
      */
     public void check_ime_action_button_in_billing_contact_info() {
-        ContactInfoTesterCommon.check_ime_action_button_in_contact_info("check_ime_action_button_in_billing_contact_info", defaultCountry, R.id.billingViewComponent, false, false);
+        ContactInfoTesterCommon.check_ime_action_button_in_contact_info("check_ime_action_button_in_billing_contact_info", defaultCountryKey, R.id.billingViewComponent, false, false);
     }
 
     /**

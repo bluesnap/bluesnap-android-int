@@ -16,23 +16,26 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.not;
 
 /**
  * Created by sivani on 17/07/2018.
  */
 
 public class ContactInfoTesterCommon {
+    static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
+            "New York", "555 Broadway street", "New York", "3abc 324a", "US");
+
+    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
+            "CityTest", "AddressTest", "RJ", "12345", "BR");
+
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), pressImeActionButton());
         if (withEmail)
@@ -242,7 +245,7 @@ public class ContactInfoTesterCommon {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
         //verify error message is displayed
-        check_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
+        NewCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
 
         //filling in Rio de Janeiro
         onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(click());
@@ -255,10 +258,9 @@ public class ContactInfoTesterCommon {
 //                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
     }
 
-    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, boolean fullInfo, boolean withEmail) throws IOException {
-        ShopperContactInfo contactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
-                "New York", "555 Broadway street", "NY", "3abc 324a", "US");
-        contact_info_content_validation(testName, context, componentResourceId, fullInfo, withEmail, contactInfo);
+    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail) throws IOException {
+        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
+        contact_info_content_validation(testName, context, componentResourceId, country, fullInfo, withEmail, contactInfo);
     }
 
     /**
@@ -266,12 +268,12 @@ public class ContactInfoTesterCommon {
      * continuing to shipping and going back to billing,
      * while using the back button summarized_contact_info_visibility_validation
      */
-    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, boolean fullInfo, boolean withEmail,
+    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail,
                                                        ShopperContactInfo contactInfo) throws IOException {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
-        NewCardVisibilityTesterCommon.country_view_validation(testName, context, contactInfo.getCountry(), componentResourceId);
+        NewCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
         //onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
 
         //Verify full name has been saved in current component
@@ -313,21 +315,25 @@ public class ContactInfoTesterCommon {
     //if changeCountry is true than country is the country to change to
     //o.w. county is the chosen country and we dont change it
 
-
     public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
+        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
+        fillInContactInfo(componentResourceId, country, fullInfo, withEmail, contactInfo);
+    }
+
+    public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail, ShopperContactInfo contactInfo) {
 //        if (changeCountry)
 //            changeCountry(componentResourceId, country);
-        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText("La Fleur"), pressImeActionButton());
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(typeText(contactInfo.getName()), pressImeActionButton());
 
         if (withEmail)
-            onView(withId(R.id.input_email)).perform(clearText(), typeText("test@sdk.com"), pressImeActionButton());
+            onView(withId(R.id.input_email)).perform(clearText(), typeText(contactInfo.getEmail()), pressImeActionButton());
 
         if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
-            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("3abc 324a"), pressImeActionButton());
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getZip()), pressImeActionButton());
 
         if (fullInfo) {
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("New York"), pressImeActionButton());
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText("555 Broadway street"));
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getCity()), pressImeActionButton());
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getAddress()));
             if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
                 onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
                 if (country.equals("US"))
@@ -352,25 +358,11 @@ public class ContactInfoTesterCommon {
         onData(hasToString(containsString(country))).inAdapterView(withId(R.id.country_list_view)).perform(click());
     }
 
-    public static void check_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, boolean isDisplayed) {
-        if (isDisplayed) //Verify error message is displayed
-            onView(allOf(withId(R.id.textinput_error),
-                    isDescendantOfA(withId(layoutResourceId)),
-                    isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not visible"))
-                    .perform(scrollTo()).check(matches(isDisplayed()));
 
-        else //Verify error message is not displayed
-            onView(allOf(withId(R.id.textinput_error),
-                    isDescendantOfA(withId(layoutResourceId)),
-                    isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is visible"))
-                    .check(doesNotExist());
-    }
 
     public static void check_input_validation(String testName, int fieldResourceId, int layoutResourceId, int componentResourceId, boolean withImeButton, int nextFieldResourceId, String input, boolean isInvalid) {
         onView(allOf(withId(fieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), clearText(), typeText(input));
         moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, fieldResourceId);
-        check_invalid_error_visibility(testName, layoutResourceId, componentResourceId, isInvalid);
+        NewCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, layoutResourceId, componentResourceId, isInvalid);
     }
 }

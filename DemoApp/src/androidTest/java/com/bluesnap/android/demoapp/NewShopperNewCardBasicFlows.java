@@ -72,6 +72,10 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     public static final String SANDBOX_GET_SHOPPER = "vaulted-shoppers/";
     private String shopperId;
     private String getShopperResponse;
+    String billingCountryKey;
+    String billingCountryValue;
+    String shippingCountryKey;
+    String shippingCountryValue;
 
     @After
     public void keepRunning() {
@@ -82,13 +86,22 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     @Before
     public void setup() {
         demoMainActivity = mActivityRule.getActivity();
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
+        applicationContext = demoMainActivity.getApplicationContext();
+        //defaultCountryKey = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {
             fail("Could not wake up device");
             e.printStackTrace();
         }
+
+        String[] billingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
+        billingCountryKey = billingCountry[0];
+        billingCountryValue = billingCountry[1];
+
+        String[] shippingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
+        shippingCountryKey = shippingCountry[0];
+        shippingCountryValue = shippingCountry[1];
     }
 
     public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
@@ -203,13 +216,18 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
             onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
 
         //fill in info in billing and continue to shipping or paying
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, fullInfo, withEmail);
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, billingCountryValue);
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountryKey, fullInfo, withEmail);
+
+        onView(withId(R.id.buyNowButton)).perform(click());
 
         if (withShipping) {
-            if (defaultCountry.equals("US")) //updating purchaseAmount to include tax
+            if (billingCountryKey.equals("US")) //updating purchaseAmount to include tax
                 purchaseAmount *= 1.05; //TODO: add comment
             if (!shippingSameAsBilling) {
-                ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, defaultCountry, true, false);
+                ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, shippingCountryValue);
+                ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, shippingCountryKey, true, false);
                 onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.shippingButtonComponentView)))).perform(click());
             }
         }
@@ -308,28 +326,35 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
     private void new_shopper_component_info_saved_validation(boolean isBillingInfo) {
         String address = isBillingInfo ? "address" : "address1";
-        check_if_field_identify(isBillingInfo, "country", defaultCountry);
+        String countryKey = isBillingInfo ? billingCountryKey : shippingCountryKey;
+        String countryValue = isBillingInfo ? billingCountryValue : shippingCountryValue;
 
-        check_if_field_identify(isBillingInfo, "first-name", "La");
-        check_if_field_identify(isBillingInfo, "last-name", "Fleur");
+
+        ShopperContactInfo contactInfo = isBillingInfo ? ContactInfoTesterCommon.billingContactInfo : ContactInfoTesterCommon.shippingContactInfo;
+
+
+        check_if_field_identify(isBillingInfo, "country", countryKey.toLowerCase());
+
+        check_if_field_identify(isBillingInfo, "first-name", contactInfo.getFirstName());
+        check_if_field_identify(isBillingInfo, "last-name", contactInfo.getLastName());
 
         if (isBillingInfo && withEmail)
-            check_if_field_identify(true, "email", "test@sdk.com");
+            check_if_field_identify(true, "email", contactInfo.getEmail());
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(defaultCountry))
-            check_if_field_identify(isBillingInfo, "zip", "3abc 324a");
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryValue))
+            check_if_field_identify(isBillingInfo, "zip", contactInfo.getZip());
 
         if (fullInfo || !isBillingInfo) { //full info or shipping
-            if (defaultCountry.equals("US") || defaultCountry.equals("CA") || defaultCountry.equals("BR")) {
-                if (defaultCountry.equals("US"))
+            if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
+                if (countryKey.equals("US"))
                     check_if_field_identify(isBillingInfo, "state", "New York");
-                else if (defaultCountry.equals("CA"))
+                else if (countryKey.equals("CA"))
                     check_if_field_identify(isBillingInfo, "state", "Quebec");
                 else
                     check_if_field_identify(isBillingInfo, "state", "Rio de Janeiro");
             }
-            check_if_field_identify(isBillingInfo, "city", "New York");
-            check_if_field_identify(isBillingInfo, address, "555 Broadway street");
+            check_if_field_identify(isBillingInfo, "city", contactInfo.getCity());
+            check_if_field_identify(isBillingInfo, address, contactInfo.getAddress());
         }
     }
 
@@ -340,8 +365,6 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
                         ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
         String fieldContent = shopperInfo.substring(shopperInfo.indexOf("<" + fieldName + ">") +
                 ("<" + fieldName + ">").length(), shopperInfo.indexOf("</" + fieldName + ">"));
-        assert fieldContent.equals(expectedResult);
+        Assert.assertEquals(fieldName + "was not saved correctly in DataBase", fieldContent, expectedResult);
     }
-
-
 }

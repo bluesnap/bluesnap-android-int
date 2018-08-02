@@ -6,6 +6,9 @@ package com.bluesnap.android.demoapp;
 
 public class ShopperContactInfo {
     private String name;
+    private String firstName;
+    private String lastName;
+
     private String email;
 
     private String city;
@@ -26,6 +29,13 @@ public class ShopperContactInfo {
         country = country_;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
 
     public String getName() {
         return name;

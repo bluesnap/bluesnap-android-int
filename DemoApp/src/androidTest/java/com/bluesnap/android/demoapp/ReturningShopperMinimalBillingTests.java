@@ -4,10 +4,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +17,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
-import static org.hamcrest.Matchers.is;
 
 /**
  * Created by sivani on 28/07/2018.
@@ -29,31 +25,19 @@ import static org.hamcrest.Matchers.is;
 
 @RunWith(AndroidJUnit4.class)
 
-public class ReturningShopperMinimalBilling extends EspressoBasedTest {
-    private static final String RETURNING_SHOPPER_ID_MIN_BILLING = BluesnapCheckoutActivity.class.getSimpleName();
-    ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
-            "New York", "555 Broadway street", "New York", "3abc 324a", "US");
-
-    ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
-            "CityTest", "AddressTest", "RJ", "12345", "BR");
-
+public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
+    private static final String RETURNING_SHOPPER_ID_MIN_BILLING = "22852981";
 
     private String cardLastDigit;
 
-    public ReturningShopperMinimalBilling() {
-        super("?shopperId=22828965");
-    }
-
-    @After
-    public void keepRunning() throws InterruptedException {
-        Thread.sleep(1000);
+    public ReturningShopperMinimalBillingTests() {
+        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING);
     }
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         //sdkRequest.setBillingRequired(true);
-        sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
         //cardLastDigit = TestUtils.getText(withId(R.id.oneLineCCViewComponentsListView));
@@ -77,7 +61,7 @@ public class ReturningShopperMinimalBilling extends EspressoBasedTest {
     @Test
     public void billing_summarized_contact_info_visibility_validation() {
         ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(R.id.billingViewSummarizedComponent,
-                false, false, billingContactInfo);
+                false, false);
     }
 
     /**
@@ -89,7 +73,7 @@ public class ReturningShopperMinimalBilling extends EspressoBasedTest {
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
 
         //verify info has been saved
-        ContactInfoTesterCommon.contact_info_content_validation("billing_contact_info_content_validation", applicationContext, R.id.billingViewComponent, false, false);
+        ContactInfoTesterCommon.contact_info_content_validation("billing_contact_info_content_validation", applicationContext, R.id.billingViewComponent, defaultCountryKey, false, false);
     }
 
 //    /**

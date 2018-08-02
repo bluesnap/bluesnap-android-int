@@ -61,8 +61,8 @@ public class EspressoBasedTest {
     NumberFormat df;
     RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
 
-    protected String defaultCountry;
-    String defaultCountryFull;
+    protected String defaultCountryKey;
+    String defaultCountryValue;
     protected String checkoutCurrency = "USD";
     protected double purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
@@ -78,6 +78,7 @@ public class EspressoBasedTest {
 
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
+
 
     public EspressoBasedTest() {
         this(" ");
@@ -143,11 +144,11 @@ public class EspressoBasedTest {
         mActivityRule.launchActivity(intent);
         mActivity = mActivityRule.getActivity();
         applicationContext = mActivity.getApplicationContext();
-        defaultCountry = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
+        defaultCountryKey = BlueSnapService.getInstance().getUserCountry(this.mActivity.getApplicationContext());
         String[] countryKeyArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
         String[] countryValueArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
 
-        defaultCountryFull = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountry)];
+        defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
     }
 
     public void setSDKToken() throws InterruptedException {

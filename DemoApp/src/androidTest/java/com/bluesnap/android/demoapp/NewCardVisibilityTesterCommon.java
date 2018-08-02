@@ -2,33 +2,24 @@ package com.bluesnap.android.demoapp;
 
 import android.content.Context;
 import android.support.test.espresso.Espresso;
-
-import android.support.test.espresso.FailureHandler;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.util.Log;
-import android.view.View;
 
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
-
-import org.hamcrest.Matcher;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasToString;
@@ -45,12 +36,18 @@ public class NewCardVisibilityTesterCommon {
         onView(withId(R.id.cvvEditText)).withFailureHandler(new CustomFailureHandler(testName + ": Cvv number editText is visible")).check(matches(not(isDisplayed())));
     }
 
+    public static void new_credit_card_info_error_messages_validation(String testName) {
+        check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, false);
+        check_cc_info_invalid_error_visibility(testName, R.id.expErrorTextView, false);
+        check_cc_info_invalid_error_visibility(testName, R.id.cvvErrorTextView, false);
+    }
+
     public static void new_credit_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
-        //verifies that the right component(billing/shipping) is displayed- is this necessary?
+        //verify that the right component(billing/shipping) is displayed- is this necessary?
         onView(withId(componentResourceId)).check(matches(isDisplayed()));
 
         Espresso.closeSoftKeyboard();
-        //verifies that all right fields are displayed in the component
+        //verify that all right fields are displayed in the component
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input name editText is not visible")).check(matches(isDisplayed()));
         if (withEmail)
             onView(withId(R.id.input_email)).withFailureHandler(new CustomFailureHandler(testName + ": Input email editText is not visible")).check(matches(isDisplayed()));
@@ -63,6 +60,20 @@ public class NewCardVisibilityTesterCommon {
         } else {
             onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city editText is visible")).check(matches(not(isDisplayed())));
             onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address editText is visible")).check(matches(not(isDisplayed())));
+        }
+
+    }
+
+    public static void new_credit_contact_info_error_messages_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
+        Espresso.closeSoftKeyboard();
+        //verify that all error messages are not displayed in the component
+        check_contact_info_invalid_error_visibility(testName, R.id.input_layout_name, componentResourceId, false);
+        if (withEmail)
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_email, componentResourceId, false);
+
+        if (fullInfo) {
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_city, componentResourceId, false);
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_address, componentResourceId, false);
         }
     }
 
@@ -255,5 +266,34 @@ public class NewCardVisibilityTesterCommon {
                 .check(matches(withText(AndroidUtil.getCurrencySymbol(currency) + " " + tax)));
     }
 
+    public static void check_contact_info_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, boolean isDisplayed) {
+        if (isDisplayed) //Verify error message is displayed
+            onView(allOf(withId(R.id.textinput_error),
+                    isDescendantOfA(withId(layoutResourceId)),
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not visible"))
+                    .perform(scrollTo()).check(matches(isDisplayed()));
+
+        else //Verify error message is not displayed
+            onView(allOf(withId(R.id.textinput_error),
+                    isDescendantOfA(withId(layoutResourceId)),
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is visible"))
+                    .check(doesNotExist());
+    }
+
+    public static void check_cc_info_invalid_error_visibility(String testName, int fieldResourceId, boolean isDisplayed) {
+        if (isDisplayed) //Verify error message is displayed
+            onView(withId(fieldResourceId))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not visible"))
+                    .check(matches(ViewMatchers.isDisplayed()));
+
+
+        else //Verify error message is not displayed
+            onView(withId(fieldResourceId))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is visible"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
+
+    }
 
 }

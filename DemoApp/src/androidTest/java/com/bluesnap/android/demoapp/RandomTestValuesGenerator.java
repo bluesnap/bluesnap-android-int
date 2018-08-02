@@ -2,9 +2,9 @@ package com.bluesnap.android.demoapp;
 
 import android.content.Context;
 
-import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -28,6 +28,19 @@ public class RandomTestValuesGenerator {
 
     public int randomReturningShopperCardPosition() {
         int result = random.nextInt(7);
+        return result;
+    }
+
+    public String[] randomReturningShopperCountry(Context context) {
+        String[] result = new String[2];
+        String[] countryKeyArray = context.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
+        String[] countryValueArray = context.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
+        String countryKey = countryKeyArray[random.nextInt(countryKeyArray.length)];
+        String countryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(countryKey)];
+
+        result[0] = countryKey;
+        result[1] = countryValue;
+
         return result;
     }
 

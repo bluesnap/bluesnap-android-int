@@ -1,6 +1,5 @@
 package com.bluesnap.android.demoapp;
 
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -20,7 +19,6 @@ import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 
@@ -44,15 +42,18 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     public void full_billing_with_shipping_test() throws IOException {
         //Pre-condition: credit card number wasn't entered
         new_cc_info_visibility_validation();
+        new_credit_card_info_error_messages_validation();
         new_credit_billing_contact_info_visibility_validation();
+        new_credit_billing_contact_info_error_messages_validation();
         //Pre-condition: Current billing country is the default one
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
+        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, true, false);
         //Pre-condition: The current fragment displayed is shipping
         new_credit_shipping_contact_info_visibility_validation();
+        new_credit_shipping_contact_info_error_messages_validation();
         //Pre-condition: Current country is the default one
         default_country_zip_view_validation_in_shipping();
         default_country_state_view_validation_in_shipping();
@@ -76,11 +77,27 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that all invalid error messages of credit card info
+     * fields are not displayed.
+     */
+    public void new_credit_card_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
+    }
+
+    /**
      * This test verifies that all the billing contact info fields are displayed
      * according to full billing with shipping when choosing new credit card.
      */
     public void new_credit_billing_contact_info_visibility_validation() {
         NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_billing_contact_info_visibility_validation", R.id.billingViewComponent, true, false);
+    }
+
+    /**
+     * This test verifies that all invalid error messages of billing contact info
+     * fields are not displayed.
+     */
+    public void new_credit_billing_contact_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_error_messages_validation("new_credit_contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
     }
 
     /**
@@ -92,11 +109,19 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     }
 
     /**
+     * This test verifies that all invalid error messages of billing contact info
+     * fields are not displayed.
+     */
+    public void new_credit_shipping_contact_info_error_messages_validation() {
+        NewCardVisibilityTesterCommon.new_credit_contact_info_error_messages_validation("new_credit_contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+    }
+
+    /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */
     public void default_country_zip_view_validation_in_billing() {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountryKey, R.id.billingViewComponent);
     }
 
     /**
@@ -106,7 +131,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      * o.w. it doesn't.
      */
     public void default_country_state_view_validation_in_billing() {
-        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountry);
+        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountryKey);
     }
 
     /**
@@ -114,7 +139,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      * to the default Country (the one that is chosen when entering shipping).
      */
     public void default_country_zip_view_validation_in_shipping() {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_shipping", defaultCountry, R.id.newShoppershippingViewComponent);
+        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_shipping", defaultCountryKey, R.id.newShoppershippingViewComponent);
     }
 
     /**
@@ -124,7 +149,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      * o.w. it doesn't.
      */
     public void default_country_state_view_validation_in_shipping() {
-        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_shipping", R.id.newShoppershippingViewComponent, defaultCountry);
+        NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_shipping", R.id.newShoppershippingViewComponent, defaultCountryKey);
     }
 
     /**
@@ -133,7 +158,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      */
 
     public void pay_button_in_shipping_validation() {
-        double tax = defaultCountry.equals("US") ? taxAmount : 0.00;
+        double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
         NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
     }
 
