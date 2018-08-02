@@ -126,4 +126,14 @@ public class MinimalBillingTests extends EspressoBasedTest {
         CurrencyChangeTest.change_currency_amount_validation("change_currency_in_billing_amount_validation", R.id.billingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
     }
 
+    /**
+     * This test verifies that the credit card number error message is
+     * displayed after entering all cc line info and then edit the
+     * credit card number to an invalid one.
+     */
+    @Test
+    public void invalid_cc_number_with_valid_exp_and_cvv_validation() {
+        CreditCardLineTesterCommon.invalid_cc_number_with_valid_exp_and_cvv_validation("invalid_cc_number_with_valid_exp_and_cvv_validation");
+    }
+
 }

@@ -42,7 +42,7 @@ public class NewCardVisibilityTesterCommon {
         onView(withId(R.id.oneLineCCEditComponent)).withFailureHandler(new CustomFailureHandler(testName + ": One line credit card is not visible")).check(matches(isDisplayed()));
         onView(withId(R.id.creditCardNumberEditText)).withFailureHandler(new CustomFailureHandler(testName + ": Credit card editText is not visible")).check(matches(isDisplayed()));
         onView(withId(R.id.expEditText)).withFailureHandler(new CustomFailureHandler(testName + ": Exp date editText is visible")).check(matches(not(isDisplayed())));
-        onView(withId(R.id.cvvEditText)).withFailureHandler(new CustomFailureHandler(testName + ": Cvv number editText is not visible")).check(matches(not(isDisplayed())));
+        onView(withId(R.id.cvvEditText)).withFailureHandler(new CustomFailureHandler(testName + ": Cvv number editText is visible")).check(matches(not(isDisplayed())));
     }
 
     public static void new_credit_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
@@ -197,7 +197,7 @@ public class NewCardVisibilityTesterCommon {
                 .withFailureHandler(new CustomFailureHandler(testName + ": Country changed in shipping"))
                 .check(matches(not(TestUtils.withDrawable(R.drawable.es))));
 
-        //Changing Country to Italy in second fragment
+        //Changing Country to Italy in shipping fragment
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "Italy");
 
         //go back to billing

@@ -35,13 +35,14 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
 
     @Test
     public void full_billing_with_email_test() throws IOException {
-        new_credit_cc_info_visibility_validation();
+        new_credit_card_info_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
-        Espresso.closeSoftKeyboard();
+        Espresso.closeSoftKeyboard(); //Close soft keyboard to make all fields visible
+        //Pre-condition: All fields are empty
         empty_fields_invalid_error_validation_in_billing();
     }
 
@@ -62,7 +63,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.
      */
-    public void new_credit_cc_info_visibility_validation() {
+    public void new_credit_card_info_visibility_validation() {
         NewCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_cc_info_visibility_validation");
     }
 

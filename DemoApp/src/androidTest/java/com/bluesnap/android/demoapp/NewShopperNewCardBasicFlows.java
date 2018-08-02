@@ -192,6 +192,13 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         onView(withId(R.id.newCardButton)).perform(click());
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
 
+        new_card_basic_fill_info();
+
+        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+        finish_demo_purchase(sdkResult);
+    }
+
+    public void new_card_basic_fill_info() {
         if (shippingSameAsBilling)
             onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
 
@@ -206,11 +213,6 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
                 onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.shippingButtonComponentView)))).perform(click());
             }
         }
-
-        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
-        // merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
-
-        finish_demo_purchase(sdkResult);
     }
 
     public Double start_demo_purchase() {

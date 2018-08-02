@@ -42,20 +42,25 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
     @Test
     public void full_billing_with_shipping_test() throws IOException {
+        //Pre-condition: credit card number wasn't entered
         new_cc_info_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
+        //Pre-condition: Current billing country is the default one
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
         shipping_button_validation();
 
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountry, true, false);
+        //Pre-condition: The current fragment displayed is shipping
         new_credit_shipping_contact_info_visibility_validation();
+        //Pre-condition: Current country is the default one
         default_country_zip_view_validation_in_shipping();
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
 
-        Espresso.pressBack();
+        TestUtils.go_back_to_billing_in_new_card();
 
+        //Pre-condition: Current country is the default one
         country_changes_per_fragment_validation();
         amount_tax_view_before_choosing_shipping_same_as_billing();
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //annul shipping same as billing option

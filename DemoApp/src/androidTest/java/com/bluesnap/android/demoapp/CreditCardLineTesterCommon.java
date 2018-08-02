@@ -1,11 +1,13 @@
 package com.bluesnap.android.demoapp;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -73,6 +75,26 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.cvvEditText))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Cvv number wasn't saved"))
                 .check(matches(withText(cvvNum)));
+    }
+
+    /**
+     * This test verifies that the credit card number error message is
+     * displayed after entering all cc line info and then edit the
+     * credit card number to an invalid one.
+     */
+    public static void invalid_cc_number_with_valid_exp_and_cvv_validation(String testName) {
+        //fill in cc line info
+        fillInCCLineWithValidCard();
+        //change credit card number to an invalid one
+        onView(withId(R.id.creditCardNumberEditText))
+                .perform(click(), clearText(), typeText("5572758881122"));
+
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+
+        onView(withId(R.id.creditCardNumberErrorTextView))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed"))
+                .check(matches(ViewMatchers.isDisplayed()));
     }
 
     public static void fillInCCLineWithValidCard() {

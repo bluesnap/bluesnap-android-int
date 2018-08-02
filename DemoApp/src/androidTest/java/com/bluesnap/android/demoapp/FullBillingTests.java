@@ -36,10 +36,12 @@ public class FullBillingTests extends EspressoBasedTest {
         new_credit_cc_info_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
         default_country_view_validation_in_billing();
-        changing_country_view_validation_in_billing();
         default_country_zip_view_validation_in_billing();
-        changing_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
+
+        //Pre-condition: Current billing country is the default one
+        changing_country_view_validation_in_billing();
+        changing_country_zip_view_validation_in_billing();
         changing_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
@@ -83,7 +85,6 @@ public class FullBillingTests extends EspressoBasedTest {
      * to the default Country (the one that is chosen when entering billing).
      */
     public void default_country_zip_view_validation_in_billing() {
-        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, defaultCountryFull);
         NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountry, R.id.billingViewComponent);
     }
 
@@ -102,7 +103,6 @@ public class FullBillingTests extends EspressoBasedTest {
      * o.w. it doesn't.
      */
     public void default_country_state_view_validation_in_billing() {
-        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, defaultCountryFull);
         NewCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountry);
     }
 
