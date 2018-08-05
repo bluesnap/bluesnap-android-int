@@ -56,30 +56,10 @@ public class BSAndroidTestsBase {
             tokenServiceInterface.onServiceSuccess();
 
         } else {
-
             fail("Cannot get token for tests: " + post.getResponseCode());
             tokenServiceInterface.onServiceFailure();
         }
 
-//        final AsyncHttpClient httpClient = new SyncHttpClient();
-//        httpClient.setMaxRetriesAndTimeout(2, 20000);
-//        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-//        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                Log.e(TAG, responseString, throwable);
-//                fail("Cannot get token for tests:" + throwable.getMessage());
-//                tokenServiceInterface.onServiceFailure();
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                merchantToken = extractTokenFromHeaders(headers);
-//                tokenServiceInterface.onServiceSuccess();
-//            }
-//
-//        });
     }
 
     @Before

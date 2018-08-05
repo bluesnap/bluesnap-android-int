@@ -46,10 +46,6 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         assertTrue(BlueSnapValidator.creditCardFullValidation(card));
         assertNotNull(card.getCardType());
         assertFalse(card.getCardType().isEmpty());
-//
-//        new Handler(Looper.myLooper()).post(new Runnable() {
-//            @Override
-//            public void run() {
 
         try {
             BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
@@ -65,9 +61,6 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
             fail("Exceptions while parsing response");
         }
     }
-
-//        }});
-//    }
 }
 
 
