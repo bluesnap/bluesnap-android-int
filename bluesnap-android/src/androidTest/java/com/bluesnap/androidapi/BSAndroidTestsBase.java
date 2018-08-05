@@ -3,7 +3,6 @@ package com.bluesnap.androidapi;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
@@ -12,21 +11,15 @@ import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
-
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BufferedHeader;
 import junit.framework.Assert;
-
 import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.message.BufferedHeader;
-
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_PASS;
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_TOKEN_CREATION;
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_URL;
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_USER;
+import static com.bluesnap.androidapi.TestDoken.*;
 import static junit.framework.Assert.fail;
 
 

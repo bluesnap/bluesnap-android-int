@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;

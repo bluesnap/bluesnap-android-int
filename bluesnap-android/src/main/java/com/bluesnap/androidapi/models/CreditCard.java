@@ -4,8 +4,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by roy.biber on 07/11/2017.
  */
@@ -22,17 +20,17 @@ public class CreditCard {
     private boolean tokenizedSuccess = false;
     private boolean newCreditCard = false;
 
-    @SerializedName("cardLastFourDigits")
+    //@SerializedName("cardLastFourDigits")
     private String cardLastFourDigits;
     @Nullable
-    @SerializedName("cardType")
+    //@SerializedName("cardType")
     private String cardType;
     @Nullable
-    @SerializedName("cardSubType")
+    //@SerializedName("cardSubType")
     private String cardSubType;
-    @SerializedName("expirationMonth")
+    //@SerializedName("expirationMonth")
     private Integer expirationMonth;
-    @SerializedName("expirationYear")
+    //@SerializedName("expirationYear")
     private Integer expirationYear;
 
     public CreditCard() {
@@ -108,7 +106,7 @@ public class CreditCard {
      * @return normalized credit card Last Four Digits
      */
     private String getNumberLastFourDigits(String normalizedCardNumber) {
-        return normalizedCardNumber.substring(normalizedCardNumber.length() - 4, normalizedCardNumber.length());
+        return normalizedCardNumber.substring(normalizedCardNumber.length() - 4);
     }
 
     /**
@@ -119,7 +117,7 @@ public class CreditCard {
             return cardLastFourDigits;
         }
         if (number != null && number.length() > 4) {
-            return number.substring(number.length() - 4, number.length());
+            return number.substring(number.length() - 4);
         }
         return null;
     }

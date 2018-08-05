@@ -9,15 +9,13 @@ import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.view.View;
-
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.loopj.android.http.SyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
-
+import cz.msebera.android.httpclient.Header;
 import junit.framework.Assert;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -28,27 +26,14 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.Header;
-
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static com.bluesnap.android.demoapp.DemoToken.*;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.containsString;
 
 /**

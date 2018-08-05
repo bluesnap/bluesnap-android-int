@@ -1,7 +1,6 @@
 package com.bluesnap.android.demoapp;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,43 +9,23 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BluesnapAlertDialog;
-import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TaxCalculator;
-import com.bluesnap.androidapi.services.TokenProvider;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.util.TextUtils;
 
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.util.TextUtils;
-
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.android.demoapp.DemoToken.*;
 
 public class DemoMainActivity extends AppCompatActivity {
 
@@ -383,21 +362,38 @@ public class DemoMainActivity extends AppCompatActivity {
         bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                if (null == currency || null == currency.getCurrencyCode()) {
-                    Set<String> supportedRates = bluesnapService.getSupportedRates();
-                    if (supportedRates != null) {
-                        updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (null == currency || null == currency.getCurrencyCode()) {
+                            Set<String> supportedRates = bluesnapService.getSupportedRates();
+                            if (supportedRates != null) {
+                                updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                            }
+                        }
+                        progressBar.setVisibility(View.INVISIBLE);
+                        linearLayoutForProgressBar.setVisibility(View.VISIBLE);
+                        productPriceEditText.setVisibility(View.VISIBLE);
+                        productPriceEditText.requestFocus();
+
                     }
-                }
-                progressBar.setVisibility(View.INVISIBLE);
-                linearLayoutForProgressBar.setVisibility(View.VISIBLE);
-                productPriceEditText.setVisibility(View.VISIBLE);
-                productPriceEditText.requestFocus();
+                });
+
+
+
+
             }
 
             @Override
             public void onFailure() {
-                showDialog("unable to get rates quote from service");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDialog("Failed to setup sdk");
+
+                    }
+                });
             }
         });
     }

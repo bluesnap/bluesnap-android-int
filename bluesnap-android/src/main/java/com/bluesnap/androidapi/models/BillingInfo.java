@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by roy.biber on 12/11/2017.
  */
@@ -21,7 +19,7 @@ public class BillingInfo extends ContactInfo implements Parcelable {
     public static final String EMAIL = "email";
 
     @Nullable
-    @SerializedName("email")
+    //@SerializedName("email")
     private String email;
 
     protected BillingInfo(Parcel parcel) {

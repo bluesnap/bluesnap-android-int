@@ -1,19 +1,28 @@
 package com.bluesnap.androidapi.models;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * A representation of server exchange rate.
  */
 public class Currency {
-    @SerializedName("quoteCurrency")
+    //@SerializedName("quoteCurrency")
     private String quoteCurrency;
-    @SerializedName("quoteCurrencyName")
+    //@SerializedName("quoteCurrencyName")
     private String quoteCurrencyName;
-    @SerializedName("fractionDigits")
+    //@SerializedName("fractionDigits")
     private double fractionDigits;
-    @SerializedName("conversionRate")
+    //@SerializedName("conversionRate")
     private double conversionRate;
+
+    public Currency() {
+    }
+
+    public Currency(String quoteCurrency, String quoteCurrencyName, double fractionDigits, double conversionRate) {
+        this.quoteCurrency = quoteCurrency;
+        this.quoteCurrencyName = quoteCurrencyName;
+        this.fractionDigits = fractionDigits;
+        this.conversionRate = conversionRate;
+    }
+
 
     public String getQuoteCurrency() {
         return quoteCurrency;
@@ -46,5 +55,6 @@ public class Currency {
     public void setConversionRate(double conversionRate) {
         this.conversionRate = conversionRate;
     }
+
 
 }

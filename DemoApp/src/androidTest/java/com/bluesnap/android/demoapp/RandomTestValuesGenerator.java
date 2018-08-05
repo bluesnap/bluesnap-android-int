@@ -1,7 +1,6 @@
 package com.bluesnap.android.demoapp;
 
 import android.content.Context;
-
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import java.util.Arrays;

@@ -12,21 +12,13 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.PriceDetails;
-import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.Shopper;
-import com.bluesnap.androidapi.models.SupportedPaymentMethods;
+import com.bluesnap.androidapi.models.*;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
-
 import org.json.JSONObject;
 
 import java.util.ArrayList;

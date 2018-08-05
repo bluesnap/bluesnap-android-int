@@ -3,7 +3,6 @@ package com.bluesnap.android.demoapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;

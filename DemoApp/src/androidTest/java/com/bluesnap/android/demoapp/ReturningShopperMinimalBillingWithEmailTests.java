@@ -2,7 +2,6 @@ package com.bluesnap.android.demoapp;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 

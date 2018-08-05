@@ -3,9 +3,7 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-
 import com.bluesnap.androidapi.services.AndroidUtil;
-import com.google.gson.annotations.SerializedName;
 
 
 /**
@@ -14,27 +12,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class ContactInfo implements Parcelable {
 
-    @SerializedName("firstName")
+    //@SerializedName("firstName")
     private String firstName;
-    @SerializedName("lastName")
+    //@SerializedName("lastName")
     private String lastName;
     @Nullable
-    @SerializedName("address1")
+    //@SerializedName("address1")
     private String address;
     @Nullable
-    @SerializedName("address2")
+    //@SerializedName("address2")
     private String address2;
     @Nullable
-    @SerializedName("city")
+    //@SerializedName("city")
     private String city;
     @Nullable
-    @SerializedName("state")
+    //@SerializedName("state")
     private String state;
     @Nullable
-    @SerializedName("zip")
+    //@SerializedName("zip")
     private String zip;
     @Nullable
-    @SerializedName("country")
+    //@SerializedName("country")
     private String country;
 
     public ContactInfo() {

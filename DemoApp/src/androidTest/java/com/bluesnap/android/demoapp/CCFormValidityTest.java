@@ -5,10 +5,8 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -16,9 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.cardNumberGeneratorTest;

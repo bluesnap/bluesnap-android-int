@@ -4,8 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * A representation of server exchange rate.
  */
@@ -13,27 +11,27 @@ public class Shopper extends ContactInfo {
 
     private static final String TAG = Shopper.class.getSimpleName();
 
-    @SerializedName("vaultedShopperId")
+    //@SerializedName("vaultedShopperId")
     private int vaultedShopperId;
     @Nullable
-    @SerializedName("email")
+    //@SerializedName("email")
     private String email;
     @Nullable
-    @SerializedName("address")
+    //@SerializedName("address")
     private String address;
     @Nullable
-    @SerializedName("phone")
+    //@SerializedName("phone")
     private String phone;
-    @SerializedName("shopperCurrency")
+    //@SerializedName("shopperCurrency")
     private String shopperCurrency;
     @Nullable
-    @SerializedName("paymentSources")
+    //@SerializedName("paymentSources")
     private PaymentSources previousPaymentSources;
     @Nullable
-    @SerializedName("shippingContactInfo")
+    //@SerializedName("shippingContactInfo")
     private ShippingInfo shippingContactInfo;
     @Nullable
-    @SerializedName("lastPaymentInfo")
+    //@SerializedName("lastPaymentInfo")
     private LastPaymentInfo lastPaymentInfo;
 
     private CreditCardInfo newCreditCardInfo;

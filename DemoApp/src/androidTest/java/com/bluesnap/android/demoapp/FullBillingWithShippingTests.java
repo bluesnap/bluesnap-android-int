@@ -2,20 +2,14 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -39,7 +33,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_with_shipping_test() throws IOException {
+    public void full_billing_with_shipping_test() {
         //Pre-condition: credit card number wasn't entered
         new_cc_info_visibility_validation();
         new_credit_card_info_error_messages_validation();

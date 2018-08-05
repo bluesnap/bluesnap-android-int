@@ -2,8 +2,6 @@ package com.bluesnap.androidapi.models;
 
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
 
 /**
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 public class PaymentSources {
 
     @Nullable
-    @SerializedName("creditCardInfo")
+    //@SerializedName("creditCardInfo")
     private ArrayList<CreditCardInfo> previousCreditCardInfos;
 
     @Nullable

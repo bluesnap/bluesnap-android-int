@@ -1,8 +1,6 @@
 package com.bluesnap.androidapi;
 
 import android.text.TextUtils;
-
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapToken;
 import junit.framework.TestCase;
 import org.junit.Test;

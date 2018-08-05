@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
@@ -42,7 +41,7 @@ public class OneLineCCViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return creditCardInfos.indexOf((CreditCardInfo)getItem(position));
+        return creditCardInfos.indexOf(getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -53,9 +52,9 @@ public class OneLineCCViewAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.one_line_cc_view_component, null);
         }
 
-        TextView ccLastFourDigitsTextView = (TextView) convertView.findViewById(R.id.ccLastFourDigitsTextView);
-        TextView expTextView = (TextView) convertView.findViewById(R.id.expTextView);
-        ImageView cardIconImageView = (ImageView) convertView.findViewById(R.id.cardIconImageView);
+        TextView ccLastFourDigitsTextView = convertView.findViewById(R.id.ccLastFourDigitsTextView);
+        TextView expTextView = convertView.findViewById(R.id.expTextView);
+        ImageView cardIconImageView = convertView.findViewById(R.id.cardIconImageView);
         CreditCard creditCard = creditCardInfos.get(position).getCreditCard();
 
         CreditCardTypeResolver creditCardTypeResolver = CreditCardTypeResolver.getInstance();

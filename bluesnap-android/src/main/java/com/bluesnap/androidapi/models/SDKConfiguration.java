@@ -2,24 +2,18 @@ package com.bluesnap.androidapi.models;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.bluesnap.androidapi.models.Rates;
-import com.bluesnap.androidapi.models.Shopper;
-import com.google.gson.annotations.SerializedName;
 
 public class SDKConfiguration {
 
     @Nullable
-    @SerializedName("shopper")
+    //@SerializedName("shopper")
     private Shopper shopper;
 
-    @SerializedName("kountMerchantId")
+    //@SerializedName("kountMerchantId")
     private int kountMerchantId;
-    @SerializedName("rates")
+    //@SerializedName("rates")
     private Rates rates;
-    @SerializedName("supportedPaymentMethods")
+    //@SerializedName("supportedPaymentMethods")
     private SupportedPaymentMethods supportedPaymentMethods;
 
     public int getKountMerchantId() {

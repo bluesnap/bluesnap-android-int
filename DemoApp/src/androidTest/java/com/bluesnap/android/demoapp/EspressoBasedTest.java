@@ -18,17 +18,10 @@ import android.support.test.uiautomator.UiDevice;
 import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
-
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TaxCalculator;
-import com.bluesnap.androidapi.services.TokenProvider;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
-
 import org.junit.Rule;
 
 import java.io.IOException;
@@ -44,10 +37,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.android.demoapp.DemoToken.*;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.containsString;
 
@@ -100,7 +90,7 @@ public class EspressoBasedTest {
     protected BluesnapCheckoutActivity mActivity;
 
     //    @Before
-    public void doSetup() throws InterruptedException, BSPaymentRequestException {
+    public void doSetup() {
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {

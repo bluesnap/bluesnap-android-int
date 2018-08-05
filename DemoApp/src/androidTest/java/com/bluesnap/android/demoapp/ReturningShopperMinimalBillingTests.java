@@ -1,10 +1,8 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +67,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      * content when pressing the billing edit button in returning shopper.
      */
     @Test
-    public void billing_contact_info_content_validation() throws InterruptedException, IOException {
+    public void billing_contact_info_content_validation() throws IOException {
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
 
         //verify info has been saved

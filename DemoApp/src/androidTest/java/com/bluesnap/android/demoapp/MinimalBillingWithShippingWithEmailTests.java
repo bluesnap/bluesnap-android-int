@@ -1,15 +1,11 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -32,7 +28,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
     }
 
     @Test
-    public void minimal_billing_with_shipping_with_email_test() throws IOException {
+    public void minimal_billing_with_shipping_with_email_test() {
         new_credit_card_info_visibility_validation();
         new_credit_card_info_error_messages_validation();
         new_credit_billing_contact_info_visibility_validation();

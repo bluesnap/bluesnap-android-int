@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;

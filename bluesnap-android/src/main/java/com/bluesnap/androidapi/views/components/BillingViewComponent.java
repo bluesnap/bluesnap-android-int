@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.util.AttributeSet;
@@ -9,7 +8,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
-
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;

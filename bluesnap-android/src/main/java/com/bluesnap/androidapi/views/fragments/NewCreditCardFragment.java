@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;

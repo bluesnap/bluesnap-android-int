@@ -3,13 +3,8 @@ package com.bluesnap.androidapi.services;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Patterns;
-
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.ContactInfo;
-import com.bluesnap.androidapi.models.CreditCard;
-import com.bluesnap.androidapi.models.CreditCardTypeResolver;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.*;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -162,13 +157,10 @@ public class BlueSnapValidator {
         }
         if (cvv.length() >= 3 && cvv.length() < 5) {
             if (null != cardType && CreditCardTypeResolver.AMEX.equals(cardType)) {
-                if (cvv.length() != 4)
-                    return false;
-            } else if (cvv.length() != 3)
-                return false;
+                return cvv.length() == 4;
+            } else return cvv.length() == 3;
         } else return false;
 
-        return true;
     }
 
     /**
@@ -206,11 +198,7 @@ public class BlueSnapValidator {
             return false;
         } else if ((EditTextFields.EMAIL_FIELD.equals(validationType)) && (!Patterns.EMAIL_ADDRESS.matcher(editTextString).matches())) {
             return false;
-        } else if ((EditTextFields.STATE_FIELD.equals(validationType)) && (editTextString.length() != 2)) {
-            return false;
-        } else {
-            return true;
-        }
+        } else return (!EditTextFields.STATE_FIELD.equals(validationType)) || (editTextString.length() == 2);
     }
 
 

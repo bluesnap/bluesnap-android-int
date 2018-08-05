@@ -14,20 +14,14 @@ import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.bluesnap.androidapi.services.AndroidUtil;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Collection;
 

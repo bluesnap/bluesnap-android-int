@@ -1,16 +1,14 @@
 package com.bluesnap.androidapi.models;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
 public class CreditCardInfo {
 
-    @SerializedName("billingContactInfo")
+    //@SerializedName("billingContactInfo")
     private BillingInfo billingContactInfo;
-    @SerializedName("creditCard")
+    //@SerializedName("creditCard")
     private CreditCard creditCard;
 
     public CreditCardInfo() {

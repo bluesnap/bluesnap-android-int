@@ -2,10 +2,8 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +72,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     }
 
     @Test
-    public void minimal_billing_with_shipping_test_inputs() throws IOException {
+    public void minimal_billing_with_shipping_test_inputs() {
         TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, false);
         empty_fields_invalid_error_validation_in_shipping();
         name_invalid_error_validation_in_shipping();

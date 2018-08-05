@@ -1,7 +1,5 @@
 package com.bluesnap.androidapi;
 
-import java.util.ArrayList;
-
 /**
  * Created by roy.biber on 08/06/2016.
  */

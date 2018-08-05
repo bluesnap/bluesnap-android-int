@@ -6,23 +6,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.StateListObject;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.views.adapters.StateListAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StateActivity extends Activity {
 
@@ -122,7 +112,7 @@ public class StateActivity extends Activity {
     }
 
     private void displayIndex() {
-        LinearLayout indexLayout = (LinearLayout) findViewById(R.id.side_index);
+        LinearLayout indexLayout = findViewById(R.id.side_index);
 
         TextView textView;
         List<String> indexList = new ArrayList<>(mapIndex.keySet());
