@@ -1,21 +1,17 @@
 package com.bluesnap.androidapi;
 
-import android.os.Handler;
-import android.os.Looper;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.BillingInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
-
+import static java.net.HttpURLConnection.HTTP_OK;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
@@ -48,42 +44,31 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         //assertTrue("this should be a valid luhn", BlueSnapValidator.creditCardNumberValidation(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(BlueSnapValidator.creditCardNumberValidation(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
         assertTrue(BlueSnapValidator.creditCardFullValidation(card));
+        assertNotNull(card.getCardType());
         assertFalse(card.getCardType().isEmpty());
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            public void run() {
-                try {
-                    blueSnapService.submitTokenizedDetails(purchaseDetails, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//
+//        new Handler(Looper.myLooper()).post(new Runnable() {
+//            @Override
+//            public void run() {
 
-                            try {
-                                assertEquals(200, statusCode);
-                                String Last4 = response.getString("last4Digits");
-                                String ccType = response.getString("ccType");
-                                assertEquals("MASTERCARD", ccType);
-                                assertEquals("1116", Last4);
+        try {
+            BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
+            assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
+            JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());
+            String Last4 = jsonObject.getString("last4Digits");
+            String ccType = jsonObject.getString("ccType");
+            assertEquals("MASTERCARD", ccType);
+            assertEquals("1116", Last4);
 
-                            } catch (NullPointerException | JSONException e) {
-                                e.printStackTrace();
-                                fail("Exceptions while parsing response");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            fail("Could not tokenize card:" + statusCode);
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    fail("json exception:" + e);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    fail("got UnsupportedEncodingException");
-                }
-            }
-        }, 100);
-
+        } catch (NullPointerException | JSONException e) {
+            e.printStackTrace();
+            fail("Exceptions while parsing response");
+        }
     }
 
+//        }});
+//    }
 }
+
+
+

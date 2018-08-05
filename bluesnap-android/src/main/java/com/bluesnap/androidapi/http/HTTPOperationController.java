@@ -10,6 +10,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static java.net.HttpURLConnection.HTTP_CREATED;
+import static java.net.HttpURLConnection.HTTP_OK;
+
 /**
  * Created by oz
  */
@@ -75,10 +78,11 @@ public class HTTPOperationController {
             int statusCode = conn.getResponseCode();
             Log.d(TAG, "Status Code is: " + statusCode);
             switch (statusCode) {
-                case 200:
+                case HTTP_CREATED:
+                case HTTP_OK:
                     String response = new String(readFullyBytes(conn.getInputStream(), 2 * _4KB));
                     Log.d(TAG, "Response String is : " + response);
-                    return new BlueSnapHTTPResponse(statusCode, response);
+                    return new BlueSnapHTTPResponse(statusCode, response, conn.getHeaderFields());
                 default:
                     return new BlueSnapHTTPResponse(statusCode, "");
 

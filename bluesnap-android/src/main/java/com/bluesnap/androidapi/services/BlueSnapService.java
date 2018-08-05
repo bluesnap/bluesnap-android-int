@@ -170,7 +170,7 @@ public class BlueSnapService {
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
-    public BlueSnapHTTPResponse submitTokenizedDetails(PurchaseDetails purchaseDetails) throws JSONException, UnsupportedEncodingException {
+    public BlueSnapHTTPResponse submitTokenizedDetails(PurchaseDetails purchaseDetails) throws JSONException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         return blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails).toString());
     }

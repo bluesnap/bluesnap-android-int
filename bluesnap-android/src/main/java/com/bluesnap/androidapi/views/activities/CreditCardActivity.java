@@ -454,8 +454,6 @@ public class CreditCardActivity extends AppCompatActivity {
                 } catch (JSONException ex) {
                     Log.e(TAG, "JsonException");
 
-                } catch (UnsupportedEncodingException encodingException) {
-                    Log.e(TAG, "EncodingException");
                 }
             }
         });

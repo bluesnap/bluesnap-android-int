@@ -1,5 +1,10 @@
 package com.bluesnap.androidapi.http;
 
+import android.support.annotation.Nullable;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by oz
  */
@@ -7,6 +12,7 @@ package com.bluesnap.androidapi.http;
 public class BlueSnapHTTPResponse {
 
 
+    private Map<String, List<String>> headers;
     private int responseCode;
     private String responseString;
     private String errorResponseString;
@@ -22,6 +28,12 @@ public class BlueSnapHTTPResponse {
         this.errorResponseString = errorResponseString;
     }
 
+    public BlueSnapHTTPResponse(int responseCode, String responseString, Map<String, List<String>> headerFields) {
+        this.responseCode = responseCode;
+        this.responseString = responseString;
+        this.headers = headerFields;
+    }
+
     public int getResponseCode() {
         return responseCode;
     }
@@ -32,5 +44,10 @@ public class BlueSnapHTTPResponse {
 
     public String getErrorResponseString() {
         return errorResponseString;
+    }
+
+    @Nullable
+    public Map<String, List<String>> getHeaders() {
+        return headers;
     }
 }
