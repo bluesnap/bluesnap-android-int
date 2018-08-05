@@ -107,7 +107,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * according to shipping enabled when choosing new credit card.
      */
     public void new_credit_shipping_contact_info_visibility_validation() {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_shipping_contact_info_visibility_validation", R.id.newShoppershippingViewComponent, true, true);
+        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_shipping_contact_info_visibility_validation", R.id.newShoppershippingViewComponent, true, false);
     }
 
     /**
@@ -239,8 +239,10 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         //continue to shipping
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
 
+        ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "Brazil");
+
         //Fill in contact info in shipping
-        ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "US", true, false);
+        ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "BR", true, false);
 
         //return to billing
         TestUtils.go_back_to_billing_in_new_card();
@@ -251,6 +253,6 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         //continue to shipping
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
         //verify that the shipping contact card info remained the same
-        ContactInfoTesterCommon.contact_info_content_validation("shipping_same_as_billing_info_saved_in_shipping_validation", applicationContext, R.id.newShoppershippingViewComponent, "US", true, false);
+        ContactInfoTesterCommon.contact_info_content_validation("shipping_same_as_billing_info_saved_in_shipping_validation", applicationContext, R.id.newShoppershippingViewComponent, "BR", true, false);
     }
 }

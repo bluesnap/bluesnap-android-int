@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.hasToString;
 
 public class ContactInfoTesterCommon {
     static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
-            "New York", "555 Broadway street", "New York", "3abc 324a", "US");
+            "New York", "555 Broadway street", "NY", "3abc 324a", "US");
 
     static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
