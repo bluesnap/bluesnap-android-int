@@ -10,11 +10,10 @@ import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.view.View;
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.loopj.android.http.SyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
 import junit.framework.Assert;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -31,7 +30,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static com.bluesnap.android.demoapp.DemoToken.*;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.containsString;
@@ -281,25 +280,14 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     }
 
     private void get_shopper_service(final GetShopperServiceInterface getShopperServiceInterface) {
-        final SyncHttpClient httpClient = new SyncHttpClient();
-        httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
-        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        //httpClient.addHeader("Token-Authentication", merchantToken);
-
-        httpClient.get(SANDBOX_URL + SANDBOX_GET_SHOPPER + shopperId, new TextHttpResponseHandler() {
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d(TAG, responseString, throwable);
-                getShopperServiceInterface.onServiceFailure();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                getShopperResponse = responseString;
-                getShopperServiceInterface.onServiceSuccess();
-            }
-        });
+        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_GET_SHOPPER + shopperId, "application/json", "application/json", sahdboxHttpHeaders);
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300 && response.getHeaders() != null) {
+            getShopperResponse = response.getResponseString();
+            getShopperServiceInterface.onServiceSuccess();
+        } else {
+            Log.d(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
+            getShopperServiceInterface.onServiceFailure();
+        }
     }
 
     //TODO: add validation that the new credit card info has been saved correctly

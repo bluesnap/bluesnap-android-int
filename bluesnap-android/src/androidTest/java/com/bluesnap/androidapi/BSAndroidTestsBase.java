@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import static com.bluesnap.androidapi.TestDoken.*;
+import static com.bluesnap.androidapi.SandboxToken.*;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 import static junit.framework.Assert.fail;
 

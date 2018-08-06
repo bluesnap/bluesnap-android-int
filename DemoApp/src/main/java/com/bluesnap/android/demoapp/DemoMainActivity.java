@@ -6,26 +6,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.CustomHTTPParams;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.util.TextUtils;
 
-import java.util.Currency;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import javax.net.ssl.HttpsURLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static com.bluesnap.android.demoapp.DemoToken.*;
+import static java.net.HttpURLConnection.HTTP_CREATED;
 
 public class DemoMainActivity extends AppCompatActivity {
 
@@ -53,6 +54,8 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch emailSwitch;
     private Switch allowCurrencyChangeSwitch;
     private EditText taxAmountEditText;
+    private HttpsURLConnection myURLConnection;
+
 
     /**
      * Called when the activity is first created.
@@ -80,6 +83,7 @@ public class DemoMainActivity extends AppCompatActivity {
         currencySym = findViewById(R.id.currencySym);
         ratesSpinner = findViewById(R.id.rateSpinner);
         merchantStoreCurrencySpinner = findViewById(R.id.merchantStoreCurrencySpinner);
+
         showDemoAppVersion();
         try {
             Locale current = getResources().getConfiguration().locale;
@@ -87,6 +91,7 @@ public class DemoMainActivity extends AppCompatActivity {
         } catch (Exception e) {
             currencyByLocale = Currency.getInstance("USD");
         }
+
 
         bluesnapService = BlueSnapService.getInstance();
 
@@ -288,48 +293,41 @@ public class DemoMainActivity extends AppCompatActivity {
     }
 
     private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
-        final AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
-        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper, new TextHttpResponseHandler() {
 
+        final Runnable myRunnable = new Runnable() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d(TAG, responseString, throwable);
-                tokenServiceInterface.onServiceFailure();
-            }
+            public void run() {
+                try {
+                    String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
+                    ArrayList<CustomHTTPParams> headerParams = new ArrayList<>();
+                    headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
+                    BlueSnapHTTPResponse post = HTTPOperationController.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper, null, "application/json", "application/json", headerParams);
+                    if (post.getResponseCode() == HTTP_CREATED && post.getHeaders() != null) {
+                        String location = post.getHeaders().get("Location").get(0);
+                        merchantToken = location.substring(location.lastIndexOf('/') + 1);
+                        tokenServiceInterface.onServiceSuccess();
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
-                tokenServiceInterface.onServiceSuccess();
-            }
+                    } else {
 
-        });
+                        tokenServiceInterface.onServiceFailure();
+                    }
+
+                } catch (Exception e) {
+                    tokenServiceInterface.onServiceFailure();
+                }
+
+            }
+        };
+
+
+        MainApplication.mainHandler.post(myRunnable);
+
     }
 
     //TODO: Find a mock merchant service t¡o provide this
     private void generateMerchantToken() {
 
         // create the interface for activating the token creation from server
-        tokenProvider = new TokenProvider() {
-            @Override
-            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
-
-                merchantTokenService(new TokenServiceInterface() {
-                    @Override
-                    public void onServiceSuccess() {
-                        //change the expired token
-                        tokenServiceCallback.complete(merchantToken);
-                    }
-
-                    @Override
-                    public void onServiceFailure() {
-
-                    }
-                });
-            }
-        };
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -379,8 +377,6 @@ public class DemoMainActivity extends AppCompatActivity {
 
                     }
                 });
-
-
 
 
             }
