@@ -4,7 +4,6 @@ import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 import org.hamcrest.Matcher;
-import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -82,7 +81,7 @@ public class CreditCardLineTesterCommon {
         fillInCCLineWithValidCard();
         //change credit card number to an invalid one
         onView(withId(R.id.creditCardNumberEditText))
-                .perform(click(), clearText(), typeText("5572758881122"));
+                .perform(click(), clearText(), typeText("1232758881122"));
 
         onView(withId(R.id.buyNowButton)).perform(click());
 
@@ -110,7 +109,7 @@ public class CreditCardLineTesterCommon {
         onData(hasToString(containsString(currencyCode))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
     }
 
-    @Test
+    //TODO: integrate the following tests
     public void ccn_new_card_validation_messages() {
         Matcher<View> ccNumberEditTextVM = withId(R.id.creditCardNumberEditText);
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
@@ -205,7 +204,6 @@ public class CreditCardLineTesterCommon {
     /**
      * @throws InterruptedException
      */
-    @Test
     public void cc_new_Card_ccn_first() {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
@@ -222,7 +220,6 @@ public class CreditCardLineTesterCommon {
      *
      * @throws InterruptedException
      */
-    @Test
     public void cc_new_card_empty_name_then_ccn() {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
