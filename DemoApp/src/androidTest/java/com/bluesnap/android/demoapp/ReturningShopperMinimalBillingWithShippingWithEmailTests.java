@@ -58,7 +58,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * in the returning shopper cards list.
      */
     public void credit_card_in_list_visibility_validation() {
-        ReturningShopperVisibilityTesterCommon.credit_card_in_list_visibility_validation("5288", "12/26");
+        ReturningShopperVisibilityTesterCommon.credit_card_in_list_visibility_validation("credit_card_in_list_visibility_validation", "5288", "12/26");
     }
 
     /**
@@ -66,7 +66,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * when choosing an existing credit card in returning shopper.
      */
     public void credit_card_view_visibility_validation() {
-        ReturningShopperVisibilityTesterCommon.credit_card_view_visibility_validation("5288", "12/26");
+        ReturningShopperVisibilityTesterCommon.credit_card_view_visibility_validation("credit_card_view_visibility_validation", "5288", "12/26");
     }
 
     /**
@@ -74,7 +74,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * according to minimal billing with shipping when choosing an existing credit card in returning shopper.
      */
     public void billing_summarized_contact_info_visibility_validation() {
-        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(R.id.billingViewSummarizedComponent, "NP",
+        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation("billing_summarized_contact_info_visibility_validation", R.id.billingViewSummarizedComponent, "NP",
                 false, true);
     }
 
@@ -94,7 +94,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * according to minimal billing with shipping when choosing an existing credit card in returning shopper.
      */
     public void shipping_summarized_contact_info_visibility_validation() {
-        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(R.id.shippingViewSummarizedComponent, "TH",
+        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation("shipping_summarized_contact_info_visibility_validation", R.id.shippingViewSummarizedComponent, "TH",
                 true, false);
     }
 
@@ -107,5 +107,23 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
 
         //verify info has been saved
         ContactInfoTesterCommon.contact_info_content_validation("shipping_contact_info_content_validation", applicationContext, R.id.returningShoppershippingViewComponent, "TH", false, false);
+    }
+
+    /**
+     * This test verifies that the summarized billing contact info and the
+     * billing contact info presents the new content after editing the info.
+     * It uses the "Done" button to go back to credit card fragment.
+     */
+    public void returning_shopper_edit_billing_contact_info_using_done_button_validation() throws IOException {
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, true, "RU");
+    }
+
+    /**
+     * This test verifies that the summarized billing contact info and the
+     * billing contact info presents the old content after editing the info,
+     * since it uses the "Back" button to go back to credit card fragment.
+     */
+    public void returning_shopper_edit_billing_contact_info_using_back_button_validation() throws IOException {
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, "RU");
     }
 }

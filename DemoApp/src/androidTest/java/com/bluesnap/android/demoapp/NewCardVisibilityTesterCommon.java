@@ -225,7 +225,7 @@ public class NewCardVisibilityTesterCommon {
      * the correct currency symbol and amount
      */
     public static void pay_button_visibility_and_content_validation(String testName, int buttonComponent, String checkoutCurrency, Double purchaseAmount, Double taxAmount) {
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Buy now button is not visible "))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Buy now button is not visible"))
                 .check(matches(ViewMatchers.isDisplayed()));
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't present the correct content"))
                 .check(matches(withText(TestUtils.getStringFormatAmount("Pay",
@@ -236,9 +236,9 @@ public class NewCardVisibilityTesterCommon {
      * This test verifies that the "Shipping" button is visible
      */
     public static void shipping_button_visibility_and_content_validation(String testName, int buttonComponent) {
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button is not visible "))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button is not visible"))
                 .check(matches(ViewMatchers.isDisplayed()));
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button does not display the correct content "))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button does not display the correct content"))
                 .check(matches(withText("Shipping")));
     }
 
