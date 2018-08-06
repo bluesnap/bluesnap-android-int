@@ -247,7 +247,7 @@ public class ContactInfoTesterCommon {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
         //verify error message is displayed
-        NewCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
+        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
 
         //filling in Rio de Janeiro
         onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(click());
@@ -275,7 +275,7 @@ public class ContactInfoTesterCommon {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
-        NewCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
+        CreditCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
         //onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
 
         //Verify full name has been saved in current component
@@ -391,7 +391,7 @@ public class ContactInfoTesterCommon {
     public static void check_input_validation(String testName, int fieldResourceId, int layoutResourceId, int componentResourceId, boolean withImeButton, int nextFieldResourceId, String input, boolean isInvalid) {
         onView(allOf(withId(fieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), clearText(), typeText(input));
         moveToNextField(componentResourceId, withImeButton, nextFieldResourceId, fieldResourceId);
-        NewCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, layoutResourceId, componentResourceId, isInvalid);
+        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, layoutResourceId, componentResourceId, isInvalid);
     }
 
 
