@@ -33,8 +33,8 @@ public class SdkResult implements Parcelable {
 
     private String shopperID;
 
-    private BillingInfo billingInfo;
-    private ShippingInfo shippingInfo;
+    private BillingContactInfo billingContactInfo;
+    private ShippingContactInfo shippingContactInfo;
 
     private String token;
     private String kountSessionId;
@@ -49,8 +49,8 @@ public class SdkResult implements Parcelable {
         setCurrencyNameCode(in.readString());
         setCardType(in.readString());
         setExpDate(in.readString());
-        setBillingInfo((BillingInfo) in.readParcelable(BillingInfo.class.getClassLoader()));
-        setShippingInfo((ShippingInfo) in.readParcelable(ShippingInfo.class.getClassLoader()));
+        setBillingContactInfo((BillingContactInfo) in.readParcelable(BillingContactInfo.class.getClassLoader()));
+        setShippingContactInfo((ShippingContactInfo) in.readParcelable(ShippingContactInfo.class.getClassLoader()));
         setPaypalInvoiceId(in.readString());
         setKountSessionId(in.readString());
         setToken(in.readString());
@@ -64,8 +64,8 @@ public class SdkResult implements Parcelable {
         dest.writeString(getCurrencyNameCode());
         dest.writeString(getCardType());
         dest.writeString(getExpDate());
-        dest.writeParcelable(billingInfo, flags);
-        dest.writeParcelable(shippingInfo, flags);
+        dest.writeParcelable(billingContactInfo, flags);
+        dest.writeParcelable(shippingContactInfo, flags);
         dest.writeString(getPaypalInvoiceId());
         dest.writeString(getKountSessionId());
         dest.writeString(getToken());
@@ -120,8 +120,8 @@ public class SdkResult implements Parcelable {
                 ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' +
                 ", shopperID='" + getShopperID() + '\'' +
                 ", token=" + getToken() + '\'' +
-                ", billingInfo" + billingInfo + '\'' +
-                ", shippingInfo" + shippingInfo + '\'' +
+                ", billingContactInfo" + billingContactInfo + '\'' +
+                ", shippingContactInfo" + shippingContactInfo + '\'' +
                 ", kountSessionId=" + kountSessionId + '\'' +
                 '}';
     }
@@ -174,20 +174,20 @@ public class SdkResult implements Parcelable {
         this.expDate = expDate;
     }
 
-    public BillingInfo getBillingInfo() {
-        return billingInfo;
+    public BillingContactInfo getBillingContactInfo() {
+        return billingContactInfo;
     }
 
-    public void setBillingInfo(BillingInfo billingInfo) {
-        this.billingInfo = billingInfo;
+    public void setBillingContactInfo(BillingContactInfo billingContactInfo) {
+        this.billingContactInfo = billingContactInfo;
     }
 
-    public ShippingInfo getShippingInfo() {
-        return shippingInfo;
+    public ShippingContactInfo getShippingContactInfo() {
+        return shippingContactInfo;
     }
 
-    public void setShippingInfo(ShippingInfo shippingInfo) {
-        this.shippingInfo = shippingInfo;
+    public void setShippingContactInfo(ShippingContactInfo shippingContactInfo) {
+        this.shippingContactInfo = shippingContactInfo;
     }
 
     /**

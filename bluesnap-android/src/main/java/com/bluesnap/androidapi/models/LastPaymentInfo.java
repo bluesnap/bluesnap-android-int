@@ -1,6 +1,8 @@
 package com.bluesnap.androidapi.models;
 
 import android.support.annotation.Nullable;
+import com.bluesnap.androidapi.utils.JsonParser;
+import org.json.JSONObject;
 
 
 /**
@@ -13,6 +15,16 @@ public class LastPaymentInfo extends CreditCardInfo{
     @Nullable
     //@SerializedName("paymentMethod")
     private String paymentMethod;
+
+    @Nullable
+    public static LastPaymentInfo fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null) {
+            return null;
+        }
+        LastPaymentInfo lastPaymentInfo = new LastPaymentInfo();
+        lastPaymentInfo.setPaymentMethod(JsonParser.getOptionalString(jsonObject, "paymentMethod"));
+        return lastPaymentInfo;
+    }
 
     @Nullable
     public String getPaymentMethod() {

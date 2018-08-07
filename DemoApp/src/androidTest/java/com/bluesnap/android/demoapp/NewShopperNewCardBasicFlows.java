@@ -274,18 +274,18 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
             @Override
             public void onServiceFailure() {
-                Log.d(TAG, "Cannot obtain shopper info from merchant server");
+                fail("Cannot obtain shopper info from merchant server");
             }
         });
     }
 
     private void get_shopper_service(final GetShopperServiceInterface getShopperServiceInterface) {
         BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_GET_SHOPPER + shopperId, "application/json", "application/json", sahdboxHttpHeaders);
-        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300 && response.getHeaders() != null) {
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             getShopperResponse = response.getResponseString();
             getShopperServiceInterface.onServiceSuccess();
         } else {
-            Log.d(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
+            Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
             getShopperServiceInterface.onServiceFailure();
         }
     }

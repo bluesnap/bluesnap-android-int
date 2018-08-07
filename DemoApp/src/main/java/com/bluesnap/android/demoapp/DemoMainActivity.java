@@ -418,16 +418,16 @@ public class DemoMainActivity extends AppCompatActivity {
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
 
         /*// If shipping information is available show it, Here we simply log the shipping info.
-        ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+        ShippingContactInfo shippingInfo = (ShippingContactInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
-            Log.d(TAG, "ShippingInfo " + shippingInfo.toString());
+            Log.d(TAG, "ShippingContactInfo " + shippingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
         }
 
         // If billing information is available show it, Here we simply log the billing info.
-        BillingInfo billingInfo = (BillingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        BillingContactInfo billingInfo = (BillingContactInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         if (billingInfo != null) {
-            Log.d(TAG, "BillingInfo " + billingInfo.toString());
+            Log.d(TAG, "BillingContactInfo " + billingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
         }*/
 

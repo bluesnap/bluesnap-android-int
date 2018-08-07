@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -91,7 +91,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         // set Summarized Shipping details or hide Shipping View
         shippingViewSummarizedTextView = inflate.findViewById(R.id.shippingViewSummarizedTextView);
         shippingViewSummarizedComponent = inflate.findViewById(R.id.shippingViewSummarizedComponent);
-        final ShippingInfo shippingContactInfo = shopper.getShippingContactInfo();
+        final ShippingContactInfo shippingContactInfo = shopper.getShippingContactInfo();
         if (!sdkRequest.isShippingRequired()) {
             setVisibilityForShippingView(View.INVISIBLE);
         } else {

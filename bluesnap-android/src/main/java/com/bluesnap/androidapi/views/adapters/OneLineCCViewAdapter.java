@@ -13,7 +13,7 @@ import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by roy.biber on 04/03/2018.
@@ -22,9 +22,9 @@ import java.util.ArrayList;
 public class OneLineCCViewAdapter extends BaseAdapter {
 
     private final Activity context;
-    private ArrayList<CreditCardInfo> creditCardInfos;
+    private List<CreditCardInfo> creditCardInfos;
 
-    public OneLineCCViewAdapter(Activity context, ArrayList<CreditCardInfo> creditCardInfos) {
+    public OneLineCCViewAdapter(Activity context, List<CreditCardInfo> creditCardInfos) {
         this.context = context;
         this.creditCardInfos = creditCardInfos;
     }

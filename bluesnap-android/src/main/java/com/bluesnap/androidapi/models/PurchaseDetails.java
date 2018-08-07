@@ -9,18 +9,18 @@ import android.support.annotation.Nullable;
 public class PurchaseDetails {
 
     @Nullable
-    private ShippingInfo shippingContactInfo;
-    private BillingInfo billingContactInfo;
+    private ShippingContactInfo shippingContactInfo;
+    private BillingContactInfo billingContactInfo;
     private CreditCard creditCard;
 
     public PurchaseDetails() {
     }
 
-    public PurchaseDetails(CreditCard creditCard, BillingInfo billingContactInfo) {
+    public PurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo) {
         setPurchaseDetails(creditCard, billingContactInfo, null);
     }
 
-    public PurchaseDetails(CreditCard creditCard, BillingInfo billingContactInfo, ShippingInfo shippingContactInfo) {
+    public PurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, ShippingContactInfo shippingContactInfo) {
         setPurchaseDetails(creditCard, billingContactInfo, shippingContactInfo);
     }
 
@@ -28,39 +28,39 @@ public class PurchaseDetails {
      * set Purchase Details
      *
      * @param creditCard          - {@link CreditCard}
-     * @param billingContactInfo  - {@link BillingInfo}
-     * @param shippingContactInfo - {@link ShippingInfo}
+     * @param billingContactInfo  - {@link BillingContactInfo}
+     * @param shippingContactInfo - {@link ShippingContactInfo}
      */
-    public void setPurchaseDetails(CreditCard creditCard, BillingInfo billingContactInfo, @Nullable ShippingInfo shippingContactInfo) {
+    public void setPurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo) {
         setCreditCard(creditCard);
         setBillingContactInfo(billingContactInfo);
         setShippingContactInfo(shippingContactInfo);
     }
 
     @Nullable
-    public ShippingInfo getShippingContactInfo() {
+    public ShippingContactInfo getShippingContactInfo() {
         return shippingContactInfo;
     }
 
     /**
      * set Shipping Contact Info
      *
-     * @param shippingContactInfo - @Nullable {@link ShippingInfo}
+     * @param shippingContactInfo - @Nullable {@link ShippingContactInfo}
      */
-    public void setShippingContactInfo(@Nullable ShippingInfo shippingContactInfo) {
+    public void setShippingContactInfo(@Nullable ShippingContactInfo shippingContactInfo) {
         this.shippingContactInfo = shippingContactInfo;
     }
 
-    public BillingInfo getBillingContactInfo() {
+    public BillingContactInfo getBillingContactInfo() {
         return billingContactInfo;
     }
 
     /**
      * set Billing Contact Info
      *
-     * @param billingContactInfo - {@link BillingInfo}
+     * @param billingContactInfo - {@link BillingContactInfo}
      */
-    public void setBillingContactInfo(BillingInfo billingContactInfo) {
+    public void setBillingContactInfo(BillingContactInfo billingContactInfo) {
         this.billingContactInfo = billingContactInfo;
     }
 

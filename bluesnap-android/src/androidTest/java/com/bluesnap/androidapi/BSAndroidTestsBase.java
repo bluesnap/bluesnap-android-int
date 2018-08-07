@@ -138,16 +138,5 @@ public class BSAndroidTestsBase {
         Log.i(TAG, "Done");
     }
 
-//    public static String extractTokenFromHeaders(Header[] headers) {
-//        String token = null;
-//        for (Header hr : headers) {
-//            BufferedHeader bufferedHeader = (BufferedHeader) hr;
-//            if (bufferedHeader.getName().equals("Location")) {
-//                String path = bufferedHeader.getValue();
-//                token = path.substring(path.lastIndexOf('/') + 1);
-//            }
-//        }
-//        return token;
-//    }
 
 }

@@ -182,22 +182,22 @@ public class BlueSnapService {
      */
     private JSONObject createDataObject(PurchaseDetails purchaseDetails) throws JSONException {
         CreditCard creditCard = purchaseDetails.getCreditCard();
-        BillingInfo billingInfo = purchaseDetails.getBillingContactInfo();
-        ShippingInfo shippingInfo = null;
+        BillingContactInfo billingContactInfo = purchaseDetails.getBillingContactInfo();
+        ShippingContactInfo shippingContactInfo = null;
         if (sdkRequest.isShippingRequired())
-            shippingInfo = purchaseDetails.getShippingContactInfo();
+            shippingContactInfo = purchaseDetails.getShippingContactInfo();
 
-        return createDataObject(creditCard, billingInfo, shippingInfo);
+        return createDataObject(creditCard, billingContactInfo, shippingContactInfo);
     }
 
     /**
      * @param creditCard   {@link CreditCard}
-     * @param billingInfo  {@link BillingInfo}
-     * @param shippingInfo {@link ShippingInfo}
+     * @param billingContactInfo  {@link BillingContactInfo}
+     * @param shippingContactInfo {@link ShippingContactInfo}
      * @return {@link JSONObject} representation for api put call for the server
      * @throws JSONException in case of invalid JSON object (should not happen)
      */
-    private JSONObject createDataObject(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo) throws JSONException {
+    private JSONObject createDataObject(CreditCard creditCard, BillingContactInfo billingContactInfo, ShippingContactInfo shippingContactInfo) throws JSONException {
         JSONObject postData = new JSONObject();
 
         if (creditCard.getIsNewCreditCard()) {
@@ -210,34 +210,34 @@ public class BlueSnapService {
 
         }
 
-        postData.put(BillingInfo.BILLINGFIRSTNAME, billingInfo.getFirstName());
-        postData.put(BillingInfo.BILLINGLASTNAME, billingInfo.getLastName());
-        postData.put(BillingInfo.BILLINGCOUNTRY, billingInfo.getCountry());
+        postData.put(BillingContactInfo.BILLINGFIRSTNAME, billingContactInfo.getFirstName());
+        postData.put(BillingContactInfo.BILLINGLASTNAME, billingContactInfo.getLastName());
+        postData.put(BillingContactInfo.BILLINGCOUNTRY, billingContactInfo.getCountry());
 
-        if (null != billingInfo.getZip() && !"".equals(billingInfo.getZip()))
-            postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
+        if (null != billingContactInfo.getZip() && !"".equals(billingContactInfo.getZip()))
+            postData.put(BillingContactInfo.BILLINGZIP, billingContactInfo.getZip());
 
         if (sdkRequest.isBillingRequired()) {
-            if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
-                postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
-            postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
-            postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
+            if (BlueSnapValidator.checkCountryHasState(billingContactInfo.getCountry()))
+                postData.put(BillingContactInfo.BILLINGSTATE, billingContactInfo.getState());
+            postData.put(BillingContactInfo.BILLINGCITY, billingContactInfo.getCity());
+            postData.put(BillingContactInfo.BILLINGADDRESS, billingContactInfo.getAddress());
         }
 
         if (sdkRequest.isEmailRequired())
-            postData.put(BillingInfo.EMAIL, billingInfo.getEmail());
+            postData.put(BillingContactInfo.EMAIL, billingContactInfo.getEmail());
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
-        if (sdkRequest.isShippingRequired() || null != shippingInfo) {
-            postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
-            postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
-            postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
-            if (BlueSnapValidator.checkCountryHasState(shippingInfo.getCountry()))
-                postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
-            postData.put(ShippingInfo.SHIPPINGCITY, shippingInfo.getCity());
-            postData.put(ShippingInfo.SHIPPINGADDRESS, shippingInfo.getAddress());
-            postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
+        if (sdkRequest.isShippingRequired() || null != shippingContactInfo) {
+            postData.put(ShippingContactInfo.SHIPPINGFIRSTNAME, shippingContactInfo.getFirstName());
+            postData.put(ShippingContactInfo.SHIPPINGLASTNAME, shippingContactInfo.getLastName());
+            postData.put(ShippingContactInfo.SHIPPINGCOUNTRY, shippingContactInfo.getCountry());
+            if (BlueSnapValidator.checkCountryHasState(shippingContactInfo.getCountry()))
+                postData.put(ShippingContactInfo.SHIPPINGSTATE, shippingContactInfo.getState());
+            postData.put(ShippingContactInfo.SHIPPINGCITY, shippingContactInfo.getCity());
+            postData.put(ShippingContactInfo.SHIPPINGADDRESS, shippingContactInfo.getAddress());
+            postData.put(ShippingContactInfo.SHIPPINGZIP, shippingContactInfo.getZip());
         }
 
         if (null != kountService.getKountSessionId()) {

@@ -205,24 +205,24 @@ public class BlueSnapValidator {
     /**
      * Billing Info Validation
      *
-     * @param billingInfo           {@link BillingInfo}
+     * @param billingContactInfo           {@link BillingContactInfo}
      * @param isEmailRequired       is Email Required
      * @param isFullBillingRequired is Full Billing Required
      */
-    public static boolean billingInfoValidation(@NonNull BillingInfo billingInfo, boolean isEmailRequired, boolean isFullBillingRequired) {
-        boolean validInput = contactInfoValidation(billingInfo, isFullBillingRequired);
+    public static boolean billingInfoValidation(@NonNull BillingContactInfo billingContactInfo, boolean isEmailRequired, boolean isFullBillingRequired) {
+        boolean validInput = contactInfoValidation(billingContactInfo, isFullBillingRequired);
         if (isEmailRequired)
-            validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify((billingInfo.getEmail())), BlueSnapValidator.EditTextFields.EMAIL_FIELD);
+            validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify((billingContactInfo.getEmail())), BlueSnapValidator.EditTextFields.EMAIL_FIELD);
         return validInput;
     }
 
     /**
      * Shipping Info Validation
      *
-     * @param shippingInfo {@link ShippingInfo}
+     * @param shippingContactInfo {@link ShippingContactInfo}
      */
-    public static boolean shippingInfoValidation(@NonNull ShippingInfo shippingInfo) {
-        return contactInfoValidation(shippingInfo, true);
+    public static boolean shippingInfoValidation(@NonNull ShippingContactInfo shippingContactInfo) {
+        return contactInfoValidation(shippingContactInfo, true);
     }
 
     /**

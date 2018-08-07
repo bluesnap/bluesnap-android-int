@@ -11,9 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
@@ -36,8 +36,8 @@ public class PostPaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_payment);
         final SdkResult sdkResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
-        ShippingInfo shippingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
-        BillingInfo billingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        ShippingContactInfo shippingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+        BillingContactInfo billingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         TextView paymentResultTextView2
                 = (TextView) findViewById(R.id.paymentResultTextView2);
         continueShippingView = (TextView) findViewById(R.id.continueShippingButton);
@@ -62,7 +62,7 @@ public class PostPaymentActivity extends AppCompatActivity {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
                 //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {
-                //setDialog(sdkResult.toString() + "\n" + shippingInfo + "\n" + billingInfo, "Payment Result");
+                //setDialog(sdkResult.toString() + "\n" + shippingContactInfo + "\n" + billingContactInfo, "Payment Result");
                 MainApplication.mainHandler.post(new Runnable() {
                     @Override
                     public void run() {

@@ -22,6 +22,7 @@ import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by roy.biber on 21/02/2018.
@@ -131,7 +132,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             return;
         }
         //create an ArrayList<CreditCardInfo> for the ListView.
-        ArrayList<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
+        List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
 
         //create an adapter to describe how the items are displayed.
         ListView oneLineCCViewComponentsListView = findViewById(R.id.oneLineCCViewComponentsListView);
@@ -143,15 +144,15 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 shopper.setNewCreditCardInfo((CreditCardInfo) oneLineCCViewAdapter.getItem(position));
-                BillingInfo billingInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
+                BillingContactInfo billingContactInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
                 if (!sdkRequest.isEmailRequired())
-                    billingInfo.setEmail(null);
+                    billingContactInfo.setEmail(null);
                 else
-                    billingInfo.setEmail(shopper.getEmail());
+                    billingContactInfo.setEmail(shopper.getEmail());
                 if (!sdkRequest.isBillingRequired()) {
-                    billingInfo.setAddress(null);
-                    billingInfo.setCity(null);
-                    billingInfo.setState(null);
+                    billingContactInfo.setAddress(null);
+                    billingContactInfo.setCity(null);
+                    billingContactInfo.setState(null);
                 }
                 startCreditCardActivityForResult(FRAGMENT_TYPE, RETURNING_CC);
             }

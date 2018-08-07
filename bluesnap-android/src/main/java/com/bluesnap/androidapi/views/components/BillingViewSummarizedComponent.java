@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -35,17 +35,17 @@ public class BillingViewSummarizedComponent extends ContactInfoViewSummarizedCom
     /**
      * updates BillingViewSummarizedComponent with details
      *
-     * @param billingInfo - {@link BillingInfo}
+     * @param billingContactInfo - {@link BillingContactInfo}
      */
-    public void updateViewResourceWithDetails(@NonNull BillingInfo billingInfo) {
-        super.updateViewResourceWithDetails(billingInfo);
+    public void updateViewResourceWithDetails(@NonNull BillingContactInfo billingContactInfo) {
+        super.updateViewResourceWithDetails(billingContactInfo);
 
         final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        if (!sdkRequest.isEmailRequired() || stringify(billingInfo.getEmail()).isEmpty())
+        if (!sdkRequest.isEmailRequired() || stringify(billingContactInfo.getEmail()).isEmpty())
             setEmailVisibility(GONE);
         else
-            setEmailText(billingInfo.getEmail());
+            setEmailText(billingContactInfo.getEmail());
 
         if (!sdkRequest.isBillingRequired())
             forFullBillingLinearLayout.setVisibility(GONE);

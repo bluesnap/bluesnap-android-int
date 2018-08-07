@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
@@ -88,9 +88,9 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
      * get Credit Card Info from
      * {@link BillingViewComponent}
      *
-     * @return {@link BillingInfo}
+     * @return {@link BillingContactInfo}
      */
-    public BillingInfo getViewResourceDetails() {
+    public BillingContactInfo getViewResourceDetails() {
         return billingViewComponent.getViewResourceDetails();
     }
 

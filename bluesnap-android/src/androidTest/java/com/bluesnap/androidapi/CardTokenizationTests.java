@@ -1,7 +1,7 @@
 package com.bluesnap.androidapi;
 
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -33,9 +33,9 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         blueSnapService.setSdkRequest(sdkRequest);
 
         final PurchaseDetails purchaseDetails = new PurchaseDetails();
-        final BillingInfo billingInfo = new BillingInfo();
-        purchaseDetails.setBillingContactInfo(billingInfo);
-        billingInfo.setFullName("John Doe");
+        final BillingContactInfo billingContactInfo = new BillingContactInfo();
+        purchaseDetails.setBillingContactInfo(billingContactInfo);
+        billingContactInfo.setFullName("John Doe");
         final CreditCard card = new CreditCard();
         purchaseDetails.setCreditCard(card);
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;

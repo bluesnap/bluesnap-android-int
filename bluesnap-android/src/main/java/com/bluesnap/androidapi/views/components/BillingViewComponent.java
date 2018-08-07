@@ -8,7 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -79,24 +79,24 @@ public class BillingViewComponent extends ContactInfoViewComponent {
     /**
      * update resource with details
      *
-     * @param billingInfo - {@link BillingInfo}
+     * @param billingContactInfo - {@link BillingContactInfo}
      */
-    public void updateViewResourceWithDetails(BillingInfo billingInfo) {
-        super.updateViewResourceWithDetails(billingInfo);
+    public void updateViewResourceWithDetails(BillingContactInfo billingContactInfo) {
+        super.updateViewResourceWithDetails(billingContactInfo);
         if (isEmailRequired)
-            inputEmail.setText(AndroidUtil.stringify(billingInfo.getEmail()));
+            inputEmail.setText(AndroidUtil.stringify(billingContactInfo.getEmail()));
     }
 
     /**
-     * get BillingInfo Resource from inputs
+     * get BillingContactInfo Resource from inputs
      *
      * @return billing info
      */
-    public BillingInfo getViewResourceDetails() {
-        BillingInfo billingInfo = new BillingInfo(super.getViewResourceDetails());
+    public BillingContactInfo getViewResourceDetails() {
+        BillingContactInfo billingContactInfo = new BillingContactInfo(super.getViewResourceDetails());
         if (isEmailRequired)
-            billingInfo.setEmail(inputEmail.getText().toString().trim());
-        return billingInfo;
+            billingContactInfo.setEmail(inputEmail.getText().toString().trim());
+        return billingContactInfo;
     }
 
     /**

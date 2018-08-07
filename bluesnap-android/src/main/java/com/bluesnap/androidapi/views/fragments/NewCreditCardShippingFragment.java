@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -120,22 +120,22 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
     }
 
     /**
-     * get ShippingInfo from
+     * get ShippingContactInfo from
      * {@link ShippingViewComponent}
      *
-     * @return {@link ShippingInfo}
+     * @return {@link ShippingContactInfo}
      */
-    public ShippingInfo getShippingInfo() {
+    public ShippingContactInfo getShippingInfo() {
         return shippingViewComponent.getViewResourceDetails();
     }
 
     /**
      * set Shipping Info in view - {@link ShippingViewComponent}
      *
-     * @param shippingInfo - {@link ShippingInfo}
+     * @param shippingContactInfo - {@link ShippingContactInfo}
      */
-    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
-        shippingViewComponent.updateViewResourceWithDetails(shippingInfo);
+    public void updateViewResourceWithDetails(ShippingContactInfo shippingContactInfo) {
+        shippingViewComponent.updateViewResourceWithDetails(shippingContactInfo);
     }
 
     /**

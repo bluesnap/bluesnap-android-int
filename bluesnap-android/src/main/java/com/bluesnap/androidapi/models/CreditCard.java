@@ -3,6 +3,8 @@ package com.bluesnap.androidapi.models;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import com.bluesnap.androidapi.utils.JsonParser;
+import org.json.JSONObject;
 
 /**
  * Created by roy.biber on 07/11/2017.
@@ -34,6 +36,22 @@ public class CreditCard {
     private Integer expirationYear;
 
     public CreditCard() {
+    }
+
+    @Nullable
+    public static CreditCard fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null) {
+            return null;
+        }
+
+        CreditCard creditCard = new CreditCard();
+        creditCard.setCardLastFourDigits(JsonParser.getOptionalString(jsonObject, "cardLastFourDigits"));
+        creditCard.setCardType(JsonParser.getOptionalString(jsonObject, "cardType"));
+        creditCard.setCardSubType(JsonParser.getOptionalString(jsonObject, "cardSubType"));
+        creditCard.setExpirationMonth(Integer.valueOf(JsonParser.getOptionalString(jsonObject, "expirationMonth")));
+        creditCard.setExpirationYear(Integer.valueOf(JsonParser.getOptionalString(jsonObject, "expirationYear")));
+        return creditCard;
+
     }
 
     /**

@@ -1,11 +1,9 @@
 package com.bluesnap.androidapi.utils;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import com.bluesnap.androidapi.models.Currency;
-import com.bluesnap.androidapi.models.Rates;
-import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.bluesnap.androidapi.models.SupportedPaymentMethods;
+import com.bluesnap.androidapi.models.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +44,10 @@ public class JsonParser {
                 Rates rates = new Rates(currencyList, ratesJsonObject.getString("baseCurrency"), ratesJsonObject.getString("baseCurrencyName"));
                 sdkConfiguration.setRates(rates);
             }
+
+
+            Shopper shopper = Shopper.fromJson(getOptionalObject(jsonObject, "shopper"));
+            sdkConfiguration.setShopper(shopper);
 
             SupportedPaymentMethods supportedPaymentMethods = new SupportedPaymentMethods();
             JSONObject supportedPaymentTypeObject = jsonObject.getJSONObject("supportedPaymentMethods");
@@ -90,11 +92,31 @@ public class JsonParser {
 
                 sdkConfiguration.setSupportedPaymentMethods(supportedPaymentMethods);
             }
+
+
         } catch (JSONException ex) {
-            Log.d(TAG, "Error on parse sdk configuration " + ex.getMessage());
+            Log.e(TAG, "Error on parse sdk configuration " + ex.getMessage());
         }
 
         return sdkConfiguration;
 
+    }
+
+    public static String getOptionalString(@NonNull JSONObject jsonObject, @NonNull String name) {
+        try {
+            return jsonObject.getString(name);
+        } catch (JSONException e) {
+            //IGNORED
+        }
+        return "";
+    }
+
+    @Nullable
+    public static JSONObject getOptionalObject(@NonNull JSONObject jsonObject, @NonNull String name) {
+        try {
+            return jsonObject.getJSONObject(name);
+        } catch (JSONException e) {
+            return null;
+        }
     }
 }

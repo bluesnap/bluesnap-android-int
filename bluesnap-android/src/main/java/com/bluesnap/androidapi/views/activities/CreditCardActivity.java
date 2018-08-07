@@ -395,9 +395,9 @@ public class CreditCardActivity extends AppCompatActivity {
                                 Log.d(TAG, "tokenization of previous used credit card");
                             }
 
-                            sdkResult.setBillingInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
+                            sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
                             if (sdkRequest.isShippingRequired())
-                                sdkResult.setShippingInfo(shopper.getShippingContactInfo());
+                                sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
                             sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
                             sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
                             // update last4 from server result
