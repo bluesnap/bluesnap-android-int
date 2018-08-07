@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * Created by sivani on 04/06/2018.
  */
-public class NewCardVisibilityTesterCommon {
+public class CreditCardVisibilityTesterCommon {
     public static void new_credit_card_info_visibility_validation(String testName) {
         onView(withId(R.id.oneLineCCEditComponent)).withFailureHandler(new CustomFailureHandler(testName + ": One line credit card is not visible")).check(matches(isDisplayed()));
         onView(withId(R.id.creditCardNumberEditText)).withFailureHandler(new CustomFailureHandler(testName + ": Credit card editText is not visible")).check(matches(isDisplayed()));
@@ -34,7 +34,7 @@ public class NewCardVisibilityTesterCommon {
         check_cc_info_invalid_error_visibility(testName, R.id.cvvErrorTextView, false);
     }
 
-    public static void new_credit_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
+    public static void contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
         //verify that the right component(billing/shipping) is displayed- is this necessary?
         onView(withId(componentResourceId)).check(matches(isDisplayed()));
 
@@ -56,7 +56,7 @@ public class NewCardVisibilityTesterCommon {
 
     }
 
-    public static void new_credit_contact_info_error_messages_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
+    public static void contact_info_error_messages_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
         Espresso.closeSoftKeyboard();
         //verify that all error messages are not displayed in the component
         check_contact_info_invalid_error_visibility(testName, R.id.input_layout_name, componentResourceId, false);
@@ -217,7 +217,7 @@ public class NewCardVisibilityTesterCommon {
      * the correct currency symbol and amount
      */
     public static void pay_button_visibility_and_content_validation(String testName, int buttonComponent, String checkoutCurrency, Double purchaseAmount, Double taxAmount) {
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Buy now button is not visible "))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Buy now button is not visible"))
                 .check(matches(ViewMatchers.isDisplayed()));
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't present the correct content"))
                 .check(matches(withText(TestUtils.getStringFormatAmount("Pay",
@@ -228,9 +228,9 @@ public class NewCardVisibilityTesterCommon {
      * This test verifies that the "Shipping" button is visible
      */
     public static void shipping_button_visibility_and_content_validation(String testName, int buttonComponent) {
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button is not visible "))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button is not visible"))
                 .check(matches(ViewMatchers.isDisplayed()));
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button does not display the correct content "))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).withFailureHandler(new CustomFailureHandler(testName + ": Shipping button does not display the correct content"))
                 .check(matches(withText("Shipping")));
     }
 
@@ -240,12 +240,12 @@ public class NewCardVisibilityTesterCommon {
     public static void amount_tax_shipping_view_validation(String testName, int amountTaxShippingComponent, String currency, String amount, String tax) {
         //verify component is visible
         onView(withId(amountTaxShippingComponent))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Amount-tax component is not visible"))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Amount-tax component is not visible in a country with tax"))
                 .check(matches(ViewMatchers.isDisplayed()));
 
         //verify amount and tax is visible
         onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(amountTaxShippingComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Amount-tax layout is not visible"))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Amount-tax layout is not visible in a country with tax"))
                 .check(matches(ViewMatchers.isDisplayed()));
 
         //verify that the presented amount and tax are correct

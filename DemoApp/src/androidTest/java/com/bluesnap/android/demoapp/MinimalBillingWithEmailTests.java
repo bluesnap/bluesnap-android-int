@@ -39,7 +39,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
         new_credit_card_info_visibility_validation();
         new_credit_card_info_error_messages_validation();
         new_credit_billing_contact_info_visibility_validation();
-        new_credit_billing_contact_info_error_messages_validation();
+        billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
@@ -50,7 +50,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * when choosing new credit card.
      */
     public void new_credit_card_info_visibility_validation() {
-        NewCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_card_info_visibility_validation");
+        CreditCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_card_info_visibility_validation");
     }
 
     /**
@@ -58,7 +58,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_card_info_error_messages_validation() {
-        NewCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
+        CreditCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
     }
 
     /**
@@ -66,15 +66,15 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * according to minimal billing when choosing new credit card.
      */
     public void new_credit_billing_contact_info_visibility_validation() {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_visibility_validation("new_credit_billing_contact_info_visibility_validation", R.id.billingViewComponent, false, true);
+        CreditCardVisibilityTesterCommon.contact_info_visibility_validation("new_credit_billing_contact_info_visibility_validation", R.id.billingViewComponent, false, true);
     }
 
     /**
      * This test verifies that all invalid error messages of billing contact info
      * fields are not displayed.
      */
-    public void new_credit_billing_contact_info_error_messages_validation() {
-        NewCardVisibilityTesterCommon.new_credit_contact_info_error_messages_validation("new_credit_contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
+    public void billing_contact_info_error_messages_validation() {
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("billing_contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
     }
 
     /**
@@ -82,7 +82,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * to the default Country (the one that is chosen when entering billing).
      */
     public void default_country_zip_view_validation_in_billing() {
-        NewCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountryKey, R.id.billingViewComponent);
+        CreditCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountryKey, R.id.billingViewComponent);
     }
 
     /**
@@ -90,7 +90,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * the correct currency symbol and amount
      */
     public void pay_button_in_billing_validation() {
-        NewCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
     }
 
     /**

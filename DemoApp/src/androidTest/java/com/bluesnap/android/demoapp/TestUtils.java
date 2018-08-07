@@ -10,6 +10,7 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
@@ -28,10 +29,14 @@ import java.util.Collection;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 
 public class TestUtils {
     public static Activity getCurrentActivity() {
@@ -266,12 +271,30 @@ public class TestUtils {
         Espresso.pressBack();
     }
 
+    public static void go_back_to_credit_card_in_returning_shopper(boolean useDoneButton, int buttonComponentResourceId) {
+        if (useDoneButton)
+            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponentResourceId)))).perform(click());
+
+        else {
+            Espresso.closeSoftKeyboard();
+            Espresso.pressBack();
+        }
+    }
+
     public static double round_amount(double amount) {
         return Math.round(amount * 100.0) / 100.0;
     }
 
     public static String get_amount_in_string(NumberFormat df, double amount) {
         return df.format(amount);
+    }
+
+    private void checkViewVisibility(int viewResourceId, boolean isVisible) {
+        if (isVisible)
+            onView(withId(viewResourceId)).check(matches(ViewMatchers.isDisplayed()));
+        else
+            onView(withId(viewResourceId)).check(matches(not(ViewMatchers.isDisplayed())));
+
     }
 
 
