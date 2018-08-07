@@ -3,7 +3,7 @@ package com.bluesnap.androidapi.views.components;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
 /**
@@ -34,19 +34,19 @@ public class ShippingViewComponent extends ContactInfoViewComponent {
     /**
      * update resource with details
      *
-     * @param shippingInfo - {@link ShippingInfo}
+     * @param shippingContactInfo - {@link ShippingContactInfo}
      */
-    public void updateViewResourceWithDetails(ShippingInfo shippingInfo) {
-        super.updateViewResourceWithDetails(shippingInfo);
+    public void updateViewResourceWithDetails(ShippingContactInfo shippingContactInfo) {
+        super.updateViewResourceWithDetails(shippingContactInfo);
     }
 
     /**
-     * get ShippingInfo Resource from inputs
+     * get ShippingContactInfo Resource from inputs
      *
      * @return shipping info
      */
-    public ShippingInfo getViewResourceDetails() {
-        return new ShippingInfo(super.getViewResourceDetails());
+    public ShippingContactInfo getViewResourceDetails() {
+        return new ShippingContactInfo(super.getViewResourceDetails());
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,7 +13,7 @@ import java.util.LinkedHashMap;
 
 
 //TODO: join cardtype class with this class or conjoin or something
-public class SupportedPaymentMethods {
+public class SupportedPaymentMethods extends BSModel {
     private static final String TAG = SupportedPaymentMethods.class.getSimpleName();
 
     public static final String PAYPAL = "PAYPAL";
@@ -82,4 +84,14 @@ public class SupportedPaymentMethods {
         }
         return res;
     }
+
+
+    @NonNull
+    @Override
+    public JSONObject toJson() {
+        return null;
+    }
+
+
+
 }

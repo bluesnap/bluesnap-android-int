@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
  * Created by roy.biber on 12/11/2017.
  */
 
-public class ShippingInfo extends ContactInfo implements Parcelable {
+public class ShippingContactInfo extends ContactInfo implements Parcelable {
     public static final String SHIPPINGFIRSTNAME = "shippingFirstName";
     public static final String SHIPPINGLASTNAME = "shippingLastName";
     public static final String SHIPPINGCOUNTRY = "shippingCountry";
@@ -22,16 +22,16 @@ public class ShippingInfo extends ContactInfo implements Parcelable {
     //@SerializedName("phone")
     private String phone;
 
-    protected ShippingInfo(Parcel parcel) {
+    protected ShippingContactInfo(Parcel parcel) {
         super(parcel);
         phone = parcel.readString();
     }
 
-    public ShippingInfo() {
+    public ShippingContactInfo() {
         super();
     }
 
-    public ShippingInfo(ContactInfo contactInfo) {
+    public ShippingContactInfo(ContactInfo contactInfo) {
         setFullName(contactInfo.getFullName());
         setAddress(contactInfo.getAddress());
         setAddress2(contactInfo.getAddress2());
@@ -41,15 +41,15 @@ public class ShippingInfo extends ContactInfo implements Parcelable {
         setCountry(contactInfo.getCountry());
     }
 
-    public static final Creator<ShippingInfo> CREATOR = new Creator<ShippingInfo>() {
+    public static final Creator<ShippingContactInfo> CREATOR = new Creator<ShippingContactInfo>() {
         @Override
-        public ShippingInfo createFromParcel(Parcel in) {
-            return new ShippingInfo(in);
+        public ShippingContactInfo createFromParcel(Parcel in) {
+            return new ShippingContactInfo(in);
         }
 
         @Override
-        public ShippingInfo[] newArray(int size) {
-            return new ShippingInfo[size];
+        public ShippingContactInfo[] newArray(int size) {
+            return new ShippingContactInfo[size];
         }
     };
 
