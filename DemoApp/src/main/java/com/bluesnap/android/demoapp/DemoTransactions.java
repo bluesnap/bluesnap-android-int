@@ -79,6 +79,7 @@ public class DemoTransactions {
                     errorName = responseString.substring(responseString.indexOf("<error-name>") + "<error-name>".length(), responseString.indexOf("</error-name>"));
             } catch (Exception e) {
                 Log.w(TAG, "failed to get error name from response string");
+                Log.w(TAG, "Failed TX Response:  " + responseString);
             }
             setMessage(errorName);
             setTitle("Merchant Server");
