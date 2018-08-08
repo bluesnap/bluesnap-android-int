@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 
 import android.content.Context;
 import android.support.test.espresso.Espresso;
+
 import com.bluesnap.androidapi.Constants;
 
 import org.hamcrest.Matchers;
@@ -12,10 +13,19 @@ import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.clearText;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
 
 /**
  * Created by sivani on 17/07/2018.
@@ -25,7 +35,7 @@ public class ContactInfoTesterCommon {
     static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
             "New York", "555 Broadway street", "NY", "3abc 324a", "US");
 
-    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
+    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "null",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
 
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {

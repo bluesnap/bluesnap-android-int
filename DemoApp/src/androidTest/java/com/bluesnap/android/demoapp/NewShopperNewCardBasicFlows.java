@@ -9,14 +9,19 @@ import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.view.View;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
+
 import junit.framework.Assert;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,12 +32,22 @@ import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 
 /**
@@ -79,13 +94,21 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
             e.printStackTrace();
         }
 
-        String[] billingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
-        billingCountryKey = billingCountry[0];
-        billingCountryValue = billingCountry[1];
+        //TODO: restore this after the counties mapping fix
+//        String[] billingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
+//        billingCountryKey = billingCountry[0];
+//        billingCountryValue = billingCountry[1];
+//
+//        String[] shippingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
+//        shippingCountryKey = shippingCountry[0];
+//        shippingCountryValue = shippingCountry[1];
+        defaultCountryKey = BlueSnapService.getInstance().getUserCountry(applicationContext);
+        String[] countryKeyArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
+        String[] countryValueArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
 
-        String[] shippingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
-        shippingCountryKey = shippingCountry[0];
-        shippingCountryValue = shippingCountry[1];
+        defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
+        billingCountryKey = shippingCountryKey = defaultCountryKey;
+        billingCountryValue = shippingCountryValue = defaultCountryValue;
     }
 
     public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
@@ -257,7 +280,6 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
         //TODO: change this stupid thing. in demoApp as well
         shopperId = TestUtils.getText(withId(R.id.shopperId)).substring(13);
-
         Espresso.unregisterIdlingResources(transactionMessageIR);
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
@@ -292,59 +314,60 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
     //TODO: add validation that the new credit card info has been saved correctly
     private void new_shopper_info_saved_validation() {
-        new_shopper_component_info_saved_validation(true);
-        if (withShipping)
-            new_shopper_component_info_saved_validation(false);
+        try {
+            JSONObject jsonObject = new JSONObject(getShopperResponse);
+            new_shopper_component_info_saved_validation(true, jsonObject);
+            if (withShipping)
+                new_shopper_component_info_saved_validation(false, jsonObject.getJSONObject("shippingContactInfo"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail("Error on parse shopper info");
+        }
     }
 
-    private void new_shopper_component_info_saved_validation(boolean isBillingInfo) {
+    private void new_shopper_component_info_saved_validation(boolean isBillingInfo, JSONObject jsonObject) {
         String address = isBillingInfo ? "address" : "address1";
-        String countryKey = isBillingInfo ? billingCountryKey : shippingCountryKey;
-        String countryValue = isBillingInfo ? billingCountryValue : shippingCountryValue;
+        String countryKey = (!isBillingInfo && !shippingSameAsBilling) ? shippingCountryKey : billingCountryKey;
 
+        ShopperContactInfo contactInfo = (!isBillingInfo && !shippingSameAsBilling) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
 
-        ShopperContactInfo contactInfo = isBillingInfo ? ContactInfoTesterCommon.billingContactInfo : ContactInfoTesterCommon.shippingContactInfo;
+        check_if_field_identify(isBillingInfo, "country", countryKey.toLowerCase(), jsonObject);
 
-
-        check_if_field_identify(isBillingInfo, "country", countryKey.toLowerCase());
-
-        check_if_field_identify(isBillingInfo, "first-name", contactInfo.getFirstName());
-        check_if_field_identify(isBillingInfo, "last-name", contactInfo.getLastName());
+        check_if_field_identify(isBillingInfo, "firstName", contactInfo.getFirstName(), jsonObject);
+        check_if_field_identify(isBillingInfo, "lastName", contactInfo.getLastName(), jsonObject);
 
         if (isBillingInfo && withEmail)
-            check_if_field_identify(true, "email", contactInfo.getEmail());
+            check_if_field_identify(true, "email", contactInfo.getEmail(), jsonObject);
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryValue))
-            check_if_field_identify(isBillingInfo, "zip", contactInfo.getZip());
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryKey))
+            check_if_field_identify(isBillingInfo, "zip", contactInfo.getZip(), jsonObject);
 
         if (fullInfo || !isBillingInfo) { //full info or shipping
             if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
                 if (countryKey.equals("US"))
-                    check_if_field_identify(isBillingInfo, "state", "New York");
+                    check_if_field_identify(isBillingInfo, "state", "New York", jsonObject);
                 else if (countryKey.equals("CA"))
-                    check_if_field_identify(isBillingInfo, "state", "Quebec");
+                    check_if_field_identify(isBillingInfo, "state", "Quebec", jsonObject);
                 else
-                    check_if_field_identify(isBillingInfo, "state", "Rio de Janeiro");
+                    check_if_field_identify(isBillingInfo, "state", "Rio de Janeiro", jsonObject);
             }
-            check_if_field_identify(isBillingInfo, "city", contactInfo.getCity());
-            check_if_field_identify(isBillingInfo, address, contactInfo.getAddress());
+            check_if_field_identify(isBillingInfo, "city", contactInfo.getCity(), jsonObject);
+            check_if_field_identify(isBillingInfo, address, contactInfo.getAddress(), jsonObject);
         }
     }
 
-    private void check_if_field_identify(boolean isBillingInfo, String fieldName, String expectedResult) {
+    private void check_if_field_identify(boolean isBillingInfo, String fieldName, String expectedResult, JSONObject shopperInfoJsonObject) {
         String fieldContent = null;
         try {
-            String shopperInfo = (isBillingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
-                    ("<vaulted-shopper-id>").length(), getShopperResponse.indexOf("<payment-sources>")) :
-                    getShopperResponse.substring(getShopperResponse.indexOf("<shipping-contact-info>") +
-                            ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
-            fieldContent = shopperInfo.substring(shopperInfo.indexOf("<" + fieldName + ">") +
-                    ("<" + fieldName + ">").length(), shopperInfo.indexOf("</" + fieldName + ">"));
+            fieldContent = getOptionalString(shopperInfoJsonObject, fieldName);
+            if (fieldName.equals("email"))
+                fieldContent = fieldContent.substring(0, fieldContent.indexOf("&")) + "@" + fieldContent.substring(fieldContent.indexOf(";") + 1);
         } catch (Exception e) {
             e.printStackTrace();
             fail("missing field in server response:\n Expected fieldName: " + fieldName + " Expected Value:" + expectedResult + "\n" + getShopperResponse);
         }
 
-        Assert.assertEquals(fieldName + "was not saved correctly in DataBase", fieldContent, expectedResult);
+        Assert.assertEquals(fieldName + " was not saved correctly in DataBase", expectedResult, fieldContent);
     }
 }
