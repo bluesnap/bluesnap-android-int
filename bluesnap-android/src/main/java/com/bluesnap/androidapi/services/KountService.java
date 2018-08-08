@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import com.kount.api.DataCollector;
 
 import java.util.UUID;

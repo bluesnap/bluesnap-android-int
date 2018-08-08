@@ -5,10 +5,8 @@ import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -57,7 +55,7 @@ public class CardTest extends TestCase {
     // http://www.getnewidentity.com/validate-card.php
 
     @Test
-    public void testValidAmex() throws Exception {
+    public void testValidAmex() {
         CreditCard card = new CreditCard();
         //AMEX("3782 8224 6310 005", "1111", "AMEX"), AMEX_FD("341111597241002", "1111", "AMEX")
         String[] validAmex = new String[]{"376140184044485", "370796644125630", "377494679521484", "3782 8224 6310 005", "341111597241002"};
@@ -72,7 +70,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void tesValidMC() throws Exception {
+    public void tesValidMC() {
         CreditCard card = new CreditCard();
         //MASTERCARD("5105 1051 0510 5100", "111","MASTERCARD"), MASTERCARD_FD("5424180279791732", "111", "MASTERCARD"), MASTERCARD_WERTHER("5555555555554444", "111", "MASTERCARD"), MASTERCARD_SKRILL("5232000000123456","115","MASTERCARD"), MASTERCARD_BRAZIL("5365 2917 2765 9784","111","MASTERCARD"), MAESTR_UK_NOW_MASTERCARD("6759411100000008", "123", "MASTERCARD")
         String[] validMC = new String[]{"5572758886015288", "5522796652320905", "5212330191503840", "5105 1051 0510 5100", "5424180279791732", "5555555555554444", "5365 2917 2765 9784", "6759411100000008"};
@@ -87,7 +85,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testInValidMC() throws Exception {
+    public void testInValidMC() {
         CreditCard card = new CreditCard();
         //MASTERCARD_SKRILL("5232000000123456","115","MASTERCARD")
         String[] validMC = new String[]{"5232000000123456"};
@@ -102,7 +100,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidVisa() throws Exception {
+    public void testValidVisa() {
         CreditCard card = new CreditCard();
         //VISA("4111 1111 1111 1111", "111", "VISA"), VISA_DEBIT("4594 4001 0053 3682", "111", "VISA"), VISA_FD("4012 0000 3333 0026", "111", "VISA"), VISA_CREDIT("4263 9826 4026 9299","123","VISA"), VISA_DEBIT_INSUFFECIENT_FUNDS("4917484589897107","111","VISA")
         String[] validMC = new String[]{"4111111111111111" /*15 ones*/, "4916088887594869", "4716836794238927", "4594 4001 0053 3682", "4012 0000 3333 0026", "4263 9826 4026 9299", "4917484589897107", "4973 0100 0000 0004"};
@@ -117,7 +115,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testInValidVisa() throws Exception {
+    public void testInValidVisa() {
         CreditCard card = new CreditCard();
         String[] validMC = new String[]{"4111 1111 111" /* 10 ones */, "4111 1111 1111 1111 1111" /* 19 ones */};
         CreditCardTypeResolver.setCreditCardRegex(creditCardRegex());
@@ -131,7 +129,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidMaestro() throws Exception {
+    public void testValidMaestro() {
         CreditCard card = new CreditCard();
         //MAESTR_UK("6759411100000008", "123", "MAESTR_UK")
         String[] validMaestro = new String[]{"6759411100000008"};
@@ -146,7 +144,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidDiscover() throws Exception {
+    public void testValidDiscover() {
         CreditCard card = new CreditCard();
         //DISCOVER("6011 1111 1111 1117", "111", "DISCOVER"), DISCOVER_FD("6011000990139424", "111", "DISCOVER"), DISCOVER_NOW_MASTERCARD("6011 1111 1111 1117", "111", "MASTERCARD")
         String[] validDiscover = new String[]{"6011 1111 1111 1117", "6011000990139424", "6011 1111 1111 1117"};
@@ -161,7 +159,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testInValidSolo() throws Exception {
+    public void testInValidSolo() {
         CreditCard card = new CreditCard();
         //SOLO("6334 5898 9800 0001", "111", "SOLO")
         String[] validSolo = new String[]{"6334 5898 9800 0001"};
@@ -176,7 +174,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidDiners() throws Exception {
+    public void testValidDiners() {
         CreditCard card = new CreditCard();
         //DINERS("3600 6666 3333 44", "111", "DINERS")
         String[] validDiners = new String[]{"3600 6666 3333 44"};
@@ -191,7 +189,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidJCB() throws Exception {
+    public void testValidJCB() {
         CreditCard card = new CreditCard();
         //JCB("3530 1113 3330 0000", "111", "JCB"), JCB_FD("3566007770017510", "111", "JCB")
         String[] validJCB = new String[]{"3530 1113 3330 0000", "3566007770017510"};
@@ -206,7 +204,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidCarteBleue() throws Exception {
+    public void testValidCarteBleue() {
         CreditCard card = new CreditCard();
         //CARTE_BLEUE("4973 0100 0000 0004", "111", "CARTE_BLEUE"), OLD_CARTE_BLEUE_WHICH_IS_REALLY_NOT("5817 8400 4710 8510", "111", "CARTE_BLEUE")
         String[] validCarteBleue = new String[]{"5817 8400 4710 8510"};
@@ -221,7 +219,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidChinaUnionPay() throws Exception {
+    public void testValidChinaUnionPay() {
         CreditCard card = new CreditCard();
         //CHINA_UNION_PAY("6240 0086 3140 1148","111","CHINA_UNION_PAY")
         String[] validChinaUnionPay = new String[]{"6240008631401148"};
@@ -236,7 +234,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testInvalidStrings() throws Exception {
+    public void testInvalidStrings() {
         CreditCard card = new CreditCard();
         card.setNumber("abcdef");
         assertFalse(BlueSnapValidator.creditCardNumberValidation(card.getNumber()));
@@ -244,7 +242,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidateExpiryDate() throws Exception {
+    public void testValidateExpiryDate() {
         assertTrue("this date should be in the future", BlueSnapValidator.isDateInFuture(11, 25));
         CreditCard card = new CreditCard();
         card.setExpirationMonth(13);
@@ -269,7 +267,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testCurrentDateValid() throws Exception {
+    public void testCurrentDateValid() {
         java.util.Calendar now = Calendar.getInstance();
         //return isYearInPast(year) || year == now.get(java.util.Calendar.YEAR) && month < (now.get(java.util.Calendar.MONTH) + 1);
         int year = now.get(java.util.Calendar.YEAR);
@@ -290,7 +288,7 @@ public class CardTest extends TestCase {
 
 
     @Test
-    public void testFuturePastExpiryDates() throws Exception {
+    public void testFuturePastExpiryDates() {
         CreditCard card = new CreditCard();
         card.setExpirationMonth(java.util.Calendar.DECEMBER);
         card.setExpirationYear(05);
@@ -319,7 +317,7 @@ public class CardTest extends TestCase {
     }
 
     @Test
-    public void testValidateAll() throws Exception {
+    public void testValidateAll() {
         CreditCard card = new CreditCard();
         card.update(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE, "11/25", "123");
         //assertTrue("this should be a valid luhn", CreditCard.isValidLuhnNumber(CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE));
@@ -342,7 +340,7 @@ public class CardTest extends TestCase {
 
         String cardToString = creditCard.toString();
         assertFalse("the tostring should not expose number", cardToString.contains(number));
-        String last4 = number.substring(number.length() - 4, number.length());
+        String last4 = number.substring(number.length() - 4);
         assertEquals("Last 4 contains too many digits", creditCard.getCardLastFourDigits().length(), 4);
         assertEquals("Last 4 contains too many digits: " + last4, last4.length(), 4);
         assertTrue("the tostring should containg last4", cardToString.contains(last4));

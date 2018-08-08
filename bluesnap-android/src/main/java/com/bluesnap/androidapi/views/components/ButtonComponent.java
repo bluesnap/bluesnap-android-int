@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.services.AndroidUtil;

@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.models;
 
 import android.util.Log;
-
 import com.bluesnap.androidapi.R;
 
 import java.util.LinkedHashMap;

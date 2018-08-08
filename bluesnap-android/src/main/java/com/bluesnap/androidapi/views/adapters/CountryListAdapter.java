@@ -5,12 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CountryListObject;
 
@@ -48,7 +43,7 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
-        return countryListObjects.indexOf((CountryListObject)getItem(position));
+        return countryListObjects.indexOf(getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -59,9 +54,9 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
             convertView = inflater.inflate(R.layout.country_list_view, null);
         }
 
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.countryTextView);
-        ImageView bluensap_customlist_list_view_icon = (ImageView) convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
-        ImageView countryImage = (ImageView) convertView.findViewById(R.id.countryImage);
+        TextView txtTitle = convertView.findViewById(R.id.countryTextView);
+        ImageView bluensap_customlist_list_view_icon = convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
+        ImageView countryImage = convertView.findViewById(R.id.countryImage);
 
         String countryFullName = countryListObjects.get(position).getCountryFullName();
         String countryInitial = countryListObjects.get(position).getCountryInitial();

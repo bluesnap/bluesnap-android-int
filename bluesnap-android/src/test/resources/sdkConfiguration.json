@@ -1,0 +1,705 @@
+{
+  "kountMerchantId": 700000,
+  "rates": {
+    "baseCurrency": "USD",
+    "baseCurrencyName": "US Dollar",
+    "exchangeRate": [
+      {
+        "quoteCurrency": "EUR",
+        "quoteCurrencyName": "Euro",
+        "fractionDigits": 2,
+        "conversionRate": 0.776349
+      },
+      {
+        "quoteCurrency": "GBP",
+        "quoteCurrencyName": "British Pound Sterling",
+        "fractionDigits": 2,
+        "conversionRate": 0.628543
+      },
+      {
+        "quoteCurrency": "CAD",
+        "quoteCurrencyName": "Canadian Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.1531
+      },
+      {
+        "quoteCurrency": "JPY",
+        "quoteCurrencyName": "Japanese Yen",
+        "fractionDigits": 0,
+        "conversionRate": 107.808
+      },
+      {
+        "quoteCurrency": "CHF",
+        "quoteCurrencyName": "Swiss Franc",
+        "fractionDigits": 2,
+        "conversionRate": 0.947938
+      },
+      {
+        "quoteCurrency": "AED",
+        "quoteCurrencyName": "United Arab Emirates Dirham",
+        "fractionDigits": 2,
+        "conversionRate": 3.92338
+      },
+      {
+        "quoteCurrency": "AFN",
+        "quoteCurrencyName": "Afghan Afghani",
+        "fractionDigits": 2,
+        "conversionRate": 68.3466
+      },
+      {
+        "quoteCurrency": "ALL",
+        "quoteCurrencyName": "Albanian Lek",
+        "fractionDigits": 2,
+        "conversionRate": 131.251
+      },
+      {
+        "quoteCurrency": "AMD",
+        "quoteCurrencyName": "Armenian Dram",
+        "fractionDigits": 2,
+        "conversionRate": 476.6775
+      },
+      {
+        "quoteCurrency": "ANG",
+        "quoteCurrencyName": "Netherlands Antillean Guilder",
+        "fractionDigits": 2,
+        "conversionRate": 1.818675
+      },
+      {
+        "quoteCurrency": "ARS",
+        "quoteCurrencyName": "Argentine Peso",
+        "fractionDigits": 2,
+        "conversionRate": 4.69994
+      },
+      {
+        "quoteCurrency": "AUD",
+        "quoteCurrencyName": "Australian Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.14711
+      },
+      {
+        "quoteCurrency": "BYR",
+        "quoteCurrencyName": "Belarusian Ruble (2000-2016)",
+        "fractionDigits": 0,
+        "conversionRate": 18210.83
+      },
+      {
+        "quoteCurrency": "AWG",
+        "quoteCurrencyName": "Aruban Florin",
+        "fractionDigits": 2,
+        "conversionRate": 1.82
+      },
+      {
+        "quoteCurrency": "BAM",
+        "quoteCurrencyName": "Bosnia-Herzegovina Convertible Mark",
+        "fractionDigits": 2,
+        "conversionRate": 1.85052
+      },
+      {
+        "quoteCurrency": "BBD",
+        "quoteCurrencyName": "Barbadian Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 2.15
+      },
+      {
+        "quoteCurrency": "BGN",
+        "quoteCurrencyName": "Bulgarian Lev",
+        "fractionDigits": 2,
+        "conversionRate": 1.86104
+      },
+      {
+        "quoteCurrency": "BHD",
+        "quoteCurrencyName": "Bahraini Dinar",
+        "fractionDigits": 3,
+        "conversionRate": 0.407227
+      },
+      {
+        "quoteCurrency": "BMD",
+        "quoteCurrencyName": "Bermudan Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.09
+      },
+      {
+        "quoteCurrency": "BND",
+        "quoteCurrencyName": "Brunei Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.4469
+      },
+      {
+        "quoteCurrency": "BOB",
+        "quoteCurrencyName": "Bolivian Boliviano",
+        "fractionDigits": 2,
+        "conversionRate": 6.94027
+      },
+      {
+        "quoteCurrency": "BRL",
+        "quoteCurrencyName": "Brazilian Real",
+        "fractionDigits": 2,
+        "conversionRate": 2.22033
+      },
+      {
+        "quoteCurrency": "BSD",
+        "quoteCurrencyName": "Bahamian Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.09
+      },
+      {
+        "quoteCurrency": "BWP",
+        "quoteCurrencyName": "Botswanan Pula",
+        "fractionDigits": 2,
+        "conversionRate": 10.702213
+      },
+      {
+        "quoteCurrency": "CLP",
+        "quoteCurrencyName": "Chilean Peso",
+        "fractionDigits": 0,
+        "conversionRate": 535.471
+      },
+      {
+        "quoteCurrency": "CNY",
+        "quoteCurrencyName": "Chinese Yuan",
+        "fractionDigits": 2,
+        "conversionRate": 6.77274
+      },
+      {
+        "quoteCurrency": "COP",
+        "quoteCurrencyName": "Colombian Peso",
+        "fractionDigits": 2,
+        "conversionRate": 1936.41
+      },
+      {
+        "quoteCurrency": "CRC",
+        "quoteCurrencyName": "Costa Rican Colón",
+        "fractionDigits": 2,
+        "conversionRate": 570.229
+      },
+      {
+        "quoteCurrency": "CZK",
+        "quoteCurrencyName": "Czech Republic Koruna",
+        "fractionDigits": 2,
+        "conversionRate": 25.407
+      },
+      {
+        "quoteCurrency": "DKK",
+        "quoteCurrencyName": "Danish Krone",
+        "fractionDigits": 2,
+        "conversionRate": 5.79535
+      },
+      {
+        "quoteCurrency": "DOP",
+        "quoteCurrencyName": "Dominican Peso",
+        "fractionDigits": 2,
+        "conversionRate": 45.32332
+      },
+      {
+        "quoteCurrency": "DZD",
+        "quoteCurrencyName": "Algerian Dinar",
+        "fractionDigits": 2,
+        "conversionRate": 112.199
+      },
+      {
+        "quoteCurrency": "EGP",
+        "quoteCurrencyName": "Egyptian Pound",
+        "fractionDigits": 2,
+        "conversionRate": 8.542
+      },
+      {
+        "quoteCurrency": "FJD",
+        "quoteCurrencyName": "Fijian Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 2.29448
+      },
+      {
+        "quoteCurrency": "GEL",
+        "quoteCurrencyName": "Georgian Lari",
+        "fractionDigits": 2,
+        "conversionRate": 2.4261
+      },
+      {
+        "quoteCurrency": "GIP",
+        "quoteCurrencyName": "Gibraltar Pound",
+        "fractionDigits": 2,
+        "conversionRate": 0.694411
+      },
+      {
+        "quoteCurrency": "GTQ",
+        "quoteCurrencyName": "Guatemalan Quetzal",
+        "fractionDigits": 2,
+        "conversionRate": 7.69502
+      },
+      {
+        "quoteCurrency": "HKD",
+        "quoteCurrencyName": "Hong Kong Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 8.20439
+      },
+      {
+        "quoteCurrency": "HRK",
+        "quoteCurrencyName": "Kuna",
+        "fractionDigits": 2,
+        "conversionRate": 7.015916
+      },
+      {
+        "quoteCurrency": "HUF",
+        "quoteCurrencyName": "Hungarian Forint",
+        "fractionDigits": 2,
+        "conversionRate": 236.434
+      },
+      {
+        "quoteCurrency": "IDR",
+        "quoteCurrencyName": "Indonesian Rupiah",
+        "fractionDigits": 2,
+        "conversionRate": 14345.63
+      },
+      {
+        "quoteCurrency": "ILS",
+        "quoteCurrencyName": "Israeli New Sheqel",
+        "fractionDigits": 2,
+        "conversionRate": 3.70677
+      },
+      {
+        "quoteCurrency": "INR",
+        "quoteCurrencyName": "Indian Rupee",
+        "fractionDigits": 2,
+        "conversionRate": 62.1358
+      },
+      {
+        "quoteCurrency": "ISK",
+        "quoteCurrencyName": "Icelandic Króna",
+        "fractionDigits": 0,
+        "conversionRate": 132.796
+      },
+      {
+        "quoteCurrency": "JMD",
+        "quoteCurrencyName": "Jamaican Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 126.976
+      },
+      {
+        "quoteCurrency": "JOD",
+        "quoteCurrencyName": "Jordanian Dinar",
+        "fractionDigits": 3,
+        "conversionRate": 0.783554
+      },
+      {
+        "quoteCurrency": "KES",
+        "quoteCurrencyName": "Kenyan Shilling",
+        "fractionDigits": 2,
+        "conversionRate": 102.3219
+      },
+      {
+        "quoteCurrency": "KHR",
+        "quoteCurrencyName": "Cambodian Riel",
+        "fractionDigits": 2,
+        "conversionRate": 4039.505
+      },
+      {
+        "quoteCurrency": "KRW",
+        "quoteCurrencyName": "South Korean Won",
+        "fractionDigits": 0,
+        "conversionRate": 1197.17
+      },
+      {
+        "quoteCurrency": "KWD",
+        "quoteCurrencyName": "Kuwaiti Dinar",
+        "fractionDigits": 3,
+        "conversionRate": 0.349923
+      },
+      {
+        "quoteCurrency": "KYD",
+        "quoteCurrencyName": "Cayman Islands Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 0.8568
+      },
+      {
+        "quoteCurrency": "KZT",
+        "quoteCurrencyName": "Kazakhstani Tenge",
+        "fractionDigits": 2,
+        "conversionRate": 305.92297
+      },
+      {
+        "quoteCurrency": "LBP",
+        "quoteCurrencyName": "Lebanese Pound",
+        "fractionDigits": 2,
+        "conversionRate": 1599.55
+      },
+      {
+        "quoteCurrency": "LKR",
+        "quoteCurrencyName": "Sri Lankan Rupee",
+        "fractionDigits": 2,
+        "conversionRate": 141.629
+      },
+      {
+        "quoteCurrency": "MAD",
+        "quoteCurrencyName": "Moroccan Dirham",
+        "fractionDigits": 2,
+        "conversionRate": 10.2725
+      },
+      {
+        "quoteCurrency": "MDL",
+        "quoteCurrencyName": "Moldovan Leu",
+        "fractionDigits": 2,
+        "conversionRate": 19.96504
+      },
+      {
+        "quoteCurrency": "MKD",
+        "quoteCurrencyName": "Macedonian Denar",
+        "fractionDigits": 2,
+        "conversionRate": 57.25676
+      },
+      {
+        "quoteCurrency": "MRO",
+        "quoteCurrencyName": "Mauritanian Ouguiya",
+        "fractionDigits": 2,
+        "conversionRate": 332.78
+      },
+      {
+        "quoteCurrency": "MUR",
+        "quoteCurrencyName": "Mauritian Rupee",
+        "fractionDigits": 2,
+        "conversionRate": 36.0672
+      },
+      {
+        "quoteCurrency": "MWK",
+        "quoteCurrencyName": "Malawian Malawi Kwacha",
+        "fractionDigits": 2,
+        "conversionRate": 559.65
+      },
+      {
+        "quoteCurrency": "MXN",
+        "quoteCurrencyName": "Mexican Peso",
+        "fractionDigits": 2,
+        "conversionRate": 13.6846
+      },
+      {
+        "quoteCurrency": "MYR",
+        "quoteCurrencyName": "Malaysian Ringgit",
+        "fractionDigits": 2,
+        "conversionRate": 3.41139
+      },
+      {
+        "quoteCurrency": "UAH",
+        "quoteCurrencyName": "Ukrainian Hryvnia",
+        "fractionDigits": 2,
+        "conversionRate": 22.9792
+      },
+      {
+        "quoteCurrency": "NAD",
+        "quoteCurrencyName": "Namibian Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 14.199
+      },
+      {
+        "quoteCurrency": "NGN",
+        "quoteCurrencyName": "Nigerian Naira",
+        "fractionDigits": 2,
+        "conversionRate": 211.48
+      },
+      {
+        "quoteCurrency": "NOK",
+        "quoteCurrencyName": "Norwegian Krone",
+        "fractionDigits": 2,
+        "conversionRate": 6.31507
+      },
+      {
+        "quoteCurrency": "NPR",
+        "quoteCurrencyName": "Nepalese Rupee",
+        "fractionDigits": 2,
+        "conversionRate": 105.258096
+      },
+      {
+        "quoteCurrency": "NZD",
+        "quoteCurrencyName": "New Zealand Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.23883
+      },
+      {
+        "quoteCurrency": "OMR",
+        "quoteCurrencyName": "Omani Rial",
+        "fractionDigits": 3,
+        "conversionRate": 0.415114
+      },
+      {
+        "quoteCurrency": "PAB",
+        "quoteCurrencyName": "Panamanian Balboa",
+        "fractionDigits": 2,
+        "conversionRate": 1.03
+      },
+      {
+        "quoteCurrency": "PEN",
+        "quoteCurrencyName": "Peruvian Sol",
+        "fractionDigits": 2,
+        "conversionRate": 2.96037
+      },
+      {
+        "quoteCurrency": "PGK",
+        "quoteCurrencyName": "Papua New Guinean Kina",
+        "fractionDigits": 2,
+        "conversionRate": 2.977125
+      },
+      {
+        "quoteCurrency": "PHP",
+        "quoteCurrencyName": "Philippine Peso",
+        "fractionDigits": 2,
+        "conversionRate": 48.9095
+      },
+      {
+        "quoteCurrency": "PKR",
+        "quoteCurrencyName": "Pakistani Rupee",
+        "fractionDigits": 2,
+        "conversionRate": 110.793
+      },
+      {
+        "quoteCurrency": "PLN",
+        "quoteCurrencyName": "Polish Zloty",
+        "fractionDigits": 2,
+        "conversionRate": 3.24447
+      },
+      {
+        "quoteCurrency": "QAR",
+        "quoteCurrencyName": "Qatari Rial",
+        "fractionDigits": 2,
+        "conversionRate": 3.66903
+      },
+      {
+        "quoteCurrency": "RON",
+        "quoteCurrencyName": "Romanian Leu",
+        "fractionDigits": 2,
+        "conversionRate": 4.16755
+      },
+      {
+        "quoteCurrency": "RSD",
+        "quoteCurrencyName": "Serbian Dinar",
+        "fractionDigits": 2,
+        "conversionRate": 112.29458
+      },
+      {
+        "quoteCurrency": "RUB",
+        "quoteCurrencyName": "Russian Ruble",
+        "fractionDigits": 2,
+        "conversionRate": 36.4807
+      },
+      {
+        "quoteCurrency": "SAR",
+        "quoteCurrencyName": "Saudi Riyal",
+        "fractionDigits": 2,
+        "conversionRate": 3.9816
+      },
+      {
+        "quoteCurrency": "SCR",
+        "quoteCurrencyName": "Seychellois Rupee",
+        "fractionDigits": 2,
+        "conversionRate": 12.895913
+      },
+      {
+        "quoteCurrency": "SDG",
+        "quoteCurrencyName": "Sudanese Pound",
+        "fractionDigits": 2,
+        "conversionRate": 6.128138
+      },
+      {
+        "quoteCurrency": "SEK",
+        "quoteCurrencyName": "Swedish Krona",
+        "fractionDigits": 2,
+        "conversionRate": 7.03076
+      },
+      {
+        "quoteCurrency": "SGD",
+        "quoteCurrencyName": "Singapore Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 1.32557
+      },
+      {
+        "quoteCurrency": "THB",
+        "quoteCurrencyName": "Thai Baht",
+        "fractionDigits": 2,
+        "conversionRate": 37.5322
+      },
+      {
+        "quoteCurrency": "TND",
+        "quoteCurrencyName": "Tunisian Dinar",
+        "fractionDigits": 3,
+        "conversionRate": 2.05895
+      },
+      {
+        "quoteCurrency": "TRY",
+        "quoteCurrencyName": "Turkish Lira",
+        "fractionDigits": 2,
+        "conversionRate": 3.10157
+      },
+      {
+        "quoteCurrency": "TTD",
+        "quoteCurrencyName": "Trinidad and Tobago Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 6.76229
+      },
+      {
+        "quoteCurrency": "TWD",
+        "quoteCurrencyName": "New Taiwan Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 34.3309
+      },
+      {
+        "quoteCurrency": "TZS",
+        "quoteCurrencyName": "Tanzanian Shilling",
+        "fractionDigits": 2,
+        "conversionRate": 2148.6467
+      },
+      {
+        "quoteCurrency": "UYU",
+        "quoteCurrencyName": "Uruguayan Peso",
+        "fractionDigits": 2,
+        "conversionRate": 29.45396
+      },
+      {
+        "quoteCurrency": "UZS",
+        "quoteCurrencyName": "Uzbekistan Som",
+        "fractionDigits": 2,
+        "conversionRate": 2694.845
+      },
+      {
+        "quoteCurrency": "VEF",
+        "quoteCurrencyName": "Venezuelan Bolívar",
+        "fractionDigits": 2,
+        "conversionRate": 6.70801
+      },
+      {
+        "quoteCurrency": "VND",
+        "quoteCurrencyName": "Vietnamese Dong",
+        "fractionDigits": 0,
+        "conversionRate": 23660.73
+      },
+      {
+        "quoteCurrency": "XCD",
+        "quoteCurrencyName": "East Caribbean Dollar",
+        "fractionDigits": 2,
+        "conversionRate": 2.91318
+      },
+      {
+        "quoteCurrency": "XOF",
+        "quoteCurrencyName": "CFA Franc BCEAO",
+        "fractionDigits": 0,
+        "conversionRate": 619.189
+      },
+      {
+        "quoteCurrency": "ZAR",
+        "quoteCurrencyName": "South African Rand",
+        "fractionDigits": 2,
+        "conversionRate": 11.0252
+      }
+    ]
+  },
+  "shopper": {
+    "vaultedShopperId": 22868797,
+    "firstName": "aaa2",
+    "lastName": "bbb2",
+    "email": "two@two.com",
+    "country": "ca",
+    "state": "ON",
+    "address": "billing address2",
+    "city": "billing city2",
+    "zip": "123452",
+    "shopperCurrency": "USD",
+    "paymentSources": {
+      "creditCardInfo": [
+        {
+          "billingContactInfo": {
+            "firstName": "billingFirstName",
+            "lastName": "billingLastName",
+            "address1": "10 Main St",
+            "address2": "Apt 1",
+            "state": "MA",
+            "zip": "01752",
+            "country": "us"
+          },
+          "creditCard": {
+            "cardLastFourDigits": "1111",
+            "cardType": "VISA",
+            "cardSubType": "CREDIT",
+            "expirationMonth": "12",
+            "expirationYear": "2020"
+          },
+          "processingInfo": {
+            "cvvResponseCode": "ND",
+            "avsResponseCodeZip": "U",
+            "avsResponseCodeAddress": "U",
+            "avsResponseCodeName": "U"
+          }
+        }
+      ]
+    },
+    "shippingContactInfo": {
+      "firstName": "aaa2",
+      "lastName": "bbb2",
+      "address1": "shipping address2",
+      "city": "shipping city2",
+      "state": "NY",
+      "zip": "123452",
+      "country": "us"
+    },
+    "chosenPaymentMethod": {
+      "chosenPaymentMethodType": "CC",
+      "creditCard": {
+        "cardLastFourDigits": "1111",
+        "cardType": "VISA",
+        "cardSubType": "CREDIT",
+        "expirationMonth": "12",
+        "expirationYear": "2020"
+      }
+    }
+  },
+  "supportedPaymentMethods": {
+    "paymentMethods": [
+      "APPLE_PAY",
+      "CC",
+      "PAYPAL",
+      "WIRE",
+      "ECP",
+      "MONEYBOOKERS",
+      "BANKTRANSFER_COMMON",
+      "PAYSAFECARD"
+    ],
+    "paypalCurrencies": [
+      "EUR",
+      "CAD",
+      "USD",
+      "GBP"
+    ],
+    "creditCardBrands": [
+      "VISA",
+      "MASTERCARD",
+      "AMEX",
+      "DISCOVER",
+      "DINERS",
+      "CHINA_UNION_PAY",
+      "CARTE_BLEUE",
+      "CABAL",
+      "TARJETASHOPPING",
+      "NARANJA",
+      "CENCOSUD",
+      "HIPERCARD",
+      "ELO"
+    ],
+    "creditCardTypes": [
+      "CREDIT",
+      "DEBIT",
+      "PREPAID"
+    ],
+    "creditCardRegex": {
+      "ELO": "^(40117[8-9]|431274|438935|451416|457393|45763[1-2]|504175|506699|5067[0-6][0-9]|50677[0-8]|509[0-9][0-9][0-9]|636368|636369|636297|627780).*",
+      "HIPERCARD": "^(606282|637095).*",
+      "CENCOSUD": "^603493.*",
+      "NARANJA": "^589562.*",
+      "TARJETASHOPPING": "^(603488|(27995[0-9])).*",
+      "ARGENCARD": "^(501105).*",
+      "CABAL": "^((627170)|(589657)|(603522)|(604((20[1-9])|(2[1-9][0-9])|(3[0-9]{2})|(400)))).*",
+      "VISA": "^4.+",
+      "MASTERCARD": "^(5(([1-5])|(0[1-5]))|2(([2-6])|(7(1|20)))|6((0(0[2-9]|1[2-9]|2[6-9]|[3-5]))|(2((1(0|2|3|[5-9]))|20|7[0-9]|80))|(60|3(0|[3-9]))|(4[0-2]|[6-8]))).+",
+      "AMEX": "^3(24|4[0-9]|7|56904|379(41|12|13)).+",
+      "DISCOVER": "^(3[8-9]|(6((01(1|300))|4[4-9]|5))).+",
+      "DINERS": "^(3(0([0-5]|9|55)|6)).*",
+      "JCB": "^(2131|1800|35).*",
+      "CHINA_UNION_PAY": "(^62(([4-6]|8)[0-9]{13,16}|2[2-9][0-9]{12,15}))$",
+      "CARTE_BLEUE": "^((3(6[1-4]|77451))|(4(059(?!34)|150|201|561|562|533|556|97))|(5(0[1-4]|13|30066|341[0-1]|587[0-2]|6|8))|(6(27244|390|75[1-6]|799999998))).*"
+    }
+  }
+}

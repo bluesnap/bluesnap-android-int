@@ -11,21 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.views.activities.CreditCardActivity;
-import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
-import com.bluesnap.androidapi.views.components.BillingViewSummarizedComponent;
-import com.bluesnap.androidapi.views.components.ButtonComponent;
-import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
-import com.bluesnap.androidapi.views.components.ShippingViewSummarizedComponent;
+import com.bluesnap.androidapi.views.components.*;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -96,7 +91,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         // set Summarized Shipping details or hide Shipping View
         shippingViewSummarizedTextView = inflate.findViewById(R.id.shippingViewSummarizedTextView);
         shippingViewSummarizedComponent = inflate.findViewById(R.id.shippingViewSummarizedComponent);
-        final ShippingInfo shippingContactInfo = shopper.getShippingContactInfo();
+        final ShippingContactInfo shippingContactInfo = shopper.getShippingContactInfo();
         if (!sdkRequest.isShippingRequired()) {
             setVisibilityForShippingView(View.INVISIBLE);
         } else {

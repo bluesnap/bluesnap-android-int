@@ -3,14 +3,15 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import org.json.JSONObject;
 
-import com.google.gson.annotations.SerializedName;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 /**
  * Created by roy.biber on 12/11/2017.
  */
 
-public class BillingInfo extends ContactInfo implements Parcelable {
+public class BillingContactInfo extends ContactInfo implements Parcelable {
     public static final String BILLINGFIRSTNAME = "billingFirstName";
     public static final String BILLINGLASTNAME = "billingLastName";
     public static final String BILLINGCOUNTRY = "billingCountry";
@@ -21,31 +22,31 @@ public class BillingInfo extends ContactInfo implements Parcelable {
     public static final String EMAIL = "email";
 
     @Nullable
-    @SerializedName("email")
+    //@SerializedName("email")
     private String email;
 
-    protected BillingInfo(Parcel parcel) {
+    protected BillingContactInfo(Parcel parcel) {
         super(parcel);
         email = parcel.readString();
     }
 
-    public static final Creator<BillingInfo> CREATOR = new Creator<BillingInfo>() {
+    public static final Creator<BillingContactInfo> CREATOR = new Creator<BillingContactInfo>() {
         @Override
-        public BillingInfo createFromParcel(Parcel in) {
-            return new BillingInfo(in);
+        public BillingContactInfo createFromParcel(Parcel in) {
+            return new BillingContactInfo(in);
         }
 
         @Override
-        public BillingInfo[] newArray(int size) {
-            return new BillingInfo[size];
+        public BillingContactInfo[] newArray(int size) {
+            return new BillingContactInfo[size];
         }
     };
 
-    public BillingInfo() {
+    public BillingContactInfo() {
         super();
     }
 
-    public BillingInfo(ContactInfo contactInfo) {
+    public BillingContactInfo(ContactInfo contactInfo) {
         setFullName(contactInfo.getFullName());
         setAddress(contactInfo.getAddress());
         setAddress2(contactInfo.getAddress2());
@@ -53,6 +54,22 @@ public class BillingInfo extends ContactInfo implements Parcelable {
         setCity(contactInfo.getCity());
         setState(contactInfo.getState());
         setCountry(contactInfo.getCountry());
+    }
+
+    @Nullable
+    public static BillingContactInfo fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null)
+            return null;
+
+        ContactInfo contactInfo = ContactInfo.fromJson(jsonObject);
+        if (contactInfo == null) {
+            return null;
+        }
+        BillingContactInfo billingContactInfo = null;
+        billingContactInfo = new BillingContactInfo(contactInfo);
+        billingContactInfo.setEmail(getOptionalString(jsonObject, "email"));
+        return billingContactInfo;
+
     }
 
     public void writeToParcel(Parcel parcel, int flags) {

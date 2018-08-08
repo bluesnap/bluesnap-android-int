@@ -6,25 +6,37 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Looper;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.UiController;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
+import com.bluesnap.androidapi.services.AndroidUtil;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.text.NumberFormat;
 import java.util.Collection;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 
 public class TestUtils {
     public static Activity getCurrentActivity() {
@@ -78,6 +90,7 @@ public class TestUtils {
     public static Matcher<View> withCurrentTextColor(int color) {
         return withCurrentTextColor(is(color));
     }
+
 
     /**
      * @param resourceId
@@ -194,23 +207,95 @@ public class TestUtils {
         }
     }
 
-    public static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
 
+    public static Matcher<View> isViewFocused() {
         return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
 
             @Override
             public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
+//
+                return (view).isFocused();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("is-selected=true");
             }
         };
     }
+
+    public static String getText(final Matcher<View> matcher) {
+        final String[] stringHolder = {null};
+        onView(matcher).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isAssignableFrom(TextView.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "getting text from a TextView";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                if (view instanceof Button) {
+                    Button bv = (Button) view; //Save, because of check in getConstraints()
+                    stringHolder[0] = bv.getText().toString();
+                } else {
+                    TextView tv = (TextView) view; //Save, because of check in getConstraints()
+                    stringHolder[0] = tv.getText().toString();
+                }
+            }
+        });
+        return stringHolder[0];
+    }
+
+    public static String getStringFormatAmount(String text, String currencyNameCode, Double amount) {
+        return String.format("%s %s %s",
+                text,
+                AndroidUtil.getCurrencySymbol(currencyNameCode),
+                AndroidUtil.getDecimalFormat().format(amount)
+        );
+    }
+
+    public static void continue_to_shipping_or_pay_in_new_card(String country, boolean fullInfo, boolean withEmail) {
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
+
+        onView(withId(R.id.buyNowButton)).perform(click());
+    }
+
+    public static void go_back_to_billing_in_new_card() {
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+    }
+
+    public static void go_back_to_credit_card_in_returning_shopper(boolean useDoneButton, int buttonComponentResourceId) {
+        if (useDoneButton)
+            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponentResourceId)))).perform(click());
+
+        else {
+            Espresso.closeSoftKeyboard();
+            Espresso.pressBack();
+        }
+    }
+
+    public static double round_amount(double amount) {
+        return Math.round(amount * 100.0) / 100.0;
+    }
+
+    public static String get_amount_in_string(NumberFormat df, double amount) {
+        return df.format(amount);
+    }
+
+    private void checkViewVisibility(int viewResourceId, boolean isVisible) {
+        if (isVisible)
+            onView(withId(viewResourceId)).check(matches(ViewMatchers.isDisplayed()));
+        else
+            onView(withId(viewResourceId)).check(matches(not(ViewMatchers.isDisplayed())));
+
+    }
+
 
 }
