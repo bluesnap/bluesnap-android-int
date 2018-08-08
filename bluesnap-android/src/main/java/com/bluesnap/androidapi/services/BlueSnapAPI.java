@@ -31,6 +31,7 @@ class BlueSnapAPI {
     private static final String BASE_CURRENCY = "?base-currency=";
     private static final String SUPPORTED_PAYMENT_METHODS = "tokenized-services/supported-payment-methods";
     private static final String SDK_INIT = "tokenized-services/sdk-init";
+    private static final String UPDATE_SHOPPER = "tokenized-services/shopper";
     private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
@@ -68,6 +69,20 @@ class BlueSnapAPI {
         ByteArrayEntity entity = new ByteArrayEntity(jsonObject.toString().getBytes("UTF-8"));
         entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
         httpClient.put(null, url + CARD_TOKENIZE + merchantToken, entity, "application/json", responseHandler);
+    }
+
+    /**
+     * update shopper details to server
+     *
+     * @param jsonObject      - details to set
+     * @param responseHandler
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
+    void updateShopper(JSONObject jsonObject, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        ByteArrayEntity entity = new ByteArrayEntity(jsonObject.toString().getBytes("UTF-8"));
+        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+        httpClient.put(null, url + UPDATE_SHOPPER, entity, "application/json", responseHandler);
     }
 
     /**

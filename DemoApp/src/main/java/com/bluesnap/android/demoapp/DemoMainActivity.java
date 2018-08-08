@@ -282,7 +282,7 @@ public class DemoMainActivity extends AppCompatActivity {
         readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
         Double taxAmount = 0D;
         // You can set the Amouut solely
-        SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), taxAmount, billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+        SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
 
 //        // Or you can set the Amount with tax, this will override setAmount()
 //        // The total purchase amount will be the sum of both numbers

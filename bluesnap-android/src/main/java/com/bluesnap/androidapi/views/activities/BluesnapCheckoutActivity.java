@@ -46,11 +46,11 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";
-    private ProgressBar progressBar;
-    private SdkRequest sdkRequest;
-    private SDKConfiguration sdkConfiguration;
-    private OneLineCCViewAdapter oneLineCCViewAdapter;
-    private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    protected ProgressBar progressBar;
+    protected SdkRequest sdkRequest;
+    protected SDKConfiguration sdkConfiguration;
+    protected OneLineCCViewAdapter oneLineCCViewAdapter;
+    protected final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,16 +90,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             payPalButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    String payPalToken = BlueSnapService.getPayPalToken();
-                    if ("".equals(payPalToken)) {
-                        Log.d(TAG, "create payPalToken");
-                        startPayPal();
-                    } else {
-                        Log.d(TAG, "startWebViewActivity");
-                        startWebViewActivity(payPalToken);
-                    }
-
+                    startPayPalActivityForResult();
                 }
             });
         }
@@ -119,21 +110,35 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * @param intentExtraName  - The name of the extra data, with package prefix.
      * @param intentExtravalue -  The String data value.
      */
-    private void startCreditCardActivityForResult(String intentExtraName, String intentExtravalue) {
+    protected void startCreditCardActivityForResult(String intentExtraName, String intentExtravalue) {
         Intent intent = new Intent(getApplicationContext(), CreditCardActivity.class);
         intent.putExtra(intentExtraName, intentExtravalue);
         startActivityForResult(intent, CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE);
     }
 
     /**
+     * start PayPal Activity For Result
+     */
+    protected void startPayPalActivityForResult() {
+        String payPalToken = BlueSnapService.getPayPalToken();
+        if ("".equals(payPalToken)) {
+            Log.d(TAG, "create payPalToken");
+            startPayPal();
+        } else {
+            Log.d(TAG, "startWebViewActivity");
+            startWebViewActivity(payPalToken);
+        }
+    }
+
+    /**
      * gets Shopper from SDK configuration and populate returning shopper cards (from populateFromCard function) or create a new shopper if shopper object does not exists
      */
-    private void loadShopperFromSDKConfiguration() {
+    protected void loadShopperFromSDKConfiguration() {
         final Shopper shopper = sdkConfiguration.getShopper();
         updateShopperCCViews(shopper);
     }
 
-    private void updateShopperCCViews(@NonNull final Shopper shopper) {
+    protected void updateShopperCCViews(@NonNull final Shopper shopper) {
         if (null == shopper.getPreviousPaymentSources() || null == shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
             Log.d(TAG, "Existing shopper contains no previous paymentSources or Previous card info");
             return;
@@ -172,7 +177,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      *
      * @return boolean
      */
-    private boolean verifySDKRequest() {
+    protected boolean verifySDKRequest() {
         if (sdkRequest == null) {
             Log.e(TAG, "sdkrequest is null");
 
@@ -195,7 +200,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * start PayPal
      * createsPayPal Token and redirects to Web View Activity
      */
-    private void startPayPal() {
+    protected void startPayPal() {
         startPayPal(sdkRequest.getPriceDetails());
     }
 
@@ -205,7 +210,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      *
      * @param priceDetails {@link PriceDetails}
      */
-    private void startPayPal(final PriceDetails priceDetails) {
+    protected void startPayPal(final PriceDetails priceDetails) {
         progressBar.setVisibility(View.VISIBLE);
         BlueSnapService.getInstance().createPayPalToken(priceDetails.getAmount(), priceDetails.getCurrencyCode(), new BluesnapServiceCallback() {
             @Override
@@ -292,7 +297,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      *
      * @param payPalUrl - received from createPayPalToken {@link com.bluesnap.androidapi.services.BlueSnapAPI}
      */
-    private void startWebViewActivity(String payPalUrl) {
+    protected void startWebViewActivity(String payPalUrl) {
         Intent newIntent;
         newIntent = new Intent(getApplicationContext(), WebViewActivity.class);
         // Todo change paypal header name to merchant name from payment request

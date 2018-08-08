@@ -17,49 +17,50 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:orientation="horizontal"
             android:paddingBottom="0dp"
-            android:paddingTop="20dp"
-            android:paddingHorizontal="20dp"
-            android:orientation="horizontal">
+            android:paddingTop="20dp">
 
             <Switch
                 android:id="@+id/returningShopperSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:padding="8dp"
-                android:allowUndo="true"
                 android:checked="false"
                 android:clickable="true"
                 android:enabled="true"
+                android:focusable="true"
+                android:padding="8dp"
                 android:text="@string/existing_shopper"
                 android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/shopperIdLabel"
-                android:text="@string/shopper_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:gravity="center"
+                android:text="@string/shopper_id"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
+
             <EditText
                 android:id="@+id/returningShopperEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:hint="12345678"
+                android:layout_marginEnd="10dp"
+                android:hint="@string/_12345678"
                 android:inputType="numberDecimal"
-                android:text="22061813" />
+                android:text="@string/_22061813" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/shopperDetailsTextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:hint="@string/returning_shopper_details"
-            android:layout_marginBottom="10dp"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TableLayout
@@ -93,17 +94,18 @@
                     android:id="@+id/merchantStoreCurrencyText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@android:color/transparent"
                     android:gravity="center"
-                    android:hint="Merchant Store Currency"
+                    android:hint="@string/merchant_store_currency"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <Spinner
                     android:id="@+id/merchantStoreCurrencySpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="10dp" />
+                    android:paddingEnd="10dp"
+                    android:paddingStart="0dp" />
 
             </TableRow>
 
@@ -130,10 +132,10 @@
                     android:id="@+id/currencySym"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="0.3"
                     android:gravity="center_vertical|end"
-                    android:hint="$"
+                    android:hint="@string/_dollar_sign"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <EditText
@@ -141,32 +143,36 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="0.5"
                     android:background="@android:color/transparent"
-                    android:hint="0"
+                    android:hint="@string/_0"
                     android:inputType="numberDecimal"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <TextView
-                    android:id="@+id/currencyText"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="Currency"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <android.support.v7.widget.LinearLayoutCompat android:id="@+id/rateSpinnerLayout"
-
-                    >
+                    <TextView
+                        android:id="@+id/currencyText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/currency"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <Spinner
                         android:id="@+id/rateSpinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp" />
+                        android:layout_marginEnd="10dp" />
 
-                </android.support.v7.widget.LinearLayoutCompat>
+                </LinearLayout>
 
             </TableRow>
 
@@ -182,102 +188,110 @@
                     android:layout_weight="1"
                     android:background="@drawable/line"></LinearLayout>
             </TableRow>
-
-            <!--TableRow
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="0dp"
-                android:padding="0dp">
-
-                <TextView
-                    android:id="@+id/taxSym1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="0.3"
-                    android:gravity="center_vertical|right"
-                    android:hint="Tax%"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                <EditText
-                    android:id="@+id/demoTaxEditText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="0.5"
-                    android:background="@android:color/transparent"
-                    android:hint="0"
-                    android:inputType="numberDecimal"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-
-            </TableRow-->
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="2dp"
-                android:clickable="false">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0.86dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/line"></LinearLayout>
-            </TableRow>
         </TableLayout>
 
 
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/switchesLinearLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="0dp"
-        android:paddingTop="30dp"
-        android:paddingHorizontal="30dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Switch
-            android:id="@+id/shippingSwitch"
-            android:layout_width="wrap_content"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/switchesLinearLayout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="8dp"
-            android:allowUndo="true"
-            android:checked="false"
-            android:clickable="true"
-            android:enabled="true"
-            android:text="@string/shipping"
-            android:textSize="14sp" />
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="0dp"
+            android:paddingTop="30dp">
 
-        <Switch
-            android:id="@+id/billingSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="8dp"
-            android:allowUndo="true"
-            android:checked="false"
-            android:clickable="true"
-            android:enabled="true"
-            android:text="@string/billing"
-            android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <Switch
-            android:id="@+id/emailSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="8dp"
-            android:allowUndo="true"
-            android:checked="false"
-            android:clickable="true"
-            android:enabled="true"
-            android:text="@string/emailField"
-            android:textSize="14sp" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/shippingSwitchLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:text="@string/shipping"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <Switch
+                    android:id="@+id/shippingSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/billingSwitchLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:text="@string/billing"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <Switch
+                    android:id="@+id/billingSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="8dp" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/emailSwitchLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:text="@string/emailField"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <Switch
+                    android:id="@+id/emailSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="8dp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <Switch
             android:id="@+id/allowCurrencyChangeSwitch"
@@ -285,18 +299,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
-            android:allowUndo="true"
             android:checked="false"
             android:clickable="true"
             android:enabled="true"
+            android:focusable="true"
             android:text="@string/allow_currency_change"
             android:textSize="14sp" />
 
         <ZoomButton
             android:id="@+id/merchantAppSubmitButton"
             android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:layout_weight="0.11"
@@ -304,7 +317,7 @@
             android:baselineAlignBottom="false"
             android:onClick="onPaySubmit"
             android:src="@drawable/chekout_btn"
-            android:text="Pay Now with BlueSnap" />
+            android:text="@string/pay_now_with_bluesnap" />
 
     </LinearLayout>
 
@@ -314,20 +327,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="-20dp"
-        android:layout_marginRight="-20dp"
+        android:layout_alignParentEnd="true"
         android:layout_gravity="bottom|center_vertical"
-        android:background="@drawable/logo_poweredby_bluesnap" />
+        android:layout_marginBottom="-20dp"
+        android:layout_marginEnd="-20dp"
+        android:background="@drawable/logo_poweredby_bluesnap"
+        android:contentDescription="@string/todo" />
 
     <TextView
         android:id="@+id/demoVersionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_gravity="bottom|left"
-        android:text="version" />
+        android:layout_alignParentStart="true"
+        android:layout_gravity="bottom|start"
+        android:layout_toStartOf="@+id/imageButton2"
+        android:text="@string/version" />
 
     <TextView
         android:id="@+id/paymentResultTextView"

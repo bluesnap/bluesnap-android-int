@@ -16,5 +16,14 @@
     <string name="returning_shopper_details">Returning shopper details</string>
     <string name="existing_shopper">Existing Shopper</string>
     <string name="shopper_id">ID</string>
+    <string name="_12345678">12345678</string>
+    <string name="_22061813">22061813</string>
+    <string name="merchant_store_currency">Merchant Store Currency</string>
+    <string name="_dollar_sign">$</string>
+    <string name="_0">0</string>
+    <string name="currency">Currency</string>
+    <string name="pay_now_with_bluesnap">Pay Now with BlueSnap</string>
+    <string name="version">version</string>
+    <string name="todo">TODO</string>
 
 </resources>

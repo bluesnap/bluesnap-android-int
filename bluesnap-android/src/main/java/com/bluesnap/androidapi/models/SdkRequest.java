@@ -14,6 +14,8 @@ public class SdkRequest {
     private ShopperInfoConfig shopperInfoConfig = new ShopperInfoConfig(false, false, false);
     private TaxCalculator taxCalculator;
 
+    private boolean shopperConfig = false;
+
     private SdkRequest() {
     }
 
@@ -25,6 +27,13 @@ public class SdkRequest {
 
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
         shopperInfoConfig = new ShopperInfoConfig(shippingRequired, billingRequired, emailRequired);
+    }
+
+    public SdkRequest(boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
+
+        priceDetails = new PriceDetails(0D, SupportedPaymentMethods.USD, 0D);
+        shopperInfoConfig = new ShopperInfoConfig(shippingRequired, billingRequired, emailRequired);
+        shopperConfig = true;
     }
 
     public PriceDetails getPriceDetails() {
@@ -53,6 +62,9 @@ public class SdkRequest {
         this.taxCalculator = taxCalculator;
     }
 
+    public ShopperInfoConfig getShopperInfoConfig() {
+        return shopperInfoConfig;
+    }
 
     public boolean isShippingRequired() {
         return shopperInfoConfig.isShippingRequired();
@@ -66,4 +78,7 @@ public class SdkRequest {
         return shopperInfoConfig.isEmailRequired();
     }
 
+    public boolean isShopperConfig() {
+        return shopperConfig;
+    }
 }

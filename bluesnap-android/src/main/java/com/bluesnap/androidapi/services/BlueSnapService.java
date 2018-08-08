@@ -166,6 +166,19 @@ public class BlueSnapService {
     }
 
     /**
+     * Update shopper details on the BlueSnap Server
+     *
+     * @param shopperConfiguration {@link ShopperConfiguration}
+     * @param responseHandler      {@link AsyncHttpResponseHandler}
+     * @throws JSONException                in case of invalid JSON object (should not happen)
+     * @throws UnsupportedEncodingException should not happen
+     */
+    public void submitUpdatedShopperDetails(ShopperConfiguration shopperConfiguration, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "update Shopper on token " + bluesnapToken.toString());
+        blueSnapAPI.updateShopper(BlueSnapJSON.convertShopperObject2JSON(), responseHandler);
+    }
+
+    /**
      * check Credit Card Number In Server
      *
      * @param creditCardNumber - credit Card Number String {@link CreditCard}
@@ -685,6 +698,11 @@ public class BlueSnapService {
             res = new ShopperConfiguration(billingInfo, shippingInfo, chosenPaymentMethod);
         }
         return res;
+    }
+
+    @Nullable
+    protected String getKountSessionId() {
+        return kountService.getKountSessionId();
     }
 
     private interface AfterNewTokenCreatedAction {
