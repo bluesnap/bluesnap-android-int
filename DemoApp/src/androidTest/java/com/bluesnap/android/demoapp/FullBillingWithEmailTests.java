@@ -2,15 +2,11 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -34,7 +30,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_with_email_test() throws IOException {
+    public void full_billing_with_email_test() {
         new_credit_card_info_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
         new_credit_billing_contact_info_error_messages_validation();
@@ -48,7 +44,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_with_email_test_inputs() throws IOException {
+    public void full_billing_with_email_test_inputs() {
         name_invalid_error_validation_in_billing();
         new_credit_card_info_error_messages_validation();
         name_invalid_error_validation_using_ime_button_in_billing();

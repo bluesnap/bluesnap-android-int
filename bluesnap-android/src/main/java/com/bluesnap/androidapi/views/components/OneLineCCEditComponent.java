@@ -12,30 +12,18 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
-import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BlueSnapValidator;
-import com.bluesnap.androidapi.services.BluesnapAlertDialog;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.loopj.android.http.TextHttpResponseHandler;
-
+import com.bluesnap.androidapi.services.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-
-import cz.msebera.android.httpclient.Header;
+import java.net.HttpURLConnection;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -249,7 +237,7 @@ public class OneLineCCEditComponent extends LinearLayout {
         if (number.length() < 4) {
             return number;
         } else {
-            return number.substring(number.length() - 4, number.length());
+            return number.substring(number.length() - 4);
         }
     }
 
@@ -420,27 +408,31 @@ public class OneLineCCEditComponent extends LinearLayout {
     private void submitCCNumber() {
         final BlueSnapService blueSnapService = BlueSnapService.getInstance();
 
-        try {
-            blueSnapService.submitTokenizedCCNumber(newCreditCard.getNumber(), new TextHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                    try {
-                        JSONObject response = new JSONObject(responseString);
-                        String ccType = response.getString("ccType");
-                        if (!ccType.equals(newCreditCard.getCardType()))
-                            changeCardEditTextDrawable(ccType);
-                    } catch (NullPointerException | JSONException e) {
-                        String errorMsg = String.format("Service Error %s", e.getMessage());
-                        Log.e(TAG, errorMsg, e);
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                    if (statusCode == 400 && null != blueSnapService.getTokenProvider() && !"".equals(responseString)) {
+        blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BlueSnapHTTPResponse response = blueSnapService.submitTokenizedCCNumber(newCreditCard.getNumber());
+                    if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         try {
-                            JSONObject errorResponse = new JSONObject(responseString);
+                            JSONObject jsonObject = new JSONObject(response.getResponseString());
+                            final String ccType = jsonObject.getString("ccType");
+                            if (!ccType.equals(newCreditCard.getCardType()))
+                                post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        changeCardEditTextDrawable(ccType);
+                                    }
+                                });
+
+                        } catch (NullPointerException | JSONException e) {
+                            String errorMsg = String.format("Service Error %s", e.getMessage());
+                            Log.e(TAG, errorMsg, e);
+                        }
+                        //TODO check response on 400 , may be error response here
+                    } else if (response.getResponseCode() == 400 && null != blueSnapService.getTokenProvider() && !"".equals(response.getResponseString())) {
+                        try {
+                            JSONObject errorResponse = new JSONObject(response.getResponseString());
                             JSONArray rs2 = (JSONArray) errorResponse.get("message");
                             JSONObject rs3 = (JSONObject) rs2.get(0);
                             if ("EXPIRED_TOKEN".equals(rs3.get("errorName"))) {
@@ -453,25 +445,32 @@ public class OneLineCCEditComponent extends LinearLayout {
                                 });
                             } else if ("CARD_TYPE_NOT_SUPPORTED".equals(rs3.get("errorName"))) {
                                 BluesnapAlertDialog.setDialog(getContext(), rs3.get("description").toString(), "CARD NOT SUPPORTED");
-                                changeInputColorAndErrorVisibility(creditCardNumberEditText, creditCardNumberErrorTextView, false);
+                                post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        changeInputColorAndErrorVisibility(creditCardNumberEditText, creditCardNumberErrorTextView, false);
+                                    }
+                                });
+
                             } else {
-                                String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
-                                Log.e(TAG, errorMsg, throwable);
+                                String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+                                Log.e(TAG, errorMsg);
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "json parsing exception", e);
                         }
                     } else {
-                        String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
-                        Log.e(TAG, errorMsg, throwable);
+                        String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+                        Log.e(TAG, errorMsg);
                     }
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "json parsing exception", e);
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "Unsupported Encoding Exception", e);
                 }
-            });
-        } catch (JSONException e) {
-            Log.e(TAG, "json parsing exception", e);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "Unsupported Encoding Exception", e);
-        }
+            }
+        });
     }
 
 }

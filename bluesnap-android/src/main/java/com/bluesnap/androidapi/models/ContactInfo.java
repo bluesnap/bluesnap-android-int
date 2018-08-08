@@ -3,9 +3,10 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-
 import com.bluesnap.androidapi.services.AndroidUtil;
-import com.google.gson.annotations.SerializedName;
+import org.json.JSONObject;
+
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 
 /**
@@ -14,27 +15,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class ContactInfo implements Parcelable {
 
-    @SerializedName("firstName")
+    //@SerializedName("firstName")
     private String firstName;
-    @SerializedName("lastName")
+    //@SerializedName("lastName")
     private String lastName;
     @Nullable
-    @SerializedName("address1")
+    //@SerializedName("address1")
     private String address;
     @Nullable
-    @SerializedName("address2")
+    //@SerializedName("address2")
     private String address2;
     @Nullable
-    @SerializedName("city")
+    //@SerializedName("city")
     private String city;
     @Nullable
-    @SerializedName("state")
+    //@SerializedName("state")
     private String state;
     @Nullable
-    @SerializedName("zip")
+    //@SerializedName("zip")
     private String zip;
     @Nullable
-    @SerializedName("country")
+    //@SerializedName("country")
     private String country;
 
     public ContactInfo() {
@@ -198,5 +199,23 @@ public class ContactInfo implements Parcelable {
         state = parcel.readString();
         zip = parcel.readString();
         country = parcel.readString();
+    }
+
+    @Nullable
+    public static ContactInfo fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null)
+            return null;
+
+        ContactInfo contactInfo = new ContactInfo();
+        contactInfo.setFirstName(getOptionalString(jsonObject, "firstName"));
+        contactInfo.setLastName(getOptionalString(jsonObject, "lastName"));
+        contactInfo.setAddress(getOptionalString(jsonObject, "address1"));
+        contactInfo.setAddress2(getOptionalString(jsonObject, "address2"));
+        contactInfo.setState(getOptionalString(jsonObject, "state"));
+        contactInfo.setZip(getOptionalString(jsonObject, "zip"));
+        contactInfo.setCountry(getOptionalString(jsonObject, "country"));
+//        contactInfo.setEmail(getOptionalString(jsonObject,"email"));
+        contactInfo.setCity(getOptionalString(jsonObject, "city"));
+        return contactInfo;
     }
 }

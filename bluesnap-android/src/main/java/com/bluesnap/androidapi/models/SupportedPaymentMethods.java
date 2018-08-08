@@ -1,12 +1,7 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import com.google.gson.annotations.SerializedName;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -18,23 +13,23 @@ import java.util.LinkedHashMap;
 
 
 //TODO: join cardtype class with this class or conjoin or something
-public class SupportedPaymentMethods {
+public class SupportedPaymentMethods extends BSModel {
     private static final String TAG = SupportedPaymentMethods.class.getSimpleName();
 
     public static final String PAYPAL = "PAYPAL";
     public static final String CC = "CC";
     public static final String USD = "USD";
 
-    @SerializedName("paymentMethods")
+    //@SerializedName("paymentMethods")
     private ArrayList<String> paymentMethods;
     @Nullable
-    @SerializedName("paypalCurrencies")
+    //@SerializedName("paypalCurrencies")
     private ArrayList<String> paypalCurrencies;
-    @SerializedName("creditCardBrands")
+    //@SerializedName("creditCardBrands")
     private ArrayList<String> creditCardBrands;
-    @SerializedName("creditCardTypes")
+    //@SerializedName("creditCardTypes")
     private ArrayList<String> creditCardTypes;
-    @SerializedName("creditCardRegex")
+    //@SerializedName("creditCardRegex")
     private LinkedHashMap<String, String> creditCardRegex;
 
     public ArrayList<String> getPaymentMethods() {
@@ -89,4 +84,14 @@ public class SupportedPaymentMethods {
         }
         return res;
     }
+
+
+    @NonNull
+    @Override
+    public JSONObject toJson() {
+        return null;
+    }
+
+
+
 }

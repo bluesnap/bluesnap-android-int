@@ -9,15 +9,12 @@ import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.view.View;
-
 import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.loopj.android.http.SyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
-
 import junit.framework.Assert;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.After;
@@ -28,27 +25,14 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import cz.msebera.android.httpclient.Header;
-
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.containsString;
 
 /**
@@ -290,31 +274,20 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
 
             @Override
             public void onServiceFailure() {
-                Log.d(TAG, "Cannot obtain shopper info from merchant server");
+                fail("Cannot obtain shopper info from merchant server");
             }
         });
     }
 
     private void get_shopper_service(final GetShopperServiceInterface getShopperServiceInterface) {
-        final SyncHttpClient httpClient = new SyncHttpClient();
-        httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
-        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        //httpClient.addHeader("Token-Authentication", merchantToken);
-
-        httpClient.get(SANDBOX_URL + SANDBOX_GET_SHOPPER + shopperId, new TextHttpResponseHandler() {
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d(TAG, responseString, throwable);
-                getShopperServiceInterface.onServiceFailure();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                getShopperResponse = responseString;
-                getShopperServiceInterface.onServiceSuccess();
-            }
-        });
+        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_GET_SHOPPER + shopperId, "application/json", "application/json", sahdboxHttpHeaders);
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+            getShopperResponse = response.getResponseString();
+            getShopperServiceInterface.onServiceSuccess();
+        } else {
+            Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
+            getShopperServiceInterface.onServiceFailure();
+        }
     }
 
     //TODO: add validation that the new credit card info has been saved correctly
@@ -359,12 +332,19 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     }
 
     private void check_if_field_identify(boolean isBillingInfo, String fieldName, String expectedResult) {
-        String shopperInfo = (isBillingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
-                ("<vaulted-shopper-id>").length(), getShopperResponse.indexOf("<payment-sources>")) :
-                getShopperResponse.substring(getShopperResponse.indexOf("<shipping-contact-info>") +
-                        ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
-        String fieldContent = shopperInfo.substring(shopperInfo.indexOf("<" + fieldName + ">") +
-                ("<" + fieldName + ">").length(), shopperInfo.indexOf("</" + fieldName + ">"));
+        String fieldContent = null;
+        try {
+            String shopperInfo = (isBillingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
+                    ("<vaulted-shopper-id>").length(), getShopperResponse.indexOf("<payment-sources>")) :
+                    getShopperResponse.substring(getShopperResponse.indexOf("<shipping-contact-info>") +
+                            ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
+            fieldContent = shopperInfo.substring(shopperInfo.indexOf("<" + fieldName + ">") +
+                    ("<" + fieldName + ">").length(), shopperInfo.indexOf("</" + fieldName + ">"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("missing field in server response:\n Expected fieldName: " + fieldName + " Expected Value:" + expectedResult + "\n" + getShopperResponse);
+        }
+
         Assert.assertEquals(fieldName + "was not saved correctly in DataBase", fieldContent, expectedResult);
     }
 }

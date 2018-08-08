@@ -1,20 +1,19 @@
 package com.bluesnap.android.demoapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
-import com.bluesnap.androidapi.models.BillingInfo;
+import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
@@ -22,7 +21,7 @@ import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import java.text.DecimalFormat;
 
 
-public class PostPaymentActivity extends Activity {
+public class PostPaymentActivity extends AppCompatActivity {
 
     private static final String TAG = PostPaymentActivity.class.getSimpleName();
     private TextView continueShippingView;
@@ -36,9 +35,9 @@ public class PostPaymentActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_payment);
-        SdkResult sdkResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
-        ShippingInfo shippingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
-        BillingInfo billingInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        final SdkResult sdkResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+        ShippingContactInfo shippingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+        BillingContactInfo billingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         TextView paymentResultTextView2
                 = (TextView) findViewById(R.id.paymentResultTextView2);
         continueShippingView = (TextView) findViewById(R.id.continueShippingButton);
@@ -63,20 +62,42 @@ public class PostPaymentActivity extends Activity {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
                 //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
             } else {
-                //setDialog(sdkResult.toString() + "\n" + shippingInfo + "\n" + billingInfo, "Payment Result");
-                transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
+                //setDialog(sdkResult.toString() + "\n" + shippingContactInfo + "\n" + billingContactInfo, "Payment Result");
+                MainApplication.mainHandler.post(new Runnable() {
                     @Override
-                    public void onSuccess() {
-                        setContinueButton(transactions.getMessage(), transactions.getTitle());
+                    public void run() {
+                        checkMerchantTX(sdkResult);
                     }
+                });
 
+
+            }
+        }
+    }
+
+    private void checkMerchantTX(SdkResult sdkResult) {
+        transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onFailure() {
+                    public void run() {
                         setContinueButton(transactions.getMessage(), transactions.getTitle());
                     }
                 });
             }
-        }
+
+            @Override
+            public void onFailure() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setContinueButton(transactions.getMessage(), transactions.getTitle());
+                    }
+                });
+
+            }
+        });
     }
 
 

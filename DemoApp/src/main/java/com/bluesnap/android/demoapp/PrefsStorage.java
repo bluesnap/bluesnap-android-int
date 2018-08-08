@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +17,6 @@ import java.util.Map;
 public class PrefsStorage {
 
     private static final String BLUESNAP_SHAREDPREFS_NAME = "BSNPSHAREDPREFS";
-    private static final Gson gson = new Gson();
     private static SharedPreferences preferences;
 
     public PrefsStorage(Context context) {
@@ -155,27 +152,7 @@ public class PrefsStorage {
     }
 
 
-    // Put methods
 
-    public ArrayList<Object> getListObject(String key, Class<?> mClass) {
-        Gson gson = new Gson();
-
-        ArrayList<String> objStrings = getListString(key);
-        ArrayList<Object> objects = new ArrayList<>();
-
-        for (String jObjString : objStrings) {
-            Object value = gson.fromJson(jObjString, mClass);
-            objects.add(value);
-        }
-        return objects;
-    }
-
-    public Object getObject(String key, Class<?> classOfT) {
-
-        String json = getString(key);
-        Object value = new Gson().fromJson(json, classOfT);
-        return value;
-    }
 
     /**
      * Put int value into SharedPreferences with 'key' and save
@@ -301,25 +278,7 @@ public class PrefsStorage {
         putListString(key, newList);
     }
 
-    /**
-     * Put ObJect any type into SharedPrefrences with 'key' and save
-     *
-     * @param key SharedPreferences key
-     * @param obj is the Object you want to put
-     */
-    public void putObject(String key, Object obj) {
-        checkForNullKey(key);
-        putString(key, gson.toJson(obj));
-    }
 
-    public void putListObject(String key, ArrayList<Object> objArray) {
-        checkForNullKey(key);
-        ArrayList<String> objStrings = new ArrayList<>();
-        for (Object obj : objArray) {
-            objStrings.add(gson.toJson(obj));
-        }
-        putListString(key, objStrings);
-    }
 
     /**
      * Remove SharedPreferences item with 'key'

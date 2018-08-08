@@ -7,9 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -85,9 +84,9 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
      * get Credit Card Info from
      * {@link ShippingViewComponent}
      *
-     * @return {@link ShippingInfo}
+     * @return {@link ShippingContactInfo}
      */
-    public ShippingInfo getViewResourceDetails() {
+    public ShippingContactInfo getViewResourceDetails() {
         return shippingViewComponent.getViewResourceDetails();
     }
 

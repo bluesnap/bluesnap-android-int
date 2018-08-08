@@ -5,36 +5,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.CreditCard;
-import com.bluesnap.androidapi.models.CreditCardTypeResolver;
-import com.bluesnap.androidapi.models.Currency;
-import com.bluesnap.androidapi.models.PriceDetails;
-import com.bluesnap.androidapi.models.PurchaseDetails;
-import com.bluesnap.androidapi.models.Rates;
-import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.ShippingInfo;
-import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.google.gson.Gson;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.TextHttpResponseHandler;
-
+import com.bluesnap.androidapi.http.AppExecutors;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.utils.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Core BlueSnap Service class that handles network and maintains {@link SdkRequest}
@@ -54,6 +39,8 @@ public class BlueSnapService {
     private BluesnapServiceCallback bluesnapServiceCallback;
     private SDKConfiguration sDKConfiguration;
     private TokenProvider tokenProvider;
+    private AppExecutors appExecutors;
+
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -124,7 +111,7 @@ public class BlueSnapService {
         clearPayPalToken();
         sdkInit(merchantStoreCurrency, context, callback);
 
-        Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
+        Log.d(TAG, "Service setup with token" + merchantToken.substring(merchantToken.length() - 5));
     }
 
     /**
@@ -154,7 +141,7 @@ public class BlueSnapService {
         // after expired token is replaced - placing new token in payment result
         if (null != sdkResult)
             sdkResult.setToken(merchantToken);
-        Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5, merchantToken.length()));
+        Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5));
 
     }
 
@@ -166,28 +153,26 @@ public class BlueSnapService {
      * check Credit Card Number In Server
      *
      * @param creditCardNumber - credit Card Number String {@link CreditCard}
-     * @param responseHandler  {@link AsyncHttpResponseHandler}
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
-    public void submitTokenizedCCNumber(String creditCardNumber, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public BlueSnapHTTPResponse submitTokenizedCCNumber(final String creditCardNumber) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
         postData.put(CreditCard.CCNUMBER, creditCardNumber);
-        blueSnapAPI.tokenizeDetails(postData, responseHandler);
+        return blueSnapAPI.tokenizeDetails(postData.toString());
     }
 
     /**
-     * Update details on the BlueSnap Server
+     * Update details on the BlueSnapValidator Server
      *
      * @param purchaseDetails {@link PurchaseDetails}
-     * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
-    public void submitTokenizedDetails(PurchaseDetails purchaseDetails, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public BlueSnapHTTPResponse submitTokenizedDetails(PurchaseDetails purchaseDetails) throws JSONException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails), responseHandler);
+        return blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails).toString());
     }
 
     /**
@@ -197,22 +182,22 @@ public class BlueSnapService {
      */
     private JSONObject createDataObject(PurchaseDetails purchaseDetails) throws JSONException {
         CreditCard creditCard = purchaseDetails.getCreditCard();
-        BillingInfo billingInfo = purchaseDetails.getBillingContactInfo();
-        ShippingInfo shippingInfo = null;
+        BillingContactInfo billingContactInfo = purchaseDetails.getBillingContactInfo();
+        ShippingContactInfo shippingContactInfo = null;
         if (sdkRequest.isShippingRequired())
-            shippingInfo = purchaseDetails.getShippingContactInfo();
+            shippingContactInfo = purchaseDetails.getShippingContactInfo();
 
-        return createDataObject(creditCard, billingInfo, shippingInfo);
+        return createDataObject(creditCard, billingContactInfo, shippingContactInfo);
     }
 
     /**
      * @param creditCard   {@link CreditCard}
-     * @param billingInfo  {@link BillingInfo}
-     * @param shippingInfo {@link ShippingInfo}
+     * @param billingContactInfo  {@link BillingContactInfo}
+     * @param shippingContactInfo {@link ShippingContactInfo}
      * @return {@link JSONObject} representation for api put call for the server
      * @throws JSONException in case of invalid JSON object (should not happen)
      */
-    private JSONObject createDataObject(CreditCard creditCard, BillingInfo billingInfo, ShippingInfo shippingInfo) throws JSONException {
+    private JSONObject createDataObject(CreditCard creditCard, BillingContactInfo billingContactInfo, ShippingContactInfo shippingContactInfo) throws JSONException {
         JSONObject postData = new JSONObject();
 
         if (creditCard.getIsNewCreditCard()) {
@@ -225,34 +210,34 @@ public class BlueSnapService {
 
         }
 
-        postData.put(BillingInfo.BILLINGFIRSTNAME, billingInfo.getFirstName());
-        postData.put(BillingInfo.BILLINGLASTNAME, billingInfo.getLastName());
-        postData.put(BillingInfo.BILLINGCOUNTRY, billingInfo.getCountry());
+        postData.put(BillingContactInfo.BILLINGFIRSTNAME, billingContactInfo.getFirstName());
+        postData.put(BillingContactInfo.BILLINGLASTNAME, billingContactInfo.getLastName());
+        postData.put(BillingContactInfo.BILLINGCOUNTRY, billingContactInfo.getCountry());
 
-        if (null != billingInfo.getZip() && !"".equals(billingInfo.getZip()))
-            postData.put(BillingInfo.BILLINGZIP, billingInfo.getZip());
+        if (null != billingContactInfo.getZip() && !"".equals(billingContactInfo.getZip()))
+            postData.put(BillingContactInfo.BILLINGZIP, billingContactInfo.getZip());
 
         if (sdkRequest.isBillingRequired()) {
-            if (BlueSnapValidator.checkCountryHasState(billingInfo.getCountry()))
-                postData.put(BillingInfo.BILLINGSTATE, billingInfo.getState());
-            postData.put(BillingInfo.BILLINGCITY, billingInfo.getCity());
-            postData.put(BillingInfo.BILLINGADDRESS, billingInfo.getAddress());
+            if (BlueSnapValidator.checkCountryHasState(billingContactInfo.getCountry()))
+                postData.put(BillingContactInfo.BILLINGSTATE, billingContactInfo.getState());
+            postData.put(BillingContactInfo.BILLINGCITY, billingContactInfo.getCity());
+            postData.put(BillingContactInfo.BILLINGADDRESS, billingContactInfo.getAddress());
         }
 
         if (sdkRequest.isEmailRequired())
-            postData.put(BillingInfo.EMAIL, billingInfo.getEmail());
+            postData.put(BillingContactInfo.EMAIL, billingContactInfo.getEmail());
 
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
-        if (sdkRequest.isShippingRequired() || null != shippingInfo) {
-            postData.put(ShippingInfo.SHIPPINGFIRSTNAME, shippingInfo.getFirstName());
-            postData.put(ShippingInfo.SHIPPINGLASTNAME, shippingInfo.getLastName());
-            postData.put(ShippingInfo.SHIPPINGCOUNTRY, shippingInfo.getCountry());
-            if (BlueSnapValidator.checkCountryHasState(shippingInfo.getCountry()))
-                postData.put(ShippingInfo.SHIPPINGSTATE, shippingInfo.getState());
-            postData.put(ShippingInfo.SHIPPINGCITY, shippingInfo.getCity());
-            postData.put(ShippingInfo.SHIPPINGADDRESS, shippingInfo.getAddress());
-            postData.put(ShippingInfo.SHIPPINGZIP, shippingInfo.getZip());
+        if (sdkRequest.isShippingRequired() || null != shippingContactInfo) {
+            postData.put(ShippingContactInfo.SHIPPINGFIRSTNAME, shippingContactInfo.getFirstName());
+            postData.put(ShippingContactInfo.SHIPPINGLASTNAME, shippingContactInfo.getLastName());
+            postData.put(ShippingContactInfo.SHIPPINGCOUNTRY, shippingContactInfo.getCountry());
+            if (BlueSnapValidator.checkCountryHasState(shippingContactInfo.getCountry()))
+                postData.put(ShippingContactInfo.SHIPPINGSTATE, shippingContactInfo.getState());
+            postData.put(ShippingContactInfo.SHIPPINGCITY, shippingContactInfo.getCity());
+            postData.put(ShippingContactInfo.SHIPPINGADDRESS, shippingContactInfo.getAddress());
+            postData.put(ShippingContactInfo.SHIPPINGZIP, shippingContactInfo.getZip());
         }
 
         if (null != kountService.getKountSessionId()) {
@@ -265,14 +250,12 @@ public class BlueSnapService {
 
     /**
      * Check if Token is Expired on the BlueSnap Server
-     *
-     * @param responseHandler {@link AsyncHttpResponseHandler}
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
-    private void checkTokenIsExpired(AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
-        Log.d(TAG, "Check if Token is Expired" + bluesnapToken.toString());
-        blueSnapAPI.tokenizeDetails(new JSONObject(), responseHandler);
+    private BlueSnapHTTPResponse checkTokenIsExpired() throws UnsupportedEncodingException {
+        Log.d(TAG, "Check if Token is Expired: " + bluesnapToken.toString());
+        return blueSnapAPI.tokenizeDetails(null);
     }
 
     /**
@@ -283,20 +266,17 @@ public class BlueSnapService {
      */
     private void tokenExpiredAction(final BluesnapServiceCallback callback, final AfterNewTokenCreatedAction afterNewTokenCreatedAction) {
         // try to PUT empty {} to check if token is expired
-        try {
-            checkTokenIsExpired(new TextHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                    Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
-                    callback.onFailure();
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    // check if failure is EXPIRED_TOKEN if so activating the create new token mechanism.
-                    if (statusCode == 400 && null != getTokenProvider() && !"".equals(responseString)) {
+        getAppExecutors().networkIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    BlueSnapHTTPResponse response = checkTokenIsExpired();
+                    if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        Log.e(TAG, "SDK Init service error, checkTokenIsExpired successful");
+                        callback.onFailure();
+                    } else if (response.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST && null != getTokenProvider() && !"".equals(response.getResponseString())) {
                         try {
-                            JSONObject errorResponse = new JSONObject(responseString);
+                            JSONObject errorResponse = new JSONObject(response.getResponseString());
                             JSONArray rs2 = (JSONArray) errorResponse.get("message");
                             JSONObject rs3 = (JSONObject) rs2.get(0);
                             if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
@@ -311,19 +291,20 @@ public class BlueSnapService {
                                 );
                         } catch (JSONException e) {
                             Log.e(TAG, "json parsing exception", e);
+                            callback.onFailure();
                         }
                     } else {
-                        String errorMsg = String.format("Service Error %s, %s", statusCode, responseString);
-                        Log.e(TAG, errorMsg, throwable);
+                        String errorMsg = String.format("Service Error for tokenExpiredAction [%s], [%s]", response.getResponseCode(), response.getResponseString());
+                        Log.e(TAG, errorMsg);
                         callback.onFailure();
                     }
+
+                } catch (UnsupportedEncodingException ex) {
+                    Log.e(TAG, ex.getMessage());
+                    callback.onFailure();
                 }
-            });
-        } catch (JSONException e) {
-            Log.e(TAG, "json parsing exception", e);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "Unsupported Encoding Exception", e);
-        }
+            }
+        });
     }
 
     /**
@@ -332,40 +313,40 @@ public class BlueSnapService {
      * @param merchantStoreCurrency All rates are derived from merchantStoreCurrency. merchantStoreCurrency * AnyRate = AnyCurrency
      */
     private void sdkInit(final String merchantStoreCurrency, final Context context, final BluesnapServiceCallback callback) {
-        blueSnapAPI.sdkInit(merchantStoreCurrency, new JsonHttpResponseHandler() {
+        getAppExecutors().networkIO().execute(new Runnable() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    sDKConfiguration = new Gson().fromJson(String.valueOf(response), SDKConfiguration.class);
-                    //sDKConfiguration.getRates().setInitialRates();
-
+            public void run() {
+                BlueSnapHTTPResponse response = blueSnapAPI.sdkInit(merchantStoreCurrency);
+                if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     try {
-                        if (null != context)
-                            kountService.setupKount(sDKConfiguration.getKountMerchantId(), context, getBlueSnapToken().isProduction());
+                        sDKConfiguration = JsonParser.parseSdkConfiguration(response.getResponseString());
+                        //sDKConfiguration.getRates().setInitialRates();
+
+                        try {
+                            if (null != context)
+                                kountService.setupKount(sDKConfiguration.getKountMerchantId(), context, getBlueSnapToken().isProduction());
+                        } catch (Exception e) {
+                            Log.e(TAG, "Kount SDK initialization error " + e.getMessage());
+                        }
+                        CreditCardTypeResolver.setCreditCardRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
+                        callback.onSuccess();
                     } catch (Exception e) {
-                        Log.e(TAG, "Kount SDK initialization error");
+                        Log.e(TAG, "exception: ", e);
+                        callback.onFailure();
                     }
-
-                    CreditCardTypeResolver.setCreditCardRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
-                    callback.onSuccess();
-                } catch (Exception e) {
-                    Log.e(TAG, "exception: ", e);
-                    callback.onFailure();
+                } else {
+                    Log.e(TAG, "SDK Init service error");
+                    tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
+                        @Override
+                        public void complete() {
+                            sdkInit(merchantStoreCurrency, context, bluesnapServiceCallback);
+                        }
+                    });
                 }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, "SDK Init service error", throwable);
-                tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
-                    @Override
-                    public void complete() {
-                        sdkInit(merchantStoreCurrency, context, bluesnapServiceCallback);
-                    }
-                });
             }
         });
     }
+
 
     /**
      * retrieve Rates Array
@@ -384,52 +365,60 @@ public class BlueSnapService {
      * @param callback - what to do when done
      */
     public void createPayPalToken(final Double amount, final String currency, final BluesnapServiceCallback callback) {
-        blueSnapAPI.createPayPalToken(amount, currency, sdkRequest.isShippingRequired(), new JsonHttpResponseHandler() {
-
+        getAppExecutors().networkIO().execute(new Runnable() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    paypalURL = response.getString("paypalUrl");
-                    callback.onSuccess();
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                    callback.onFailure();
-                }
-            }
-
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                errorDescription = new JSONObject();
-                try {
-                    JSONArray errorResponseJSONArray = errorResponse.getJSONArray("message");
-                    JSONObject errorJson = errorResponseJSONArray.getJSONObject(0);
-                    errorDescription = errorJson;
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                }
-                Log.e(TAG, "PayPal service error", throwable);
-                callback.onFailure();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                errorDescription = new JSONObject();
-                try {
-                    errorDescription.put("errorName", responseString.replaceAll("\"", "").toUpperCase());
-                    errorDescription.put("code", statusCode);
-                    errorDescription.put("description", responseString.replaceAll("\"", ""));
-                    Log.e(TAG, "PayPal service error", throwable);
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
-                }
-
-                tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
-                    @Override
-                    public void complete() {
-                        createPayPalToken(amount, currency, callback);
+            public void run() {
+                BlueSnapHTTPResponse response = blueSnapAPI.createPayPalToken(amount, currency, sdkRequest.isShippingRequired());
+                if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    try {
+                        paypalURL = new JSONObject(response.getResponseString()).getString("paypalUrl");
+                        callback.onSuccess();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                        errorDescription = new JSONObject();
+                        getAppExecutors().mainThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onFailure();
+                            }
+                        });
                     }
-                });
+                } else if (response.getErrorResponseString() != null) {
+                    errorDescription = new JSONObject();
+                    try {
+                        JSONArray errorResponseJSONArray = new JSONObject(response.getErrorResponseString()).getJSONArray("message");
+                        JSONObject errorJson = errorResponseJSONArray.getJSONObject(0);
+                        errorDescription = errorJson;
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                    }
+                    Log.e(TAG, "PayPal service error");
+                    getAppExecutors().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onFailure();
+                        }
+                    });
+
+                } else {
+                    errorDescription = new JSONObject();
+                    try {
+                        //todo
+                        // errorDescription.put("errorName", responseString.replaceAll("\"", "").toUpperCase());
+                        errorDescription.put("code", response.getResponseCode());
+                        //  errorDescription.put("description", responseString.replaceAll("\"", ""));
+                        Log.e(TAG, "PayPal service error");
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                    }
+
+                    tokenExpiredAction(callback, new AfterNewTokenCreatedAction() {
+                        @Override
+                        public void complete() {
+                            createPayPalToken(amount, currency, callback);
+                        }
+                    });
+                }
             }
         });
     }
@@ -440,23 +429,22 @@ public class BlueSnapService {
      * @param callback - what to do when done
      */
     public void retrieveTransactionStatus(final BluesnapServiceCallback callback) {
-        blueSnapAPI.retrieveTransactionStatus(new JsonHttpResponseHandler() {
-
+        getAppExecutors().networkIO().execute(new Runnable() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    transactionStatus = response.getString("processingStatus");
-                    callback.onSuccess();
-                } catch (JSONException e) {
-                    Log.e(TAG, "json parsing exception", e);
+            public void run() {
+                BlueSnapHTTPResponse response = blueSnapAPI.retrieveTransactionStatus();
+                if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    try {
+                        transactionStatus = new JSONObject(response.getResponseString()).getString("processingStatus");
+                        callback.onSuccess();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "json parsing exception", e);
+                        callback.onFailure();
+                    }
+                } else {
+                    Log.e(TAG, "PayPal service error");
                     callback.onFailure();
                 }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, "PayPal service error", throwable);
-                callback.onFailure();
             }
         });
     }
@@ -464,7 +452,7 @@ public class BlueSnapService {
     /**
      * Get a set of strings of the supported conversion rates
      *
-     * @return {@link Set<String>}
+     * @return {@link Set < String >}
      */
     @Nullable
     public Set<String> getSupportedRates() {
@@ -587,8 +575,6 @@ public class BlueSnapService {
     }
 
     /**
-     * for Event Bus when Currency change event {@link com.bluesnap.androidapi.views.activities.CurrencyActivity}
-     *
      * @param newCurrencyNameCode - String, new Currency Name Code
      * @param context             - Context
      */
@@ -665,6 +651,16 @@ public class BlueSnapService {
             BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
         }
     }
+
+
+    public AppExecutors getAppExecutors() {
+        if (appExecutors == null) {
+            appExecutors = new AppExecutors();
+        }
+        return appExecutors;
+    }
+
+
 
     private interface AfterNewTokenCreatedAction {
         void complete();

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
@@ -18,36 +19,30 @@ import android.support.test.uiautomator.UiDevice;
 import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
-
+import com.bluesnap.androidapi.http.CustomHTTPParams;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TaxCalculator;
-import com.bluesnap.androidapi.services.TokenProvider;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
-
 import org.junit.Rule;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.android.demoapp.DemoToken.*;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.containsString;
 
@@ -79,6 +74,7 @@ public class EspressoBasedTest {
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
 
+    List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
 
     public EspressoBasedTest() {
         this(" ");
@@ -100,7 +96,7 @@ public class EspressoBasedTest {
     protected BluesnapCheckoutActivity mActivity;
 
     //    @Before
-    public void doSetup() throws InterruptedException, BSPaymentRequestException {
+    public void doSetup() {
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {
@@ -221,6 +217,14 @@ public class EspressoBasedTest {
         }
     }
 
+
+    @NonNull
+    List<CustomHTTPParams> getHttpParamsForSandboxTests() {
+        String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
+        List<CustomHTTPParams> headerParams = new ArrayList<>();
+        headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
+        return headerParams;
+    }
 
     public void checkToken() {
         try {

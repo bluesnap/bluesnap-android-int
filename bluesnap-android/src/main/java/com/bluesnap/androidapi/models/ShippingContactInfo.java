@@ -3,14 +3,15 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import org.json.JSONObject;
 
-import com.google.gson.annotations.SerializedName;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 /**
  * Created by roy.biber on 12/11/2017.
  */
 
-public class ShippingInfo extends ContactInfo implements Parcelable {
+public class ShippingContactInfo extends ContactInfo implements Parcelable {
     public static final String SHIPPINGFIRSTNAME = "shippingFirstName";
     public static final String SHIPPINGLASTNAME = "shippingLastName";
     public static final String SHIPPINGCOUNTRY = "shippingCountry";
@@ -21,19 +22,19 @@ public class ShippingInfo extends ContactInfo implements Parcelable {
     public static final String PHONE = "phone";
 
     @Nullable
-    @SerializedName("phone")
+    //@SerializedName("phone")
     private String phone;
 
-    protected ShippingInfo(Parcel parcel) {
+    protected ShippingContactInfo(Parcel parcel) {
         super(parcel);
         phone = parcel.readString();
     }
 
-    public ShippingInfo() {
+    public ShippingContactInfo() {
         super();
     }
 
-    public ShippingInfo(ContactInfo contactInfo) {
+    public ShippingContactInfo(ContactInfo contactInfo) {
         setFullName(contactInfo.getFullName());
         setAddress(contactInfo.getAddress());
         setAddress2(contactInfo.getAddress2());
@@ -43,17 +44,35 @@ public class ShippingInfo extends ContactInfo implements Parcelable {
         setCountry(contactInfo.getCountry());
     }
 
-    public static final Creator<ShippingInfo> CREATOR = new Creator<ShippingInfo>() {
+    public static final Creator<ShippingContactInfo> CREATOR = new Creator<ShippingContactInfo>() {
         @Override
-        public ShippingInfo createFromParcel(Parcel in) {
-            return new ShippingInfo(in);
+        public ShippingContactInfo createFromParcel(Parcel in) {
+            return new ShippingContactInfo(in);
         }
 
         @Override
-        public ShippingInfo[] newArray(int size) {
-            return new ShippingInfo[size];
+        public ShippingContactInfo[] newArray(int size) {
+            return new ShippingContactInfo[size];
         }
     };
+
+    @Nullable
+    public static ShippingContactInfo fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null)
+            return null;
+        ShippingContactInfo shippingContactInfo = new ShippingContactInfo();
+        shippingContactInfo.setPhone(getOptionalString(jsonObject, "phone"));
+        shippingContactInfo.setFirstName(getOptionalString(jsonObject, "firstName"));
+        shippingContactInfo.setLastName(getOptionalString(jsonObject, "lastName"));
+        shippingContactInfo.setAddress(getOptionalString(jsonObject, "address1"));
+        shippingContactInfo.setAddress2(getOptionalString(jsonObject, "address2"));
+        shippingContactInfo.setCity(getOptionalString(jsonObject, "city"));
+        shippingContactInfo.setState(getOptionalString(jsonObject, "state"));
+        shippingContactInfo.setZip(getOptionalString(jsonObject, "zip"));
+        shippingContactInfo.setCountry(getOptionalString(jsonObject, "country"));
+        shippingContactInfo.setFullName(getOptionalString(jsonObject, "fullname"));
+        return shippingContactInfo;
+    }
 
     public void writeToParcel(Parcel parcel, int flags) {
         super.writeToParcel(parcel, flags);

@@ -2,31 +2,25 @@ package com.bluesnap.androidapi;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.Log;
-
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.CustomHTTPParams;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.SyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.message.BufferedHeader;
-
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_PASS;
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_TOKEN_CREATION;
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_URL;
-import static com.bluesnap.androidapi.TestDoken.SANDBOX_USER;
+import static com.bluesnap.androidapi.SandboxToken.*;
+import static java.net.HttpURLConnection.HTTP_CREATED;
 import static junit.framework.Assert.fail;
 
 
@@ -52,25 +46,20 @@ public class BSAndroidTestsBase {
 
     private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
 
-        final AsyncHttpClient httpClient = new SyncHttpClient();
-        httpClient.setMaxRetriesAndTimeout(2, 20000);
-        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, new TextHttpResponseHandler() {
+        String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
+        ArrayList<CustomHTTPParams> headerParams = new ArrayList<>();
+        headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
+        BlueSnapHTTPResponse post = HTTPOperationController.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION, null, "application/json", "application/json", headerParams);
+        if (post.getResponseCode() == HTTP_CREATED && post.getHeaders() != null) {
+            String location = post.getHeaders().get("Location").get(0);
+            merchantToken = location.substring(location.lastIndexOf('/') + 1);
+            tokenServiceInterface.onServiceSuccess();
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, responseString, throwable);
-                fail("Cannot get token for tests:" + throwable.getMessage());
-                tokenServiceInterface.onServiceFailure();
-            }
+        } else {
+            fail("Cannot get token for tests: " + post.getResponseCode());
+            tokenServiceInterface.onServiceFailure();
+        }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                merchantToken = extractTokenFromHeaders(headers);
-                tokenServiceInterface.onServiceSuccess();
-            }
-
-        });
     }
 
     @Before
@@ -149,16 +138,5 @@ public class BSAndroidTestsBase {
         Log.i(TAG, "Done");
     }
 
-    public static String extractTokenFromHeaders(Header[] headers) {
-        String token = null;
-        for (Header hr : headers) {
-            BufferedHeader bufferedHeader = (BufferedHeader) hr;
-            if (bufferedHeader.getName().equals("Location")) {
-                String path = bufferedHeader.getValue();
-                token = path.substring(path.lastIndexOf('/') + 1);
-            }
-        }
-        return token;
-    }
 
 }

@@ -53,8 +53,8 @@ public class BluesnapToken {
     public String toString() {
         return "BluesnapToken{" +
                 "url='" + url + '\'' +
-                "production='" + Boolean.toString(production) + '\'' +
-                ", merchantToken='" + merchantToken.substring(10) + '\'' +
+                ",  production: '" + Boolean.toString(production) + '\'' +
+                ",  merchantToken: '" + merchantToken.substring(10) + '\'' +
                 '}';
     }
 }

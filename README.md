@@ -151,7 +151,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         return;
 
     SdkResult sdkResult = (SdkResult) data.getExtras().get(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
-    ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+    ShippingInfo shippingContactInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
 }
 ```
 

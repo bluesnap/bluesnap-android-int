@@ -1,25 +1,26 @@
 package com.bluesnap.androidapi.models;
 
-import com.google.gson.annotations.SerializedName;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by roy.biber on 12/11/2017.
  */
 
 public class Rates {
-    @SerializedName("baseCurrency")
+    //@SerializedName("baseCurrency")
     private String merchantStoreCurrency;
-    @SerializedName("baseCurrencyName")
+    //@SerializedName("baseCurrencyName")
     private String merchantStoreCurrencyName;
-    @SerializedName("exchangeRate")
+    //@SerializedName("exchangeRate")
     private ArrayList<Currency> currencies;
 
     // internal c'tor for tests
-    Rates(ArrayList<Currency> currencies, String merchantStoreCurrency, String merchantStoreCurrencyName) {
+    @VisibleForTesting
+    public Rates(ArrayList<Currency> currencies, String merchantStoreCurrency, String merchantStoreCurrencyName) {
         this.currencies = currencies;
         this.merchantStoreCurrency = merchantStoreCurrency;
         this.merchantStoreCurrencyName = merchantStoreCurrencyName;

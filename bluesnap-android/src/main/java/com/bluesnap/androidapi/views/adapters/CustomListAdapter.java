@@ -5,12 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CustomListObject;
 
@@ -48,7 +43,7 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
-        return customListObjects.indexOf((CustomListObject)getItem(position));
+        return customListObjects.indexOf(getItem(position));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -59,8 +54,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
             convertView = inflater.inflate(R.layout.custom_list_view, null);
         }
 
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.bluensap_customlist_list_view_text);
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
+        TextView txtTitle = convertView.findViewById(R.id.bluensap_customlist_list_view_text);
+        ImageView imageView = convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
 
         txtTitle.setText(customListObjects.get(position).getName());
         if (sharedLanguage.equals(customListObjects.get(position).getName())) {

@@ -2,7 +2,6 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.FailureHandler;
 import android.view.View;
-
 import org.hamcrest.Matcher;
 
 import static junit.framework.Assert.fail;

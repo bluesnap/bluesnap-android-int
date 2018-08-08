@@ -1,7 +1,6 @@
 package com.bluesnap.androidapi.models;
 
 import junit.framework.Assert;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.Set;
 public class RatesTest {
 
     @Test
-    public void testRates1() throws Exception {
+    public void testRates1() {
 
         String baseCurrencyCode = "USD";
         String baseCurrencyName = "United Stated Dollar";
@@ -41,7 +40,7 @@ public class RatesTest {
     }
 
     @Test
-    public void testRates2() throws Exception {
+    public void testRates2() {
 
         String baseCurrencyCode = "USD";
         String baseCurrencyName = "United Stated Dollar";

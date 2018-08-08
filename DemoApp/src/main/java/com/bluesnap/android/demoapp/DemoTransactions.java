@@ -1,22 +1,21 @@
 package com.bluesnap.android.demoapp;
 
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
-
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.CustomHTTPParams;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.message.BufferedHeader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_CREATE_TRANSACTION;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.android.demoapp.DemoToken.*;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
  * A Demo class that mocks server to server calls
@@ -38,18 +37,6 @@ public class DemoTransactions {
         return INSTANCE;
     }
 
-    public static String extractTokenFromHeaders(Header[] headers) {
-        String token = null;
-        for (Header hr : headers) {
-            BufferedHeader bufferedHeader = (BufferedHeader) hr;
-            if (bufferedHeader.getName().equals("Location")) {
-                String path = bufferedHeader.getValue();
-                token = path.substring(path.lastIndexOf('/') + 1);
-            }
-        }
-        return token;
-    }
-
     public void createCreditCardTransaction(final SdkResult sdkResult, final BluesnapServiceCallback callback) {
 
         //TODO: I'm just a string but please don't make me look that bad..Use String.format
@@ -65,42 +52,40 @@ public class DemoTransactions {
                 "<pf-token>" + sdkResult.getToken() + "</pf-token>" +
                 "</card-transaction>";
 
-        StringEntity entity = new StringEntity(body, "UTF-8");
-        AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        Log.d(TAG, "Create transaction body:\n" + body);
-        httpClient.post(getContext(), SANDBOX_URL + SANDBOX_CREATE_TRANSACTION, entity, "application/xml", new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.e(TAG, responseString, throwable);
-                //Disabled until server will return a reasonable error
-                String errorName = "Error Server";
-                try {
-                    if (responseString != null)
-                        errorName = responseString.substring(responseString.indexOf("<error-name>") + "<error-name>".length(), responseString.indexOf("</error-name>"));
-                } catch (Exception e) {
-                    Log.w(TAG, "failed to get error name from response string");
-                }
-                setMessage(errorName);
-                setTitle("Merchant Server");
-                callback.onFailure();
-            }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                setShopperId(responseString.substring(responseString.indexOf("<vaulted-shopper-id>") +
-                        "<vaulted-shopper-id>".length(), responseString.indexOf("</vaulted-shopper-id>")));
-                setTransactionId(responseString.substring(responseString.indexOf("<transaction-id>") +
-                        "<transaction-id>".length(), responseString.indexOf("</transaction-id>")));
+        String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
+        List<CustomHTTPParams> headerParams = new ArrayList<>();
+        headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
+        BlueSnapHTTPResponse httpResponse = HTTPOperationController.post(SANDBOX_URL + SANDBOX_CREATE_TRANSACTION, body, "application/xml", "application/xml", headerParams);
+        String responseString = httpResponse.getResponseString();
+        if (httpResponse.getResponseCode() == HTTP_OK && httpResponse.getHeaders() != null) {
+            setShopperId(responseString.substring(responseString.indexOf("<vaulted-shopper-id>") +
+                    "<vaulted-shopper-id>".length(), responseString.indexOf("</vaulted-shopper-id>")));
+            setTransactionId(responseString.substring(responseString.indexOf("<transaction-id>") +
+                    "<transaction-id>".length(), responseString.indexOf("</transaction-id>")));
 
-                String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
-                setTokenSuffix(merchantToken.substring(merchantToken.length() - 6));
-                Log.d(TAG, responseString);
-                setMessage("Transaction Success " + getTransactionId());
-                setTitle("Merchant Server");
-                callback.onSuccess();
+            String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
+            setTokenSuffix(merchantToken.substring(merchantToken.length() - 6));
+            Log.d(TAG, responseString);
+            setMessage("Transaction Success " + getTransactionId());
+            setTitle("Merchant Server");
+            callback.onSuccess();
+        } else {
+            Log.e(TAG, responseString);
+            //Disabled until server will return a reasonable error
+            String errorName = "Transaction Failed";
+            try {
+                if (responseString != null)
+                    errorName = responseString.substring(responseString.indexOf("<error-name>") + "<error-name>".length(), responseString.indexOf("</error-name>"));
+            } catch (Exception e) {
+                Log.w(TAG, "failed to get error name from response string");
+                Log.w(TAG, "Failed TX Response:  " + responseString);
             }
-        });
+            setMessage(errorName);
+            setTitle("Merchant Server");
+            callback.onFailure();
+        }
+
     }
 
     public String getShopperId() {
