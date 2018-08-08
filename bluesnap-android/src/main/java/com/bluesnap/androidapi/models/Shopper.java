@@ -3,8 +3,10 @@ package com.bluesnap.androidapi.models;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import com.bluesnap.androidapi.utils.JsonParser;
 import org.json.JSONObject;
+
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalObject;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 /**
  * A representation of server exchange rate.
@@ -143,20 +145,21 @@ public class Shopper extends ContactInfo {
             return null;
         }
         Shopper shopper = new Shopper();
-        shopper.setFirstName(JsonParser.getOptionalString(jsonObject, "firstName"));
-        shopper.setLastName(JsonParser.getOptionalString(jsonObject, "lastName"));
-        shopper.setEmail(JsonParser.getOptionalString(jsonObject, "email"));
-        shopper.setCountry(JsonParser.getOptionalString(jsonObject, "country"));
-        shopper.setState(JsonParser.getOptionalString(jsonObject, "state"));
-        shopper.setAddress(JsonParser.getOptionalString(jsonObject, "address"));
-        shopper.setAddress2(JsonParser.getOptionalString(jsonObject, "address2"));
-        shopper.setCity(JsonParser.getOptionalString(jsonObject, "city"));
-        shopper.setZip(JsonParser.getOptionalString(jsonObject, "zip"));
-        shopper.setShopperCurrency(JsonParser.getOptionalString(jsonObject, "shopperCurrency"));
-
-        shopper.setLastPaymentInfo(LastPaymentInfo.fromJson(JsonParser.getOptionalObject(jsonObject, "lastPaymentInfo")));
-        shopper.setPreviousPaymentSources(PaymentSources.fromJson(JsonParser.getOptionalObject(jsonObject, "paymentSources")));
-
+        shopper.setFirstName(getOptionalString(jsonObject, "firstName"));
+        shopper.setLastName(getOptionalString(jsonObject, "lastName"));
+        shopper.setEmail(getOptionalString(jsonObject, "email"));
+        shopper.setCountry(getOptionalString(jsonObject, "country"));
+        shopper.setState(getOptionalString(jsonObject, "state"));
+        shopper.setAddress(getOptionalString(jsonObject, "address"));
+        shopper.setAddress2(getOptionalString(jsonObject, "address2"));
+        shopper.setCity(getOptionalString(jsonObject, "city"));
+        shopper.setZip(getOptionalString(jsonObject, "zip"));
+        shopper.setShopperCurrency(getOptionalString(jsonObject, "shopperCurrency"));
+        shopper.setVaultedShopperId(Integer.parseInt(getOptionalString(jsonObject, "vaultedShopperId")));
+        shopper.setLastPaymentInfo(LastPaymentInfo.fromJson(getOptionalObject(jsonObject, "lastPaymentInfo")));
+        shopper.setPreviousPaymentSources(PaymentSources.fromJson(getOptionalObject(jsonObject, "paymentSources")));
+//        shopper.setShippingContactInfo(ShippingContactInfo.fromJson(getOptionalObject(jsonObject,"shippingContactInfo")));
+        shopper.setShippingContactInfo(BillingContactInfo.fromJson(getOptionalObject(jsonObject, "shippingContactInfo")));
         if (shopper.previousPaymentSources != null && shopper.previousPaymentSources.getPreviousCreditCardInfos() != null && shopper.previousPaymentSources.getPreviousCreditCardInfos().size() > 0)
             shopper.setNewCreditCardInfo(shopper.previousPaymentSources.getPreviousCreditCardInfos().get(0));
 

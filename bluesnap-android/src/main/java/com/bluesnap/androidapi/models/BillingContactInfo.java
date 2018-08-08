@@ -3,8 +3,9 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import com.bluesnap.androidapi.utils.JsonParser;
 import org.json.JSONObject;
+
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 /**
  * Created by roy.biber on 12/11/2017.
@@ -60,15 +61,13 @@ public class BillingContactInfo extends ContactInfo implements Parcelable {
         if (jsonObject == null)
             return null;
 
-        BillingContactInfo billingContactInfo = new BillingContactInfo();
-        billingContactInfo.setFirstName(JsonParser.getOptionalString(jsonObject, "firstName"));
-        billingContactInfo.setLastName(JsonParser.getOptionalString(jsonObject, "lastName"));
-        billingContactInfo.setAddress(JsonParser.getOptionalString(jsonObject, "address1"));
-        billingContactInfo.setAddress2(JsonParser.getOptionalString(jsonObject, "address2"));
-        billingContactInfo.setState(JsonParser.getOptionalString(jsonObject, "state"));
-        billingContactInfo.setZip(JsonParser.getOptionalString(jsonObject, "zip"));
-        billingContactInfo.setCountry(JsonParser.getOptionalString(jsonObject, "country"));
-
+        ContactInfo contactInfo = ContactInfo.fromJson(jsonObject);
+        if (contactInfo == null) {
+            return null;
+        }
+        BillingContactInfo billingContactInfo = null;
+        billingContactInfo = new BillingContactInfo(contactInfo);
+        billingContactInfo.setEmail(getOptionalString(jsonObject, "email"));
         return billingContactInfo;
 
     }

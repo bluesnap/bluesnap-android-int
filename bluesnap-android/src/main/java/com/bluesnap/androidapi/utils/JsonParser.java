@@ -14,8 +14,8 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by oz
+ *
  */
-
 public class JsonParser {
 
     public static final String TAG = JsonParser.class.getSimpleName();
@@ -23,6 +23,7 @@ public class JsonParser {
     /**
      * SDKConfiguration Json mapping
      *
+     * TODO: This method should be DKConiguration.fromJson()
      * @param jsonData
      * @return
      */

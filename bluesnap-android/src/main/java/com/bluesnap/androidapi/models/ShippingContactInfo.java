@@ -3,6 +3,9 @@ package com.bluesnap.androidapi.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import org.json.JSONObject;
+
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 /**
  * Created by roy.biber on 12/11/2017.
@@ -52,6 +55,24 @@ public class ShippingContactInfo extends ContactInfo implements Parcelable {
             return new ShippingContactInfo[size];
         }
     };
+
+    @Nullable
+    public static ShippingContactInfo fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null)
+            return null;
+        ShippingContactInfo shippingContactInfo = new ShippingContactInfo();
+        shippingContactInfo.setPhone(getOptionalString(jsonObject, "phone"));
+        shippingContactInfo.setFirstName(getOptionalString(jsonObject, "firstName"));
+        shippingContactInfo.setLastName(getOptionalString(jsonObject, "lastName"));
+        shippingContactInfo.setAddress(getOptionalString(jsonObject, "address1"));
+        shippingContactInfo.setAddress2(getOptionalString(jsonObject, "address2"));
+        shippingContactInfo.setCity(getOptionalString(jsonObject, "city"));
+        shippingContactInfo.setState(getOptionalString(jsonObject, "state"));
+        shippingContactInfo.setZip(getOptionalString(jsonObject, "zip"));
+        shippingContactInfo.setCountry(getOptionalString(jsonObject, "country"));
+        shippingContactInfo.setFullName(getOptionalString(jsonObject, "fullname"));
+        return shippingContactInfo;
+    }
 
     public void writeToParcel(Parcel parcel, int flags) {
         super.writeToParcel(parcel, flags);

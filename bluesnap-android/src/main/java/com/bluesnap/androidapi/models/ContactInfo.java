@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import com.bluesnap.androidapi.services.AndroidUtil;
+import org.json.JSONObject;
+
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 
 /**
@@ -196,5 +199,23 @@ public class ContactInfo implements Parcelable {
         state = parcel.readString();
         zip = parcel.readString();
         country = parcel.readString();
+    }
+
+    @Nullable
+    public static ContactInfo fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null)
+            return null;
+
+        ContactInfo contactInfo = new ContactInfo();
+        contactInfo.setFirstName(getOptionalString(jsonObject, "firstName"));
+        contactInfo.setLastName(getOptionalString(jsonObject, "lastName"));
+        contactInfo.setAddress(getOptionalString(jsonObject, "address1"));
+        contactInfo.setAddress2(getOptionalString(jsonObject, "address2"));
+        contactInfo.setState(getOptionalString(jsonObject, "state"));
+        contactInfo.setZip(getOptionalString(jsonObject, "zip"));
+        contactInfo.setCountry(getOptionalString(jsonObject, "country"));
+//        contactInfo.setEmail(getOptionalString(jsonObject,"email"));
+        contactInfo.setCity(getOptionalString(jsonObject, "city"));
+        return contactInfo;
     }
 }
