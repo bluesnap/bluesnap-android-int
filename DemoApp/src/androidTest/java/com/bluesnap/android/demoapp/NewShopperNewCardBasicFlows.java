@@ -332,12 +332,19 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     }
 
     private void check_if_field_identify(boolean isBillingInfo, String fieldName, String expectedResult) {
-        String shopperInfo = (isBillingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
-                ("<vaulted-shopper-id>").length(), getShopperResponse.indexOf("<payment-sources>")) :
-                getShopperResponse.substring(getShopperResponse.indexOf("<shipping-contact-info>") +
-                        ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
-        String fieldContent = shopperInfo.substring(shopperInfo.indexOf("<" + fieldName + ">") +
-                ("<" + fieldName + ">").length(), shopperInfo.indexOf("</" + fieldName + ">"));
+        String fieldContent = null;
+        try {
+            String shopperInfo = (isBillingInfo) ? getShopperResponse.substring(getShopperResponse.indexOf("<vaulted-shopper-id>") +
+                    ("<vaulted-shopper-id>").length(), getShopperResponse.indexOf("<payment-sources>")) :
+                    getShopperResponse.substring(getShopperResponse.indexOf("<shipping-contact-info>") +
+                            ("<shipping-contact-info>").length(), getShopperResponse.indexOf("</shipping-contact-info>"));
+            fieldContent = shopperInfo.substring(shopperInfo.indexOf("<" + fieldName + ">") +
+                    ("<" + fieldName + ">").length(), shopperInfo.indexOf("</" + fieldName + ">"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("missing field in server response:\n Expected fieldName: " + fieldName + " Expected Value:" + expectedResult + "\n" + getShopperResponse);
+        }
+
         Assert.assertEquals(fieldName + "was not saved correctly in DataBase", fieldContent, expectedResult);
     }
 }
