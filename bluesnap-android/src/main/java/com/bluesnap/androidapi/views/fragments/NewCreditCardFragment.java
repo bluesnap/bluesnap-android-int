@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -84,7 +83,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         oneLineCCEditComponent = inflate.findViewById(R.id.oneLineCCEditComponent);
 
         amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
-        buttonComponentView = inflate.findViewById(R.id.newCCNFragmentButtonComponentView);
+        buttonComponentView = inflate.findViewById(R.id.billingButtonComponentView);
 
         if (!sdkRequest.isShippingRequired()) {
             finishFromFragmentNoShipping();

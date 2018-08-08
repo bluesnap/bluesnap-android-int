@@ -2,12 +2,10 @@ package com.bluesnap.androidapi;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
-
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +37,7 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
 //
 
     @Before
-    public void setup() throws InterruptedException {
+    public void setup() {
         // No need to call getToken - it is already done by the parent class
         // super.getToken();
         Log.i(TAG, "=============== Starting EuroBasedCurrencyConverter tests ==================");
@@ -47,7 +45,7 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
 
 
     @Test
-    public void convert_EUR_to_USD() throws InterruptedException, BSPaymentRequestException {
+    public void convert_EUR_to_USD() throws BSPaymentRequestException {
 
         Double amount = 10D;
         SdkRequest sdkRequest = new SdkRequest(amount, EUR, 0d, false, false, false);
@@ -67,7 +65,7 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
     }
 
     @Test
-    public void convert_EUR_to_ILS_to_USD() throws InterruptedException, BSPaymentRequestException {
+    public void convert_EUR_to_ILS_to_USD() throws BSPaymentRequestException {
 
         Double amount = 10.7D;
         SdkRequest sdkRequest = new SdkRequest(amount, EUR, 0d, false, false, false);
@@ -92,7 +90,7 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
 
 
     @Test
-    public void non_existing_currency_code() throws InterruptedException {
+    public void non_existing_currency_code() {
 
         Double amount = 30.5D;
         SdkRequest sdkRequest = new SdkRequest(amount, "SOMETHING_BAD", 0d, false, false, false);
@@ -112,7 +110,7 @@ public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
     }
 
     @Test
-    public void null_currency_code() throws InterruptedException {
+    public void null_currency_code() {
 
         Double amount = 30.5D;
 

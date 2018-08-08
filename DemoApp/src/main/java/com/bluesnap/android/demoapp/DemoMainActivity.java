@@ -6,51 +6,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bluesnap.androidapi.models.BillingInfo;
-import com.bluesnap.androidapi.models.ChosenPaymentMethod;
-import com.bluesnap.androidapi.models.CreditCard;
+import android.widget.*;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.CustomHTTPParams;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShopperConfiguration;
-import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BluesnapAlertDialog;
-import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TaxCalculator;
-import com.bluesnap.androidapi.services.TokenProvider;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
 
-import java.util.Currency;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import javax.net.ssl.HttpsURLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.util.TextUtils;
-
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.android.demoapp.DemoToken.*;
+import static java.net.HttpURLConnection.HTTP_CREATED;
 
 public class DemoMainActivity extends AppCompatActivity {
 
@@ -79,6 +56,7 @@ public class DemoMainActivity extends AppCompatActivity {
     Switch returningShopperSwitch;
     EditText returningShopperEditText;
     private TextView shopperDetailsTextView;
+    private HttpsURLConnection myURLConnection;
 
     /**
      * Called when the activity is first created.
@@ -111,6 +89,7 @@ public class DemoMainActivity extends AppCompatActivity {
         currencySym = findViewById(R.id.currencySym);
         ratesSpinner = findViewById(R.id.rateSpinner);
         merchantStoreCurrencySpinner = findViewById(R.id.merchantStoreCurrencySpinner);
+
         showDemoAppVersion();
         try {
             Locale current = getResources().getConfiguration().locale;
@@ -118,6 +97,7 @@ public class DemoMainActivity extends AppCompatActivity {
         } catch (Exception e) {
             currencyByLocale = Currency.getInstance("USD");
         }
+
 
         bluesnapService = BlueSnapService.getInstance();
 
@@ -336,23 +316,34 @@ public class DemoMainActivity extends AppCompatActivity {
             returningOrNewShopper = "?shopperId=" + returningShopperId;
         }
 
-        final AsyncHttpClient httpClient = new AsyncHttpClient();
-        httpClient.setMaxRetriesAndTimeout(HTTP_MAX_RETRIES, HTTP_RETRY_SLEEP_TIME_MILLIS);
-        httpClient.setBasicAuth(SANDBOX_USER, SANDBOX_PASS);
-        httpClient.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper, new TextHttpResponseHandler() {
-
+        final Runnable myRunnable = new Runnable() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d(TAG, responseString, throwable);
-                tokenServiceInterface.onServiceFailure();
-            }
+            public void run() {
+                try {
+                    String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
+                    ArrayList<CustomHTTPParams> headerParams = new ArrayList<>();
+                    headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
+                    BlueSnapHTTPResponse post = HTTPOperationController.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper, null, "application/json", "application/json", headerParams);
+                    if (post.getResponseCode() == HTTP_CREATED && post.getHeaders() != null) {
+                        String location = post.getHeaders().get("Location").get(0);
+                        merchantToken = location.substring(location.lastIndexOf('/') + 1);
+                        tokenServiceInterface.onServiceSuccess();
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                merchantToken = DemoTransactions.extractTokenFromHeaders(headers);
-                tokenServiceInterface.onServiceSuccess();
+                    } else {
+
+                        tokenServiceInterface.onServiceFailure();
+                    }
+
+                } catch (Exception e) {
+                    tokenServiceInterface.onServiceFailure();
+                }
+
             }
-        });
+        };
+
+
+        MainApplication.mainHandler.post(myRunnable);
+
     }
 
     /**
@@ -387,24 +378,6 @@ public class DemoMainActivity extends AppCompatActivity {
     private void generateMerchantToken() {
 
         // create the interface for activating the token creation from server
-        tokenProvider = new TokenProvider() {
-            @Override
-            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
-
-                merchantTokenService(new TokenServiceInterface() {
-                    @Override
-                    public void onServiceSuccess() {
-                        //change the expired token
-                        tokenServiceCallback.complete(merchantToken);
-                    }
-
-                    @Override
-                    public void onServiceFailure() {
-
-                    }
-                });
-            }
-        };
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -439,22 +412,37 @@ public class DemoMainActivity extends AppCompatActivity {
         bluesnapService.setup(merchantToken, tokenProvider, merchantStoreCurrency, getApplicationContext(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                if (null == currency || null == currency.getCurrencyCode()) {
-                    Set<String> supportedRates = bluesnapService.getSupportedRates();
-                    if (supportedRates != null) {
-                        updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (null == currency || null == currency.getCurrencyCode()) {
+                            Set<String> supportedRates = bluesnapService.getSupportedRates();
+                            if (supportedRates != null) {
+                                updateSpinnerAdapterFromRates(demoSupportedRates(supportedRates));
+                            }
+                        }
+                        progressBar.setVisibility(View.INVISIBLE);
+                        linearLayoutForProgressBar.setVisibility(View.VISIBLE);
+                        productPriceEditText.setVisibility(View.VISIBLE);
+                        productPriceEditText.requestFocus();
+                        updateReturningShopperDetails();
+
                     }
-                }
-                progressBar.setVisibility(View.INVISIBLE);
-                linearLayoutForProgressBar.setVisibility(View.VISIBLE);
-                productPriceEditText.setVisibility(View.VISIBLE);
-                productPriceEditText.requestFocus();
-                updateReturningShopperDetails();
+                });
+
+
             }
 
             @Override
             public void onFailure() {
-                showDialog("unable to get rates quote from service");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showDialog("Failed to setup sdk");
+
+                    }
+                });
             }
         });
     }
@@ -483,16 +471,16 @@ public class DemoMainActivity extends AppCompatActivity {
         intent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
 
         /*// If shipping information is available show it, Here we simply log the shipping info.
-        ShippingInfo shippingInfo = (ShippingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
+        ShippingContactInfo shippingInfo = (ShippingContactInfo) extras.get(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         if (shippingInfo != null) {
-            Log.d(TAG, "ShippingInfo " + shippingInfo.toString());
+            Log.d(TAG, "ShippingContactInfo " + shippingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shippingInfo);
         }
 
         // If billing information is available show it, Here we simply log the billing info.
-        BillingInfo billingInfo = (BillingInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
+        BillingContactInfo billingInfo = (BillingContactInfo) extras.get(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         if (billingInfo != null) {
-            Log.d(TAG, "BillingInfo " + billingInfo.toString());
+            Log.d(TAG, "BillingContactInfo " + billingInfo.toString());
             intent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, billingInfo);
         }*/
 

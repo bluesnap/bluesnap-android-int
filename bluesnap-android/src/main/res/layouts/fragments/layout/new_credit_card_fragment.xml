@@ -52,12 +52,12 @@
         android:id="@+id/amountTaxShippingComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/newCCNFragmentButtonComponentView">
+        android:layout_above="@+id/billingButtonComponentView">
 
     </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
 
     <com.bluesnap.androidapi.views.components.ButtonComponent
-        android:id="@+id/newCCNFragmentButtonComponentView"
+        android:id="@+id/billingButtonComponentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

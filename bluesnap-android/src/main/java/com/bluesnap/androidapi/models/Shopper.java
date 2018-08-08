@@ -3,8 +3,10 @@ package com.bluesnap.androidapi.models;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import org.json.JSONObject;
 
-import com.google.gson.annotations.SerializedName;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalObject;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
 /**
  * A representation of server exchange rate.
@@ -13,27 +15,27 @@ public class Shopper extends ContactInfo {
 
     private static final String TAG = Shopper.class.getSimpleName();
 
-    @SerializedName("vaultedShopperId")
+    //@SerializedName("vaultedShopperId")
     private int vaultedShopperId;
     @Nullable
-    @SerializedName("email")
+    //@SerializedName("email")
     private String email;
     @Nullable
-    @SerializedName("address")
+    //@SerializedName("address")
     private String address;
     @Nullable
-    @SerializedName("phone")
+    //@SerializedName("phone")
     private String phone;
-    @SerializedName("shopperCurrency")
+    //@SerializedName("shopperCurrency")
     private String shopperCurrency;
     @Nullable
-    @SerializedName("paymentSources")
+    //@SerializedName("paymentSources")
     private PaymentSources previousPaymentSources;
     @Nullable
-    @SerializedName("shippingContactInfo")
-    private ShippingInfo shippingContactInfo;
+    //@SerializedName("shippingContactInfo")
+    private ShippingContactInfo shippingContactInfo;
     @Nullable
-    @SerializedName("lastPaymentInfo")
+    //@SerializedName("lastPaymentInfo")
     private LastPaymentInfo lastPaymentInfo;
     @Nullable
     @SerializedName("chosenPaymentMethod")
@@ -50,7 +52,7 @@ public class Shopper extends ContactInfo {
     }
 
     public Shopper() {
-        shippingContactInfo = new ShippingInfo();
+        shippingContactInfo = new ShippingContactInfo();
         newCreditCardInfo = new CreditCardInfo();
     }
 
@@ -107,17 +109,17 @@ public class Shopper extends ContactInfo {
     }
 
     @NonNull
-    public ShippingInfo getShippingContactInfo() {
+    public ShippingContactInfo getShippingContactInfo() {
         if (null == shippingContactInfo)
-            shippingContactInfo = new ShippingInfo();
+            shippingContactInfo = new ShippingContactInfo();
         return shippingContactInfo;
     }
 
-    public void setShippingContactInfo(@Nullable ShippingInfo shippingContactInfo) {
+    public void setShippingContactInfo(@Nullable ShippingContactInfo shippingContactInfo) {
         this.shippingContactInfo = shippingContactInfo;
     }
 
-    public void setShippingContactInfo(@Nullable BillingInfo billingContactInfo) {
+    public void setShippingContactInfo(@Nullable BillingContactInfo billingContactInfo) {
         if (shippingContactInfo == null || billingContactInfo == null) {
             Log.w(TAG, "Cannot setShippingContactInfo, either shipping or billing is null");
         } else {
@@ -138,6 +140,34 @@ public class Shopper extends ContactInfo {
 
     public void setLastPaymentInfo(@Nullable LastPaymentInfo lastPaymentInfo) {
         this.lastPaymentInfo = lastPaymentInfo;
+    }
+
+    @Nullable
+    public static Shopper fromJson(@Nullable JSONObject jsonObject) {
+        if (jsonObject == null) {
+            return null;
+        }
+        Shopper shopper = new Shopper();
+        shopper.setFirstName(getOptionalString(jsonObject, "firstName"));
+        shopper.setLastName(getOptionalString(jsonObject, "lastName"));
+        shopper.setEmail(getOptionalString(jsonObject, "email"));
+        shopper.setCountry(getOptionalString(jsonObject, "country"));
+        shopper.setState(getOptionalString(jsonObject, "state"));
+        shopper.setAddress(getOptionalString(jsonObject, "address"));
+        shopper.setAddress2(getOptionalString(jsonObject, "address2"));
+        shopper.setCity(getOptionalString(jsonObject, "city"));
+        shopper.setZip(getOptionalString(jsonObject, "zip"));
+        shopper.setShopperCurrency(getOptionalString(jsonObject, "shopperCurrency"));
+        shopper.setVaultedShopperId(Integer.parseInt(getOptionalString(jsonObject, "vaultedShopperId")));
+        shopper.setLastPaymentInfo(LastPaymentInfo.fromJson(getOptionalObject(jsonObject, "lastPaymentInfo")));
+        shopper.setPreviousPaymentSources(PaymentSources.fromJson(getOptionalObject(jsonObject, "paymentSources")));
+//        shopper.setShippingContactInfo(ShippingContactInfo.fromJson(getOptionalObject(jsonObject,"shippingContactInfo")));
+        shopper.setShippingContactInfo(BillingContactInfo.fromJson(getOptionalObject(jsonObject, "shippingContactInfo")));
+        if (shopper.previousPaymentSources != null && shopper.previousPaymentSources.getPreviousCreditCardInfos() != null && shopper.previousPaymentSources.getPreviousCreditCardInfos().size() > 0)
+            shopper.setNewCreditCardInfo(shopper.previousPaymentSources.getPreviousCreditCardInfos().get(0));
+
+
+        return shopper;
     }
 
     @Nullable

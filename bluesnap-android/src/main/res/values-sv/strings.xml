@@ -11,7 +11,7 @@
     <string name="name">Namn</string>
     <string name="please_enter_your_name">Var god skriv in för- och efternamn</string>
     <string name="address">Adress</string>
-    <string name="invalid_address_line">Ogiltig adress</string>
+    <string name="invalid_address_line">Ogiltig address</string>
     <string name="invalid_email_address">Ogiltig e-mailadress</string>
     <string name="zip">Postnummer</string>
     <string name="country">Land</string>

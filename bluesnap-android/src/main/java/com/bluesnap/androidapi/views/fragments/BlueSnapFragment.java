@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 

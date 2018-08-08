@@ -5,23 +5,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.models.CustomListObject;
+import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.adapters.CustomListAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CurrencyActivity extends Activity {
     private static final String TAG = CurrencyActivity.class.getSimpleName();
@@ -47,7 +37,7 @@ public class CurrencyActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            localeCurrencyFull = currency_value_array[Arrays.asList(currency_key_array).indexOf(extras.getString(getString(R.string.CURRENCY_STRING)))].toString();
+            localeCurrencyFull = currency_value_array[Arrays.asList(currency_key_array).indexOf(extras.getString(getString(R.string.CURRENCY_STRING)))];
         }
 
         adapter = new CustomListAdapter(this, CustomListObject.getCustomListObject(currency_value_array), localeCurrencyFull);
@@ -55,7 +45,7 @@ public class CurrencyActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String currencyPick = currency_key_array[Arrays.asList(currency_value_array).indexOf(adapter.customListObjects.get(position).getName().toString())];
+                String currencyPick = currency_key_array[Arrays.asList(currency_value_array).indexOf(adapter.customListObjects.get(position).getName())];
                 BlueSnapService.getInstance().onCurrencyChange(currencyPick, CurrencyActivity.this);
                 finish();
             }

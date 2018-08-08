@@ -6,9 +6,8 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
-
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.ShippingInfo;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 
 /**
@@ -30,8 +29,8 @@ public class ShippingViewSummarizedComponent extends ContactInfoViewSummarizedCo
         super(context);
     }
 
-    public void updateViewResourceWithDetails(@NonNull ShippingInfo shippingInfo) {
-        super.updateViewResourceWithDetails(shippingInfo);
+    public void updateViewResourceWithDetails(@NonNull ShippingContactInfo shippingContactInfo) {
+        super.updateViewResourceWithDetails(shippingContactInfo);
         setEmailVisibility(GONE);
     }
 

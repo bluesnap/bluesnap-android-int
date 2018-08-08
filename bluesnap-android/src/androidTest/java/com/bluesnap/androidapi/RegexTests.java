@@ -2,10 +2,7 @@ package com.bluesnap.androidapi;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
-
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
-import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +20,12 @@ public class RegexTests extends BSAndroidTestsBase {
 
 
     @Before
-    public void setup() throws InterruptedException {
+    public void setup() {
         Log.i(TAG, "=============== Starting Regex tests ==================");
     }
 
     @Test
-    public void check_regex_order() throws InterruptedException, BSPaymentRequestException {
+    public void check_regex_order() {
 
         CreditCardTypeResolver creditCardTypeResolver = CreditCardTypeResolver.getInstance();
 

@@ -5,10 +5,8 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
-
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -16,13 +14,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static com.bluesnap.android.demoapp.CardFormTesterCommon.cardNumberGeneratorTest;
-import static com.bluesnap.android.demoapp.CardFormTesterCommon.invalidCardNumberGeneratorTest;
+import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.cardNumberGeneratorTest;
+import static com.bluesnap.android.demoapp.CreditCardLineTesterCommon.invalidCardNumberGeneratorTest;
 import static org.hamcrest.Matchers.not;
 
 
@@ -33,13 +29,13 @@ import static org.hamcrest.Matchers.not;
  */
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class CCormValidityTest extends EspressoBasedTest {
-    private static final String TAG = CCormValidityTest.class.getSimpleName();
+public class CCFormValidityTest extends EspressoBasedTest {
+    private static final String TAG = CCFormValidityTest.class.getSimpleName();
 
     @After
-    public void keepRunning() throws InterruptedException {
+    public void keepRunning() {
         //        while (true) { Thread.sleep(2000); } //Remove this
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
     }
 
 
@@ -51,7 +47,7 @@ public class CCormValidityTest extends EspressoBasedTest {
     }
 
     @Test
-    public void ccn_new_card_validation_messages() throws InterruptedException {
+    public void ccn_new_card_validation_messages() {
 
         //------------------------------------------
         // CC number
@@ -152,7 +148,7 @@ public class CCormValidityTest extends EspressoBasedTest {
      * @throws InterruptedException
      */
     @Test
-    public void cc_new_Card_ccn_first() throws InterruptedException {
+    public void cc_new_Card_ccn_first() {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
         onView(withId(R.id.creditCardNumberEditText))
@@ -169,7 +165,7 @@ public class CCormValidityTest extends EspressoBasedTest {
      * @throws InterruptedException
      */
     @Test
-    public void cc_new_card_empty_name_then_ccn() throws InterruptedException {
+    public void cc_new_card_empty_name_then_ccn() {
         Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
 
         onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
