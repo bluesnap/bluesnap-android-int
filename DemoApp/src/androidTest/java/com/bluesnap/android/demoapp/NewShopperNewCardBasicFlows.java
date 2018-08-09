@@ -346,11 +346,11 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         if (fullInfo || !isBillingInfo) { //full info or shipping
             if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
                 if (countryKey.equals("US"))
-                    check_if_field_identify(isBillingInfo, "state", "New York", jsonObject);
+                    check_if_field_identify(isBillingInfo, "state", "NY", jsonObject);
                 else if (countryKey.equals("CA"))
-                    check_if_field_identify(isBillingInfo, "state", "Quebec", jsonObject);
+                    check_if_field_identify(isBillingInfo, "state", "QC", jsonObject);
                 else
-                    check_if_field_identify(isBillingInfo, "state", "Rio de Janeiro", jsonObject);
+                    check_if_field_identify(isBillingInfo, "state", "RJ", jsonObject);
             }
             check_if_field_identify(isBillingInfo, "city", contactInfo.getCity(), jsonObject);
             check_if_field_identify(isBillingInfo, address, contactInfo.getAddress(), jsonObject);
