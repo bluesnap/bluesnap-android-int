@@ -31,8 +31,6 @@ public class SdkResult implements Parcelable {
 
     private String paypalInvoiceId;
 
-    private String shopperID;
-
     private BillingContactInfo billingContactInfo;
     private ShippingContactInfo shippingContactInfo;
 

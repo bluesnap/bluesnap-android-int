@@ -5,11 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.AppExecutors;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.*;
 import com.bluesnap.androidapi.utils.JsonParser;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,13 +23,14 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.bluesnap.androidapi.models.BSTokenizeDetailsJsonFactory.createDataObject;
+
 /**
  * Core BlueSnap Service class that handles network and maintains {@link SdkRequest}
  */
 public class BlueSnapService {
     private static final String TAG = BlueSnapService.class.getSimpleName();
     private static final BlueSnapService INSTANCE = new BlueSnapService();
-    private static final String FRAUDSESSIONID = "fraudSessionId";
     private static String paypalURL;
     private static JSONObject errorDescription;
     private static String transactionStatus;
@@ -152,14 +155,11 @@ public class BlueSnapService {
     /**
      * Update shopper details on the BlueSnap Server
      *
-     * @param shopperConfiguration {@link ShopperConfiguration}
-     * @param responseHandler      {@link AsyncHttpResponseHandler}
-     * @throws JSONException                in case of invalid JSON object (should not happen)
-     * @throws UnsupportedEncodingException should not happen
+     * @param ShopperJsonObject {@link JSONObject} - Shopper in Json convention
      */
-    public void submitUpdatedShopperDetails(ShopperConfiguration shopperConfiguration, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
+    public BlueSnapHTTPResponse submitUpdatedShopperDetails(final JSONObject ShopperJsonObject) {
         Log.d(TAG, "update Shopper on token " + bluesnapToken.toString());
-        blueSnapAPI.updateShopper(BlueSnapJSON.convertShopperObject2JSON(), responseHandler);
+        return blueSnapAPI.updateShopper(ShopperJsonObject.toString());
     }
 
     /**
@@ -172,7 +172,7 @@ public class BlueSnapService {
     public BlueSnapHTTPResponse submitTokenizedCCNumber(final String creditCardNumber) throws JSONException, UnsupportedEncodingException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         JSONObject postData = new JSONObject();
-        postData.put(CreditCard.CCNUMBER, creditCardNumber);
+        postData.put(BSTokenizeDetailsJsonFactory.CCNUMBER, creditCardNumber);
         return blueSnapAPI.tokenizeDetails(postData.toString());
     }
 
@@ -185,84 +185,12 @@ public class BlueSnapService {
      */
     public BlueSnapHTTPResponse submitTokenizedDetails(PurchaseDetails purchaseDetails) throws JSONException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        return blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails).toString());
-    }
-
-    /**
-     * @param purchaseDetails {@link PurchaseDetails}
-     * @return {@link JSONObject} representation for api put call for the server
-     * @throws JSONException in case of invalid JSON object (should not happen)
-     */
-    private JSONObject createDataObject(PurchaseDetails purchaseDetails) throws JSONException {
-        CreditCard creditCard = purchaseDetails.getCreditCard();
-        BillingContactInfo billingContactInfo = purchaseDetails.getBillingContactInfo();
-        ShippingContactInfo shippingContactInfo = null;
-        if (sdkRequest.isShippingRequired())
-            shippingContactInfo = purchaseDetails.getShippingContactInfo();
-
-        return createDataObject(creditCard, billingContactInfo, shippingContactInfo);
-    }
-
-    /**
-     * @param creditCard   {@link CreditCard}
-     * @param billingContactInfo  {@link BillingContactInfo}
-     * @param shippingContactInfo {@link ShippingContactInfo}
-     * @return {@link JSONObject} representation for api put call for the server
-     * @throws JSONException in case of invalid JSON object (should not happen)
-     */
-    private JSONObject createDataObject(CreditCard creditCard, BillingContactInfo billingContactInfo, ShippingContactInfo shippingContactInfo) throws JSONException {
-        JSONObject postData = new JSONObject();
-
-        if (creditCard.getIsNewCreditCard()) {
-            postData.put(CreditCard.CCNUMBER, creditCard.getNumber());
-            postData.put(CreditCard.CVV, creditCard.getCvc());
-            postData.put(CreditCard.EXPDATE, creditCard.getExpirationDate());
-        } else {
-            postData.put(CreditCard.CARDTYPE, creditCard.getCardType());
-            postData.put(CreditCard.LAST4DIGITS, creditCard.getCardLastFourDigits());
-
-        }
-
-        postData.put(BillingContactInfo.BILLINGFIRSTNAME, billingContactInfo.getFirstName());
-        postData.put(BillingContactInfo.BILLINGLASTNAME, billingContactInfo.getLastName());
-        postData.put(BillingContactInfo.BILLINGCOUNTRY, billingContactInfo.getCountry());
-
-        if (null != billingContactInfo.getZip() && !"".equals(billingContactInfo.getZip()))
-            postData.put(BillingContactInfo.BILLINGZIP, billingContactInfo.getZip());
-
-        if (sdkRequest.isBillingRequired()) {
-            if (BlueSnapValidator.checkCountryHasState(billingContactInfo.getCountry()))
-                postData.put(BillingContactInfo.BILLINGSTATE, billingContactInfo.getState());
-            postData.put(BillingContactInfo.BILLINGCITY, billingContactInfo.getCity());
-            postData.put(BillingContactInfo.BILLINGADDRESS, billingContactInfo.getAddress());
-        }
-
-        if (sdkRequest.isEmailRequired())
-            postData.put(BillingContactInfo.EMAIL, billingContactInfo.getEmail());
-
-        //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
-
-        if (sdkRequest.isShippingRequired() || null != shippingContactInfo) {
-            postData.put(ShippingContactInfo.SHIPPINGFIRSTNAME, shippingContactInfo.getFirstName());
-            postData.put(ShippingContactInfo.SHIPPINGLASTNAME, shippingContactInfo.getLastName());
-            postData.put(ShippingContactInfo.SHIPPINGCOUNTRY, shippingContactInfo.getCountry());
-            if (BlueSnapValidator.checkCountryHasState(shippingContactInfo.getCountry()))
-                postData.put(ShippingContactInfo.SHIPPINGSTATE, shippingContactInfo.getState());
-            postData.put(ShippingContactInfo.SHIPPINGCITY, shippingContactInfo.getCity());
-            postData.put(ShippingContactInfo.SHIPPINGADDRESS, shippingContactInfo.getAddress());
-            postData.put(ShippingContactInfo.SHIPPINGZIP, shippingContactInfo.getZip());
-        }
-
-        if (null != kountService.getKountSessionId()) {
-            String fraudSessionId = kountService.getKountSessionId();
-            postData.put(FRAUDSESSIONID, fraudSessionId);
-        }
-
-        return postData;
+        return blueSnapAPI.tokenizeDetails(createDataObject((ShopperInfoConfig) sdkRequest, purchaseDetails, getKountSessionId()).toString());
     }
 
     /**
      * Check if Token is Expired on the BlueSnap Server
+     *
      * @throws JSONException                in case of invalid JSON object (should not happen)
      * @throws UnsupportedEncodingException should not happen
      */
@@ -584,7 +512,6 @@ public class BlueSnapService {
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         sdkResult.setAmount(priceDetails.getAmount());
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
-        sdkResult.setShopperID(sdkRequest.getShopperID());
     }
 
     /**
@@ -597,7 +524,6 @@ public class BlueSnapService {
         convertPrice(priceDetails, newCurrencyNameCode);
         sdkResult.setAmount(priceDetails.getAmount());
         sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
-        sdkResult.setShopperID(sdkRequest.getShopperID());
         BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
     }
 
@@ -674,7 +600,6 @@ public class BlueSnapService {
     }
 
 
-
     /**
      * After calling initBluesnap() with a token created for an existing shopper, the merchant app can use this method to
      * get the shopper details, including the chosen payment method
@@ -686,11 +611,11 @@ public class BlueSnapService {
         ShopperConfiguration res = null;
         final Shopper shopper = sDKConfiguration.getShopper();
         if (shopper != null) {
-            BillingInfo billingInfo = new BillingInfo(shopper);
-            billingInfo.setEmail(shopper.getEmail());
-            ShippingInfo shippingInfo = shopper.getShippingContactInfo() == null ? null : new ShippingInfo(shopper.getShippingContactInfo());
+            BillingContactInfo billingContactInfo = new BillingContactInfo(shopper);
+            billingContactInfo.setEmail(shopper.getEmail());
+            ShippingContactInfo shippingContactInfo = shopper.getShippingContactInfo() == null ? null : new ShippingContactInfo(shopper.getShippingContactInfo());
             ChosenPaymentMethod chosenPaymentMethod = shopper.getChosenPaymentMethod() == null ? null : new ChosenPaymentMethod(shopper.getChosenPaymentMethod());
-            res = new ShopperConfiguration(billingInfo, shippingInfo, chosenPaymentMethod);
+            res = new ShopperConfiguration(billingContactInfo, shippingContactInfo, chosenPaymentMethod);
         }
         return res;
     }

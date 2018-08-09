@@ -2,47 +2,53 @@ package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
+
 import org.json.JSONObject;
 
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
-public class ContactInfo implements Parcelable {
+public class ContactInfo extends BSModel implements Parcelable {
 
-    //@SerializedName("firstName")
+    public static final String FIRST_NAME = "firstName";
+    public static final String LAST_NAME = "lastName";
+    public static final String ADDRESS = "address";
+    public static final String ADDRESS_2 = "address2";
+    public static final String STATE = "state";
+    public static final String ZIP = "zip";
+    public static final String COUNTRY = "country";
+    public static final String CITY = "city";
     private String firstName;
-    //@SerializedName("lastName")
     private String lastName;
     @Nullable
-    //@SerializedName("address1")
     private String address;
     @Nullable
-    //@SerializedName("address2")
     private String address2;
     @Nullable
-    //@SerializedName("city")
     private String city;
     @Nullable
-    //@SerializedName("state")
     private String state;
     @Nullable
-    //@SerializedName("zip")
     private String zip;
     @Nullable
-    //@SerializedName("country")
     private String country;
 
     public ContactInfo() {
     }
 
     public ContactInfo(ContactInfo contactInfo) {
-        setFullName(contactInfo.getFullName());
+        setFirstName(contactInfo.getFirstName());
+        setLastName(contactInfo.getLastName());
         setAddress(contactInfo.getAddress());
         setAddress2(contactInfo.getAddress2());
         setZip(contactInfo.getZip());
@@ -178,19 +184,6 @@ public class ContactInfo implements Parcelable {
         return result;
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", zip='" + zip + '\'' +
-                ", country='" + country + '\'' +
-                '}';
-    }
-
     protected ContactInfo(Parcel parcel) {
         firstName = parcel.readString();
         lastName = parcel.readString();
@@ -207,15 +200,36 @@ public class ContactInfo implements Parcelable {
             return null;
 
         ContactInfo contactInfo = new ContactInfo();
-        contactInfo.setFirstName(getOptionalString(jsonObject, "firstName"));
-        contactInfo.setLastName(getOptionalString(jsonObject, "lastName"));
-        contactInfo.setAddress(getOptionalString(jsonObject, "address1"));
-        contactInfo.setAddress2(getOptionalString(jsonObject, "address2"));
-        contactInfo.setState(getOptionalString(jsonObject, "state"));
-        contactInfo.setZip(getOptionalString(jsonObject, "zip"));
-        contactInfo.setCountry(getOptionalString(jsonObject, "country"));
-//        contactInfo.setEmail(getOptionalString(jsonObject,"email"));
-        contactInfo.setCity(getOptionalString(jsonObject, "city"));
+        contactInfo.setFirstName(getOptionalString(jsonObject, FIRST_NAME));
+        contactInfo.setLastName(getOptionalString(jsonObject, LAST_NAME));
+        contactInfo.setAddress(getOptionalString(jsonObject, ADDRESS));
+        contactInfo.setAddress2(getOptionalString(jsonObject, ADDRESS_2));
+        contactInfo.setState(getOptionalString(jsonObject, STATE));
+        contactInfo.setZip(getOptionalString(jsonObject, ZIP));
+        contactInfo.setCountry(getOptionalString(jsonObject, COUNTRY));
+        contactInfo.setCity(getOptionalString(jsonObject, CITY));
         return contactInfo;
+    }
+
+    /**
+     * create JSON object from Contact Info
+     *
+     * @return JSONObject
+     */
+    @Override
+    @NonNull
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        putJSONifNotNull(jsonObject, FIRST_NAME, getFirstName());
+        putJSONifNotNull(jsonObject, LAST_NAME, getLastName());
+        putJSONifNotNull(jsonObject, COUNTRY, getCountry());
+        if (BlueSnapValidator.checkCountryHasState(getCountry()))
+            putJSONifNotNull(jsonObject, STATE, getState());
+        putJSONifNotNull(jsonObject, ADDRESS, getAddress());
+        putJSONifNotNull(jsonObject, ADDRESS_2, getAddress2());
+        putJSONifNotNull(jsonObject, CITY, getCity());
+        putJSONifNotNull(jsonObject, ZIP, getZip());
+
+        return jsonObject;
     }
 }

@@ -2,24 +2,21 @@ package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import org.json.JSONObject;
 
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 /**
  * Created by roy.biber on 12/11/2017.
  */
 
 public class BillingContactInfo extends ContactInfo implements Parcelable {
-    public static final String BILLINGFIRSTNAME = "billingFirstName";
-    public static final String BILLINGLASTNAME = "billingLastName";
-    public static final String BILLINGCOUNTRY = "billingCountry";
-    public static final String BILLINGSTATE = "billingState";
-    public static final String BILLINGCITY = "billingCity";
-    public static final String BILLINGADDRESS = "billingAddress";
-    public static final String BILLINGZIP = "billingZip";
-    public static final String EMAIL = "email";
+    private static final String EMAIL = "email";
+    public static final String ADDRESS_1 = "address1";
 
     @Nullable
     //@SerializedName("email")
@@ -65,30 +62,29 @@ public class BillingContactInfo extends ContactInfo implements Parcelable {
         if (contactInfo == null) {
             return null;
         }
-        BillingContactInfo billingContactInfo = null;
-        billingContactInfo = new BillingContactInfo(contactInfo);
-        billingContactInfo.setEmail(getOptionalString(jsonObject, "email"));
+        BillingContactInfo billingContactInfo = new BillingContactInfo(contactInfo);
+        billingContactInfo.setEmail(getOptionalString(jsonObject, EMAIL));
         return billingContactInfo;
 
+    }
+
+    /**
+     * create JSON object from Billing Contact Info
+     *
+     * @return JSONObject
+     */
+    @NonNull
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = super.toJson();
+        putJSONifNotNull(jsonObject, ADDRESS_1, getAddress());
+        putJSONifNotNull(jsonObject, EMAIL, getEmail());
+        return jsonObject;
     }
 
     public void writeToParcel(Parcel parcel, int flags) {
         super.writeToParcel(parcel, flags);
         parcel.writeString(email);
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "firstName='" + super.getFirstName() + '\'' +
-                ", lastName='" + super.getLastName() + '\'' +
-                ", address='" + super.getAddress() + '\'' +
-                ", city='" + super.getCity() + '\'' +
-                ", state='" + super.getState() + '\'' +
-                ", zip='" + super.getZip() + '\'' +
-                ", country='" + super.getCountry() + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 
     @Nullable

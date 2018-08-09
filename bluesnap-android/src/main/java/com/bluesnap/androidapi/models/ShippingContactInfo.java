@@ -2,27 +2,23 @@ package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import org.json.JSONObject;
 
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 /**
  * Created by roy.biber on 12/11/2017.
  */
 
 public class ShippingContactInfo extends ContactInfo implements Parcelable {
-    public static final String SHIPPINGFIRSTNAME = "shippingFirstName";
-    public static final String SHIPPINGLASTNAME = "shippingLastName";
-    public static final String SHIPPINGCOUNTRY = "shippingCountry";
-    public static final String SHIPPINGSTATE = "shippingState";
-    public static final String SHIPPINGCITY = "shippingCity";
-    public static final String SHIPPINGADDRESS = "shippingAddress";
-    public static final String SHIPPINGZIP = "shippingZip";
     public static final String PHONE = "phone";
+    public static final String ADDRESS_1 = "address1";
 
     @Nullable
-    //@SerializedName("phone")
     private String phone;
 
     protected ShippingContactInfo(Parcel parcel) {
@@ -79,18 +75,18 @@ public class ShippingContactInfo extends ContactInfo implements Parcelable {
         parcel.writeString(phone);
     }
 
+    /**
+     * create JSON object from Shipping Contact Info
+     *
+     * @return JSONObject
+     */
+    @NonNull
     @Override
-    public String toString() {
-        return "{" +
-                "firstName='" + super.getFirstName() + '\'' +
-                ", lastName='" + super.getLastName() + '\'' +
-                ", address='" + super.getAddress() + '\'' +
-                ", city='" + super.getCity() + '\'' +
-                ", state='" + super.getState() + '\'' +
-                ", zip='" + super.getZip() + '\'' +
-                ", country='" + super.getCountry() + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
+    public JSONObject toJson() {
+        JSONObject jsonObject = super.toJson();
+        putJSONifNotNull(jsonObject, ADDRESS_1, getAddress());
+        putJSONifNotNull(jsonObject, PHONE, getPhone());
+        return jsonObject;
     }
 
     @Nullable

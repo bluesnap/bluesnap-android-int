@@ -1,18 +1,25 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.bluesnap.androidapi.utils.JsonParser;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
+
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
-public class CreditCardInfo {
+public class CreditCardInfo extends BSModel {
 
+    public static final String BILLING_CONTACT_INFO = "billingContactInfo";
+    public static final String CREDIT_CARD = "creditCard";
     //@SerializedName("billingContactInfo")
     private BillingContactInfo billingContactInfo;
     //@SerializedName("creditCard")
@@ -33,8 +40,8 @@ public class CreditCardInfo {
         }
 
         CreditCardInfo creditCardInfo = new CreditCardInfo();
-        creditCardInfo.setBillingContactInfo(BillingContactInfo.fromJson(JsonParser.getOptionalObject(jsonObject, "billingContactInfo")));
-        creditCardInfo.setCreditCard(CreditCard.fromJson(JsonParser.getOptionalObject(jsonObject, "creditCard")));
+        creditCardInfo.setBillingContactInfo(BillingContactInfo.fromJson(JsonParser.getOptionalObject(jsonObject, BILLING_CONTACT_INFO)));
+        creditCardInfo.setCreditCard(CreditCard.fromJson(JsonParser.getOptionalObject(jsonObject, CREDIT_CARD)));
         //TODO: processingInfo can also be parsed here..
 
         return creditCardInfo;
@@ -78,4 +85,12 @@ public class CreditCardInfo {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    @NonNull
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        putJSONifNotNull(jsonObject, CREDIT_CARD, getCreditCard());
+        putJSONifNotNull(jsonObject, BILLING_CONTACT_INFO, getBillingContactInfo());
+        return jsonObject;
+    }
 }

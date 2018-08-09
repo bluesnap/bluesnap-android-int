@@ -1,6 +1,8 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,14 +10,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
+
 /**
  * A representation of server exchange rate.
  */
-public class PaymentSources {
+public class PaymentSources extends BSModel {
 
+    public static final String CREDIT_CARD_INFO = "creditCardInfo";
     @Nullable
-    //@SerializedName("creditCardInfo")
-    private List<CreditCardInfo> previousCreditCardInfos;
+    private List<CreditCardInfo> creditCardInfos;
 
     @Nullable
     public static PaymentSources fromJson(@Nullable JSONObject previousPaymentSources) {
@@ -24,14 +28,14 @@ public class PaymentSources {
 
         }
         PaymentSources paymentSources = new PaymentSources();
-        paymentSources.previousCreditCardInfos = new ArrayList<>();
+        paymentSources.creditCardInfos = new ArrayList<>();
         try {
 
-            if (previousPaymentSources.getJSONArray("creditCardInfo").length() > 0) {
-                JSONArray creditCardInfosJA = previousPaymentSources.getJSONArray("creditCardInfo");
+            if (previousPaymentSources.getJSONArray(CREDIT_CARD_INFO).length() > 0) {
+                JSONArray creditCardInfosJA = previousPaymentSources.getJSONArray("CREDIT_CARD_INFO");
                 for (int i = 0; i < creditCardInfosJA.length(); i++) {
                     CreditCardInfo ccinfo = CreditCardInfo.fromJson(creditCardInfosJA.getJSONObject(i));
-                    paymentSources.previousCreditCardInfos.add(ccinfo);
+                    paymentSources.creditCardInfos.add(ccinfo);
                 }
             }
 
@@ -43,11 +47,19 @@ public class PaymentSources {
     }
 
     @Nullable
-    public List<CreditCardInfo> getPreviousCreditCardInfos() {
-        return previousCreditCardInfos;
+    public List<CreditCardInfo> getCreditCardInfos() {
+        return creditCardInfos;
     }
 
-    public void setPreviousCreditCardInfos(@Nullable ArrayList<CreditCardInfo> previousCreditCardInfos) {
-        this.previousCreditCardInfos = previousCreditCardInfos;
+    public void setCreditCardInfos(@Nullable ArrayList<CreditCardInfo> creditCardInfos) {
+        this.creditCardInfos = creditCardInfos;
+    }
+
+    @NonNull
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        putJSONifNotNull(jsonObject, CREDIT_CARD_INFO, getCreditCardInfos());
+        return jsonObject;
     }
 }

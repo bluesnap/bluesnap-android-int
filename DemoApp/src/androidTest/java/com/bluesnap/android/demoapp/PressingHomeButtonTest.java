@@ -87,7 +87,7 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
                         isDisplayed()));
         editText2.perform(replaceText("10"), closeSoftKeyboard());
 
-        ViewInteraction editText3 = onView(
+        /*ViewInteraction editText3 = onView(
                 allOf(withId(R.id.demoTaxEditText),
                         childAtPosition(
                                 childAtPosition(
@@ -95,7 +95,7 @@ public class PressingHomeButtonTest extends EspressoBasedTest {
                                         5),
                                 1),
                         isDisplayed()));
-        editText3.perform(replaceText("10"), closeSoftKeyboard());
+        editText3.perform(replaceText("10"), closeSoftKeyboard());*/
 
         goHome(mActivity);
 

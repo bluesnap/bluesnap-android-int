@@ -7,10 +7,13 @@ public class ShopperInfoConfig {
     private boolean emailRequired;
 
     public ShopperInfoConfig(boolean shippingRequired, boolean billingRequired, boolean emailRequired) {
-
         this.shippingRequired = shippingRequired;
         this.billingRequired = billingRequired;
         this.emailRequired = emailRequired;
+    }
+
+    public ShopperInfoConfig() {
+        this(false, false, false);
     }
 
     public boolean isShippingRequired() {

@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.services;
 
 import android.util.Log;
+
 import com.bluesnap.androidapi.BuildConfig;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
@@ -35,7 +36,6 @@ class BlueSnapAPI {
     private ArrayList<CustomHTTPParams> headerParams;
 
 
-
     static BlueSnapAPI getInstance() {
         return INSTANCE;
     }
@@ -54,8 +54,7 @@ class BlueSnapAPI {
     /**
      * tokenize details to server
      *
-     *
-     * @param body      - details to set
+     * @param body - details to set
      */
     BlueSnapHTTPResponse tokenizeDetails(final String body) {
         Log.d(TAG, "Api request for token detail");
@@ -67,15 +66,14 @@ class BlueSnapAPI {
     /**
      * update shopper details to server
      *
-     * @param jsonObject      - details to set
-     * @param responseHandler
-     * @throws JSONException
-     * @throws UnsupportedEncodingException
+     * @param body - body string to send to server
+     * @return {@link BlueSnapHTTPResponse}
      */
-    void updateShopper(JSONObject jsonObject, AsyncHttpResponseHandler responseHandler) throws JSONException, UnsupportedEncodingException {
-        ByteArrayEntity entity = new ByteArrayEntity(jsonObject.toString().getBytes("UTF-8"));
-        entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-        httpClient.put(null, url + UPDATE_SHOPPER, entity, "application/json", responseHandler);
+    BlueSnapHTTPResponse updateShopper(final String body) {
+        Log.d(TAG, "Api request for token detail");
+        // headerParams.add(new CustomHTTPParams(TOKEN_AUTHENTICATION, String.valueOf(merchantToken)));
+        return HTTPOperationController.put(url + CARD_TOKENIZE + merchantToken, body, CONTENT_TYPE,
+                ACCEPT, headerParams);
     }
 
     /**
@@ -93,7 +91,7 @@ class BlueSnapAPI {
     /**
      * get sdk initilize data from server
      *
-     * @param baseCurrency            - currency to base the rates on
+     * @param baseCurrency - currency to base the rates on
      */
     BlueSnapHTTPResponse sdkInit(final String baseCurrency) {
 
@@ -103,9 +101,9 @@ class BlueSnapAPI {
     /**
      * create PayPal Token (url)
      *
-     * @param amount                  - amount to charge
-     * @param currency                - currency to charge with
-     * @param isShippingRequired      - boolean is shipping required
+     * @param amount             - amount to charge
+     * @param currency           - currency to charge with
+     * @param isShippingRequired - boolean is shipping required
      */
     BlueSnapHTTPResponse createPayPalToken(final Double amount, final String currency, boolean isShippingRequired) {
         String urlString = url + PAYPAL_SERVICE + amount + "&currency=" + currency;
@@ -116,7 +114,6 @@ class BlueSnapAPI {
 
     /**
      * check transaction status after PayPal transaction occurred
-     *
      */
     BlueSnapHTTPResponse retrieveTransactionStatus() {
         return HTTPOperationController.get(url + RETRIEVE_TRANSACTION_SERVICE, CONTENT_TYPE, ACCEPT, headerParams);

@@ -3,7 +3,10 @@ package com.bluesnap.androidapi.utils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +17,6 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by oz
- *
  */
 public class JsonParser {
 
@@ -22,8 +24,9 @@ public class JsonParser {
 
     /**
      * SDKConfiguration Json mapping
-     *
+     * <p>
      * TODO: This method should be DKConiguration.fromJson()
+     *
      * @param jsonData
      * @return
      */
@@ -118,6 +121,40 @@ public class JsonParser {
             return jsonObject.getJSONObject(name);
         } catch (JSONException e) {
             return null;
+        }
+    }
+
+    /**
+     * check If Not Null And Put In Json
+     *
+     * @param jsonObject  - the object to put inside
+     * @param stringValue - the String to put
+     * @param key         - the key code of the stringValue
+     */
+    public static void putJSONifNotNull(JSONObject jsonObject, String key, String stringValue) {
+        if (null != stringValue && !"".equals(stringValue)) {
+            try {
+                jsonObject.put(key, stringValue);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * check If Not Null And Put In Json
+     *
+     * @param jsonObject  - the object to put inside
+     * @param objectValue - the object to put
+     * @param key         - the key code of the objectValue
+     */
+    public static void putJSONifNotNull(JSONObject jsonObject, String key, Object objectValue) {
+        if (null != objectValue) {
+            try {
+                jsonObject.put(key, objectValue);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+            }
         }
     }
 }

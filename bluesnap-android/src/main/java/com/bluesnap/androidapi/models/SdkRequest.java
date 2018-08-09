@@ -7,33 +7,24 @@ import com.bluesnap.androidapi.services.TaxCalculator;
  * A Request for payment process in the SDK.
  * A new SdkRequest should be used for each purchase.
  */
-public class SdkRequest {
+public class SdkRequest extends ShopperInfoConfig {
 
     private PriceDetails priceDetails;
     private boolean allowCurrencyChange = true;
-    private ShopperInfoConfig shopperInfoConfig = new ShopperInfoConfig(false, false, false);
     private TaxCalculator taxCalculator;
 
-    private boolean shopperConfig = false;
-
     private SdkRequest() {
+        super();
     }
 
     public SdkRequest(Double amount, String currencyNameCode) {
+        super();
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
     }
 
     public SdkRequest(Double amount, String currencyNameCode, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
-
+        super(shippingRequired, billingRequired, emailRequired);
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
-        shopperInfoConfig = new ShopperInfoConfig(shippingRequired, billingRequired, emailRequired);
-    }
-
-    public SdkRequest(boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
-
-        priceDetails = new PriceDetails(0D, SupportedPaymentMethods.USD, 0D);
-        shopperInfoConfig = new ShopperInfoConfig(shippingRequired, billingRequired, emailRequired);
-        shopperConfig = true;
     }
 
     public PriceDetails getPriceDetails() {
@@ -60,25 +51,5 @@ public class SdkRequest {
 
     public void setTaxCalculator(TaxCalculator taxCalculator) {
         this.taxCalculator = taxCalculator;
-    }
-
-    public ShopperInfoConfig getShopperInfoConfig() {
-        return shopperInfoConfig;
-    }
-
-    public boolean isShippingRequired() {
-        return shopperInfoConfig.isShippingRequired();
-    }
-
-    public boolean isBillingRequired() {
-        return shopperInfoConfig.isBillingRequired();
-    }
-
-    public boolean isEmailRequired() {
-        return shopperInfoConfig.isEmailRequired();
-    }
-
-    public boolean isShopperConfig() {
-        return shopperConfig;
     }
 }

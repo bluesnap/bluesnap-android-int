@@ -5,16 +5,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
 import com.bluesnap.androidapi.http.HTTPOperationController;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.ChosenPaymentMethod;
+import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
@@ -23,6 +25,7 @@ import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import javax.net.ssl.HttpsURLConnection;
+
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -316,6 +319,7 @@ public class DemoMainActivity extends AppCompatActivity {
             returningOrNewShopper = "?shopperId=" + returningShopperId;
         }
 
+        final String finalReturningOrNewShopper = returningOrNewShopper;
         final Runnable myRunnable = new Runnable() {
             @Override
             public void run() {
@@ -323,7 +327,7 @@ public class DemoMainActivity extends AppCompatActivity {
                     String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
                     ArrayList<CustomHTTPParams> headerParams = new ArrayList<>();
                     headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
-                    BlueSnapHTTPResponse post = HTTPOperationController.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper, null, "application/json", "application/json", headerParams);
+                    BlueSnapHTTPResponse post = HTTPOperationController.post(SANDBOX_URL + SANDBOX_TOKEN_CREATION + finalReturningOrNewShopper, null, "application/json", "application/json", headerParams);
                     if (post.getResponseCode() == HTTP_CREATED && post.getHeaders() != null) {
                         String location = post.getHeaders().get("Location").get(0);
                         merchantToken = location.substring(location.lastIndexOf('/') + 1);
@@ -356,11 +360,11 @@ public class DemoMainActivity extends AppCompatActivity {
             ShopperConfiguration shopperInfo = bluesnapService.getShopperConfiguration();
             String shopperInfoText = "";
             if (shopperInfo != null) {
-                BillingInfo billingInfo = shopperInfo.getBillingInfo();
+                BillingContactInfo billingInfo = shopperInfo.getBillingContactInfo();
                 shopperInfoText = billingInfo.getFullName();
                 ChosenPaymentMethod chosenPaymentMethod = shopperInfo.getChosenPaymentMethod();
                 if (chosenPaymentMethod != null) {
-                    shopperInfoText += "; Payment method: " + chosenPaymentMethod.getChosenPaymentMethodType().name();
+                    shopperInfoText += "; Payment method: " + chosenPaymentMethod.getChosenPaymentMethodType();
                     CreditCard creditCard = chosenPaymentMethod.getCreditCard();
                     if (creditCard != null) {
                         shopperInfoText += " " + creditCard.getCardLastFourDigits();
@@ -395,13 +399,18 @@ public class DemoMainActivity extends AppCompatActivity {
                         finish();
                     }
 
-                    @Override
+                    /*@Override
                     public void setNegativeDialog() {
                         //generateMerchantToken();
                         progressBar.setVisibility(View.INVISIBLE);
 
                     }
-                }, "Close", "Cancel");
+                }, "Close", "Cancel");*/
+                    @Override
+                    public void setNegativeDialog() {
+                        generateMerchantToken();
+                    }
+                }, "Close", "Retry");
             }
         });
     }

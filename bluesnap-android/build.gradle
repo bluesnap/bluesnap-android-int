@@ -177,6 +177,11 @@ install {
                         name 'snpori'
                         email 'oribsnap@gmail.com'
                     }
+                    developer {
+                        id 'royb'
+                        name 'royb'
+                        email 'roy.biber@bluesnap.com'
+                    }
                 }
                 scm {
                     connection gitUrl

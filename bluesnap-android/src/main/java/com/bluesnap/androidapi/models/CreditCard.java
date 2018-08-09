@@ -1,38 +1,42 @@
 package com.bluesnap.androidapi.models;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.bluesnap.androidapi.utils.JsonParser;
+
 import org.json.JSONObject;
+
+import static com.bluesnap.androidapi.models.BillingContactInfo.ADDRESS_1;
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 /**
  * Created by roy.biber on 07/11/2017.
  */
 
-public class CreditCard {
-    public static final String CCNUMBER = "ccNumber";
-    public static final String CVV = "cvv";
-    public static final String EXPDATE = "expDate";
-    public static final String LAST4DIGITS = "lastFourDigits";
-    public static final String CARDTYPE = "ccType";
+public class CreditCard extends BSModel {
+    private static final String SECURITY_CODE = "securityCode";
+    private static final String CARD_NUMBER = "cardNumber";
+
+    private static final String CARD_LAST_FOUR_DIGITS = "cardLastFourDigits";
+    private static final String EXPIRATION_MONTH = "expirationMonth";
+    private static final String EXPIRATION_YEAR = "expirationYear";
+    private static final String CARD_TYPE = "cardType";
+    public static final String CARD_SUB_TYPE = "cardSubType";
 
     private transient String number;
     private String cvc;
     private boolean tokenizedSuccess = false;
     private boolean newCreditCard = false;
 
-    //@SerializedName("cardLastFourDigits")
     private String cardLastFourDigits;
     @Nullable
-    //@SerializedName("cardType")
     private String cardType;
     @Nullable
-    //@SerializedName("cardSubType")
     private String cardSubType;
-    //@SerializedName("expirationMonth")
     private Integer expirationMonth;
-    //@SerializedName("expirationYear")
     private Integer expirationYear;
 
     public CreditCard() {
@@ -45,11 +49,11 @@ public class CreditCard {
         }
 
         CreditCard creditCard = new CreditCard();
-        creditCard.setCardLastFourDigits(JsonParser.getOptionalString(jsonObject, "cardLastFourDigits"));
-        creditCard.setCardType(JsonParser.getOptionalString(jsonObject, "cardType"));
-        creditCard.setCardSubType(JsonParser.getOptionalString(jsonObject, "cardSubType"));
-        creditCard.setExpirationMonth(Integer.valueOf(JsonParser.getOptionalString(jsonObject, "expirationMonth")));
-        creditCard.setExpirationYear(Integer.valueOf(JsonParser.getOptionalString(jsonObject, "expirationYear")));
+        creditCard.setCardLastFourDigits(JsonParser.getOptionalString(jsonObject, CARD_LAST_FOUR_DIGITS));
+        creditCard.setCardType(JsonParser.getOptionalString(jsonObject, CARD_TYPE));
+        creditCard.setCardSubType(JsonParser.getOptionalString(jsonObject, CARD_SUB_TYPE));
+        creditCard.setExpirationMonth(Integer.valueOf(JsonParser.getOptionalString(jsonObject, EXPIRATION_MONTH)));
+        creditCard.setExpirationYear(Integer.valueOf(JsonParser.getOptionalString(jsonObject, EXPIRATION_YEAR)));
         return creditCard;
 
     }
@@ -323,12 +327,22 @@ public class CreditCard {
             this.newCreditCard = true;
     }
 
+    /**
+     * create JSON object from Credit Card
+     *
+     * @return JSONObject
+     */
+    @NonNull
     @Override
-    public String toString() {
-        return "Card {" +
-                "cardType:'" + cardType + '\'' +
-                ", tokenizedSuccess:" + tokenizedSuccess +
-                ", cardLastFourDigits:'" + cardLastFourDigits + '\'' +
-                '}';
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        putJSONifNotNull(jsonObject, SECURITY_CODE, getCvc());
+        putJSONifNotNull(jsonObject, CARD_NUMBER, getNumber());
+        putJSONifNotNull(jsonObject, CARD_LAST_FOUR_DIGITS, getCardLastFourDigits());
+        putJSONifNotNull(jsonObject, EXPIRATION_MONTH, getExpirationMonth());
+        putJSONifNotNull(jsonObject, EXPIRATION_YEAR, getExpirationYear());
+        putJSONifNotNull(jsonObject, CARD_TYPE, getCardType());
+        putJSONifNotNull(jsonObject, CARD_SUB_TYPE, getCardSubType());
+        return jsonObject;
     }
 }

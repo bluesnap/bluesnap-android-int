@@ -389,7 +389,6 @@ public class CreditCardActivity extends AppCompatActivity {
                                 Log.d(TAG, "tokenization of new credit card");
                             } else {
                                 // Reused Card
-                                sdkResult.setShopperID(String.valueOf(shopper.getVaultedShopperId()));
                                 Last4 = shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
                                 ccType = shopper.getNewCreditCardInfo().getCreditCard().getCardType();
                                 Log.d(TAG, "tokenization of previous used credit card");

@@ -132,12 +132,12 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     }
 
     protected void updateShopperCCViews(@NonNull final Shopper shopper) {
-        if (null == shopper.getPreviousPaymentSources() || null == shopper.getPreviousPaymentSources().getPreviousCreditCardInfos()) {
+        if (null == shopper.getPreviousPaymentSources() || null == shopper.getPreviousPaymentSources().getCreditCardInfos()) {
             Log.d(TAG, "Existing shopper contains no previous paymentSources or Previous card info");
             return;
         }
         //create an ArrayList<CreditCardInfo> for the ListView.
-        List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getPreviousCreditCardInfos();
+        List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getCreditCardInfos();
 
         //create an adapter to describe how the items are displayed.
         ListView oneLineCCViewComponentsListView = findViewById(R.id.oneLineCCViewComponentsListView);

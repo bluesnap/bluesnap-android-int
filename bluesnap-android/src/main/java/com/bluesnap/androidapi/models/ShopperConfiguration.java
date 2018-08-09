@@ -4,31 +4,33 @@ import android.support.annotation.Nullable;
 
 public class ShopperConfiguration {
 
-    private BillingInfo billingInfo;
+    private BillingContactInfo billingContactInfo;
     @Nullable
-    private ShippingInfo shippingInfo;
+    private ShippingContactInfo shippingContactInfo;
     @Nullable
     private ChosenPaymentMethod chosenPaymentMethod;
 
-    public ShopperConfiguration(BillingInfo billingInfo, @Nullable ShippingInfo shippingInfo, @Nullable ChosenPaymentMethod chosenPaymentMethod) {
-        this.billingInfo = billingInfo;
-        this.shippingInfo = shippingInfo;
+    public ShopperConfiguration(BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo, @Nullable ChosenPaymentMethod chosenPaymentMethod) {
+        this.billingContactInfo = billingContactInfo;
+        this.shippingContactInfo = shippingContactInfo;
         this.chosenPaymentMethod = chosenPaymentMethod;
     }
 
-    public BillingInfo getBillingInfo() { return billingInfo; }
+    public BillingContactInfo getBillingContactInfo() {
+        return billingContactInfo;
+    }
 
-    public void setBillingInfo(BillingInfo billingInfo) {
-        this.billingInfo = billingInfo;
+    public void setBillingContactInfo(BillingContactInfo billingContactInfo) {
+        this.billingContactInfo = billingContactInfo;
     }
 
     @Nullable
-    public ShippingInfo getShippingInfo() {
-        return shippingInfo;
+    public ShippingContactInfo getShippingContactInfo() {
+        return shippingContactInfo;
     }
 
-    public void setShippingInfo(ShippingInfo shippingInfo) {
-        this.shippingInfo = shippingInfo;
+    public void setShippingContactInfo(@Nullable ShippingContactInfo shippingContactInfo) {
+        this.shippingContactInfo = shippingContactInfo;
     }
 
     @Nullable
@@ -36,7 +38,7 @@ public class ShopperConfiguration {
         return chosenPaymentMethod;
     }
 
-    public void setChosenPaymentMethod(ChosenPaymentMethod chosenPaymentMethod) {
+    public void setChosenPaymentMethod(@Nullable ChosenPaymentMethod chosenPaymentMethod) {
         this.chosenPaymentMethod = chosenPaymentMethod;
     }
 }
