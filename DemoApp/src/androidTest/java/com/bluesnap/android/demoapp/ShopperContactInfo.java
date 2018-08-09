@@ -29,6 +29,16 @@ public class ShopperContactInfo {
         country = country_;
     }
 
+    public ShopperContactInfo(ShopperContactInfo contactInfo) {
+        name = contactInfo.name;
+        email = contactInfo.email;
+        city = contactInfo.city;
+        address = contactInfo.address;
+        state = contactInfo.state;
+        zip = contactInfo.zip;
+        country = contactInfo.country;
+    }
+
     public String getFirstName() {
         return name.substring(0, name.indexOf(" "));
     }

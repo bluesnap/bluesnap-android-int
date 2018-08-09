@@ -3,15 +3,21 @@ package com.bluesnap.android.demoapp;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
+
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.clearText;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Helper class for UI tests, handles the New CC form.
@@ -81,7 +87,7 @@ public class CreditCardLineTesterCommon {
         fillInCCLineWithValidCard();
         //change credit card number to an invalid one
         onView(withId(R.id.creditCardNumberEditText))
-                .perform(click(), clearText(), typeText("1232758881122"));
+                .perform(click(), clearText(), typeText(invalidCardNumberGeneratorTest()));
 
         onView(withId(R.id.buyNowButton)).perform(click());
 

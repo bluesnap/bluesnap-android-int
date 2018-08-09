@@ -2,6 +2,8 @@ package com.bluesnap.android.demoapp;
 
 import com.bluesnap.androidapi.Constants;
 
+import org.hamcrest.Matchers;
+
 import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -44,7 +46,7 @@ public class ReturningShopperVisibilityTesterCommon {
     }
 
     public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
-        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewSummarizedComponent) ? billingContactInfo : shippingContactInfo;
+        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewSummarizedComponent) ? ContactInfoTesterCommon.billingContactInfo : ContactInfoTesterCommon.shippingContactInfo;
         summarized_contact_info_visibility_validation(testName, componentResourceId, country, fullInfo, withEmail, contactInfo);
     }
 
@@ -108,38 +110,29 @@ public class ReturningShopperVisibilityTesterCommon {
     }
 
     /**
-     * This test verifies that changing the country in one fragment (billing/shipping contact
+     * This test verifies that changing the country in one component (billing/shipping contact
      * info) doesn't change the country in the other.
      *
      * @param summarizedComponentResourceId- The component in which it changes the country
      */
-    public static void country_changes_per_fragment_validation(String testName, int summarizedComponentResourceId, int componentResourceId, boolean fullInfo, boolean withEmail) {
+    public static void country_changes_per_fragment_validation(String testName, int summarizedComponentResourceId, String countryKey, String countryValue) {
         int editableComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.billingViewComponent : R.id.returningShoppershippingViewComponent;
         int firstSummarizedComponent = summarizedComponentResourceId; //the component to change
         int secondSummarizedComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.shippingViewSummarizedComponent : R.id.billingViewSummarizedComponent;
+        int buttonComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.returningShopperBillingFragmentButtonComponentView : R.id.returningShopperShippingFragmentButtonComponentView;
 
+        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(firstSummarizedComponent)))).perform(click());
 
-        //Changing country to Spain in first fragment
-        ContactInfoTesterCommon.changeCountry(editableComponent, "Spain");
+        //Changing country to Spain in first component
+        ContactInfoTesterCommon.changeCountry(editableComponent, countryValue);
 
-        //continue to shipping
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        //go back to credit card
+        TestUtils.go_back_to_credit_card_in_returning_shopper(true, buttonComponent);
 
-        //Verify country hasn't change in shipping fragment
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Country changed in shipping"))
-                .check(matches(not(TestUtils.withDrawable(R.drawable.es))));
-
-        //Changing Country to Italy in shipping fragment
-        ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "Italy");
-
-        //go back to billing
-        TestUtils.go_back_to_billing_in_new_card();
-
-        //Verify country hasn't change in billing fragment
-        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.billingViewComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Country changed in billing"))
-                .check(matches(TestUtils.withDrawable(R.drawable.es)));
+        //Verify country hasn't change in other info component
+        onView(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(secondSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Country TextView changed in second component"))
+                .check(matches(not(withText(countryKey))));
     }
 
 }

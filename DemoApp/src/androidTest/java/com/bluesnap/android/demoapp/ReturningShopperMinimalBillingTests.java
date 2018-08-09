@@ -16,9 +16,12 @@ import java.io.IOException;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.anything;
+import static org.hamcrest.CoreMatchers.not;
 
 /**
  * Created by sivani on 28/07/2018.
@@ -27,13 +30,13 @@ import static org.hamcrest.CoreMatchers.anything;
 @RunWith(AndroidJUnit4.class)
 
 public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
-    private static final String RETURNING_SHOPPER_ID_MIN_BILLING = "22852981";
-    private static final String BILLING_COUNTRY = "RU";
+    private static final String RETURNING_SHOPPER_ID_MIN_BILLING = "22876609";
+    private static String BILLING_COUNTRY;
 
     private String cardLastDigit;
 
     public ReturningShopperMinimalBillingTests() {
-        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING);
+        super(true, "");
     }
 
     @Before
@@ -43,15 +46,15 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
         setupAndLaunch(sdkRequest);
         int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
         //cardLastDigit = TestUtils.getText(withId(R.id.oneLineCCViewComponentsListView));
-
+        BILLING_COUNTRY = returningShopper.getBillingCountry();
     }
 
-    @Test
-    public void returning_shopper_minimal_billing_test() throws IOException {
+    public void returning_shopper_minimal_billing_common_tester() throws IOException {
         credit_card_in_list_visibility_validation();
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
+        onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(not(isDisplayed()))); //check shipping is not displayed
         pay_button_in_billing_validation();
 
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
@@ -67,6 +70,26 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
         Espresso.pressBack();
         returning_shopper_edit_billing_contact_info_using_done_button_validation();
         Espresso.pressBack();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_test() throws IOException {
+        returning_shopper_minimal_billing_common_tester();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_test() throws IOException {
+        returning_shopper_minimal_billing_common_tester();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_email_test() throws IOException {
+        returning_shopper_minimal_billing_common_tester();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_with_email_test() throws IOException {
+        returning_shopper_minimal_billing_common_tester();
     }
 
     /**
@@ -90,7 +113,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      * according to minimal billing with shipping when choosing an existing credit card in returning shopper.
      */
     public void billing_summarized_contact_info_visibility_validation() {
-        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation("billing_summarized_contact_info_visibility_validation", R.id.billingViewSummarizedComponent, BILLING_COUNTRY,
+        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation("billing_summarized_contact_info_visibility_validation in" + returningShopper.getShopperDescription(), R.id.billingViewSummarizedComponent, BILLING_COUNTRY,
                 false, false);
     }
 
@@ -141,7 +164,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      * It uses the "Done" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_done_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, true, BILLING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, true, BILLING_COUNTRY, null);
     }
 
     /**
@@ -150,7 +173,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      * since it uses the "Back" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_back_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, BILLING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, BILLING_COUNTRY, returningShopperBillingContactInfo);
     }
 
     /**

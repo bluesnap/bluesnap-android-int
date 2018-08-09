@@ -7,7 +7,6 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.io.IOException;
 
@@ -25,11 +24,12 @@ import static org.hamcrest.CoreMatchers.anything;
 public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends EspressoBasedTest {
 
     private static final String RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL = "22862837";
-    private static final String BILLING_COUNTRY = "NP";
-    private static final String SHIPPING_COUNTRY = "TH";
+    private static String BILLING_COUNTRY;
+    private static String SHIPPING_COUNTRY;
 
     public ReturningShopperMinimalBillingWithShippingWithEmailTests() {
-        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL);
+//        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL);
+        super(true, "");
     }
 
     @Before
@@ -38,9 +38,11 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
         sdkRequest.setShippingRequired(true);
         sdkRequest.setEmailRequired(true);
         setupAndLaunch(sdkRequest);
+        BILLING_COUNTRY = returningShopper.getBillingCountry();
+        SHIPPING_COUNTRY = returningShopper.getShippingCountry();
     }
 
-    @Test
+    //@Test
     public void returning_shopper_minimal_billing_with_shipping_with_email_test() throws IOException {
         credit_card_in_list_visibility_validation();
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
@@ -139,7 +141,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * It uses the "Done" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_done_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, true, true, BILLING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, true, true, BILLING_COUNTRY, null);
     }
 
     /**
@@ -148,7 +150,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * since it uses the "Back" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_back_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, true, false, BILLING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, true, false, BILLING_COUNTRY, returningShopperBillingContactInfo);
     }
 
     /**
@@ -157,7 +159,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * It uses the "Done" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_shipping_contact_info_using_done_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, true, SHIPPING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, true, SHIPPING_COUNTRY, null);
     }
 
     /**
@@ -166,6 +168,6 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
      * since it uses the "Back" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_shipping_contact_info_using_back_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, false, SHIPPING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, false, SHIPPING_COUNTRY, returningShopperShippingContactInfo);
     }
 }

@@ -7,7 +7,6 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.io.IOException;
 
@@ -27,14 +26,13 @@ import static org.hamcrest.Matchers.hasToString;
  */
 
 public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBasedTest {
-
-    private static final String RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING = "22862697";
-    private static final String BILLING_COUNTRY = "MD";
-    private static final String SHIPPING_COUNTRY = "CH";
+    private static String BILLING_COUNTRY;
+    private static String SHIPPING_COUNTRY;
 
 
     public ReturningShopperMinimalBillingWithShippingTests() {
-        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING);
+//        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING);
+        super(true, "");
     }
 
     @Before
@@ -42,9 +40,13 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
+        BILLING_COUNTRY = returningShopper.getBillingCountry();
+        SHIPPING_COUNTRY = returningShopper.getShippingCountry();
+        if (!returningShopper.isWithShipping())
+            returningShopperBillingContactInfo.setEmail("");
     }
 
-    @Test
+    //@Test
     public void returning_shopper_minimal_billing_with_shipping_test() throws IOException {
         credit_card_in_list_visibility_validation();
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
@@ -73,7 +75,8 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         returning_shopper_edit_shipping_contact_info_using_done_button_validation();
         TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
         amount_tax_view_in_shipping_validation();
-
+        country_changes_per_billing_validation();
+        country_changes_per_shipping_validation();
     }
 
     /**
@@ -145,7 +148,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
      * It uses the "Done" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_done_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, true, BILLING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, true, BILLING_COUNTRY, null);
     }
 
     /**
@@ -154,7 +157,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
      * since it uses the "Back" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_back_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, BILLING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, BILLING_COUNTRY, returningShopperBillingContactInfo);
     }
 
     /**
@@ -163,7 +166,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
      * It uses the "Done" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_shipping_contact_info_using_done_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, true, SHIPPING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, true, SHIPPING_COUNTRY, null);
     }
 
     /**
@@ -172,7 +175,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
      * since it uses the "Back" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_shipping_contact_info_using_back_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, false, SHIPPING_COUNTRY);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.shippingViewSummarizedComponent, true, false, false, SHIPPING_COUNTRY, returningShopperShippingContactInfo);
     }
 
     /**
@@ -193,5 +196,19 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
                 TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
     }
 
+    /**
+     * This test verifies that changing the country in billing component (billing/shipping contact
+     * info) doesn't change the country in shipping component.
+     */
+    public void country_changes_per_billing_validation() {
+        ReturningShopperVisibilityTesterCommon.country_changes_per_fragment_validation("country_changes_per_billing_validation", R.id.billingViewSummarizedComponent, "ES", "Spain");
+    }
 
+    /**
+     * This test verifies that changing the country in shipping component (billing/shipping contact
+     * info) doesn't change the country in billing component.
+     */
+    public void country_changes_per_shipping_validation() {
+        ReturningShopperVisibilityTesterCommon.country_changes_per_fragment_validation("country_changes_per_shipping_validation", R.id.shippingViewSummarizedComponent, "IT", "Italy");
+    }
 }
