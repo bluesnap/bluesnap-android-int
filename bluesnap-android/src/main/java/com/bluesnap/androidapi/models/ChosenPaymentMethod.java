@@ -9,10 +9,13 @@ import org.json.JSONObject;
 
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalObject;
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
-public class ChosenPaymentMethod {
+public class ChosenPaymentMethod extends BSModel {
     public static final String CC = "CC";
     public static final String PAYPAL = "PAYPAL";
+    public static final String CHOSEN_PAYMENT_METHOD_TYPE = "chosenPaymentMethodType";
+    public static final String CREDIT_CARD = "creditCard";
 
     @NonNull
     //@SerializedName("chosenPaymentMethodType")
@@ -61,10 +64,20 @@ public class ChosenPaymentMethod {
         }
 
         ChosenPaymentMethod chosenPaymentMethod = new ChosenPaymentMethod();
-        chosenPaymentMethod.setChosenPaymentMethodType(getOptionalString(jsonObject, "chosenPaymentMethodType"));
+        chosenPaymentMethod.setChosenPaymentMethodType(getOptionalString(jsonObject, CHOSEN_PAYMENT_METHOD_TYPE));
         if (CC.equals(chosenPaymentMethod.getChosenPaymentMethodType()))
-            chosenPaymentMethod.setCreditCard((CreditCard.fromJson(getOptionalObject(jsonObject, "creditCard"))));
+            chosenPaymentMethod.setCreditCard((CreditCard.fromJson(getOptionalObject(jsonObject, CREDIT_CARD))));
 
         return chosenPaymentMethod;
+    }
+
+    @Override
+    @NonNull
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        putJSONifNotNull(jsonObject, CHOSEN_PAYMENT_METHOD_TYPE, getChosenPaymentMethodType());
+        if (CC.equals(getChosenPaymentMethodType()))
+            putJSONifNotNull(jsonObject, CREDIT_CARD, getCreditCard().toJson());
+        return jsonObject;
     }
 }

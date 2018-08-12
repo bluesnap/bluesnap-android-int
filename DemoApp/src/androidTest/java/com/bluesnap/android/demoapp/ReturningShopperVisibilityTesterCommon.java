@@ -5,6 +5,7 @@ import com.bluesnap.androidapi.Constants;
 import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.allOf;
@@ -101,6 +102,41 @@ public class ReturningShopperVisibilityTesterCommon {
                     .check(matches(not(isDisplayed())));
         }
 
+    }
+
+    /**
+     * This test verifies that changing the country in one fragment (billing/shipping contact
+     * info) doesn't change the country in the other.
+     *
+     * @param summarizedComponentResourceId- The component in which it changes the country
+     */
+    public static void country_changes_per_fragment_validation(String testName, int summarizedComponentResourceId, int componentResourceId, boolean fullInfo, boolean withEmail) {
+        int editableComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.billingViewComponent : R.id.returningShoppershippingViewComponent;
+        int firstSummarizedComponent = summarizedComponentResourceId; //the component to change
+        int secondSummarizedComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.shippingViewSummarizedComponent : R.id.billingViewSummarizedComponent;
+
+
+        //Changing country to Spain in first fragment
+        ContactInfoTesterCommon.changeCountry(editableComponent, "Spain");
+
+        //continue to shipping
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+
+        //Verify country hasn't change in shipping fragment
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Country changed in shipping"))
+                .check(matches(not(TestUtils.withDrawable(R.drawable.es))));
+
+        //Changing Country to Italy in shipping fragment
+        ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "Italy");
+
+        //go back to billing
+        TestUtils.go_back_to_billing_in_new_card();
+
+        //Verify country hasn't change in billing fragment
+        onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.billingViewComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Country changed in billing"))
+                .check(matches(TestUtils.withDrawable(R.drawable.es)));
     }
 
 }

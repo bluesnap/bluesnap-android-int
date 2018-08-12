@@ -32,7 +32,7 @@ public class PaymentSources extends BSModel {
         try {
 
             if (previousPaymentSources.getJSONArray(CREDIT_CARD_INFO).length() > 0) {
-                JSONArray creditCardInfosJA = previousPaymentSources.getJSONArray("CREDIT_CARD_INFO");
+                JSONArray creditCardInfosJA = previousPaymentSources.getJSONArray(CREDIT_CARD_INFO);
                 for (int i = 0; i < creditCardInfosJA.length(); i++) {
                     CreditCardInfo ccinfo = CreditCardInfo.fromJson(creditCardInfosJA.getJSONObject(i));
                     paymentSources.creditCardInfos.add(ccinfo);
@@ -59,7 +59,13 @@ public class PaymentSources extends BSModel {
     @Override
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
-        putJSONifNotNull(jsonObject, CREDIT_CARD_INFO, getCreditCardInfos());
+        List<CreditCardInfo> creditCardInfos = getCreditCardInfos();
+        JSONArray jsonArray = new JSONArray();
+        if (null != creditCardInfos)
+            for (CreditCardInfo creditCardInfo : creditCardInfos) {
+                jsonArray.put(creditCardInfo.toJson());
+            }
+        putJSONifNotNull(jsonObject, CREDIT_CARD_INFO, jsonArray);
         return jsonObject;
     }
 }

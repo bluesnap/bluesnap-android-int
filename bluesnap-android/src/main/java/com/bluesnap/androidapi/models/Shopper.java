@@ -217,8 +217,9 @@ public class Shopper extends ContactInfo {
         putJSONifNotNull(jsonObject, PHONE, getPhone());
         putJSONifNotNull(jsonObject, SHOPPER_CURRENCY, getShopperCurrency());
         putJSONifNotNull(jsonObject, VAULTED_SHOPPER_ID, getVaultedShopperId());
-        putJSONifNotNull(jsonObject, PAYMENT_SOURCES, getNewPaymentSources());
-        putJSONifNotNull(jsonObject, CHOSEN_PAYMENT_METHOD, getChosenPaymentMethod());
+        putJSONifNotNull(jsonObject, PAYMENT_SOURCES, getNewPaymentSources().toJson());
+        putJSONifNotNull(jsonObject, SHIPPING_CONTACT_INFO, getShippingContactInfo().toJson());
+        putJSONifNotNull(jsonObject, CHOSEN_PAYMENT_METHOD, getChosenPaymentMethod().toJson());
         return jsonObject;
     }
 

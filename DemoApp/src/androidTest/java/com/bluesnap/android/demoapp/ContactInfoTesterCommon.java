@@ -25,7 +25,7 @@ public class ContactInfoTesterCommon {
     static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
             "New York", "555 Broadway street", "NY", "3abc 324a", "US");
 
-    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
+    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "null",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
 
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {

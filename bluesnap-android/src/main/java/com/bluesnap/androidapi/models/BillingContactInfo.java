@@ -63,6 +63,7 @@ public class BillingContactInfo extends ContactInfo implements Parcelable {
             return null;
         }
         BillingContactInfo billingContactInfo = new BillingContactInfo(contactInfo);
+        billingContactInfo.setAddress(getOptionalString(jsonObject, ADDRESS_1));
         billingContactInfo.setEmail(getOptionalString(jsonObject, EMAIL));
         return billingContactInfo;
 

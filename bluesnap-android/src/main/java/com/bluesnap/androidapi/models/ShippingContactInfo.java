@@ -56,17 +56,16 @@ public class ShippingContactInfo extends ContactInfo implements Parcelable {
     public static ShippingContactInfo fromJson(@Nullable JSONObject jsonObject) {
         if (jsonObject == null)
             return null;
-        ShippingContactInfo shippingContactInfo = new ShippingContactInfo();
-        shippingContactInfo.setPhone(getOptionalString(jsonObject, "phone"));
-        shippingContactInfo.setFirstName(getOptionalString(jsonObject, "firstName"));
-        shippingContactInfo.setLastName(getOptionalString(jsonObject, "lastName"));
-        shippingContactInfo.setAddress(getOptionalString(jsonObject, "address1"));
-        shippingContactInfo.setAddress2(getOptionalString(jsonObject, "address2"));
-        shippingContactInfo.setCity(getOptionalString(jsonObject, "city"));
-        shippingContactInfo.setState(getOptionalString(jsonObject, "state"));
-        shippingContactInfo.setZip(getOptionalString(jsonObject, "zip"));
-        shippingContactInfo.setCountry(getOptionalString(jsonObject, "country"));
-        shippingContactInfo.setFullName(getOptionalString(jsonObject, "fullname"));
+
+        ContactInfo contactInfo = ContactInfo.fromJson(jsonObject);
+        if (contactInfo == null) {
+            return null;
+        }
+
+        ShippingContactInfo shippingContactInfo = new ShippingContactInfo(contactInfo);
+        shippingContactInfo.setPhone(getOptionalString(jsonObject, PHONE));
+        shippingContactInfo.setAddress(getOptionalString(jsonObject, ADDRESS_1));
+
         return shippingContactInfo;
     }
 

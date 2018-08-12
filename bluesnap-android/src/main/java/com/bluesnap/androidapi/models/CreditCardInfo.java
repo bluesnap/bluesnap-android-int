@@ -89,8 +89,8 @@ public class CreditCardInfo extends BSModel {
     @NonNull
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
-        putJSONifNotNull(jsonObject, CREDIT_CARD, getCreditCard());
-        putJSONifNotNull(jsonObject, BILLING_CONTACT_INFO, getBillingContactInfo());
+        putJSONifNotNull(jsonObject, CREDIT_CARD, getCreditCard().toJson());
+        putJSONifNotNull(jsonObject, BILLING_CONTACT_INFO, getBillingContactInfo().toJson());
         return jsonObject;
     }
 }

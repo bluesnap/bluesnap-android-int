@@ -30,11 +30,11 @@ public class ShopperContactInfo {
     }
 
     public String getFirstName() {
-        return firstName;
+        return name.substring(0, name.indexOf(" "));
     }
 
     public String getLastName() {
-        return lastName;
+        return name.substring(name.indexOf(" ") + 1);
     }
 
     public String getName() {
