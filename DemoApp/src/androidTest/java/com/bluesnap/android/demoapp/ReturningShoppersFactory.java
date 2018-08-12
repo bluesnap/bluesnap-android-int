@@ -8,17 +8,20 @@ public class ReturningShoppersFactory {
     public static class Shopper {
         private String shopperDescription; //which option is this shopper (from the 8 possible)
         private String shopperId;
-        private String billingCountry;
-        private String shippingCountry;
         private boolean fullBilling;
         private boolean withEmail;
         private boolean withShipping;
+        private ShopperContactInfo billingContactInfo;
+        private ShopperContactInfo shippingContactInfo;
 
         public Shopper(String shopperDescription_, String shopperId_, String billingCountry_, String shippingCountry_) {
             shopperDescription = shopperDescription_;
             shopperId = shopperId_;
-            billingCountry = billingCountry_;
-            shippingCountry = shippingCountry_;
+            billingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.billingContactInfo);
+            billingContactInfo.setCountry(billingCountry_);
+            shippingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.shippingContactInfo);
+            shippingContactInfo.setCountry(shippingCountry_);
+
         }
 
         public String getShopperDescription() {
@@ -29,12 +32,12 @@ public class ReturningShoppersFactory {
             return shopperId;
         }
 
-        public String getBillingCountry() {
-            return billingCountry;
+        public ShopperContactInfo getBillingContactInfo() {
+            return billingContactInfo;
         }
 
-        public String getShippingCountry() {
-            return shippingCountry;
+        public ShopperContactInfo getShippingContactInfo() {
+            return shippingContactInfo;
         }
 
         public boolean isFullBilling() {
@@ -62,9 +65,9 @@ public class ReturningShoppersFactory {
         }
     }
 
-    private static final String[] returningShopperOptions = {"RETURNING_SHOPPER_ID_MIN_BILLING", "RETURNING_SHOPPER_ID_MIN_BILLING_WITH_EMAIL", "RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING",
-            "RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL", "RETURNING_SHOPPER_ID_FULL_BILLING", "RETURNING_SHOPPER_ID_FULL_BILLING_WITH_EMAIL",
-            "RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING", "RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL"};
+    private static final String[] returningShopperOptions = {"RETURNING_SHOPPER_MIN_BILLING", "RETURNING_SHOPPER_MIN_BILLING_WITH_EMAIL", "RETURNING_SHOPPER_MIN_BILLING_WITH_SHIPPING",
+            "RETURNING_SHOPPER_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL", "RETURNING_SHOPPER_FULL_BILLING", "RETURNING_SHOPPER_FULL_BILLING_WITH_EMAIL",
+            "RETURNING_SHOPPER_FULL_BILLING_WITH_SHIPPING", "RETURNING_SHOPPER_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL"};
 
     private static final String[] returningShopperIDs = {"22876609", "22852991", "22862697", "22862837", "", "", "", ""};
 

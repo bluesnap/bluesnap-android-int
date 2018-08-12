@@ -74,8 +74,7 @@ public class EspressoBasedTest {
     double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
 
     protected ReturningShoppersFactory.Shopper returningShopper;
-    ShopperContactInfo returningShopperBillingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.billingContactInfo);
-    ShopperContactInfo returningShopperShippingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.shippingContactInfo);
+
 
     IdlingResource tokenProgressBarIR;
     IdlingResource transactionMessageIR;

@@ -275,7 +275,8 @@ public class ContactInfoTesterCommon {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
-        CreditCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
+        if (!country.equals(""))
+            CreditCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
         //onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
 
         //Verify full name has been saved in current component
@@ -288,10 +289,11 @@ public class ContactInfoTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": Email wasn't saved"))
                     .check(matches(withText(contactInfo.getEmail())));
 
-        //Verify zip has been saved in current component
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Zip wasn't saved"))
-                .check(matches(withText(contactInfo.getZip())));
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            //Verify zip has been saved in current component
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Zip wasn't saved"))
+                    .check(matches(withText(contactInfo.getZip())));
 
         if (fullInfo) {
             //Verify city has been saved in current component
@@ -338,7 +340,7 @@ public class ContactInfoTesterCommon {
 
         //go back and verify info has changed or was saved in the summarized component
         TestUtils.go_back_to_credit_card_in_returning_shopper(useDoneButton, buttonComponent);
-        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(testName, summarizedComponentResourceId, countryKey, fullInfo, shopperHasEmail, verifyContactInfo);
+        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(testName, summarizedComponentResourceId, fullInfo, shopperHasEmail, verifyContactInfo);
 
         //Press edit to verify info was saved in the edit component
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(summarizedComponentResourceId)))).perform(click());

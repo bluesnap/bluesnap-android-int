@@ -47,17 +47,17 @@ public class ReturningShopperVisibilityTesterCommon {
 
     public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
         ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewSummarizedComponent) ? ContactInfoTesterCommon.billingContactInfo : ContactInfoTesterCommon.shippingContactInfo;
-        summarized_contact_info_visibility_validation(testName, componentResourceId, country, fullInfo, withEmail, contactInfo);
+        summarized_contact_info_visibility_validation(testName, componentResourceId, fullInfo, withEmail, contactInfo);
     }
 
-    public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, String country, boolean fullInfo, boolean withEmail, ShopperContactInfo contactInfo) {
+    public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail, ShopperContactInfo contactInfo) {
         //verifies that the right component(billing/shipping) is displayed
         onView(withId(componentResourceId)).check(matches(isDisplayed()));
 
         //verifies that all right fields in the component are displayed and contain the correct data
         onView(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(componentResourceId))))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Country TextView doesn't present the correct content"))
-                .check(matches(allOf(isDisplayed(), withText(country))));
+                .check(matches(allOf(isDisplayed(), withText(contactInfo.getCountry()))));
 
         onView(allOf(withId(R.id.nameTextView), isDescendantOfA(withId(componentResourceId))))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Name TextView doesn't present the correct content"))
@@ -72,7 +72,7 @@ public class ReturningShopperVisibilityTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": email TextView is displayed"))
                     .check(matches(not(isDisplayed())));
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country)) {
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(contactInfo.getCountry())) {
             onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Zip TextView doesn't present the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getZip()))));
@@ -82,7 +82,7 @@ public class ReturningShopperVisibilityTesterCommon {
                     .check(matches(not(isDisplayed())));
 
         if (fullInfo) {
-            if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
+            if (contactInfo.getCountry().equals("US") || contactInfo.getCountry().equals("CA") || contactInfo.getCountry().equals("BR")) {
                 onView(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(componentResourceId))))
                         .withFailureHandler(new CustomFailureHandler(testName + ": State TextView doesn't present the correct content"))
                         .check(matches(allOf(isDisplayed(), withText(contactInfo.getState()))));
@@ -107,6 +107,48 @@ public class ReturningShopperVisibilityTesterCommon {
                     .check(matches(not(isDisplayed())));
         }
 
+    }
+
+    public static void shipping_empty_summarized_contact_info_visibility_validation(String testName) {
+        //verifies that the right component(billing/shipping) is displayed
+        onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(isDisplayed()));
+
+        String countryTry = TestUtils.getText(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
+        String zipTry = TestUtils.getText(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
+
+        //verifies that all right fields in the component are displayed and contain the correct data
+        onView(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Country TextView is displayed"))
+                .check(matches(not(isDisplayed())));
+
+        onView(allOf(withId(R.id.nameTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Name TextView is displayed"))
+                .check(matches(allOf(isDisplayed(), withText(" "))));
+
+
+        onView(allOf(withId(R.id.emailTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": email TextView is displayed"))
+                .check(matches(not(isDisplayed())));
+
+        onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Zip TextView is displayed"))
+                .check(matches(allOf(isDisplayed(), withText(""))));
+
+
+        String cityTry = TestUtils.getText(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
+        String addressTry = TestUtils.getText(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
+
+        onView(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": State TextView is displayed"))
+                .check(matches(not(isDisplayed())));
+
+        onView(allOf(withId(R.id.cityTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": City TextView is displayed"))
+                .check(matches(not(isDisplayed())));
+
+        onView(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Address TextView is displayed"))
+                .check(matches(not(isDisplayed())));
     }
 
     /**

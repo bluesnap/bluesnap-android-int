@@ -46,7 +46,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
         setupAndLaunch(sdkRequest);
         int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
         //cardLastDigit = TestUtils.getText(withId(R.id.oneLineCCViewComponentsListView));
-        BILLING_COUNTRY = returningShopper.getBillingCountry();
+        BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountry();
     }
 
     public void returning_shopper_minimal_billing_common_tester() throws IOException {
@@ -113,8 +113,8 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      * according to minimal billing with shipping when choosing an existing credit card in returning shopper.
      */
     public void billing_summarized_contact_info_visibility_validation() {
-        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation("billing_summarized_contact_info_visibility_validation in" + returningShopper.getShopperDescription(), R.id.billingViewSummarizedComponent, BILLING_COUNTRY,
-                false, false);
+        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation("billing_summarized_contact_info_visibility_validation in" + returningShopper.getShopperDescription(), R.id.billingViewSummarizedComponent,
+                false, false, returningShopper.getBillingContactInfo());
     }
 
     /**
@@ -173,7 +173,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      * since it uses the "Back" button to go back to credit card fragment.
      */
     public void returning_shopper_edit_billing_contact_info_using_back_button_validation() throws IOException {
-        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, BILLING_COUNTRY, returningShopperBillingContactInfo);
+        ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation", applicationContext, R.id.billingViewSummarizedComponent, false, false, false, BILLING_COUNTRY, returningShopper.getBillingContactInfo());
     }
 
     /**

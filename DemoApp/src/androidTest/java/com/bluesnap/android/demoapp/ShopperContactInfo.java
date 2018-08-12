@@ -103,7 +103,14 @@ public class ShopperContactInfo {
         this.country = country;
     }
 
-
+    public void resetFields() {
+        this.setName("");
+        this.setEmail("");
+        this.setZip("");
+        this.setState("");
+        this.setCity("");
+        this.setAddress("");
+    }
 }
 
 
