@@ -76,6 +76,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     String shippingCountryKey;
     String shippingCountryValue;
 
+
     @After
     public void keepRunning() {
         mActivityRule.getActivity().finish();
@@ -95,20 +96,20 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         }
 
         //TODO: restore this after the counties mapping fix
-//        String[] billingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
-//        billingCountryKey = billingCountry[0];
-//        billingCountryValue = billingCountry[1];
-//
-//        String[] shippingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
-//        shippingCountryKey = shippingCountry[0];
-//        shippingCountryValue = shippingCountry[1];
-        defaultCountryKey = BlueSnapService.getInstance().getUserCountry(applicationContext);
-        String[] countryKeyArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
-        String[] countryValueArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
+        String[] billingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
+        billingCountryKey = billingCountry[0];
+        billingCountryValue = billingCountry[1];
 
-        defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
-        billingCountryKey = shippingCountryKey = defaultCountryKey;
-        billingCountryValue = shippingCountryValue = defaultCountryValue;
+        String[] shippingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
+        shippingCountryKey = shippingCountry[0];
+        shippingCountryValue = shippingCountry[1];
+//        defaultCountryKey = BlueSnapService.getInstance().getUserCountry(applicationContext);
+//        String[] countryKeyArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
+//        String[] countryValueArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
+//
+//        defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
+//        billingCountryKey = shippingCountryKey = defaultCountryKey;
+//        billingCountryValue = shippingCountryValue = defaultCountryValue;
     }
 
     public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {

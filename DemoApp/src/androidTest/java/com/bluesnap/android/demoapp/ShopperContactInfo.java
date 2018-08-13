@@ -40,10 +40,14 @@ public class ShopperContactInfo {
     }
 
     public String getFirstName() {
+        if (this.name.isEmpty())
+            return "";
         return name.substring(0, name.indexOf(" "));
     }
 
     public String getLastName() {
+        if (this.name.isEmpty())
+            return "";
         return name.substring(name.indexOf(" ") + 1);
     }
 
@@ -103,10 +107,16 @@ public class ShopperContactInfo {
         this.country = country;
     }
 
-    public void resetFields() {
+    public void resetAllFields() {
         this.setName("");
         this.setEmail("");
         this.setZip("");
+        this.setState("");
+        this.setCity("");
+        this.setAddress("");
+    }
+
+    public void resetFullBillingFields() {
         this.setState("");
         this.setCity("");
         this.setAddress("");

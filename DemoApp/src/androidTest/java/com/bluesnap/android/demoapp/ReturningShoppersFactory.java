@@ -69,10 +69,10 @@ public class ReturningShoppersFactory {
             "RETURNING_SHOPPER_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL", "RETURNING_SHOPPER_FULL_BILLING", "RETURNING_SHOPPER_FULL_BILLING_WITH_EMAIL",
             "RETURNING_SHOPPER_FULL_BILLING_WITH_SHIPPING", "RETURNING_SHOPPER_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL"};
 
-    private static final String[] returningShopperIDs = {"22876609", "22852991", "22862697", "22862837", "", "", "", ""};
+    private static final String[] returningShopperIDs = {"22876609", "22852991", "22862697", "22862837", "29632258", "29632260", "29632268", "29632264"};
 
-    private static final String[] returningShopperBillingCountries = {"IL", "SI", "MD", "NP", "", "", "", ""};
-    private static final String[] returningShopperShippingCountries = {"", "", "CH", "TH", "", "", "", ""};
+    private static final String[] returningShopperBillingCountries = {"IL", "SI", "MD", "NP", "FJ", "MT", "CL", "LT"};
+    private static final String[] returningShopperShippingCountries = {"", "", "CH", "TH", "", "", "GA", "KH"};
 
 
     private static Shopper[] shoppers = new Shopper[8];
@@ -110,7 +110,7 @@ public class ReturningShoppersFactory {
     public static Shopper getReturningShopper() {
         Shopper returningShopper = shoppers[COUNTER];
         COUNTER++;
-        if (COUNTER == 4)
+        if (COUNTER == 8)
             COUNTER = 0;
         return returningShopper;
     }
