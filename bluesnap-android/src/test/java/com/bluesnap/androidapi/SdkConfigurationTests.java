@@ -1,5 +1,6 @@
 package com.bluesnap.androidapi;
 
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
@@ -79,6 +80,8 @@ public class SdkConfigurationTests extends TestCase {
         try {
             Shopper shopper = sdkConfiguration.getShopper();
             shopper.setNewPaymentSources(shopper.getPreviousPaymentSources());
+            shopper.getNewCreditCardInfo().getCreditCard().setCvc("123");
+            shopper.getNewCreditCardInfo().getCreditCard().setNumber("4111 1111 1111 1111");
             JSONObject shopperJsonObject = shopper.toJson();
 
             assertNotNull(shopperJsonObject);
@@ -116,10 +119,13 @@ public class SdkConfigurationTests extends TestCase {
             JSONObject creditCardJsonObject = (JSONObject) creditCardInfoJsonObject.get("creditCard");
             assertNotNull(creditCardJsonObject);
             assertEquals(creditCardJsonObject.get("cardLastFourDigits"), "1111");
-            assertEquals(creditCardJsonObject.get("cardType"), "VISA");
+            assertEquals(creditCardJsonObject.get("cardType"), CreditCardTypeResolver.VISA);
             assertEquals(creditCardJsonObject.get("cardSubType"), "CREDIT");
             assertEquals(creditCardJsonObject.get("expirationMonth"), 12);
             assertEquals(creditCardJsonObject.get("expirationYear"), 2020);
+
+            assertEquals(creditCardJsonObject.get("cardNumber"), "4111111111111111");
+            assertEquals(creditCardJsonObject.get("securityCode"), "123");
 
             JSONObject shippingContactInfoJsonObject = (JSONObject) shopperJsonObject.get("shippingContactInfo");
             assertNotNull(shippingContactInfoJsonObject);
@@ -135,10 +141,10 @@ public class SdkConfigurationTests extends TestCase {
             assertNotNull(chosenPaymentMethodJsonObject);
             assertEquals(chosenPaymentMethodJsonObject.get("chosenPaymentMethodType"), "CC");
 
-            JSONObject creditCard2JsonObject = (JSONObject) creditCardInfoJsonObject.get("creditCard");
+            JSONObject creditCard2JsonObject = (JSONObject) chosenPaymentMethodJsonObject.get("creditCard");
             assertNotNull(creditCard2JsonObject);
             assertEquals(creditCardJsonObject.get("cardLastFourDigits"), "1111");
-            assertEquals(creditCardJsonObject.get("cardType"), "VISA");
+            assertEquals(creditCardJsonObject.get("cardType"), CreditCardTypeResolver.VISA);
             assertEquals(creditCardJsonObject.get("cardSubType"), "CREDIT");
             assertEquals(creditCardJsonObject.get("expirationMonth"), 12);
             assertEquals(creditCardJsonObject.get("expirationYear"), 2020);

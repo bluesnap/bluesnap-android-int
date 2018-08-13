@@ -269,7 +269,6 @@ public class BlueSnapService {
                         } catch (Exception e) {
                             Log.e(TAG, "Kount SDK initialization error " + e.getMessage());
                         }
-                        CreditCardTypeResolver.setCreditCardRegex(sDKConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
                         callback.onSuccess();
                     } catch (Exception e) {
                         Log.e(TAG, "exception: ", e);

@@ -95,6 +95,8 @@ public class JsonParser {
                 supportedPaymentMethods.setCreditCardRegex(creditCardRegexMap);
 
                 sdkConfiguration.setSupportedPaymentMethods(supportedPaymentMethods);
+
+                CreditCardTypeResolver.setCreditCardRegex(sdkConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
             }
 
 
