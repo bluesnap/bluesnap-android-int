@@ -58,33 +58,36 @@ public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedT
         credit_card_in_list_visibility_validation();
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
         credit_card_view_visibility_validation();
-        pay_button_in_billing_validation();
-
         billing_summarized_contact_info_visibility_validation();
-        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
-        billing_contact_info_content_validation();
-        Espresso.pressBack();
-
-        shipping_summarized_contact_info_visibility_validation();
-        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
-        shipping_contact_info_content_validation();
-        Espresso.pressBack();
-
-        //Pre-condition: current info is billingInfo
-        //TODO: restore this when the bug is fixed (AS-148)
-//        returning_shopper_edit_billing_contact_info_using_back_button_validation();
-//        Espresso.pressBack();
-        returning_shopper_edit_billing_contact_info_using_done_button_validation();
-        Espresso.pressBack();
-
-        //Pre-condition: current info is shippingInfo
-        //TODO: restore this when the bug is fixed (AS-148)
-//        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
-//        Espresso.pressBack();
-        returning_shopper_edit_shipping_contact_info_using_done_button_validation();
-        TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
 
         if (ReturningShoppersFactory.COUNTER == 1) {
+            pay_button_in_billing_validation();
+            onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
+            billing_contact_info_content_validation();
+            Espresso.pressBack();
+        }
+
+        shipping_summarized_contact_info_visibility_validation();
+
+        if (ReturningShoppersFactory.COUNTER == 1) {
+            onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
+            shipping_contact_info_content_validation();
+            Espresso.pressBack();
+
+            //Pre-condition: current info is billingInfo
+            //TODO: restore this when the bug is fixed (AS-148)
+//        returning_shopper_edit_billing_contact_info_using_back_button_validation();
+//        Espresso.pressBack();
+            returning_shopper_edit_billing_contact_info_using_done_button_validation();
+            Espresso.pressBack();
+
+            //Pre-condition: current info is shippingInfo
+            //TODO: restore this when the bug is fixed (AS-148)
+//        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
+//        Espresso.pressBack();
+            returning_shopper_edit_shipping_contact_info_using_done_button_validation();
+            TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
+
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();

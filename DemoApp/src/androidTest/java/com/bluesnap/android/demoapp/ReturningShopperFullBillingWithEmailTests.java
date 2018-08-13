@@ -49,17 +49,21 @@ public class ReturningShopperFullBillingWithEmailTests extends EspressoBasedTest
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
-        pay_button_in_billing_validation();
 
-        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
-        billing_contact_info_content_validation();
-        Espresso.pressBack();
+        if (ReturningShoppersFactory.COUNTER == 1) {
 
-        //Pre-condition: current info is billingInfo
-        //TODO: restore this when the bug is fixed (AS-148)
-        //returning_shopper_edit_billing_contact_info_using_back_button_validation();
-        //Espresso.pressBack();
-        returning_shopper_edit_billing_contact_info_using_done_button_validation();
+            pay_button_in_billing_validation();
+
+            onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
+            billing_contact_info_content_validation();
+            Espresso.pressBack();
+
+            //Pre-condition: current info is billingInfo
+            //TODO: restore this when the bug is fixed (AS-148)
+            //returning_shopper_edit_billing_contact_info_using_back_button_validation();
+            //Espresso.pressBack();
+            returning_shopper_edit_billing_contact_info_using_done_button_validation();
+        }
     }
 
     @Test
