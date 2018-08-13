@@ -74,6 +74,10 @@ The instance must include:
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode, Double taxAmount, boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
+An `SdkRequest` instance contain also an `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By defult it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
+```
+sdkRequest.setAllowCurrencyChange(false);
+```
 
 #### Handling tax updates (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 
@@ -170,7 +174,7 @@ sdkResult.getPaypalInvoiceId(); // A string with the invoice Id.
 ## Complete the transaction
 If the shopper purchased via PayPal, then the transaction has successfully been submitted and no further action is required.
 
-If the shopper purchased via credit card, you will need to make a server-to-server call to BlueSnap's Payment API with the Hosted Payment Field token you initialized in the SDK. You should do this after the shopper has completed checkout and has left the SDK checkout screen. Visit the [API documentation](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) to see how to send an Auth Capture, Auth Only, Create Subscription, or Create Vaulted Shopper request (to name a few of the options).
+If the shopper purchased via credit card, you will need to make a server-to-server call to BlueSnap's Payment API with the Hosted Payment Field token you initialized in the SDK. You should do this after the shopper has completed checkout and has left the SDK checkout screen. Visit the [API documentation](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) to see how to send an Auth Capture, Auth Only, or Create Vaulted Shopper request (to name a few of the options).
 
 ### Auth Capture example - Credit card payments
 For credit card payments, send an HTTP POST request to `/services/2/transactions` of the BlueSnap sandbox or production environment.

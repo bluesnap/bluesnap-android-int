@@ -294,7 +294,7 @@ public class CreditCard {
     }
 
     /**
-     * set Tokenization Successfull
+     * set Tokeanization Successful
      */
     public void setTokenizationSuccess() {
         tokenizedSuccess = true;

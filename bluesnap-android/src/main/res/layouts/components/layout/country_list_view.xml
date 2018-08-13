@@ -27,13 +27,13 @@
         android:textSize="17sp" />
 
     <ImageView
-        android:id="@+id/bluensap_customlist_list_view_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="10sp"
-        android:padding="5sp"
-        android:src="@drawable/blue_check_mark"
-        android:visibility="invisible"
-        android:contentDescription="previously selected country check mark icon" />
+            android:id="@+id/bluesnap_customlist_list_view_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10sp"
+            android:padding="5sp"
+            android:src="@drawable/blue_check_mark"
+            android:visibility="invisible"
+            android:contentDescription="previously selected country check mark icon" />
 
 </LinearLayout>

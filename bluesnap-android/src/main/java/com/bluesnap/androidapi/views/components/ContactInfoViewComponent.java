@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -12,7 +13,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 public class ContactInfoViewComponent extends LinearLayout {
     public static final String TAG = ContactInfoViewComponent.class.getSimpleName();
-    EditText inputName, inputEmail, inputZip, inputState, inputCity, inputAddress;
+    TextInputEditText inputName, inputEmail, inputZip, inputState, inputCity, inputAddress;
     TextInputLayout inputLayoutName, inputLayoutEmail, inputLayoutZip, inputLayoutState, inputLayoutCity, inputLayoutAddress;
     ImageButton countryImageButton;
     //boolean hasAlreadyRequestedFocus;
@@ -217,7 +217,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      * @param validationType  - {@link BlueSnapValidator.EditTextFields}
      * @return boolean
      */
-    boolean validateField(EditText editText, TextInputLayout textInputLayout, BlueSnapValidator.EditTextFields validationType) {
+    boolean validateField(TextInputEditText editText, TextInputLayout textInputLayout, BlueSnapValidator.EditTextFields validationType) {
         if (!BlueSnapValidator.validateEditTextString(editText.getText().toString(), validationType)) {
             //TODO: This may throw exception to the log if not checked for empty strings
             textInputLayout.setError(getErrorMsg(validationType));

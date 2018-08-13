@@ -54,17 +54,17 @@ public class StateListAdapter extends BaseAdapter implements Filterable {
             convertView = inflater.inflate(R.layout.custom_list_view, null);
         }
 
-        TextView txtTitle = convertView.findViewById(R.id.bluensap_customlist_list_view_text);
-        ImageView bluensap_customlist_list_view_icon = convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
+        TextView txtTitle = convertView.findViewById(R.id.bluesnap_customlist_list_view_text);
+        ImageView bluesnap_customlist_list_view_icon = convertView.findViewById(R.id.bluesnap_customlist_list_view_icon);
 
         String stateFullName = stateListObjects.get(position).getStateFullName();
         String stateInitial = stateListObjects.get(position).getStateCode();
 
         txtTitle.setText(stateFullName);
         if (sharedLanguage.equals(stateListObjects.get(position).getStateFullName())) {
-            bluensap_customlist_list_view_icon.setVisibility(View.VISIBLE);
+            bluesnap_customlist_list_view_icon.setVisibility(View.VISIBLE);
         } else {
-            bluensap_customlist_list_view_icon.setVisibility(View.INVISIBLE);
+            bluesnap_customlist_list_view_icon.setVisibility(View.INVISIBLE);
         }
 
         return convertView;
