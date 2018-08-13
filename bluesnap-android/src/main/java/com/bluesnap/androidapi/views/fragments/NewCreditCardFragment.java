@@ -239,9 +239,11 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
-            } else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
-                billingViewComponent.requestFocusOnNameInput();
-            } else {
+            }
+            // else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
+            //     billingViewComponent.requestFocusOnNameInput();
+            // }
+            else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 billingViewComponent.setShippingSameAsBilling(isShippingSameAsBilling);
                 if (isShippingSameAsBilling) {
