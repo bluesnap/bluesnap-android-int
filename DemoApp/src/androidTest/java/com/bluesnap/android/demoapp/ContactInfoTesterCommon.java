@@ -38,6 +38,12 @@ public class ContactInfoTesterCommon {
     static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "null",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
 
+    static ShopperContactInfo editBillingContactInfo = new ShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
+            "Barcelona", "77 Rambla street", "QC", "4815", "CA");
+
+    static ShopperContactInfo editShippingContactInfo = new ShopperContactInfo("Janet Weiss", "null",
+            "Denton", "75 some street", "TX", "162342", "US");
+
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), pressImeActionButton());
         if (withEmail)
@@ -320,15 +326,14 @@ public class ContactInfoTesterCommon {
                                                                       boolean withEmail, boolean useDoneButton, ShopperContactInfo verifyContactInfo) throws IOException {
         int buttonComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.returningShopperBillingFragmentButtonComponentView : R.id.returningShopperShippingFragmentButtonComponentView;
         int editableComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.billingViewComponent : R.id.returningShoppershippingViewComponent;
-        ShopperContactInfo newContactInfo = new ShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
-                "Barcelona", "77 Rambla street", "QC", "12345", "CA");
+
         String countryKey;
         boolean shopperHasEmail, shopperHasFullBilling;
         //Enter to edit info
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(summarizedComponentResourceId)))).perform(click());
 
         if (useDoneButton) {
-            verifyContactInfo = newContactInfo;
+            verifyContactInfo = editBillingContactInfo;
             countryKey = "CA";
         } else
             countryKey = verifyContactInfo.getCountry();
@@ -341,7 +346,7 @@ public class ContactInfoTesterCommon {
 
         //Edit the component info
         ContactInfoTesterCommon.changeCountry(editableComponent, "Canada");
-        fillInContactInfo(editableComponent, "CA", fullInfo, withEmail, newContactInfo);
+        fillInContactInfo(editableComponent, "CA", fullInfo, withEmail, editBillingContactInfo);
 
         //go back and verify info has changed or was saved in the summarized component
         TestUtils.go_back_to_credit_card_in_returning_shopper(useDoneButton, buttonComponent);

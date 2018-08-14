@@ -180,7 +180,7 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
      * as it should in the hamburger and buy now buttons.
      */
     public void initial_currency_view_validation_in_billing() {
-        CurrencyChangeTest.currency_view_validation("initial_currency_view_validation_in_billing in " + returningShopper.getShopperDescription(),
+        CurrencyChangeTesterCommon.currency_view_validation("initial_currency_view_validation_in_billing in " + returningShopper.getShopperDescription(),
                 R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency);
     }
 
@@ -189,8 +189,8 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
      * changes as it should in billing.
      */
     public void change_currency_in_billing_validation() {
-        CreditCardLineTesterCommon.changeCurrency("GBP");
-        CurrencyChangeTest.currency_view_validation("change_currency_in_billing_validation in " + returningShopper.getShopperDescription(),
+        CurrencyChangeTesterCommon.changeCurrency("GBP");
+        CurrencyChangeTesterCommon.currency_view_validation("change_currency_in_billing_validation in " + returningShopper.getShopperDescription(),
                 R.id.returningShppoerCCNFragmentButtonComponentView, "GBP");
     }
 
@@ -199,7 +199,7 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
      * and back to the origin one in billing, the amount remains the same
      */
     public void change_currency_in_billing_amount_validation() {
-        CurrencyChangeTest.change_currency_amount_validation("change_currency_in_billing_amount_validation in " + returningShopper.getShopperDescription(),
+        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_billing_amount_validation in " + returningShopper.getShopperDescription(),
                 R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
     }
 

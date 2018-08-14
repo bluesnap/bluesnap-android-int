@@ -6,7 +6,6 @@ import android.view.View;
 
 import org.hamcrest.Matcher;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -16,7 +15,6 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.Matchers.not;
 
 /**
@@ -107,12 +105,6 @@ public class CreditCardLineTesterCommon {
 
         onView(cvvEditTextVM).perform(typeText("123"));
 
-    }
-
-    public static void changeCurrency(String currencyCode) {
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString(currencyCode))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
     }
 
     //TODO: integrate the following tests

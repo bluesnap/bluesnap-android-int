@@ -6,37 +6,39 @@ import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.Checks;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.test.suitebuilder.annotation.LargeTest;
 import android.view.View;
+
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BlueSnapService;
+
 import junit.framework.Assert;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.CoreMatchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
 
 
 /**
  * Created by oz on 5/26/16.
  */
-@RunWith(AndroidJUnit4.class)
-@LargeTest
 public class DemoFlowTest extends EspressoBasedTest {
     @Rule
     public ActivityTestRule<DemoMainActivity> mActivityRule = new ActivityTestRule<>(
@@ -98,19 +100,6 @@ public class DemoFlowTest extends EspressoBasedTest {
         return demoPurchaseAmount;
     }
 
-    @Test
-    public void A_valid_CC_without_Shipping_Transaction_Test() {
-        startDemoPurchase();
-        Espresso.unregisterIdlingResources(tokenProgressBarIR);
-        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
-        onView(withId(R.id.buyNowButton)).perform(click());
-        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finishDemoPurchase("USD", demoPurchaseAmount, sdkResult);
-    }
-
     public void finishDemoPurchase(String currencySymbol, Double amountRequestedInTest, SdkResult sdkResult) {
         Espresso.registerIdlingResources(transactionMessageIR);
         IdlingPolicies.setIdlingResourceTimeout(120, TimeUnit.SECONDS);
@@ -125,77 +114,6 @@ public class DemoFlowTest extends EspressoBasedTest {
 
         Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - amountRequestedInTest) < 0.00000000001);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), "USD");
-
-    }
-
-    @Test
-    public void change_currency_once_back_to_usd_espresso_test() {
-        Double startDemoPurchaseAmount = startDemoPurchase();
-        Espresso.unregisterIdlingResources(tokenProgressBarIR);
-        onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
-        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString("CAD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("CAD")))));
-
-
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString("USD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
-
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getDecimalFormat().format(startDemoPurchaseAmount)))));
-
-
-        onView(withId(R.id.buyNowButton)).perform(click());
-        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finishDemoPurchase("USD", startDemoPurchaseAmount, sdkResult);
-
-
-    }
-
-    @Test
-    public void change_currency_twice_back_to_usd_espresso_test() {
-        Double startDemoPurchaseAmount = startDemoPurchase();
-        Espresso.unregisterIdlingResources(tokenProgressBarIR);
-        onView(withId(R.id.buyNowButton)).check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
-        DemoMainActivity demoMainActivity = mActivityRule.getActivity();
-        String billingCountry = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountry, false, false);
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString("CAD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("CAD")))));
-
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString("ILS"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("ILS")))));
-
-        onView(withId(R.id.hamburger_button)).perform(click());
-        onView(withText(containsString("Currency"))).perform(click());
-        onData(hasToString(containsString("USD"))).inAdapterView(withId(R.id.currency_list_view)).perform(click());
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol("USD")))));
-
-        onView(withId(R.id.buyNowButton))
-                .check(matches(withText(containsString(AndroidUtil.getDecimalFormat().format(startDemoPurchaseAmount)))));
-
-
-        onView(withId(R.id.buyNowButton)).perform(click());
-
-        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finishDemoPurchase("USD", startDemoPurchaseAmount, sdkResult);
     }
 }
 
