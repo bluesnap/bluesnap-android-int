@@ -33,7 +33,7 @@ public class ReturningShopperAllowCurrencyChangeTest extends EspressoBasedTest {
     private static final String RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING = "22862697";
 
     public ReturningShopperAllowCurrencyChangeTest() {
-        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING);
+        super(true, "?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING);
     }
 
     @Before

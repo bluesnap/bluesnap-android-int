@@ -2,8 +2,10 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -369,7 +371,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * as it should in the hamburger buy buttons.
      */
     public void initial_currency_view_validation_in_shipping() {
-        CurrencyChangeTest.currency_view_validation("initial_currency_view_validation_in_shipping", R.id.shippingButtonComponentView, checkoutCurrency);
+        CurrencyChangeTesterCommon.currency_view_validation("initial_currency_view_validation_in_shipping", R.id.shippingButtonComponentView, checkoutCurrency);
     }
 
     /**
@@ -377,8 +379,8 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * changes as it should in shipping.
      */
     public void change_currency_in_shipping_validation() {
-        CreditCardLineTesterCommon.changeCurrency("CAD");
-        CurrencyChangeTest.currency_view_validation("change_currency_in_shipping_validation", R.id.shippingButtonComponentView, "CAD");
+        CurrencyChangeTesterCommon.changeCurrency("CAD");
+        CurrencyChangeTesterCommon.currency_view_validation("change_currency_in_shipping_validation", R.id.shippingButtonComponentView, "CAD");
     }
 
     /**
@@ -386,9 +388,9 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * changes as it should in shipping.
      */
     public void change_currency_in_billing_with_shipping_validation() {
-        CreditCardLineTesterCommon.changeCurrency("GBP");
+        CurrencyChangeTesterCommon.changeCurrency("GBP");
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
-        CurrencyChangeTest.currency_view_validation("change_currency_in_billing_with_shipping_validation", R.id.shippingButtonComponentView, "GBP");
+        CurrencyChangeTesterCommon.currency_view_validation("change_currency_in_billing_with_shipping_validation", R.id.shippingButtonComponentView, "GBP");
     }
 
     /**
@@ -398,7 +400,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void change_currency_in_shipping_amount_validation() {
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, defaultCountryValue);
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
-        CurrencyChangeTest.change_currency_amount_validation("change_currency_in_shipping_amount_validation", R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount + tax));
+        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_shipping_amount_validation", R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount + tax));
     }
 
     /**

@@ -1,8 +1,10 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,7 +121,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * as it should in the hamburger and buy now buttons.
      */
     public void initial_currency_view_validation_in_billing() {
-        CurrencyChangeTest.currency_view_validation("initial_currency_view_validation_in_billing", R.id.billingButtonComponentView, checkoutCurrency);
+        CurrencyChangeTesterCommon.currency_view_validation("initial_currency_view_validation_in_billing", R.id.billingButtonComponentView, checkoutCurrency);
     }
 
     /**
@@ -127,8 +129,8 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * changes as it should in billing.
      */
     public void change_currency_in_billing_validation() {
-        CreditCardLineTesterCommon.changeCurrency("GBP");
-        CurrencyChangeTest.currency_view_validation("change_currency_in_billing_validation", R.id.billingButtonComponentView, "GBP");
+        CurrencyChangeTesterCommon.changeCurrency("GBP");
+        CurrencyChangeTesterCommon.currency_view_validation("change_currency_in_billing_validation", R.id.billingButtonComponentView, "GBP");
     }
 
     /**
@@ -136,7 +138,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * and back to the origin one in billing, the amount remains the same
      */
     public void change_currency_in_billing_amount_validation() {
-        CurrencyChangeTest.change_currency_amount_validation("change_currency_in_billing_amount_validation", R.id.billingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
+        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_billing_amount_validation", R.id.billingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
     }
 
     /**
@@ -144,7 +146,8 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * displayed after entering all cc line info and then edit the
      * credit card number to an invalid one.
      */
-    @Test
+    //TODO: restore this when the bug is fixed (AS-147)
+    //@Test
     public void invalid_cc_number_with_valid_exp_and_cvv_validation() {
         CreditCardLineTesterCommon.invalid_cc_number_with_valid_exp_and_cvv_validation("invalid_cc_number_with_valid_exp_and_cvv_validation");
     }

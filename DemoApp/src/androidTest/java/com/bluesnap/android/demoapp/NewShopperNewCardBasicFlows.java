@@ -1,166 +1,59 @@
 package com.bluesnap.android.demoapp;
 
-import android.os.RemoteException;
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.IdlingPolicies;
-import android.support.test.espresso.action.ViewActions;
-import android.support.test.espresso.intent.Checks;
-import android.support.test.espresso.matcher.BoundedMatcher;
-import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
-import android.view.View;
-import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
-import com.bluesnap.androidapi.http.HTTPOperationController;
+import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import junit.framework.Assert;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
-import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
-import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.containsString;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.CoreMatchers.allOf;
 
 /**
- * Created by sivani on 23/07/2018.
+ * Created by sivani on 14/08/2018.
  */
 
-public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
-    @Rule
-    public ActivityTestRule<DemoMainActivity> mActivityRule = new ActivityTestRule<>(
-            DemoMainActivity.class);
+@RunWith(AndroidJUnit4.class)
 
-    DemoMainActivity demoMainActivity;
-    private static final String TAG = "NewShopperBasicFlow";
-    private boolean fullInfo = false;
-    private boolean withShipping = false;
-    private boolean withEmail = false;
-    private boolean shippingSameAsBilling = false;
-
-    private static final int HTTP_MAX_RETRIES = 2;
-    private static final int HTTP_RETRY_SLEEP_TIME_MILLIS = 3750;
-    public static final String SANDBOX_GET_SHOPPER = "vaulted-shoppers/";
-    private String shopperId;
-    private String getShopperResponse;
-    String billingCountryKey;
-    String billingCountryValue;
-    String shippingCountryKey;
-    String shippingCountryValue;
-
-    @After
-    public void keepRunning() {
-        mActivityRule.getActivity().finish();
-        //Thread.sleep(1000);
-    }
-
-    @Before
-    public void setup() {
-        demoMainActivity = mActivityRule.getActivity();
-        applicationContext = demoMainActivity.getApplicationContext();
-        //defaultCountryKey = BlueSnapService.getInstance().getUserCountry(demoMainActivity.getApplicationContext());
-        try {
-            wakeUpDeviceScreen();
-        } catch (RemoteException e) {
-            fail("Could not wake up device");
-            e.printStackTrace();
-        }
-
-        //TODO: restore this after the counties mapping fix
-//        String[] billingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
-//        billingCountryKey = billingCountry[0];
-//        billingCountryValue = billingCountry[1];
-//
-//        String[] shippingCountry = randomTestValuesGenerator.randomReturningShopperCountry(applicationContext);
-//        shippingCountryKey = shippingCountry[0];
-//        shippingCountryValue = shippingCountry[1];
-        defaultCountryKey = BlueSnapService.getInstance().getUserCountry(applicationContext);
-        String[] countryKeyArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_key_array);
-        String[] countryValueArray = applicationContext.getResources().getStringArray(com.bluesnap.androidapi.R.array.country_value_array);
-
-        defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
-        billingCountryKey = shippingCountryKey = defaultCountryKey;
-        billingCountryValue = shippingCountryValue = defaultCountryValue;
-    }
-
-    public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
-        Checks.checkNotNull(itemListText);
-        return new BoundedMatcher<Object, String>(String.class) {
-            @Override
-            public boolean matchesSafely(String item) {
-                return itemListText.matches(item);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("with text: " + itemListText.toString());
-                itemListText.describeTo(description);
-            }
-        };
-    }
-
-    /**
-     * This test verifies that the shipping same as billing switch works as
-     * it should.
-     * It checks that the shipping button changed to pay, and that the tax
-     * and subtotal are presented if they supposed to.
-     */
+public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
     @Test
     public void minimal_billing_basic_flow_transaction() {
-        new_card_basic_flow_transaction();
-        get_shopper_after_transaction();
-    }
-
-    @Test
-    public void minimal_billing_with_shipping_basic_flow_transaction() {
-        withShipping = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(0);
         get_shopper_after_transaction();
     }
 
     @Test
     public void minimal_billing_with_email_basic_flow_transaction() {
         withEmail = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(1);
         get_shopper_after_transaction();
     }
 
     @Test
+    public void minimal_billing_with_shipping_basic_flow_transaction() {
+        withShipping = true;
+        new_card_basic_flow_transaction(2);
+        get_shopper_after_transaction();
+    }
+    @Test
     public void minimal_billing_with_shipping_with_email_basic_flow_transaction() {
         withShipping = true;
         withEmail = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(3);
         get_shopper_after_transaction();
     }
 
     @Test
     public void full_billing_basic_flow_transaction() {
         fullInfo = true;
-        new_card_basic_flow_transaction();
-        get_shopper_after_transaction();
-    }
-
-    @Test
-    public void full_billing_with_shipping_basic_flow_transaction() {
-        fullInfo = true;
-        withShipping = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(4);
         get_shopper_after_transaction();
     }
 
@@ -168,7 +61,15 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
     public void full_billing_with_email_basic_flow_transaction() {
         fullInfo = true;
         withEmail = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(5);
+        get_shopper_after_transaction();
+    }
+
+    @Test
+    public void full_billing_with_shipping_basic_flow_transaction() {
+        fullInfo = true;
+        withShipping = true;
+        new_card_basic_flow_transaction(6);
         get_shopper_after_transaction();
     }
 
@@ -177,7 +78,7 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         fullInfo = true;
         withShipping = true;
         withEmail = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(7);
         get_shopper_after_transaction();
     }
 
@@ -187,23 +88,43 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
         withShipping = true;
         withEmail = true;
         shippingSameAsBilling = true;
-        new_card_basic_flow_transaction();
+        new_card_basic_flow_transaction(-1);
         get_shopper_after_transaction();
+    }
+
+    @Test
+    public void change_currency_twice_back_to_usd_espresso_test() {
+        start_demo_purchase(-1);
+        onView(withId(R.id.newCardButton)).perform(click());
+        Espresso.unregisterIdlingResources(tokenProgressBarIR);
+
+        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, billingCountryValue);
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, billingCountryKey, fullInfo, withEmail);
+
+        CurrencyChangeTesterCommon.changeCurrency("CAD");
+        CurrencyChangeTesterCommon.changeCurrency("ILS");
+        CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+
+        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+        finish_demo_purchase(sdkResult, -1);
     }
 
     /**
      * This test does an end-to-end new card flow for all 8 options:
      * with/without full billing, shipping, email.
      */
-    public void new_card_basic_flow_transaction() {
-        start_demo_purchase();
+    public void new_card_basic_flow_transaction(int returningShopperIndex) {
+        start_demo_purchase(-1);
         onView(withId(R.id.newCardButton)).perform(click());
         Espresso.unregisterIdlingResources(tokenProgressBarIR);
 
         new_card_basic_fill_info();
 
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finish_demo_purchase(sdkResult);
+        finish_demo_purchase(sdkResult, returningShopperIndex);
     }
 
     public void new_card_basic_fill_info() {
@@ -226,136 +147,5 @@ public class NewShopperNewCardBasicFlows extends EspressoBasedTest {
                 onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.shippingButtonComponentView)))).perform(click());
             }
         }
-    }
-
-    public Double start_demo_purchase() {
-        //purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
-        tokenProgressBarIR = new VisibleViewIdlingResource(R.id.progressBarMerchant, View.INVISIBLE, "merchant token progress bar");
-        transactionMessageIR = new VisibleViewIdlingResource(R.id.transactionResult, View.VISIBLE, "merchant transaction completed text");
-
-        Espresso.registerIdlingResources(tokenProgressBarIR);
-        checkToken();
-        onView(withId(R.id.productPriceEditText)).check(matches(isCompletelyDisplayed()));
-
-        onView(withId(R.id.rateSpinner)).check(matches(isDisplayed())).perform(closeSoftKeyboard(), click());
-        onData(allOf(is(instanceOf(String.class)), itemListMatcher(containsString(checkoutCurrency))))
-                .perform(click());
-
-        // onView(withId(R.id.rateSpinner)).perform(click(), closeSoftKeyboard());
-        onView(withId(R.id.productPriceEditText))
-                .perform(typeText(Double.toString(purchaseAmount)), ViewActions.closeSoftKeyboard());
-
-        if (fullInfo)
-            onView(withId(R.id.billingSwitch)).perform(swipeRight());
-
-        if (withShipping)
-            onView(withId(R.id.shippingSwitch)).perform(swipeRight());
-
-        if (withEmail)
-            onView(withId(R.id.emailSwitch)).perform(swipeRight());
-
-        onView(withId(R.id.merchantAppSubmitButton)).perform(click());
-        return purchaseAmount;
-    }
-
-
-    public void finish_demo_purchase(SdkResult sdkResult) {
-        //wait for transaction to finish
-        Espresso.registerIdlingResources(transactionMessageIR);
-        IdlingPolicies.setIdlingResourceTimeout(120, TimeUnit.SECONDS);
-        onView(withId(R.id.transactionResult)) //verify transaction success
-                .check(matches(withText(containsString("Transaction Success"))));
-
-        //TODO: change this stupid thing. in demoApp as well
-        shopperId = TestUtils.getText(withId(R.id.shopperId)).substring(13);
-        Espresso.unregisterIdlingResources(transactionMessageIR);
-
-        //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
-        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
-    }
-
-    private void get_shopper_after_transaction() {
-        get_shopper_service(new GetShopperServiceInterface() {
-            @Override
-            public void onServiceSuccess() {
-                new_shopper_info_saved_validation();
-            }
-
-            @Override
-            public void onServiceFailure() {
-                fail("Cannot obtain shopper info from merchant server");
-            }
-        });
-    }
-
-    private void get_shopper_service(final GetShopperServiceInterface getShopperServiceInterface) {
-        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_GET_SHOPPER + shopperId, "application/json", "application/json", sahdboxHttpHeaders);
-        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
-            getShopperResponse = response.getResponseString();
-            getShopperServiceInterface.onServiceSuccess();
-        } else {
-            Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
-            getShopperServiceInterface.onServiceFailure();
-        }
-    }
-
-    //TODO: add validation that the new credit card info has been saved correctly
-    private void new_shopper_info_saved_validation() {
-        try {
-            JSONObject jsonObject = new JSONObject(getShopperResponse);
-            new_shopper_component_info_saved_validation(true, jsonObject);
-        if (withShipping)
-            new_shopper_component_info_saved_validation(false, jsonObject.getJSONObject("shippingContactInfo"));
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            fail("Error on parse shopper info");
-        }
-    }
-
-    private void new_shopper_component_info_saved_validation(boolean isBillingInfo, JSONObject jsonObject) {
-        String address = isBillingInfo ? "address" : "address1";
-        String countryKey = (!isBillingInfo && !shippingSameAsBilling) ? shippingCountryKey : billingCountryKey;
-
-        ShopperContactInfo contactInfo = (!isBillingInfo && !shippingSameAsBilling) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
-
-        check_if_field_identify(isBillingInfo, "country", countryKey.toLowerCase(), jsonObject);
-
-        check_if_field_identify(isBillingInfo, "firstName", contactInfo.getFirstName(), jsonObject);
-        check_if_field_identify(isBillingInfo, "lastName", contactInfo.getLastName(), jsonObject);
-
-        if (isBillingInfo && withEmail)
-            check_if_field_identify(true, "email", contactInfo.getEmail(), jsonObject);
-
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryKey))
-            check_if_field_identify(isBillingInfo, "zip", contactInfo.getZip(), jsonObject);
-
-        if (fullInfo || !isBillingInfo) { //full info or shipping
-            if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
-                if (countryKey.equals("US"))
-                    check_if_field_identify(isBillingInfo, "state", "NY", jsonObject);
-                else if (countryKey.equals("CA"))
-                    check_if_field_identify(isBillingInfo, "state", "QC", jsonObject);
-                else
-                    check_if_field_identify(isBillingInfo, "state", "RJ", jsonObject);
-            }
-            check_if_field_identify(isBillingInfo, "city", contactInfo.getCity(), jsonObject);
-            check_if_field_identify(isBillingInfo, address, contactInfo.getAddress(), jsonObject);
-        }
-    }
-
-    private void check_if_field_identify(boolean isBillingInfo, String fieldName, String expectedResult, JSONObject shopperInfoJsonObject) {
-        String fieldContent = null;
-        try {
-            fieldContent = getOptionalString(shopperInfoJsonObject, fieldName);
-            if (fieldName.equals("email"))
-                fieldContent = fieldContent.substring(0, fieldContent.indexOf("&")) + "@" + fieldContent.substring(fieldContent.indexOf(";") + 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("missing field in server response:\n Expected fieldName: " + fieldName + " Expected Value:" + expectedResult + "\n" + getShopperResponse);
-        }
-
-        Assert.assertEquals(fieldName + " was not saved correctly in DataBase", expectedResult, fieldContent);
     }
 }

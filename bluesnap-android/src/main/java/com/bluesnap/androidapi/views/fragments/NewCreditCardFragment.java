@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -239,10 +240,9 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 buttonComponentView.setBuyNowButton(buttonComponentText);
+            } else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
+                // billingViewComponent.requestFocusOnNameInput();
             }
-            // else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
-            //     billingViewComponent.requestFocusOnNameInput();
-            // }
             else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 billingViewComponent.setShippingSameAsBilling(isShippingSameAsBilling);

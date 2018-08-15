@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 
 import android.content.Context;
 import android.support.test.espresso.Espresso;
+
 import com.bluesnap.androidapi.Constants;
 
 import org.hamcrest.Matchers;
@@ -12,10 +13,19 @@ import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.clearText;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
 
 /**
  * Created by sivani on 17/07/2018.
@@ -27,6 +37,12 @@ public class ContactInfoTesterCommon {
 
     static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "null",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
+
+    static ShopperContactInfo editBillingContactInfo = new ShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
+            "Barcelona", "77 Rambla street", "QC", "4815", "CA");
+
+    static ShopperContactInfo editShippingContactInfo = new ShopperContactInfo("Janet Weiss", "null",
+            "Denton", "75 some street", "TX", "162342", "US");
 
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), pressImeActionButton());
@@ -265,7 +281,8 @@ public class ContactInfoTesterCommon {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
-        CreditCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
+        if (!country.equals(""))
+            CreditCardVisibilityTesterCommon.country_view_validation(testName, context, country, componentResourceId);
         //onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).check(matches(TestUtils.withDrawable(R.drawable.us)));
 
         //Verify full name has been saved in current component
@@ -278,10 +295,11 @@ public class ContactInfoTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": Email wasn't saved"))
                     .check(matches(withText(contactInfo.getEmail())));
 
-        //Verify zip has been saved in current component
-        onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Zip wasn't saved"))
-                .check(matches(withText(contactInfo.getZip())));
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+            //Verify zip has been saved in current component
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Zip wasn't saved"))
+                    .check(matches(withText(contactInfo.getZip())));
 
         if (fullInfo) {
             //Verify city has been saved in current component
@@ -304,31 +322,35 @@ public class ContactInfoTesterCommon {
      * If useDoneButton is true then it uses "Done" button and verifies the info changes,
      * o.w. it uses the "Back" button and verifies the info doesn't change.
      */
-    public static void returning_shopper_edit_contact_info_validation(String testName, Context context, int summarizedComponentResourceId, boolean fullInfo, boolean withEmail, boolean useDoneButton, String country) throws IOException {
+    public static void returning_shopper_edit_contact_info_validation(String testName, Context context, int summarizedComponentResourceId, boolean fullInfo,
+                                                                      boolean withEmail, boolean useDoneButton, ShopperContactInfo verifyContactInfo) throws IOException {
         int buttonComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.returningShopperBillingFragmentButtonComponentView : R.id.returningShopperShippingFragmentButtonComponentView;
         int editableComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.billingViewComponent : R.id.returningShoppershippingViewComponent;
-        ShopperContactInfo newContactInfo = new ShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
-                "Barcelona", "77 Rambla street", "QC", "12345", "CA");
-        String countryKey = country;
-        ShopperContactInfo verifyContactInfo;
 
+        String countryKey;
+        boolean shopperHasEmail, shopperHasFullBilling;
         //Enter to edit info
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(summarizedComponentResourceId)))).perform(click());
 
         if (useDoneButton) {
-            verifyContactInfo = newContactInfo;
+            verifyContactInfo = editBillingContactInfo;
             countryKey = "CA";
         } else
-            verifyContactInfo = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? billingContactInfo : shippingContactInfo;
+            countryKey = verifyContactInfo.getCountry();
+
+
+        //TODO: move this outside
+        shopperHasEmail = withEmail & (!verifyContactInfo.getEmail().isEmpty());
+        shopperHasFullBilling = fullInfo & (!verifyContactInfo.getCity().isEmpty());
 
 
         //Edit the component info
         ContactInfoTesterCommon.changeCountry(editableComponent, "Canada");
-        fillInContactInfo(editableComponent, "CA", fullInfo, withEmail, newContactInfo);
+        fillInContactInfo(editableComponent, "CA", fullInfo, withEmail, editBillingContactInfo);
 
         //go back and verify info has changed or was saved in the summarized component
         TestUtils.go_back_to_credit_card_in_returning_shopper(useDoneButton, buttonComponent);
-        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(testName, summarizedComponentResourceId, countryKey, fullInfo, withEmail, verifyContactInfo);
+        ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(testName, summarizedComponentResourceId, shopperHasFullBilling, shopperHasEmail, verifyContactInfo);
 
         //Press edit to verify info was saved in the edit component
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(summarizedComponentResourceId)))).perform(click());

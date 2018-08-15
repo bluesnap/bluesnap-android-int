@@ -29,11 +29,25 @@ public class ShopperContactInfo {
         country = country_;
     }
 
+    public ShopperContactInfo(ShopperContactInfo contactInfo) {
+        name = contactInfo.name;
+        email = contactInfo.email;
+        city = contactInfo.city;
+        address = contactInfo.address;
+        state = contactInfo.state;
+        zip = contactInfo.zip;
+        country = contactInfo.country;
+    }
+
     public String getFirstName() {
+        if (this.name.isEmpty())
+            return "";
         return name.substring(0, name.indexOf(" "));
     }
 
     public String getLastName() {
+        if (this.name.isEmpty())
+            return "";
         return name.substring(name.indexOf(" ") + 1);
     }
 
@@ -93,7 +107,20 @@ public class ShopperContactInfo {
         this.country = country;
     }
 
+    public void resetAllFields() {
+        this.setName("");
+        this.setEmail("");
+        this.setZip("");
+        this.setState("");
+        this.setCity("");
+        this.setAddress("");
+    }
 
+    public void resetFullBillingFields() {
+        this.setState("");
+        this.setCity("");
+        this.setAddress("");
+    }
 }
 
 
