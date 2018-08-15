@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
@@ -162,7 +163,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         ((CreditCardActivity) getActivity()).setHeaderTextView(TAG);
         amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
-        buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
+        buttonComponentView.setBuyNowButton(buttonComponentText, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (shippingViewComponent.validateInfo()) {
@@ -172,7 +173,6 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
             }
         });
     }
-
 
     /**
      * Broadcast Receiver for Credit Card Activity
@@ -186,7 +186,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
             if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
-                buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
+                buttonComponentView.setBuyNowButton(buttonComponentText);
             }
         }
     };

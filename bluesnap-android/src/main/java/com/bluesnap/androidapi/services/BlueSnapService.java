@@ -23,7 +23,11 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.bluesnap.androidapi.models.BSTokenizeDetailsJsonFactory.CARDTYPE;
+import static com.bluesnap.androidapi.models.BSTokenizeDetailsJsonFactory.FRAUDSESSIONID;
+import static com.bluesnap.androidapi.models.BSTokenizeDetailsJsonFactory.LAST4DIGITS;
 import static com.bluesnap.androidapi.models.BSTokenizeDetailsJsonFactory.createDataObject;
+import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 /**
  * Core BlueSnap Service class that handles network and maintains {@link SdkRequest}
@@ -38,12 +42,12 @@ public class BlueSnapService {
     private final KountService kountService = KountService.getInstance();
     private SdkResult sdkResult;
     private SdkRequest sdkRequest;
+    private ShopperInfoConfig shopperInfoConfig;
     private BluesnapToken bluesnapToken;
     private BluesnapServiceCallback bluesnapServiceCallback;
     private SDKConfiguration sDKConfiguration;
     private TokenProvider tokenProvider;
     private AppExecutors appExecutors;
-
 
     public static BlueSnapService getInstance() {
         return INSTANCE;
@@ -154,11 +158,11 @@ public class BlueSnapService {
 
     /**
      * Update shopper details on the BlueSnap Server
-     *
-     * @param ShopperJsonObject {@link JSONObject} - Shopper in Json convention
      */
-    public BlueSnapHTTPResponse submitUpdatedShopperDetails(final JSONObject ShopperJsonObject) {
+    public BlueSnapHTTPResponse submitUpdatedShopperDetails(final Shopper shopper) {
         Log.d(TAG, "update Shopper on token " + bluesnapToken.toString());
+        String kountSessionId = getKountSessionId();
+        JSONObject ShopperJsonObject = (null != kountSessionId || !"".equals(getKountSessionId())) ? shopper.toJsonWithFraudSessionId(kountSessionId) : shopper.toJson();
         return blueSnapAPI.updateShopper(ShopperJsonObject.toString());
     }
 
@@ -186,6 +190,20 @@ public class BlueSnapService {
     public BlueSnapHTTPResponse submitTokenizedDetails(PurchaseDetails purchaseDetails) throws JSONException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
         return blueSnapAPI.tokenizeDetails(createDataObject((ShopperInfoConfig) sdkRequest, purchaseDetails, getKountSessionId()).toString());
+    }
+
+    /**
+     * Update details on the BlueSnapValidator Server
+     *
+     * @param creditCard {@link CreditCard}
+     */
+    public BlueSnapHTTPResponse submitCreditCardDetailsForShopperConfiguration(CreditCard creditCard) {
+        Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
+        JSONObject jsonObject = new JSONObject();
+        putJSONifNotNull(jsonObject, CARDTYPE, creditCard.getCardType());
+        putJSONifNotNull(jsonObject, LAST4DIGITS, creditCard.getCardLastFourDigits());
+        putJSONifNotNull(jsonObject, FRAUDSESSIONID, getKountSessionId());
+        return blueSnapAPI.tokenizeDetails(jsonObject.toString());
     }
 
     /**
@@ -598,6 +616,47 @@ public class BlueSnapService {
         return appExecutors;
     }
 
+    /**
+     * get Shopper Info Config
+     *
+     * @return {@link ShopperInfoConfig}
+     */
+    public ShopperInfoConfig getShopperInfoConfig() {
+        return shopperInfoConfig;
+    }
+
+    /**
+     * set Shopper Info Config
+     *
+     * @param shopperInfoConfig - {@link ShopperInfoConfig}
+     */
+    public synchronized void setShopperInfoConfig(@NonNull ShopperInfoConfig shopperInfoConfig) {
+        if (this.shopperInfoConfig != null) {
+            Log.w(TAG, "shopperInfoConfig override");
+        }
+        this.shopperInfoConfig = shopperInfoConfig;
+
+        try {
+            setSdkRequest(new SdkRequest(0.01D, SupportedPaymentMethods.USD, shopperInfoConfig));
+        } catch (BSPaymentRequestException e) {
+            Log.d(TAG, "failed to create Sdk Request for setShopperInfoConfig: " + e.getMessage());
+        }
+        sdkRequest.setAllowCurrencyChange(false);
+
+    }
+
+    /**
+     * set Shopper Configuration
+     * This will reset the previous payment request
+     *
+     * @param merchantToken A Merchant SDK token, obtained from the merchant.
+     * @param tokenProvider A merchant function for requesting a new token if expired
+     * @param context       A Merchant Application Context
+     * @param callback      A {@link BluesnapServiceCallback}
+     */
+    public void setShopperConfiguration(String merchantToken, TokenProvider tokenProvider, @NonNull Context context, final BluesnapServiceCallback callback) {
+        setup(merchantToken, tokenProvider, context, callback);
+    }
 
     /**
      * After calling initBluesnap() with a token created for an existing shopper, the merchant app can use this method to

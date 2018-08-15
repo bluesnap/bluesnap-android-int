@@ -18,14 +18,16 @@ public class ChosenPaymentMethod extends BSModel {
     public static final String CREDIT_CARD = "creditCard";
 
     @NonNull
-    //@SerializedName("chosenPaymentMethodType")
     private String chosenPaymentMethodType;
 
     @Nullable
-    //@SerializedName("creditCard")
     private CreditCard creditCard;
 
     public ChosenPaymentMethod() {
+    }
+
+    public ChosenPaymentMethod(@NonNull String chosenPaymentMethodType) {
+        this.chosenPaymentMethodType = chosenPaymentMethodType;
     }
 
     public ChosenPaymentMethod(@NonNull String chosenPaymentMethodType, @Nullable CreditCard creditCard) {

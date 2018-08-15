@@ -21,6 +21,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
+            android:name=".views.activities.BluesnapChoosePaymentMethodActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
             android:name=".views.activities.CurrencyActivity"
             android:label="@string/title_activity_currency"
             android:parentActivityName=".views.activities.CreditCardActivity"

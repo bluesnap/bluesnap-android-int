@@ -21,8 +21,10 @@ import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShopperConfiguration;
+import com.bluesnap.androidapi.models.ShopperInfoConfig;
 import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -56,6 +58,7 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch billingSwitch;
     private Switch emailSwitch;
     private Switch allowCurrencyChangeSwitch;
+    Switch shopperConfigSwitch;
     Switch returningShopperSwitch;
     EditText returningShopperEditText;
     private TextView shopperDetailsTextView;
@@ -80,6 +83,8 @@ public class DemoMainActivity extends AppCompatActivity {
         emailSwitch.setChecked(false);
         allowCurrencyChangeSwitch = findViewById(R.id.allowCurrencyChangeSwitch);
         allowCurrencyChangeSwitch.setChecked(true);
+        shopperConfigSwitch = findViewById(R.id.shopperConfigSwitch);
+        shopperConfigSwitch.setVisibility(View.INVISIBLE);
         returningShopperSwitch = findViewById(R.id.returningShopperSwitch);
         returningShopperSwitch.setChecked(false);
         returningShopperEditText = findViewById(R.id.returningShopperEditText);
@@ -249,23 +254,23 @@ public class DemoMainActivity extends AppCompatActivity {
     }
 
     public void onPaySubmit(View view) {
+        if (!shopperConfigSwitch.isChecked()) {
+            String productPriceStr = AndroidUtil.stringify(productPriceEditText.getText());
+            if (TextUtils.isEmpty(productPriceStr)) {
+                Toast.makeText(getApplicationContext(), "null payment", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        String productPriceStr = AndroidUtil.stringify(productPriceEditText.getText());
-        if (TextUtils.isEmpty(productPriceStr)) {
-            Toast.makeText(getApplicationContext(), "null payment", Toast.LENGTH_LONG).show();
-            return;
-        }
+            Double productPrice = Double.valueOf(productPriceStr);
+            if (productPrice <= 0D) {
+                Toast.makeText(getApplicationContext(), "0 payment", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        Double productPrice = Double.valueOf(productPriceStr);
-        if (productPrice <= 0D) {
-            Toast.makeText(getApplicationContext(), "0 payment", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
-        Double taxAmount = 0D;
-        // You can set the Amouut solely
-        SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+            readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
+            Double taxAmount = 0D;
+            // You can set the Amouut solely
+            SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
 
 //        // Or you can set the Amount with tax, this will override setAmount()
 //        // The total purchase amount will be the sum of both numbers
@@ -276,38 +281,44 @@ public class DemoMainActivity extends AppCompatActivity {
 //        }
 
 
-        sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
-        try {
-            sdkRequest.verify();
-        } catch (BSPaymentRequestException e) {
-            showDialog("SdkRequest error:" + e.getMessage());
-            Log.d(TAG, sdkRequest.toString());
-            finish();
-        }
-
-        // Set special tax policy: non-US pay no tax; MA pays 10%, other US states pay 5%
-        sdkRequest.setTaxCalculator(new TaxCalculator() {
-            @Override
-            public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
-                if ("us".equalsIgnoreCase(shippingCountry)) {
-                    Double taxRate = 0.05;
-                    if ("ma".equalsIgnoreCase(shippingState)) {
-                        taxRate = 0.1;
-                    }
-                    priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
-                } else {
-                    priceDetails.setTaxAmount(0D);
-                }
+            sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
+            try {
+                sdkRequest.verify();
+            } catch (BSPaymentRequestException e) {
+                showDialog("SdkRequest error:" + e.getMessage());
+                Log.d(TAG, sdkRequest.toString());
+                finish();
             }
-        });
 
-        try {
-            bluesnapService.setSdkRequest(sdkRequest);
-            Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
-            startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
-        } catch (BSPaymentRequestException e) {
-            Log.e(TAG, "payment request not validated: ", e);
-            finish();
+            // Set special tax policy: non-US pay no tax; MA pays 10%, other US states pay 5%
+            sdkRequest.setTaxCalculator(new TaxCalculator() {
+                @Override
+                public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
+                    if ("us".equalsIgnoreCase(shippingCountry)) {
+                        Double taxRate = 0.05;
+                        if ("ma".equalsIgnoreCase(shippingState)) {
+                            taxRate = 0.1;
+                        }
+                        priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
+                    } else {
+                        priceDetails.setTaxAmount(0D);
+                    }
+                }
+            });
+
+            try {
+                bluesnapService.setSdkRequest(sdkRequest);
+                Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
+                startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
+            } catch (BSPaymentRequestException e) {
+                Log.e(TAG, "payment request not validated: ", e);
+                finish();
+            }
+        } else {
+            ShopperInfoConfig shopperInfoConfig = new ShopperInfoConfig(billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+            bluesnapService.setShopperInfoConfig(shopperInfoConfig);
+            Intent intent = new Intent(getApplicationContext(), BluesnapChoosePaymentMethodActivity.class);
+            startActivityForResult(intent, BluesnapChoosePaymentMethodActivity.REQUEST_CODE_DEFAULT);
         }
     }
 
@@ -373,8 +384,10 @@ public class DemoMainActivity extends AppCompatActivity {
             }
             shopperDetailsTextView.setText(shopperInfoText);
             shopperDetailsTextView.setVisibility(View.VISIBLE);
+            shopperConfigSwitch.setVisibility(View.VISIBLE);
         } else {
             shopperDetailsTextView.setVisibility(View.INVISIBLE);
+            shopperConfigSwitch.setVisibility(View.INVISIBLE);
         }
     }
 

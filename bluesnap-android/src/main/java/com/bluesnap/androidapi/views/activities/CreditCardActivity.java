@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.PurchaseDetails;
@@ -27,6 +29,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.fragments.*;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,8 +77,7 @@ public class CreditCardActivity extends AppCompatActivity {
             startActivityWithNewCreditCardFragment();
         else if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {
             newCreditCardShippingFragment = NewCreditCardShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.creditCardFrameLayout, newCreditCardShippingFragment).commit();
+            replaceBlueSnapFragment(R.id.creditCardFrameLayout, newCreditCardShippingFragment);
         } else {
             startActivityWithReturningShopperCreditCardFragment();
         }
@@ -148,8 +150,7 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, broadcastReceiver);
 
         NewCreditCardFragment newCreditCardFragment = NewCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle());
-        getFragmentManager().beginTransaction()
-                .replace(R.id.creditCardFrameLayout, newCreditCardFragment).commit();
+        replaceBlueSnapFragment(R.id.creditCardFrameLayout, newCreditCardFragment);
     }
 
     /**
@@ -168,8 +169,7 @@ public class CreditCardActivity extends AppCompatActivity {
         else if (fragmentType.equals(ReturningShopperShippingFragment.TAG))
             blueSnapFragment = ReturningShopperShippingFragment.newInstance(CreditCardActivity.this, new Bundle());
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.creditCardFrameLayout, blueSnapFragment).commit();
+        replaceBlueSnapFragment(R.id.creditCardFrameLayout, blueSnapFragment);
     }
 
     /**
@@ -230,8 +230,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
             if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_CHANGE.equals(event)
                     || BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE.equals(event)) {
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.creditCardFrameLayout, ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle())).commit();
+                replaceBlueSnapFragment(R.id.creditCardFrameLayout, ReturningShopperCreditCardFragment.newInstance(CreditCardActivity.this, new Bundle()));
                 setHeaderTextView(ReturningShopperCreditCardFragment.TAG);
                 setHamburgerMenuButtonVisibility(View.VISIBLE);
             } else if (BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT.equals(event)) {
@@ -346,7 +345,12 @@ public class CreditCardActivity extends AppCompatActivity {
 
         Log.d(TAG, "Testing if card requires server tokenization:" + shopper.getNewCreditCardInfo().getCreditCard().toString());
         try {
-            tokenizeCardOnServer(shopper, resultIntent);
+            if (BluesnapChoosePaymentMethodActivity.NEW_SHOPPER.equals(fragmentType) || BluesnapChoosePaymentMethodActivity.RETURNING_SHOPPER.equals(fragmentType)) {
+                setResult(RESULT_OK);
+                blueSnapService.getsDKConfiguration().setShopper(shopper);
+                finish();
+            } else
+                tokenizeCardOnServer(shopper, resultIntent);
         } catch (UnsupportedEncodingException | JSONException e) {
             String errorMsg = "SDK service error";
             Log.e(TAG, errorMsg, e);
@@ -465,6 +469,16 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     private BlueSnapFragment getBlueSnapFragment() {
         return (BlueSnapFragment) getFragmentManager().findFragmentById(R.id.creditCardFrameLayout);
+    }
+
+    /**
+     * replace BlueSnap Fragment and set to submit if arrived from choose payment method shopper config
+     */
+    private void replaceBlueSnapFragment(@IdRes int containerViewId, BlueSnapFragment fragment) {
+        if (BluesnapChoosePaymentMethodActivity.NEW_SHOPPER.equals(fragmentType) || BluesnapChoosePaymentMethodActivity.RETURNING_SHOPPER.equals(fragmentType))
+            fragment.setButtonComponentTextToSubmit();
+        getFragmentManager().beginTransaction()
+                .replace(containerViewId, fragment).commit();
     }
 
     /**

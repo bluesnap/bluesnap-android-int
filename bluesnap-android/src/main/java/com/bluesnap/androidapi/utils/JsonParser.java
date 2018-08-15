@@ -143,6 +143,36 @@ public class JsonParser {
         }
     }
 
+    public static void putJSONifNotNull(JSONObject jsonObject, String key, Integer intValue) {
+        if (null != intValue) {
+            try {
+                jsonObject.put(key, intValue);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+            }
+        }
+    }
+
+    public static void putJSONifNotNull(JSONObject jsonObject, String key, JSONObject jsonObject1) {
+        if (null != jsonObject1) {
+            try {
+                jsonObject.put(key, jsonObject1);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+            }
+        }
+    }
+
+    public static void putJSONifNotNull(JSONObject jsonObject, String key, JSONArray jsonArray) {
+        if (null != jsonArray) {
+            try {
+                jsonObject.put(key, jsonArray);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+            }
+        }
+    }
+
     /**
      * check If Not Null And Put In Json
      *
@@ -150,10 +180,10 @@ public class JsonParser {
      * @param objectValue - the object to put
      * @param key         - the key code of the objectValue
      */
-    public static void putJSONifNotNull(JSONObject jsonObject, String key, Object objectValue) {
+    public static void putJSONifNotNull(JSONObject jsonObject, String key, BSModel objectValue) {
         if (null != objectValue) {
             try {
-                jsonObject.put(key, objectValue);
+                jsonObject.put(key, objectValue.toJson());
             } catch (JSONException e) {
                 Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
             }

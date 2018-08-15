@@ -26,6 +26,7 @@
     <string name="coupon_questionmark">Coupon?</string>
     <string name="done">Done</string>
     <string name="shipping">Shipping</string>
+    <string name="submit">Submit</string>
     <string name="billing">Billing</string>
     <string name="payment">Payment</string>
     <string name="payment_type">Payment Type</string>

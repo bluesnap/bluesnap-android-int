@@ -7,10 +7,14 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.views.components.ButtonComponent;
 
 public class BlueSnapFragment extends Fragment {
+    protected ButtonComponent.ButtonComponentText buttonComponentText = ButtonComponent.ButtonComponentText.PAY;
+
     public void onActivitySavedInstanceState(Bundle outState) {
 
     }
@@ -41,5 +45,28 @@ public class BlueSnapFragment extends Fragment {
 
     public void registerBlueSnapLocalBroadcastReceiver() {
 
+    }
+
+    /**
+     * set Button Component Text for Regular flow (not shipping or done) just for pay or submit
+     *
+     * @param buttonComponentText {@link ButtonComponent.ButtonComponentText}
+     */
+    private void setButtonComponentText(ButtonComponent.ButtonComponentText buttonComponentText) {
+        this.buttonComponentText = buttonComponentText;
+    }
+
+    /**
+     * set Button Component Text To Pay
+     */
+    public void setButtonComponentTextToPay() {
+        setButtonComponentText(ButtonComponent.ButtonComponentText.PAY);
+    }
+
+    /**
+     * set Button Component Text To Submit
+     */
+    public void setButtonComponentTextToSubmit() {
+        setButtonComponentText(ButtonComponent.ButtonComponentText.SUBMIT);
     }
 }

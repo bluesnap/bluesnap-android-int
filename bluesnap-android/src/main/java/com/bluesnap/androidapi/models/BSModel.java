@@ -12,18 +12,4 @@ public abstract class BSModel {
      */
     public abstract JSONObject toJson();
 
-    /**
-     * return Class to Stringified JSON Object
-     *
-     * @return JSON Object String
-     */
-    @Override
-    public String toString() {
-        JSONObject jsonObject = this.toJson();
-        if (null == jsonObject)
-            return "";
-        else
-            return this.toJson().toString();
-    }
-
 }

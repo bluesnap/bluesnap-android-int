@@ -345,12 +345,4 @@ public class CreditCard extends BSModel {
         putJSONifNotNull(jsonObject, CARD_SUB_TYPE, getCardSubType());
         return jsonObject;
     }
-
-    @Override
-    public String toString() {
-        JSONObject jsonObject = toJson();
-        jsonObject.remove(CARD_NUMBER);
-        jsonObject.remove(SECURITY_CODE);
-        return jsonObject.toString();
-    }
 }

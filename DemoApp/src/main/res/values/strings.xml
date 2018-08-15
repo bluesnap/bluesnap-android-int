@@ -15,6 +15,7 @@
     <string name="allow_currency_change">Allow Currency Change</string>
     <string name="returning_shopper_details">Returning shopper details</string>
     <string name="existing_shopper">Existing Shopper</string>
+    <string name="shopper_config">Activate Shopper Config</string>
     <string name="shopper_id">ID</string>
     <string name="_12345678">12345678</string>
     <string name="_22061813">22061813</string>

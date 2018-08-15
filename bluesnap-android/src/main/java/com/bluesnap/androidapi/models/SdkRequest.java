@@ -22,6 +22,11 @@ public class SdkRequest extends ShopperInfoConfig {
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
     }
 
+    public SdkRequest(Double amount, String currencyNameCode, ShopperInfoConfig shopperInfoConfig) {
+        super(shopperInfoConfig);
+        priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
+    }
+
     public SdkRequest(Double amount, String currencyNameCode, boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
         super(shippingRequired, billingRequired, emailRequired);
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);

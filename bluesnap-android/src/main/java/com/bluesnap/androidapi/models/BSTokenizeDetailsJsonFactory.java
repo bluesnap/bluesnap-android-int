@@ -33,7 +33,7 @@ public class BSTokenizeDetailsJsonFactory {
     public static final String SHIPPINGZIP = "shippingZip";
     public static final String PHONE = "phone";
 
-    private static final String FRAUDSESSIONID = "fraudSessionId";
+    public static final String FRAUDSESSIONID = "fraudSessionId";
 
     /**
      * @param creditCard          {@link CreditCard}

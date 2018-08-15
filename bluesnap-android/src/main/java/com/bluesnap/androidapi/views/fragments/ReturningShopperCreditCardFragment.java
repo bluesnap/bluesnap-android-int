@@ -104,7 +104,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
 
         buttonComponentView = inflate.findViewById(R.id.returningShppoerCCNFragmentButtonComponentView);
-        buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY, new View.OnClickListener() {
+        buttonComponentView.setBuyNowButton(buttonComponentText, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BlueSnapValidator.billingInfoValidation(newCreditCardInfo.getBillingContactInfo(), sdkRequest.isEmailRequired(), sdkRequest.isBillingRequired())) {
@@ -164,7 +164,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
             else if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
-                buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
+                buttonComponentView.setBuyNowButton(buttonComponentText);
             } /*else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 if (isShippingSameAsBilling)

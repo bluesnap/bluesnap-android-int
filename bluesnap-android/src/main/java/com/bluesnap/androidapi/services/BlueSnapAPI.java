@@ -71,8 +71,8 @@ class BlueSnapAPI {
      */
     BlueSnapHTTPResponse updateShopper(final String body) {
         Log.d(TAG, "Api request for token detail");
-        // headerParams.add(new CustomHTTPParams(TOKEN_AUTHENTICATION, String.valueOf(merchantToken)));
-        return HTTPOperationController.put(url + CARD_TOKENIZE + merchantToken, body, CONTENT_TYPE,
+        headerParams.add(new CustomHTTPParams(TOKEN_AUTHENTICATION, String.valueOf(merchantToken)));
+        return HTTPOperationController.put(url + UPDATE_SHOPPER, body, CONTENT_TYPE,
                 ACCEPT, headerParams);
     }
 

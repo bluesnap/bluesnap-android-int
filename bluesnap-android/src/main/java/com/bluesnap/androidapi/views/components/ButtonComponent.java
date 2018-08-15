@@ -23,7 +23,7 @@ public class ButtonComponent extends LinearLayout {
      * change ButtonComponentText to Enum
      */
     public enum ButtonComponentText {
-        PAY, DONE, SHIPPING
+        PAY, DONE, SHIPPING, SUBMIT
     }
 
     public ButtonComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -94,6 +94,8 @@ public class ButtonComponent extends LinearLayout {
             buyNowButton.setText(getResources().getString(R.string.done));
         } else if (buttonComponentText.equals(ButtonComponentText.SHIPPING)) {
             buyNowButton.setText(getResources().getString(R.string.shipping));
+        } else if (buttonComponentText.equals(ButtonComponentText.SUBMIT)) {
+            buyNowButton.setText(getResources().getString(R.string.submit));
         }
     }
 

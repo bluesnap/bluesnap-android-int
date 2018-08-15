@@ -2,6 +2,7 @@ package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 /**
  * Returns the result of the payment process to the Caller.
@@ -30,6 +31,8 @@ public class SdkResult implements Parcelable {
     private String expDate;
 
     private String paypalInvoiceId;
+    @Nullable
+    private String chosenPaymentMethodType;
 
     private BillingContactInfo billingContactInfo;
     private ShippingContactInfo shippingContactInfo;
@@ -49,6 +52,7 @@ public class SdkResult implements Parcelable {
         setBillingContactInfo((BillingContactInfo) in.readParcelable(BillingContactInfo.class.getClassLoader()));
         setShippingContactInfo((ShippingContactInfo) in.readParcelable(ShippingContactInfo.class.getClassLoader()));
         setPaypalInvoiceId(in.readString());
+        setChosenPaymentMethodType(in.readString());
         setKountSessionId(in.readString());
         setToken(in.readString());
     }
@@ -63,6 +67,7 @@ public class SdkResult implements Parcelable {
         dest.writeParcelable(billingContactInfo, flags);
         dest.writeParcelable(shippingContactInfo, flags);
         dest.writeString(getPaypalInvoiceId());
+        dest.writeString(getChosenPaymentMethodType());
         dest.writeString(getKountSessionId());
         dest.writeString(getToken());
     }
@@ -111,6 +116,7 @@ public class SdkResult implements Parcelable {
                 ", cardType='" + getCardType() + '\'' +
                 ", expDate='" + getExpDate() + '\'' +
                 ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' +
+                ", chosenPaymentMethodType=" + getChosenPaymentMethodType() + '\'' +
                 ", token=" + getToken() + '\'' +
                 ", billingContactInfo" + billingContactInfo + '\'' +
                 ", shippingContactInfo" + shippingContactInfo + '\'' +
@@ -201,6 +207,25 @@ public class SdkResult implements Parcelable {
 
     public void setKountSessionId(String kountSessionId) {
         this.kountSessionId = kountSessionId;
+    }
+
+    /**
+     * Returns the chosen Payment Method Type For Shopper Configuration
+     *
+     * @return String - chosenPaymentMethodType ("CC", "PAYPAL")
+     */
+    @Nullable
+    public String getChosenPaymentMethodType() {
+        return chosenPaymentMethodType;
+    }
+
+    /**
+     * Set the chosen Payment Method Type For Shopper Configuration
+     *
+     * @param chosenPaymentMethodType - String chosenPaymentMethodType ("CC", "PAYPAL")
+     */
+    public void setChosenPaymentMethodType(@Nullable String chosenPaymentMethodType) {
+        this.chosenPaymentMethodType = chosenPaymentMethodType;
     }
 
 }

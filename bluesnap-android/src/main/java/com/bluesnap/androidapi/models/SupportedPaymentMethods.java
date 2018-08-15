@@ -20,16 +20,11 @@ public class SupportedPaymentMethods extends BSModel {
     public static final String CC = "CC";
     public static final String USD = "USD";
 
-    //@SerializedName("paymentMethods")
     private ArrayList<String> paymentMethods;
     @Nullable
-    //@SerializedName("paypalCurrencies")
     private ArrayList<String> paypalCurrencies;
-    //@SerializedName("creditCardBrands")
     private ArrayList<String> creditCardBrands;
-    //@SerializedName("creditCardTypes")
     private ArrayList<String> creditCardTypes;
-    //@SerializedName("creditCardRegex")
     private LinkedHashMap<String, String> creditCardRegex;
 
     public ArrayList<String> getPaymentMethods() {
