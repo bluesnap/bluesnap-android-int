@@ -2,12 +2,10 @@ package com.bluesnap.androidapi;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
-
 import com.bluesnap.androidapi.models.Currency;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
