@@ -348,7 +348,7 @@ public class InstrumentedCardTest extends BSAndroidTestsBase {
         String last4 = number.substring(number.length() - 4);
         assertEquals("Last 4 contains too many digits", creditCard.getCardLastFourDigits().length(), 4);
         assertEquals("Last 4 contains too many digits: " + last4, last4.length(), 4);
-        assertTrue("the tostring should containg last4", cardToString.contains(last4));
+        assertFalse("the tostring should not contain last4", cardToString.contains(last4));
         assertFalse("card tostring should not expose name", cardToString.contains(billingInfo.getFullName()));
     }
 }

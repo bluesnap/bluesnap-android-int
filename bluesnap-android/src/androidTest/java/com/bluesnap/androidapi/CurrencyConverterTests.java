@@ -2,9 +2,11 @@ package com.bluesnap.androidapi;
 
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
+
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +46,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void convert_USD_to_ILS_and_Back() throws BSPaymentRequestException {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "USD", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD", false, false, false);
 
         blueSnapService.setSdkRequest(sdkRequest);
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
@@ -59,7 +61,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void convert_ILS_to_EUR_and_Back() throws BSPaymentRequestException {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "ILS", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "ILS", false, false, false);
 
         blueSnapService.setSdkRequest(sdkRequest);
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
@@ -74,7 +76,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void convert_ILS_to_EUR_to_GBP_and_Back() throws BSPaymentRequestException {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "ILS", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "ILS", false, false, false);
 
         blueSnapService.setSdkRequest(sdkRequest);
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
@@ -92,7 +94,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void convert_EUR_to_USD() throws BSPaymentRequestException {
 
         Double amount = 10D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "EUR", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "EUR", false, false, false);
 
         blueSnapService.setSdkRequest(sdkRequest);
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
@@ -107,7 +109,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void convert_EUR_to_ILS_to_USD() throws BSPaymentRequestException {
 
         Double amount = 10.7D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "EUR", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "EUR", false, false, false);
 
         blueSnapService.setSdkRequest(sdkRequest);
         PriceDetails priceDetails = sdkRequest.getPriceDetails();
@@ -120,12 +122,11 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     }
 
 
-
     @Test
     public void non_existing_currency_code() {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "SOMETHING_BAD", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "SOMETHING_BAD", false, false, false);
 
         try {
             blueSnapService.setSdkRequest(sdkRequest);
@@ -143,7 +144,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void non_existing_new_currency_code() {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "USD", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD", false, false, false);
 
         try {
             blueSnapService.setSdkRequest(sdkRequest);
@@ -161,7 +162,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void null_currency_code() {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, null, 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, null, false, false, false);
 
         try {
             blueSnapService.setSdkRequest(sdkRequest);
@@ -180,7 +181,7 @@ public class CurrencyConverterTests extends BSAndroidTestsBase {
     public void null_new_currency_code() {
 
         Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "USD", 0d, false, false, false);
+        SdkRequest sdkRequest = new SdkRequest(amount, "USD", false, false, false);
 
         try {
             blueSnapService.setSdkRequest(sdkRequest);
