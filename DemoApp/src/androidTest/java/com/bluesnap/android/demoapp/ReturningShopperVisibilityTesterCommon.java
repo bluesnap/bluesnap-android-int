@@ -52,7 +52,9 @@ public class ReturningShopperVisibilityTesterCommon {
 
     public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail, ShopperContactInfo contactInfo) {
         //verifies that the right component(billing/shipping) is displayed
-        onView(withId(componentResourceId)).check(matches(isDisplayed()));
+        onView(withId(componentResourceId))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Component is not displayed"))
+                .check(matches(isDisplayed()));
 
         //verifies that all right fields in the component are displayed and contain the correct data
         if (!contactInfo.getCountry().equals(""))
@@ -181,4 +183,26 @@ public class ReturningShopperVisibilityTesterCommon {
                 .check(matches(not(withText(countryKey))));
     }
 
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public static void component_opens_when_pressing_buyNow_with_missing_info(String testName, boolean fullBilling, boolean withShipping, boolean withEmail, ReturningShoppersFactory.Shopper returningShopper) {
+        int componentResourceId;
+        if ((fullBilling && !returningShopper.isFullBilling()) || (withEmail && !returningShopper.isWithEmail()))
+            componentResourceId = R.id.billingViewComponent;
+        else if (withShipping && !returningShopper.isWithShipping())
+            componentResourceId = R.id.newShoppershippingViewComponent;
+        else
+            componentResourceId = -1;
+
+        if (componentResourceId != -1) {
+            onView(withId(R.id.buyNowButton)).perform(click());
+            //verifies that the right component(billing/shipping) with the missing info is displayed
+            onView(withId(componentResourceId))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Component didn't open"))
+                    .check(matches(isDisplayed()));
+        }
+    }
 }

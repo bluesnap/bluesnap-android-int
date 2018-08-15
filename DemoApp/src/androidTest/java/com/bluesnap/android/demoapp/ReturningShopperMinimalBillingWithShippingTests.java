@@ -54,7 +54,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 3) {
 
             pay_button_in_billing_validation();
 
@@ -64,7 +64,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         }
 
         shipping_summarized_contact_info_visibility_validation();
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 3) {
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -84,7 +84,8 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        }
+        } else
+            component_opens_when_pressing_buyNow_with_missing_info();
     }
 
     @Test
@@ -272,5 +273,14 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
     public void country_changes_per_shipping_validation() {
         ReturningShopperVisibilityTesterCommon.country_changes_per_fragment_validation("country_changes_per_shipping_validation in " + returningShopper.getShopperDescription(),
                 R.id.shippingViewSummarizedComponent, "IT", "Italy");
+    }
+
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public void component_opens_when_pressing_buyNow_with_missing_info() {
+        ReturningShopperVisibilityTesterCommon.component_opens_when_pressing_buyNow_with_missing_info("component_opens_when_pressing_buyNow_with_missing_info in " + returningShopper.getShopperDescription(), false, true, false, returningShopper);
     }
 }

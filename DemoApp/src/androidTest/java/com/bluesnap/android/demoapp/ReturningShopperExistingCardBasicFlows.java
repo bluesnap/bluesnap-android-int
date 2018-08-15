@@ -103,6 +103,8 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
 
         existing_card_edit_info();
 
+        onView(withId(R.id.buyNowButton)).perform(click());
+
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
         finish_demo_purchase(sdkResult, returningShopperIndex);
     }
@@ -123,8 +125,5 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
             ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountry(), true, false, ContactInfoTesterCommon.editShippingContactInfo);
             TestUtils.go_back_to_credit_card_in_returning_shopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
         }
-
-        onView(withId(R.id.buyNowButton)).perform(click());
     }
-
 }

@@ -14,7 +14,7 @@ public class ReturningShoppersFactory {
         private ShopperContactInfo billingContactInfo;
         private ShopperContactInfo shippingContactInfo;
 
-        public Shopper(String shopperDescription_, String shopperId_, String billingCountry_, String shippingCountry_) {
+        Shopper(String shopperDescription_, String shopperId_, String billingCountry_, String shippingCountry_) {
             shopperDescription = shopperDescription_;
             shopperId = shopperId_;
             billingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.billingContactInfo);
@@ -24,7 +24,7 @@ public class ReturningShoppersFactory {
 
         }
 
-        public String getShopperDescription() {
+        String getShopperDescription() {
             return shopperDescription;
         }
 
@@ -32,35 +32,35 @@ public class ReturningShoppersFactory {
             return shopperId;
         }
 
-        public ShopperContactInfo getBillingContactInfo() {
+        ShopperContactInfo getBillingContactInfo() {
             return billingContactInfo;
         }
 
-        public ShopperContactInfo getShippingContactInfo() {
+        ShopperContactInfo getShippingContactInfo() {
             return shippingContactInfo;
         }
 
-        public boolean isFullBilling() {
+        boolean isFullBilling() {
             return fullBilling;
         }
 
-        public boolean isWithEmail() {
+        boolean isWithEmail() {
             return withEmail;
         }
 
-        public boolean isWithShipping() {
+        boolean isWithShipping() {
             return withShipping;
         }
 
-        public void setFullBilling(boolean fullBilling) {
+        void setFullBilling(boolean fullBilling) {
             this.fullBilling = fullBilling;
         }
 
-        public void setWithEmail(boolean withEmail) {
+        void setWithEmail(boolean withEmail) {
             this.withEmail = withEmail;
         }
 
-        public void setWithShipping(boolean withShipping) {
+        void setWithShipping(boolean withShipping) {
             this.withShipping = withShipping;
         }
     }
@@ -77,7 +77,7 @@ public class ReturningShoppersFactory {
 
     private static Shopper[] shoppers = new Shopper[8];
 
-    protected static int COUNTER = 0;
+    static int COUNTER = 0;
     //private static Map<String,String> shoppersIds = new HashMap();
 
     static {
@@ -92,7 +92,7 @@ public class ReturningShoppersFactory {
         }
     }
 
-    public static void setFlags(Shopper shopper, String bitCode) {
+    private static void setFlags(Shopper shopper, String bitCode) {
         boolean fullBilling = getBooleanFromChar(bitCode.charAt(0));
         boolean withShipping = getBooleanFromChar(bitCode.charAt(1));
         boolean withEmail = getBooleanFromChar(bitCode.charAt(2));
@@ -102,8 +102,8 @@ public class ReturningShoppersFactory {
         shopper.setWithShipping(withShipping);
     }
 
-    public static boolean getBooleanFromChar(char x) {
-        return x == '0' ? false : true;
+    private static boolean getBooleanFromChar(char x) {
+        return x != '0';
     }
 
 

@@ -53,7 +53,7 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
         billing_summarized_contact_info_visibility_validation();
         onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(not(isDisplayed()))); //check shipping is not displayed
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 5) {
             pay_button_in_billing_validation();
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
@@ -65,7 +65,8 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
             //returning_shopper_edit_billing_contact_info_using_back_button_validation();
             //Espresso.pressBack();
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
-        }
+        } else
+            component_opens_when_pressing_buyNow_with_missing_info();
     }
 
     @Test
@@ -201,6 +202,15 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
     public void change_currency_in_billing_amount_validation() {
         CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_billing_amount_validation in " + returningShopper.getShopperDescription(),
                 R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
+    }
+
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public void component_opens_when_pressing_buyNow_with_missing_info() {
+        ReturningShopperVisibilityTesterCommon.component_opens_when_pressing_buyNow_with_missing_info("component_opens_when_pressing_buyNow_with_missing_info in " + returningShopper.getShopperDescription(), true, false, false, returningShopper);
     }
 
 }

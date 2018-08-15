@@ -60,18 +60,18 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
             billing_contact_info_content_validation();
             TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
 
-            if (ReturningShoppersFactory.COUNTER == 1) {
-                initial_currency_view_validation_in_billing();
-                change_currency_in_billing_validation();
-                change_currency_in_billing_amount_validation();
-            }
+            initial_currency_view_validation_in_billing();
+            change_currency_in_billing_validation();
+            change_currency_in_billing_amount_validation();
+
 
             //Pre-condition: current info is billingInfo
             returning_shopper_edit_billing_contact_info_using_back_button_validation();
             Espresso.pressBack();
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
             Espresso.pressBack();
-        }
+        } else
+            component_opens_when_pressing_buyNow_with_missing_info();
     }
 
     @Test
@@ -226,6 +226,15 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
      */
     public void change_currency_in_billing_amount_validation() {
         CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_billing_amount_validation in " + returningShopper.getShopperDescription(), R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
+    }
+
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public void component_opens_when_pressing_buyNow_with_missing_info() {
+        ReturningShopperVisibilityTesterCommon.component_opens_when_pressing_buyNow_with_missing_info("component_opens_when_pressing_buyNow_with_missing_info in " + returningShopper.getShopperDescription(), false, false, false, returningShopper);
     }
 
 }
