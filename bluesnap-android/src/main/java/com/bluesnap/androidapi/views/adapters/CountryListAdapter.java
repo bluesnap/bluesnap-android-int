@@ -55,7 +55,7 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
         }
 
         TextView txtTitle = convertView.findViewById(R.id.countryTextView);
-        ImageView bluensap_customlist_list_view_icon = convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
+        ImageView bluesnap_customlist_list_view_icon = convertView.findViewById(R.id.bluesnap_customlist_list_view_icon);
         ImageView countryImage = convertView.findViewById(R.id.countryImage);
 
         String countryFullName = countryListObjects.get(position).getCountryFullName();
@@ -72,9 +72,9 @@ public class CountryListAdapter extends BaseAdapter implements Filterable {
         countryImage.setImageResource(countryDrawable);
         txtTitle.setText(countryFullName);
         if (sharedLanguage.equals(countryListObjects.get(position).getCountryFullName())) {
-            bluensap_customlist_list_view_icon.setVisibility(View.VISIBLE);
+            bluesnap_customlist_list_view_icon.setVisibility(View.VISIBLE);
         } else {
-            bluensap_customlist_list_view_icon.setVisibility(View.INVISIBLE);
+            bluesnap_customlist_list_view_icon.setVisibility(View.INVISIBLE);
         }
 
         return convertView;

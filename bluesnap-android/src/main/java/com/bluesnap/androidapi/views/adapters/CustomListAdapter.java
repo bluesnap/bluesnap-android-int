@@ -54,8 +54,8 @@ public class CustomListAdapter extends BaseAdapter implements Filterable {
             convertView = inflater.inflate(R.layout.custom_list_view, null);
         }
 
-        TextView txtTitle = convertView.findViewById(R.id.bluensap_customlist_list_view_text);
-        ImageView imageView = convertView.findViewById(R.id.bluensap_customlist_list_view_icon);
+        TextView txtTitle = convertView.findViewById(R.id.bluesnap_customlist_list_view_text);
+        ImageView imageView = convertView.findViewById(R.id.bluesnap_customlist_list_view_icon);
 
         txtTitle.setText(customListObjects.get(position).getName());
         if (sharedLanguage.equals(customListObjects.get(position).getName())) {

@@ -306,7 +306,7 @@ public class CreditCard extends BSModel {
     }
 
     /**
-     * set Tokenization Successfull
+     * set Tokeanization Successful
      */
     public void setTokenizationSuccess() {
         tokenizedSuccess = true;

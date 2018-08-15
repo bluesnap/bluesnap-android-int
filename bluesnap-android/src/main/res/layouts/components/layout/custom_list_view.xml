@@ -7,23 +7,23 @@
     android:orientation="horizontal">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/bluensap_customlist_list_view_text"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="10sp"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:padding="5sp"
-        android:textDirection="ltr"
-        android:textSize="17sp" />
+              android:id="@+id/bluesnap_customlist_list_view_text"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="10sp"
+              android:layout_weight="1"
+              android:gravity="center_vertical"
+              android:padding="5sp"
+              android:textDirection="ltr"
+              android:textSize="17sp" />
 
     <ImageView
-        android:id="@+id/bluensap_customlist_list_view_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginRight="10sp"
-        android:padding="5sp"
-        android:src="@drawable/blue_check_mark"
-        android:visibility="invisible" />
+            android:id="@+id/bluesnap_customlist_list_view_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10sp"
+            android:padding="5sp"
+            android:src="@drawable/blue_check_mark"
+            android:visibility="invisible" />
 
 </LinearLayout>
