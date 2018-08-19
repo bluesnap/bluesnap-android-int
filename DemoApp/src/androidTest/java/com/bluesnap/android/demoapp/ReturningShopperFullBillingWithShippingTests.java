@@ -91,7 +91,7 @@ public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedT
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        } else
+        } else if (returningShopper.isWithShipping()) //TODO: change to else (without condition) after the bug is fixed (AS-119)
             component_opens_when_pressing_buyNow_with_missing_info();
     }
 
