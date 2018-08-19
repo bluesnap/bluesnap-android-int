@@ -35,7 +35,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setShippingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
 

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -33,7 +33,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     private BillingViewComponent billingViewComponent;
     private OneLineCCEditComponent oneLineCCEditComponent;
 
-    private SdkRequest sdkRequest;
+    private SdkRequestBase sdkRequest;
     private Shopper shopper;
     private CreditCardInfo newCreditCardInfo;
 
@@ -86,7 +86,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
         buttonComponentView = inflate.findViewById(R.id.billingButtonComponentView);
 
-        if (!sdkRequest.isShippingRequired()) {
+        if (!sdkRequest.getShopperCheckoutRequirements().isShippingRequired()) {
             finishFromFragmentNoShipping();
         } else {
             finishFromFragmentWithShipping();
@@ -196,7 +196,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             public void onClick(View v) {
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
-                    if (sdkRequest.isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
+                    if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
                         shopper.setShippingContactInfo(billingViewComponent.getViewResourceDetails());
                     finishFromFragment();
                 }
@@ -213,7 +213,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         BlueSnapService.getInstance().updateTax("", "", getActivity());
-        if (!sdkRequest.isBillingRequired())
+        if (!sdkRequest.getShopperCheckoutRequirements().isBillingRequired())
             amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {

@@ -18,7 +18,7 @@ public class ChosenPaymentMethod extends BSModel {
     public static final String CREDIT_CARD = "creditCard";
 
     @NonNull
-    private String chosenPaymentMethodType;
+    private String chosenPaymentMethodType = "UNKNOWN";
 
     @Nullable
     private CreditCard creditCard;

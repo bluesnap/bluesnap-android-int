@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.bluesnap.androidapi.services.KountService;
+
 import org.json.JSONObject;
 
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalObject;
@@ -41,8 +43,8 @@ public class Shopper extends ContactInfo {
     private ShippingContactInfo shippingContactInfo;
     @Nullable
     private LastPaymentInfo lastPaymentInfo;
-    @Nullable
-    private ChosenPaymentMethod chosenPaymentMethod;
+    @NonNull
+    private ChosenPaymentMethod chosenPaymentMethod = new ChosenPaymentMethod();
 
     private CreditCardInfo newCreditCardInfo;
 
@@ -58,17 +60,17 @@ public class Shopper extends ContactInfo {
 
     }
 
+    public Shopper() {
+        shippingContactInfo = new ShippingContactInfo();
+        newCreditCardInfo = new CreditCardInfo();
+    }
+
     public CreditCardInfo getNewCreditCardInfo() {
         return newCreditCardInfo;
     }
 
     public void setNewCreditCardInfo(CreditCardInfo newCreditCardInfo) {
         this.newCreditCardInfo = newCreditCardInfo;
-    }
-
-    public Shopper() {
-        shippingContactInfo = new ShippingContactInfo();
-        newCreditCardInfo = new CreditCardInfo();
     }
 
     public int getVaultedShopperId() {
@@ -188,24 +190,6 @@ public class Shopper extends ContactInfo {
 
     /**
      * create JSON object from Shopper
-     * With Fraud Session Id
-     *
-     * @return JSONObject
-     */
-    @NonNull
-    public JSONObject toJsonWithFraudSessionId(String fraudSessionId) {
-        JSONObject jsonObject = toJson();
-
-        JSONObject transactionFraudInfo = new JSONObject();
-        putJSONifNotNull(transactionFraudInfo, FRAUD_SESSION_ID, fraudSessionId);
-        putJSONifNotNull(jsonObject, TRANSACTION_FRAUD_INFO, transactionFraudInfo);
-
-        return jsonObject;
-    }
-
-    /**
-     * create JSON object from Shopper
-     * NO Fraud Session Id!
      *
      * @return JSONObject
      */
@@ -220,15 +204,23 @@ public class Shopper extends ContactInfo {
         putJSONifNotNull(jsonObject, PAYMENT_SOURCES, getNewPaymentSources());
         putJSONifNotNull(jsonObject, SHIPPING_CONTACT_INFO, getShippingContactInfo());
         putJSONifNotNull(jsonObject, CHOSEN_PAYMENT_METHOD, getChosenPaymentMethod());
+
+        String fraudSessionId = KountService.getInstance().getKountSessionId();
+        if (null != fraudSessionId && !"".equals(fraudSessionId)) {
+            JSONObject transactionFraudInfo = new JSONObject();
+            putJSONifNotNull(transactionFraudInfo, FRAUD_SESSION_ID, fraudSessionId);
+            putJSONifNotNull(jsonObject, TRANSACTION_FRAUD_INFO, transactionFraudInfo);
+        }
+
         return jsonObject;
     }
 
-    @Nullable
+    @NonNull
     public ChosenPaymentMethod getChosenPaymentMethod() {
         return chosenPaymentMethod;
     }
 
-    public void setChosenPaymentMethod(@Nullable ChosenPaymentMethod chosenPaymentMethod) {
+    public void setChosenPaymentMethod(@NonNull ChosenPaymentMethod chosenPaymentMethod) {
         this.chosenPaymentMethod = chosenPaymentMethod;
     }
 }

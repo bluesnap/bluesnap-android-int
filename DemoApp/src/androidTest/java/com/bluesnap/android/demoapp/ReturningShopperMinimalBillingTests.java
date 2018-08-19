@@ -39,7 +39,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        //sdkRequest.setBillingRequired(true);
+        //sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
         setupAndLaunch(sdkRequest);
         int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
         //cardLastDigit = TestUtils.getText(withId(R.id.oneLineCCViewComponentsListView));

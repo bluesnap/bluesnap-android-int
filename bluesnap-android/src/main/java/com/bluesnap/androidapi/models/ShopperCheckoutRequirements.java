@@ -1,6 +1,6 @@
 package com.bluesnap.androidapi.models;
 
-public class ShopperInfoConfig {
+public class ShopperCheckoutRequirements {
 
     private boolean shippingRequired;
     private boolean billingRequired;
@@ -13,7 +13,7 @@ public class ShopperInfoConfig {
      * @param billingRequired  - boolean, setBillingRequired
      * @param emailRequired    - boolean, setEmailRequired
      */
-    public ShopperInfoConfig(boolean shippingRequired, boolean billingRequired, boolean emailRequired) {
+    public ShopperCheckoutRequirements(boolean shippingRequired, boolean billingRequired, boolean emailRequired) {
         this.shippingRequired = shippingRequired;
         this.billingRequired = billingRequired;
         this.emailRequired = emailRequired;
@@ -22,18 +22,18 @@ public class ShopperInfoConfig {
     /**
      * Shopper Info Config
      *
-     * @param shopperInfoConfig - set Shopper Config Requirement {@link ShopperInfoConfig}
+     * @param shopperCheckoutRequirements - set Shopper Config Requirement {@link ShopperCheckoutRequirements}
      */
-    public ShopperInfoConfig(ShopperInfoConfig shopperInfoConfig) {
-        this.shippingRequired = shopperInfoConfig.isShippingRequired();
-        this.billingRequired = shopperInfoConfig.isBillingRequired();
-        this.emailRequired = shopperInfoConfig.isEmailRequired();
+    public ShopperCheckoutRequirements(ShopperCheckoutRequirements shopperCheckoutRequirements) {
+        this.shippingRequired = shopperCheckoutRequirements.isShippingRequired();
+        this.billingRequired = shopperCheckoutRequirements.isBillingRequired();
+        this.emailRequired = shopperCheckoutRequirements.isEmailRequired();
     }
 
     /**
      * Shopper Info Config - set Shopper Config Requirement to false
      */
-    public ShopperInfoConfig() {
+    public ShopperCheckoutRequirements() {
         this(false, false, false);
     }
 

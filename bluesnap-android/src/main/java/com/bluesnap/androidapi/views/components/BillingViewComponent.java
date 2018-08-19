@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import com.bluesnap.androidapi.models.BillingContactInfo;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
@@ -38,12 +38,12 @@ public class BillingViewComponent extends ContactInfoViewComponent {
 
     @Override
     void initControl(final Context context) {
-        final SdkRequest sdkRequest = BlueSnapService.getInstance().getSdkRequest();
-        isFullBillingRequiredRequired = sdkRequest.isBillingRequired();
+        final SdkRequestBase sdkRequest = BlueSnapService.getInstance().getSdkRequest();
+        isFullBillingRequiredRequired = sdkRequest.getShopperCheckoutRequirements().isBillingRequired();
 
         super.initControl(context);
 
-        isEmailRequired = sdkRequest.isEmailRequired();
+        isEmailRequired = sdkRequest.getShopperCheckoutRequirements().isEmailRequired();
         if (isEmailRequired) {
             inputEmail.setOnFocusChangeListener(new OnFocusChangeListener() {
                 @Override

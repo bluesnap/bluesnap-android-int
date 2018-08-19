@@ -55,18 +55,4 @@ public class BlueSnapFragment extends Fragment {
     private void setButtonComponentText(ButtonComponent.ButtonComponentText buttonComponentText) {
         this.buttonComponentText = buttonComponentText;
     }
-
-    /**
-     * set Button Component Text To Pay
-     */
-    public void setButtonComponentTextToPay() {
-        setButtonComponentText(ButtonComponent.ButtonComponentText.PAY);
-    }
-
-    /**
-     * set Button Component Text To Submit
-     */
-    public void setButtonComponentTextToSubmit() {
-        setButtonComponentText(ButtonComponent.ButtonComponentText.SUBMIT);
-    }
 }

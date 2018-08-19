@@ -21,7 +21,8 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.PurchaseDetails;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
@@ -51,7 +52,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private String sharedCurrency;
     private ImageButton hamburgerMenuButton;
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
-    private SdkRequest sdkRequest;
+    private SdkRequestBase sdkRequest;
     private NewCreditCardShippingFragment newCreditCardShippingFragment;
 
     @Override
@@ -339,13 +340,13 @@ public class CreditCardActivity extends AppCompatActivity {
     public void finishFromFragment(final Shopper shopper) {
         Intent resultIntent = new Intent();
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
-        if (sdkRequest.isShippingRequired())
+        if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
         resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
 
         Log.d(TAG, "Testing if card requires server tokenization:" + shopper.getNewCreditCardInfo().getCreditCard().toString());
         try {
-            if (BluesnapChoosePaymentMethodActivity.NEW_SHOPPER.equals(fragmentType) || BluesnapChoosePaymentMethodActivity.RETURNING_SHOPPER.equals(fragmentType)) {
+            if (sdkRequest instanceof SdkRequestShopperRequirements) {
                 setResult(RESULT_OK);
                 blueSnapService.getsDKConfiguration().setShopper(shopper);
                 finish();
@@ -361,7 +362,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
     /**
      * tokenize Card On Server,
-     * receive shopper and activate api tokenization to the server according to SDK Request {@link SdkRequest} spec
+     * receive shopper and activate api tokenization to the server according to SDK Request {@link com.bluesnap.androidapi.models.SdkRequest} spec
      *
      * @param shopper      - {@link Shopper}
      * @param resultIntent - {@link Intent}
@@ -399,7 +400,7 @@ public class CreditCardActivity extends AppCompatActivity {
                             }
 
                             sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
-                            if (sdkRequest.isShippingRequired())
+                            if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
                                 sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
                             sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
                             sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
@@ -475,8 +476,6 @@ public class CreditCardActivity extends AppCompatActivity {
      * replace BlueSnap Fragment and set to submit if arrived from choose payment method shopper config
      */
     private void replaceBlueSnapFragment(@IdRes int containerViewId, BlueSnapFragment fragment) {
-        if (BluesnapChoosePaymentMethodActivity.NEW_SHOPPER.equals(fragmentType) || BluesnapChoosePaymentMethodActivity.RETURNING_SHOPPER.equals(fragmentType))
-            fragment.setButtonComponentTextToSubmit();
         getFragmentManager().beginTransaction()
                 .replace(containerViewId, fragment).commit();
     }

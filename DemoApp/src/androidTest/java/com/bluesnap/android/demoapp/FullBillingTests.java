@@ -22,7 +22,7 @@ public class FullBillingTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setBillingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
     }

@@ -324,13 +324,27 @@
             android:layout_width="250dp"
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_weight="0.11"
             android:adjustViewBounds="true"
             android:baselineAlignBottom="false"
             android:onClick="onPaySubmit"
             android:src="@drawable/chekout_btn"
             android:text="@string/pay_now_with_bluesnap" />
+
+        <ZoomButton
+            android:id="@+id/merchantAppSecondStepForShopperConfigurationButton"
+            android:layout_width="250dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="0.11"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="false"
+            android:onClick="onSecondStepSubmit"
+            android:src="@drawable/bsn"
+            android:text="@string/second_step_for_shopper_configuration" />
 
     </LinearLayout>
 

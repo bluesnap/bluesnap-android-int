@@ -7,9 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.PriceDetails;
-import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
 /**
@@ -23,7 +22,7 @@ public class ButtonComponent extends LinearLayout {
      * change ButtonComponentText to Enum
      */
     public enum ButtonComponentText {
-        PAY, DONE, SHIPPING, SUBMIT
+        PAY, DONE, SHIPPING
     }
 
     public ButtonComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -82,37 +81,11 @@ public class ButtonComponent extends LinearLayout {
     public void setBuyNowButton(ButtonComponentText buttonComponentText) {
 
         if (buttonComponentText.equals(ButtonComponentText.PAY)) {
-            final PriceDetails priceDetails = BlueSnapService.getInstance().getSdkRequest().getPriceDetails();
-            buyNowButton.setText(
-                    getStringFormatAmount(
-                            getResources().getString(R.string.pay),
-                            priceDetails.getCurrencyCode(),
-                            priceDetails.getAmount()
-                    )
-            );
+            buyNowButton.setText(BlueSnapService.getInstance().getSdkRequest().getBuyNowButtonText(this));
         } else if (buttonComponentText.equals(ButtonComponentText.DONE)) {
             buyNowButton.setText(getResources().getString(R.string.done));
         } else if (buttonComponentText.equals(ButtonComponentText.SHIPPING)) {
             buyNowButton.setText(getResources().getString(R.string.shipping));
-        } else if (buttonComponentText.equals(ButtonComponentText.SUBMIT)) {
-            buyNowButton.setText(getResources().getString(R.string.submit));
         }
-    }
-
-
-    /**
-     * get String Format For Pay Amount ("Pay $ 0.00")
-     *
-     * @param text             - {@link ButtonComponent.ButtonComponentText}
-     * @param currencyNameCode - The ISO 4217 currency name
-     * @param amount           - amount
-     * @return - String ("Pay $ 0.00")
-     */
-    public static String getStringFormatAmount(String text, String currencyNameCode, Double amount) {
-        return String.format("%s %s %s",
-                text,
-                AndroidUtil.getCurrencySymbol(currencyNameCode),
-                AndroidUtil.getDecimalFormat().format(amount)
-        );
     }
 }

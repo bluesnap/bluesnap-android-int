@@ -26,5 +26,6 @@
     <string name="pay_now_with_bluesnap">Pay Now with BlueSnap</string>
     <string name="version">version</string>
     <string name="todo">TODO</string>
+    <string name="second_step_for_shopper_configuration">second step for shopper configuration</string>
 
 </resources>

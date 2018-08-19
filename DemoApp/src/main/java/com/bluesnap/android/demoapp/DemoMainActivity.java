@@ -1,6 +1,5 @@
 package com.bluesnap.android.demoapp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,9 +19,10 @@ import com.bluesnap.androidapi.models.ChosenPaymentMethod;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShopperCheckoutRequirements;
 import com.bluesnap.androidapi.models.ShopperConfiguration;
-import com.bluesnap.androidapi.models.ShopperInfoConfig;
 import com.bluesnap.androidapi.services.*;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
@@ -87,6 +87,7 @@ public class DemoMainActivity extends AppCompatActivity {
         allowCurrencyChangeSwitch.setChecked(true);
         shopperConfigSwitch = findViewById(R.id.shopperConfigSwitch);
         shopperConfigSwitch.setVisibility(View.INVISIBLE);
+        shopperConfigSwitch.setChecked(false);
         returningShopperSwitch = findViewById(R.id.returningShopperSwitch);
         returningShopperSwitch.setChecked(false);
         returningShopperEditText = findViewById(R.id.returningShopperEditText);
@@ -107,7 +108,6 @@ public class DemoMainActivity extends AppCompatActivity {
         } catch (Exception e) {
             currencyByLocale = Currency.getInstance("USD");
         }
-
 
         bluesnapService = BlueSnapService.getInstance();
 
@@ -255,17 +255,91 @@ public class DemoMainActivity extends AppCompatActivity {
         ratesAdapterSelectionListener();
     }
 
-    private SdkRequest doBeofreActivatingActivity() {
+    public void onPaySubmit(View view) {
+        if (shopperConfigSwitch.isChecked()) {
+            SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements(billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+            try {
+                bluesnapService.setSdkRequest(sdkRequest);
+                Intent intent = new Intent(getApplicationContext(), BluesnapChoosePaymentMethodActivity.class);
+                startActivityForResult(intent, BluesnapChoosePaymentMethodActivity.REQUEST_CODE_DEFAULT);
+            } catch (BSPaymentRequestException e) {
+                Log.e(TAG, "payment request not validated: ", e);
+                finish();
+            }
+        } else {
+            String productPriceStr = AndroidUtil.stringify(productPriceEditText.getText());
+            if (TextUtils.isEmpty(productPriceStr)) {
+                Toast.makeText(getApplicationContext(), "null payment", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Double productPrice = Double.valueOf(productPriceStr);
+            if (productPrice <= 0D) {
+                Toast.makeText(getApplicationContext(), "0 payment", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
+            Double taxAmount = 0D;
+            // You can set the Amouut solely
+            SdkRequest sdkRequest = new SdkRequest(productPrice, ratesSpinner.getSelectedItem().toString(), billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+
+//        // Or you can set the Amount with tax, this will override setAmount()
+//        // The total purchase amount will be the sum of both numbers
+//        if (taxAmountPrecentage > 0D) {
+//            sdkRequest.setAmountWithTax(productPrice, productPrice * (taxAmountPrecentage / 100));
+//        } else {
+//            sdkRequest.setAmountNoTax(productPrice);
+//        }
+
+            sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
+            try {
+                sdkRequest.verify();
+            } catch (BSPaymentRequestException e) {
+                showDialog("SdkRequest error:" + e.getMessage());
+                Log.d(TAG, sdkRequest.toString());
+                finish();
+            }
+
+            // Set special tax policy: non-US pay no tax; MA pays 10%, other US states pay 5%
+            sdkRequest.setTaxCalculator(new TaxCalculator() {
+                @Override
+                public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
+                    if ("us".equalsIgnoreCase(shippingCountry)) {
+                        Double taxRate = 0.05;
+                        if ("ma".equalsIgnoreCase(shippingState)) {
+                            taxRate = 0.1;
+                        }
+                        priceDetails.setTaxAmount(priceDetails.getSubtotalAmount() * taxRate);
+                    } else {
+                        priceDetails.setTaxAmount(0D);
+                    }
+                }
+            });
+
+            try {
+                bluesnapService.setSdkRequest(sdkRequest);
+                Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
+                startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
+            } catch (BSPaymentRequestException e) {
+                Log.e(TAG, "payment request not validated: ", e);
+                finish();
+            }
+        }
+    }
+
+    public void onSecondStepSubmit(View view) {
+
         String productPriceStr = AndroidUtil.stringify(productPriceEditText.getText());
         if (TextUtils.isEmpty(productPriceStr)) {
             Toast.makeText(getApplicationContext(), "null payment", Toast.LENGTH_LONG).show();
-            return null;
+            return;
         }
 
         Double productPrice = Double.valueOf(productPriceStr);
         if (productPrice <= 0D) {
             Toast.makeText(getApplicationContext(), "0 payment", Toast.LENGTH_LONG).show();
-            return null;
+            return;
         }
 
         readCurencyFromSpinner(ratesSpinner.getSelectedItem().toString());
@@ -306,30 +380,14 @@ public class DemoMainActivity extends AppCompatActivity {
                 }
             }
         });
-        return sdkRequest;
-    }
 
-    public void onPaySubmit(View view) {
-        if (!shopperConfigSwitch.isChecked()) {
-            SdkRequest sdkRequest = doBeofreActivatingActivity();
-            try {
-                if (null != sdkRequest) {
-                    bluesnapService.setSdkRequest(sdkRequest);
-                    Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
-                    startActivityForResult(intent, BluesnapCheckoutActivity.REQUEST_CODE_DEFAULT);
-                } else {
-                    Log.e(TAG, "sdk request is null");
-                    finish();
-                }
-            } catch (BSPaymentRequestException e) {
-                Log.e(TAG, "payment request not validated: ", e);
-                finish();
-            }
-        } else {
-            ShopperInfoConfig shopperInfoConfig = new ShopperInfoConfig(billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
-            bluesnapService.setShopperInfoConfig(shopperInfoConfig);
-            Intent intent = new Intent(getApplicationContext(), BluesnapChoosePaymentMethodActivity.class);
-            startActivityForResult(intent, BluesnapChoosePaymentMethodActivity.REQUEST_CODE_DEFAULT);
+        try {
+            bluesnapService.setSdkRequest(sdkRequest);
+            Intent intent = new Intent(getApplicationContext(), BluesnapCreatePaymentActivity.class);
+            startActivityForResult(intent, BluesnapCreatePaymentActivity.REQUEST_CODE_DEFAULT);
+        } catch (BSPaymentRequestException e) {
+            Log.e(TAG, "payment request not validated: ", e);
+            finish();
         }
     }
 
@@ -406,6 +464,24 @@ public class DemoMainActivity extends AppCompatActivity {
     private void generateMerchantToken() {
 
         // create the interface for activating the token creation from server
+        tokenProvider = new TokenProvider() {
+            @Override
+            public void getNewToken(final TokenServiceCallback tokenServiceCallback) {
+
+                merchantTokenService(new TokenServiceInterface() {
+                    @Override
+                    public void onServiceSuccess() {
+                        //change the expired token
+                        tokenServiceCallback.complete(merchantToken);
+                    }
+
+                    @Override
+                    public void onServiceFailure() {
+
+                    }
+                });
+            }
+        };
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -483,7 +559,7 @@ public class DemoMainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
+        if (resultCode != BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK && resultCode != BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK) {
             if (data != null) {
                 String sdkErrorMsg = "SDK Failed to process the request:";
                 sdkErrorMsg += data.getStringExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG);
@@ -498,7 +574,7 @@ public class DemoMainActivity extends AppCompatActivity {
         Bundle extras = data.getExtras();
         SdkResult sdkResult = data.getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
 
-        if (null == sdkResult.getChosenPaymentMethodType() && "".equals(sdkResult.getChosenPaymentMethodType())) {
+        if (BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK == sdkResult.getResult()) {
             //Start a demo activity that shows purchase summary.
             Intent intent = new Intent(getApplicationContext(), PostPaymentActivity.class);
             intent.putExtra("MERCHANT_TOKEN", merchantToken);
@@ -519,31 +595,10 @@ public class DemoMainActivity extends AppCompatActivity {
         }*/
 
             startActivity(intent);
-
-            //Recreate the demo activity
-            merchantToken = null;
-            recreate();
-        } else {
-            //TODO: second step
-            merchantToken = null;
-            generateMerchantToken();
-
-            SdkRequest sdkRequest = doBeofreActivatingActivity();
-            try {
-                if (null != sdkRequest) {
-                    bluesnapService.setSdkRequest(sdkRequest);
-                    Intent intent = new Intent(getApplicationContext(), BluesnapCreatePaymentActivity.class);
-                    startActivityForResult(intent, BluesnapCreatePaymentActivity.REQUEST_CODE_DEFAULT);
-                } else {
-                    Log.e(TAG, "sdk request is null");
-                    finish();
-                }
-            } catch (BSPaymentRequestException e) {
-                Log.e(TAG, "payment request not validated: ", e);
-                finish();
-            }
-
         }
+        //Recreate the demo activity
+        merchantToken = null;
+        recreate();
     }
 
     public String getMerchantToken() {

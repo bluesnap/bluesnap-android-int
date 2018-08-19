@@ -23,8 +23,8 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setBillingRequired(true);
-        sdkRequest.setEmailRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
     }

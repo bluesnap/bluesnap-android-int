@@ -31,7 +31,7 @@ public class ReturningShopperMinimalBillingWithEmailTests extends EspressoBasedT
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setEmailRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
         if (!returningShopper.isWithEmail())

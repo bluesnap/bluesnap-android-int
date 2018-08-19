@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.*;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -19,6 +20,7 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,11 +38,15 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
     public static final int RESULT_SDK_FAILED = -2;
+    /**
+     * activity result: operation succeeded.
+     */
+    public static final int BS_CHECKOUT_RESULT_OK = -11;
     public static String FRAGMENT_TYPE = "FRAGMENT_TYPE";
     public static String NEW_CC = "NEW_CC";
     public static String RETURNING_CC = "RETURNING_CC";
     protected ProgressBar progressBar;
-    protected SdkRequest sdkRequest;
+    protected SdkRequestBase sdkRequest;
     protected SDKConfiguration sdkConfiguration;
     protected OneLineCCViewAdapter oneLineCCViewAdapter;
     protected final BlueSnapService blueSnapService = BlueSnapService.getInstance();
@@ -150,11 +156,11 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 shopper.setNewCreditCardInfo((CreditCardInfo) oneLineCCViewAdapter.getItem(position));
                 BillingContactInfo billingContactInfo = shopper.getNewCreditCardInfo().getBillingContactInfo();
-                if (!sdkRequest.isEmailRequired())
+                if (!sdkRequest.getShopperCheckoutRequirements().isEmailRequired())
                     billingContactInfo.setEmail(null);
                 else
                     billingContactInfo.setEmail(shopper.getEmail());
-                if (!sdkRequest.isBillingRequired()) {
+                if (!sdkRequest.getShopperCheckoutRequirements().isBillingRequired()) {
                     billingContactInfo.setAddress(null);
                     billingContactInfo.setCity(null);
                     billingContactInfo.setState(null);
@@ -307,10 +313,10 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         Log.d(TAG, "got request " + requestCode);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE) {
-                setResult(Activity.RESULT_OK, data);
+                setResult(BS_CHECKOUT_RESULT_OK, data);
                 finish();
             } else if (requestCode == WebViewActivity.PAYPAL_REQUEST_CODE) {
-                setResult(Activity.RESULT_OK, data);
+                setResult(BS_CHECKOUT_RESULT_OK, data);
                 finish();
             }
         }

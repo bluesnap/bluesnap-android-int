@@ -34,9 +34,9 @@ public class ReturningShopperFullBillingWithShippingWithEmailTests extends Espre
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setBillingRequired(true);
-        sdkRequest.setShippingRequired(true);
-        sdkRequest.setEmailRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountry();
         SHIPPING_COUNTRY = returningShopper.getShippingContactInfo().getCountry();

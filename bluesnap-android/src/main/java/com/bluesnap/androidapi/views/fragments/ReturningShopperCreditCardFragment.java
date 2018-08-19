@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
@@ -76,7 +76,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         shopper = blueSnapService.getsDKConfiguration().getShopper();
 
         //get SDK Request
-        final SdkRequest sdkRequest = blueSnapService.getSdkRequest();
+        final SdkRequestBase sdkRequest = blueSnapService.getSdkRequest();
 
         // get Credit Card Info
         newCreditCardInfo = shopper.getNewCreditCardInfo();
@@ -92,7 +92,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         shippingViewSummarizedTextView = inflate.findViewById(R.id.shippingViewSummarizedTextView);
         shippingViewSummarizedComponent = inflate.findViewById(R.id.shippingViewSummarizedComponent);
         final ShippingContactInfo shippingContactInfo = shopper.getShippingContactInfo();
-        if (!sdkRequest.isShippingRequired()) {
+        if (!sdkRequest.getShopperCheckoutRequirements().isShippingRequired()) {
             setVisibilityForShippingView(View.INVISIBLE);
         } else {
             shippingViewSummarizedComponent.updateViewResourceWithDetails(shippingContactInfo);
@@ -107,13 +107,13 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         buttonComponentView.setBuyNowButton(buttonComponentText, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BlueSnapValidator.billingInfoValidation(newCreditCardInfo.getBillingContactInfo(), sdkRequest.isEmailRequired(), sdkRequest.isBillingRequired())) {
+                if (!BlueSnapValidator.billingInfoValidation(newCreditCardInfo.getBillingContactInfo(), sdkRequest.getShopperCheckoutRequirements().isEmailRequired(), sdkRequest.getShopperCheckoutRequirements().isBillingRequired())) {
                     BlueSnapLocalBroadcastManager.sendMessage(inflater.getContext(), BlueSnapLocalBroadcastManager.SUMMARIZED_BILLING_EDIT, TAG);
                     return;
                 }
                 Log.d(TAG, "BillingContactInfo is Valid");
 
-                if (sdkRequest.isShippingRequired() && !BlueSnapValidator.shippingInfoValidation(shippingContactInfo)) {
+                if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired() && !BlueSnapValidator.shippingInfoValidation(shippingContactInfo)) {
                     BlueSnapLocalBroadcastManager.sendMessage(inflater.getContext(), BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_EDIT, TAG);
                     return;
                 }
@@ -129,7 +129,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SUMMARIZED_SHIPPING_CHANGE, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, broadcastReceiver);
 
-        if (sdkRequest.isShippingRequired()) {
+        if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired()) {
             // calculate tax according to shipping country
             BlueSnapService.getInstance().updateTax(shippingContactInfo.getCountry(), shippingContactInfo.getState(), inflater.getContext());
         }

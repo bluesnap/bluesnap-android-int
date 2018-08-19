@@ -39,7 +39,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setShippingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountry();
         SHIPPING_COUNTRY = returningShopper.getShippingContactInfo().getCountry();

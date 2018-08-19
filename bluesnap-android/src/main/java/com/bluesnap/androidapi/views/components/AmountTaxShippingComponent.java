@@ -6,9 +6,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.*;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.PriceDetails;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -23,7 +25,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     private RelativeLayout shippingSameAsBillingRelativeLayout;
     private LinearLayout amountTaxLinearLayout;
     private TextView amountTextView, taxTextView;
-    private SdkRequest sdkRequest;
+    private SdkRequestBase sdkRequest;
     private Switch shippingSameAsBillingSwitch;
     private boolean isShippingSameAsBilling = false;
 
@@ -79,18 +81,18 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxShipping() {
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        if (sdkRequest.isShippingRequired())
+        if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
             shippingSameAsBillingRelativeLayout.setVisibility(VISIBLE);
         else
             shippingSameAsBillingRelativeLayout.setVisibility(GONE);
 
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
-        if (priceDetails.isSubtotalTaxSet()) {
+        if (sdkRequest instanceof SdkRequestShopperRequirements || !priceDetails.isSubtotalTaxSet()) {
+            amountTaxLinearLayout.setVisibility(GONE);
+        } else {
             amountTaxLinearLayout.setVisibility(VISIBLE);
             amountTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyCode(), priceDetails.getSubtotalAmount()));
             taxTextView.setText(setTextForAmountTaxView(priceDetails.getCurrencyCode(), priceDetails.getTaxAmount()));
-        } else {
-            amountTaxLinearLayout.setVisibility(GONE);
         }
     }
 
@@ -117,7 +119,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     }
 
     public void setShippingSameAsBillingVisibility(int visibility) {
-        if (GONE == visibility || INVISIBLE == visibility || sdkRequest.isShippingRequired())
+        if (GONE == visibility || INVISIBLE == visibility || sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
             this.shippingSameAsBillingRelativeLayout.setVisibility(visibility);
     }
 

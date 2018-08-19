@@ -29,23 +29,16 @@ import java.net.HttpURLConnection;
 
 public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivity {
     private static final String TAG = BluesnapChoosePaymentMethodActivity.class.getSimpleName();
-    public static final String NEW_SHOPPER = "NEW_SHOPPER";
-    public static final String RETURNING_SHOPPER = "RETURNING_SHOPPER";
+    /**
+     * activity result: operation succeeded.
+     */
+    public static final int BS_CHOOSE_PAYMENT_METHOD_RESULT_OK = -12;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        NEW_CC = NEW_SHOPPER;
-        RETURNING_CC = RETURNING_SHOPPER;
         super.onCreate(savedInstanceState);
         //TODO: remove after server paypal issue is fixed
         findViewById(R.id.payPalButton).setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void startCreditCardActivityForResult(String intentExtraName, String intentExtravalue) {
-        Intent intent = new Intent(getApplicationContext(), CreditCardActivity.class);
-        intent.putExtra(intentExtraName, intentExtravalue);
-        startActivityForResult(intent, CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE);
     }
 
     @Override
@@ -57,8 +50,6 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "got result " + resultCode);
-        Log.d(TAG, "got request " + requestCode);
         if (resultCode == Activity.RESULT_OK) {
             Shopper shopper = sdkConfiguration.getShopper();
             shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, shopper.getNewCreditCardInfo().getCreditCard()));
@@ -71,41 +62,33 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
      *
      * @param shopper - {@link Shopper}
      */
-    private void finishBlueSnapChoosePaymentMethodActivityAfterUpdateShopperSuccess(final Shopper shopper) {
-        try {
-            SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+    private void finishAfterUpdateShopperSuccess(final Shopper shopper) {
+        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
-            if (null != shopper.getNewCreditCardInfo().getBillingContactInfo())
-                sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
+        if (null != shopper.getNewCreditCardInfo().getBillingContactInfo())
+            sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
 
-            if (sdkRequest.isShippingRequired())
-                sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
+        if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
+            sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
 
-            sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
-            sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
+        sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
+        //sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
 
-            ChosenPaymentMethod chosenPaymentMethod = shopper.getChosenPaymentMethod();
-            if (chosenPaymentMethod != null) {
-                sdkResult.setChosenPaymentMethodType(chosenPaymentMethod.getChosenPaymentMethodType());
-                if (ChosenPaymentMethod.CC.equals(chosenPaymentMethod.getChosenPaymentMethodType()) && chosenPaymentMethod.getCreditCard() != null) {
-                    sdkResult.setLast4Digits(chosenPaymentMethod.getCreditCard().getCardLastFourDigits());
-                    sdkResult.setCardType(chosenPaymentMethod.getCreditCard().getCardType());
-                }
-            }
-
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-            setResult(RESULT_OK, resultIntent);
-            //Only set the remember shopper here since failure can lead to missing tokenization on the server
-            shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
-            Log.d(TAG, "tokenization finished");
-            finish();
-        } catch (NullPointerException e) {
-            Log.e(TAG, "", e);
-            String errorMsg = String.format("Service Error %s", e.getMessage());
-            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
-            finish();
+        ChosenPaymentMethod chosenPaymentMethod = shopper.getChosenPaymentMethod();
+        sdkResult.setChosenPaymentMethodType(chosenPaymentMethod.getChosenPaymentMethodType());
+        if (ChosenPaymentMethod.CC.equals(chosenPaymentMethod.getChosenPaymentMethodType()) && chosenPaymentMethod.getCreditCard() != null) {
+            sdkResult.setLast4Digits(chosenPaymentMethod.getCreditCard().getCardLastFourDigits());
+            sdkResult.setCardType(chosenPaymentMethod.getCreditCard().getCardType());
         }
+
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
+        setResult(BS_CHOOSE_PAYMENT_METHOD_RESULT_OK, resultIntent);
+        //Only set the remember shopper here since failure can lead to missing tokenization on the server
+        shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
+        Log.d(TAG, "tokenization finished");
+        finish();
     }
 
     /**
@@ -119,7 +102,7 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
             public void run() {
                 BlueSnapHTTPResponse response = blueSnapService.submitUpdatedShopperDetails(shopper);
                 if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    finishBlueSnapChoosePaymentMethodActivityAfterUpdateShopperSuccess(shopper);
+                    finishAfterUpdateShopperSuccess(shopper);
                 } else if (response.getResponseCode() == 400 && null != blueSnapService.getTokenProvider() && !"".equals(response.getResponseString())) {
                     try {
                         JSONObject errorResponse = new JSONObject(response.getResponseString());

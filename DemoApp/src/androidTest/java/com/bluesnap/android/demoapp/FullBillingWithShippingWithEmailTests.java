@@ -28,9 +28,9 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setBillingRequired(true);
-        sdkRequest.setShippingRequired(true);
-        sdkRequest.setEmailRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
         defaultCountryKey = BlueSnapService.getInstance().getUserCountry(this.applicationContext);

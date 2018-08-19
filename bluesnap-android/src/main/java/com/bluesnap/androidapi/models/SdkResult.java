@@ -4,6 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
+
+import static com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK;
+
 /**
  * Returns the result of the payment process to the Caller.
  * This will be passed as an activityResult back to the calling activity.
@@ -23,16 +27,20 @@ public class SdkResult implements Parcelable {
         }
     };
 
+    @Nullable
     private Double amount;
+    @Nullable
     private String currencyNameCode;
 
     private String last4Digits;
     private String cardType;
     private String expDate;
 
+    @Nullable
     private String paypalInvoiceId;
     @Nullable
     private String chosenPaymentMethodType;
+    private int result;
 
     private BillingContactInfo billingContactInfo;
     private ShippingContactInfo shippingContactInfo;
@@ -45,31 +53,40 @@ public class SdkResult implements Parcelable {
 
     protected SdkResult(Parcel in) {
         setLast4Digits(in.readString());
-        setAmount(in.readDouble());
-        setCurrencyNameCode(in.readString());
         setCardType(in.readString());
         setExpDate(in.readString());
         setBillingContactInfo((BillingContactInfo) in.readParcelable(BillingContactInfo.class.getClassLoader()));
         setShippingContactInfo((ShippingContactInfo) in.readParcelable(ShippingContactInfo.class.getClassLoader()));
-        setPaypalInvoiceId(in.readString());
         setChosenPaymentMethodType(in.readString());
+        setResult(in.readInt());
         setKountSessionId(in.readString());
         setToken(in.readString());
+
+        if (BS_CHOOSE_PAYMENT_METHOD_RESULT_OK != getResult()) {
+            setAmount(in.readDouble());
+            setCurrencyNameCode(in.readString());
+            setPaypalInvoiceId(in.readString());
+        }
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(getLast4Digits());
-        dest.writeDouble(getAmount());
-        dest.writeString(getCurrencyNameCode());
         dest.writeString(getCardType());
         dest.writeString(getExpDate());
         dest.writeParcelable(billingContactInfo, flags);
         dest.writeParcelable(shippingContactInfo, flags);
-        dest.writeString(getPaypalInvoiceId());
         dest.writeString(getChosenPaymentMethodType());
+        dest.writeInt(getResult());
         dest.writeString(getKountSessionId());
         dest.writeString(getToken());
+
+        if (BS_CHOOSE_PAYMENT_METHOD_RESULT_OK != getResult()) {
+            if (null != getAmount())
+                dest.writeDouble(getAmount());
+            dest.writeString(getCurrencyNameCode());
+            dest.writeString(getPaypalInvoiceId());
+        }
     }
 
     @Override
@@ -86,42 +103,50 @@ public class SdkResult implements Parcelable {
         SdkResult that = (SdkResult) o;
 
         if (!getLast4Digits().equals(that.getLast4Digits())) return false;
-        if (!getAmount().equals(that.getAmount())) return false;
-        if (!getCurrencyNameCode().equals(that.getCurrencyNameCode())) return false;
+        if (getAmount() != null && !getAmount().equals(that.getAmount())) return false;
+        if (getCurrencyNameCode() != null && !getCurrencyNameCode().equals(that.getCurrencyNameCode()))
+            return false;
         return getCardType().equals(that.getCardType());
     }
 
     @Override
     public int hashCode() {
         int result = getLast4Digits().hashCode();
-        result = 31 * result + getAmount().hashCode();
-        result = 31 * result + getCurrencyNameCode().hashCode();
+        if (null != getAmount())
+            result = 31 * result + getAmount().hashCode();
+        if (null != getCurrencyNameCode())
+            result = 31 * result + getCurrencyNameCode().hashCode();
         result = 31 * result + getCardType().hashCode();
         return result;
     }
 
     public boolean validate() {
-        if (getAmount() == null || getAmount().equals(0.0)) return false;
-        if (getCurrencyNameCode() == null || getCurrencyNameCode().isEmpty()) return false;
+        if (getAmount() != null && getAmount().equals(0.0)) return false;
+        if (getCurrencyNameCode() != null && getCurrencyNameCode().isEmpty()) return false;
         if (getExpDate() == null || getExpDate().isEmpty()) return false;
         return !(getLast4Digits() == null || Integer.valueOf(getLast4Digits()) == 0);
     }
 
     @Override
     public String toString() {
-        return "SdkResult{" +
-                "amount=" + getAmount() + '\'' +
-                ", currencyNameCode='" + getCurrencyNameCode() + '\'' +
-                ", last4Digits='" + getLast4Digits() + '\'' +
+        String s = "SdkResult{" +
+                "last4Digits='" + getLast4Digits() + '\'' +
                 ", cardType='" + getCardType() + '\'' +
                 ", expDate='" + getExpDate() + '\'' +
-                ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' +
                 ", chosenPaymentMethodType=" + getChosenPaymentMethodType() + '\'' +
+                ", result=" + getResult() + '\'' +
                 ", token=" + getToken() + '\'' +
                 ", billingContactInfo" + billingContactInfo + '\'' +
                 ", shippingContactInfo" + shippingContactInfo + '\'' +
-                ", kountSessionId=" + kountSessionId + '\'' +
-                '}';
+                ", kountSessionId=" + kountSessionId + '\'';
+
+        if (null != amount)
+            s += ", amount=" + getAmount() + '\'' +
+                    ", currencyNameCode='" + getCurrencyNameCode() + '\'' +
+                    ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'';
+
+        s += '}';
+        return s;
     }
 
     public String getLast4Digits() {
@@ -132,19 +157,21 @@ public class SdkResult implements Parcelable {
         this.last4Digits = last4Digits;
     }
 
+    @Nullable
     public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(@Nullable Double amount) {
         this.amount = amount;
     }
 
+    @Nullable
     public String getCurrencyNameCode() {
         return currencyNameCode;
     }
 
-    public void setCurrencyNameCode(String currencyNameCode) {
+    public void setCurrencyNameCode(@Nullable String currencyNameCode) {
         this.currencyNameCode = currencyNameCode;
     }
 
@@ -185,11 +212,12 @@ public class SdkResult implements Parcelable {
      *
      * @return A string representing the invoice ID on paypal. null if not a paypal transaction.
      */
+    @Nullable
     public String getPaypalInvoiceId() {
         return paypalInvoiceId;
     }
 
-    public void setPaypalInvoiceId(String paypalInvoiceId) {
+    public void setPaypalInvoiceId(@Nullable String paypalInvoiceId) {
         this.paypalInvoiceId = paypalInvoiceId;
     }
 
@@ -226,6 +254,14 @@ public class SdkResult implements Parcelable {
      */
     public void setChosenPaymentMethodType(@Nullable String chosenPaymentMethodType) {
         this.chosenPaymentMethodType = chosenPaymentMethodType;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
     }
 
 }
