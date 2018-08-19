@@ -2,8 +2,10 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +59,24 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
         address_invalid_error_validation_in_billing();
         state_invalid_error_in_billing();
     }
+
+    @Test
+    public void full_billing_with_email_basic_flow_transaction() {
+        new_card_basic_flow_transaction(true, true, false, false);
+    }
+
+    @Test
+    public void returning_shopper_full_billing_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(true, true, false, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(true, true, false);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(true, true, false);
+    }
+
     /**
      * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.

@@ -88,6 +88,23 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
     }
 
+    @Test
+    public void minimal_billing_with_shipping_basic_flow_transaction() {
+        new_card_basic_flow_transaction(false, false, true, false);
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(false, false, true, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(false, false, true);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(false, false, true);
+    }
+
     /**
      * This test verifies that the all credit card fields are displayed as they should
      * when choosing new credit card.

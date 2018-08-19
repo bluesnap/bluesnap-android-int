@@ -1,13 +1,9 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
-import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -20,29 +16,25 @@ import static org.hamcrest.CoreMatchers.allOf;
  * Created by sivani on 14/08/2018.
  */
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 
 public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
-    @Test
     public void minimal_billing_basic_flow_transaction() {
         new_card_basic_flow_transaction(0);
         get_shopper_after_transaction();
     }
 
-    @Test
     public void minimal_billing_with_email_basic_flow_transaction() {
         withEmail = true;
         new_card_basic_flow_transaction(1);
         get_shopper_after_transaction();
     }
 
-    @Test
     public void minimal_billing_with_shipping_basic_flow_transaction() {
         withShipping = true;
         new_card_basic_flow_transaction(2);
         get_shopper_after_transaction();
     }
-    @Test
     public void minimal_billing_with_shipping_with_email_basic_flow_transaction() {
         withShipping = true;
         withEmail = true;
@@ -50,14 +42,12 @@ public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
         get_shopper_after_transaction();
     }
 
-    @Test
     public void full_billing_basic_flow_transaction() {
         fullInfo = true;
         new_card_basic_flow_transaction(4);
         get_shopper_after_transaction();
     }
 
-    @Test
     public void full_billing_with_email_basic_flow_transaction() {
         fullInfo = true;
         withEmail = true;
@@ -65,7 +55,6 @@ public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
         get_shopper_after_transaction();
     }
 
-    @Test
     public void full_billing_with_shipping_basic_flow_transaction() {
         fullInfo = true;
         withShipping = true;
@@ -73,7 +62,6 @@ public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
         get_shopper_after_transaction();
     }
 
-    @Test
     public void full_billing_with_shipping_with_email_basic_flow_transaction() {
         fullInfo = true;
         withShipping = true;
@@ -82,7 +70,6 @@ public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
         get_shopper_after_transaction();
     }
 
-    @Test
     public void shipping_same_as_billing_basic_flow_transaction() {
         fullInfo = true;
         withShipping = true;
@@ -92,7 +79,6 @@ public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
         get_shopper_after_transaction();
     }
 
-    @Test
     public void change_currency_twice_back_to_usd_espresso_test() {
         start_demo_purchase(-1);
         onView(withId(R.id.newCardButton)).perform(click());

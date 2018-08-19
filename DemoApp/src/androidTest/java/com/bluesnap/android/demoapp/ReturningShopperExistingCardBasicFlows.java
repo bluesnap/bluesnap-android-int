@@ -1,14 +1,11 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
-import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
 
 import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -20,17 +17,17 @@ import static org.hamcrest.CoreMatchers.anything;
 /**
  * Created by sivani on 14/08/2018.
  */
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 
 public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlows {
-    @Test
+    //    @Test
     public void returning_shopper_minimal_billing_basic_flow_transaction() {
         isReturningShoppper = true;
         returning_shopper_card_basic_flow_transaction(0);
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_minimal_billing_with_email_basic_flow_transaction() {
         isReturningShoppper = true;
         withEmail = true;
@@ -38,7 +35,7 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_minimal_billing_with_shipping_basic_flow_transaction() {
         isReturningShoppper = true;
         withShipping = true;
@@ -46,7 +43,7 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_minimal_billing_with_shipping_with_email_basic_flow_transaction() {
         isReturningShoppper = true;
         withShipping = true;
@@ -55,7 +52,7 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_full_billing_basic_flow_transaction() {
         isReturningShoppper = true;
         fullInfo = true;
@@ -63,7 +60,7 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_full_billing_with_email_basic_flow_transaction() {
         isReturningShoppper = true;
         fullInfo = true;
@@ -72,7 +69,7 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_full_billing_with_shipping_basic_flow_transaction() {
         isReturningShoppper = true;
         fullInfo = true;
@@ -81,7 +78,7 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         get_shopper_after_transaction();
     }
 
-    @Test
+    //    @Test
     public void returning_shopper_full_billing_with_shipping_with_email_basic_flow_transaction() {
         isReturningShoppper = true;
         fullInfo = true;

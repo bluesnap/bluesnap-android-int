@@ -2,9 +2,11 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +15,17 @@ import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
 
 /**
  * Created by sivani on 21/07/2018.
@@ -59,6 +68,28 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         shipping_same_as_billing_info_saved_in_billing_validation();
         shipping_same_as_billing_info_saved_in_shipping_validation();
 
+    }
+
+    @Test
+    public void full_billing_with_shipping_with_email_basic_flow_transaction() {
+        new_card_basic_flow_transaction(true, true, true, false);
+    }
+
+    @Test
+    public void shipping_same_as_billing_basic_flow_transaction() {
+        new_card_basic_flow_transaction(true, true, true, true);
+    }
+
+    @Test
+    public void returning_shopper_full_billing_with_shipping_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(true, true, true, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(true, true, true);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(true, true, true);
     }
 
     /**

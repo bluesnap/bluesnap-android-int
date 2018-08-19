@@ -1,13 +1,11 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.intent.Intents;
 
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,12 +46,6 @@ public class ReturningShopperFullBillingWithShippingWithEmailTests extends Espre
             returningShopper.getBillingContactInfo().setEmail("");
         if (!returningShopper.isWithShipping()) //reset shipping info for this shopper
             returningShopper.getShippingContactInfo().resetAllFields();
-    }
-
-    @After
-    public void keepRunning() {
-        Intents.release();
-        //Thread.sleep(1000);
     }
 
     public void returning_shopper_full_billing_with_shipping_with_email_common_tester() throws IOException {
