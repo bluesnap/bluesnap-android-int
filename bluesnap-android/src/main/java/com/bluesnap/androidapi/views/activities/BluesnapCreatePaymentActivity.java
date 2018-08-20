@@ -65,6 +65,7 @@ public class BluesnapCreatePaymentActivity extends BluesnapCheckoutActivity {
             return;
         }
 
+        //TODO: change the CC behavior according to not needing tokenization
         if (chosenPaymentMethod.getChosenPaymentMethodType().equals(SupportedPaymentMethods.CC) && null != chosenPaymentMethod.getCreditCard()) {
             Intent resultIntent = new Intent();
             sdkRequest = BlueSnapService.getInstance().getSdkRequest();
