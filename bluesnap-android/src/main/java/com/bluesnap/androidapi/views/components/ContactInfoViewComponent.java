@@ -501,7 +501,8 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
-        validateField(this.inputState, this.inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
+        if (!"".equals(state))
+            validateField(this.inputState, this.inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
 
     }
 }
