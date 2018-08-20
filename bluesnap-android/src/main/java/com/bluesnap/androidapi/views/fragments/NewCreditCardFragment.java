@@ -145,12 +145,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
             newCreditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
         } else if (!isBillingValid) {
-            scrollView.post(new Runnable() {
-                @Override
-                public void run() {
-                    scrollView.smoothScrollTo(0, billingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition());
-                }
-            });
+            scrollView.post(() -> scrollView.smoothScrollTo(0, billingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition()));
         }
         return isValid;
     }

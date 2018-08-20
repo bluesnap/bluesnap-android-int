@@ -205,7 +205,7 @@ public class ContactInfoViewComponent extends LinearLayout {
         else if (inputLayoutAddress.isErrorEnabled())
             return inputLayoutAddress.getTop();
         else
-            return -1;
+            return inputLayoutName.getTop();
     }
 
     /**

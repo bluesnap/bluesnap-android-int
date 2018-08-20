@@ -143,9 +143,9 @@ public class BillingViewComponent extends ContactInfoViewComponent {
             else if (inputLayoutAddress.isErrorEnabled())
                 return inputLayoutAddress.getTop();
             else
-                return -1;
+                return inputLayoutName.getTop();
         } else
-            return -1;
+            return inputLayoutName.getTop();
     }
 
     /**

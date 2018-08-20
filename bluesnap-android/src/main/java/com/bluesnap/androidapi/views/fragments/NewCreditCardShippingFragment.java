@@ -173,12 +173,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
                     shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
                     finishFromFragment();
                 } else {
-                    scrollView.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            scrollView.smoothScrollTo(0, shippingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition());
-                        }
-                    });
+                    scrollView.post(() -> scrollView.smoothScrollTo(0, shippingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition()));
                 }
             }
         });
