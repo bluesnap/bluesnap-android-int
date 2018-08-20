@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
@@ -32,6 +33,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private BillingViewComponent billingViewComponent;
     private OneLineCCEditComponent oneLineCCEditComponent;
+    private ScrollView scrollView;
 
     private SdkRequest sdkRequest;
     private Shopper shopper;
@@ -82,6 +84,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
 
         billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
         oneLineCCEditComponent = inflate.findViewById(R.id.oneLineCCEditComponent);
+        scrollView = inflate.findViewById(R.id.billingScrollView);
 
         amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
         buttonComponentView = inflate.findViewById(R.id.billingButtonComponentView);
@@ -136,10 +139,18 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      */
     public boolean validateAndSetCreditCardInfoAndBillingInfo() {
         boolean isValid = oneLineCCEditComponent.validateInfo();
-        isValid &= billingViewComponent.validateInfo();
+        boolean isBillingValid = billingViewComponent.validateInfo();
+        isValid &= isBillingValid;
         if (isValid) {
             newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
             newCreditCardInfo.setCreditCard(oneLineCCEditComponent.getNewCreditCard());
+        } else if (!isBillingValid) {
+            scrollView.post(new Runnable() {
+                @Override
+                public void run() {
+                    scrollView.smoothScrollTo(0, billingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition());
+                }
+            });
         }
         return isValid;
     }
@@ -242,8 +253,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
                 buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.PAY);
             } else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
                 // billingViewComponent.requestFocusOnNameInput();
-            }
-            else {
+            } else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);
                 billingViewComponent.setShippingSameAsBilling(isShippingSameAsBilling);
                 if (isShippingSameAsBilling) {

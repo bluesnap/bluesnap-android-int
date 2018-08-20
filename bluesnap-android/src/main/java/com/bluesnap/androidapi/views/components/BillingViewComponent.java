@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.AndroidUtil;
@@ -118,6 +119,33 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         if (isEmailRequired)
             validInput &= validateField(inputEmail, inputLayoutEmail, BlueSnapValidator.EditTextFields.EMAIL_FIELD);
         return validInput;
+    }
+
+
+    /**
+     * get First Error Enabled of TextInputEditText
+     *
+     * @return TextInputLayout.getTop() or -1 if null
+     */
+    @Override
+    public int getFirstErrorEnabledOfTextInputEditTextTopPosition() {
+        if (inputLayoutName.isErrorEnabled())
+            return inputLayoutName.getTop();
+        else if (isEmailRequired && inputLayoutEmail.isErrorEnabled())
+            return inputLayoutEmail.getTop();
+        else if (isCountryRequiresZip() && inputLayoutZip.isErrorEnabled())
+            return inputLayoutZip.getTop();
+        else if (isFullBillingRequiredRequired) {
+            if (BlueSnapValidator.checkCountryHasState(getUserCountry()) && inputLayoutState.isErrorEnabled())
+                return inputLayoutState.getTop();
+            else if (inputLayoutCity.isErrorEnabled())
+                return inputLayoutCity.getTop();
+            else if (inputLayoutAddress.isErrorEnabled())
+                return inputLayoutAddress.getTop();
+            else
+                return -1;
+        } else
+            return -1;
     }
 
     /**
