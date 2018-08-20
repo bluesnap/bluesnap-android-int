@@ -51,6 +51,7 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
+            progressBar.setVisibility(View.VISIBLE);
             Shopper shopper = sdkConfiguration.getShopper();
             shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, shopper.getNewCreditCardInfo().getCreditCard()));
             updateShopperOnServer(shopper);
