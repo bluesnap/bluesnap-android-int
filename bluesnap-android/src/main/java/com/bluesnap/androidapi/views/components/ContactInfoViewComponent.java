@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
@@ -500,6 +501,7 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
+        validateField(this.inputState, this.inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
 
     }
 }
