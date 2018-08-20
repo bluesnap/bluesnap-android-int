@@ -189,6 +189,26 @@ public class ContactInfoViewComponent extends LinearLayout {
     }
 
     /**
+     * get First Error Enabled of TextInputEditText
+     *
+     * @return TextInputLayout.getTop() or -1 if null
+     */
+    public int getFirstErrorEnabledOfTextInputEditTextTopPosition() {
+        if (inputLayoutName.isErrorEnabled())
+            return inputLayoutName.getTop();
+        else if (isCountryRequiresZip() && inputLayoutZip.isErrorEnabled())
+            return inputLayoutZip.getTop();
+        else if (BlueSnapValidator.checkCountryHasState(getUserCountry()) && inputLayoutState.isErrorEnabled())
+            return inputLayoutState.getTop();
+        else if (inputLayoutCity.isErrorEnabled())
+            return inputLayoutCity.getTop();
+        else if (inputLayoutAddress.isErrorEnabled())
+            return inputLayoutAddress.getTop();
+        else
+            return inputLayoutName.getTop();
+    }
+
+    /**
      * get Error Message
      *
      * @param validationType - {@link BlueSnapValidator.EditTextFields}

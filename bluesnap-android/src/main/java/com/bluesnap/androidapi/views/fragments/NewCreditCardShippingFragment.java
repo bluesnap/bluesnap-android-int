@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
@@ -35,6 +37,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
 
     private AmountTaxShippingComponent amountTaxShippingComponentView;
     private ButtonComponent buttonComponentView;
+    private ScrollView scrollView;
 
     public static NewCreditCardShippingFragment newInstance(Activity activity, Bundle bundle) {
         FragmentManager fragmentManager = activity.getFragmentManager();
@@ -76,6 +79,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
         shippingViewComponent = inflate.findViewById(R.id.newShoppershippingViewComponent);
+        scrollView = inflate.findViewById(R.id.shippingScrollView);
 
         amountTaxShippingComponentView = inflate.findViewById(R.id.shippingAmountTaxShippingComponentView);
         buttonComponentView = inflate.findViewById(R.id.shippingButtonComponentView);
@@ -168,6 +172,8 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
                 if (shippingViewComponent.validateInfo()) {
                     shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
                     finishFromFragment();
+                } else {
+                    scrollView.post(() -> scrollView.smoothScrollTo(0, shippingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition()));
                 }
             }
         });
