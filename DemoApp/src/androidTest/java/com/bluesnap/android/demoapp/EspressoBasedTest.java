@@ -259,7 +259,7 @@ public class EspressoBasedTest {
 
         while (BlueSnapService.getInstance().getsDKConfiguration() == null || BlueSnapService.getInstance().getsDKConfiguration().equals(sDKConfiguration)) {
             Log.d(TAG, "Waiting for SDK configuration to finish");
-            Thread.sleep(2000);
+            Thread.sleep(200);
 
         }
 
@@ -268,8 +268,9 @@ public class EspressoBasedTest {
         while (!isSdkRequestNull) {
             Log.d(TAG, "Waiting for SDK request to finish");
             Thread.sleep(500);
-
         }
+
+        isSdkRequestNull = false;
     }
 
 
