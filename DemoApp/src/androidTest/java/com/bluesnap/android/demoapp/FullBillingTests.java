@@ -1,8 +1,10 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +45,23 @@ public class FullBillingTests extends EspressoBasedTest {
         changing_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
+    }
+
+    @Test
+    public void full_billing_basic_flow_transaction() {
+        new_card_basic_flow_transaction(true, false, false, false);
+    }
+
+    @Test
+    public void returning_shopper_full_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(true, false, false, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(true, false, false);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(true, false, false);
     }
 
     /**

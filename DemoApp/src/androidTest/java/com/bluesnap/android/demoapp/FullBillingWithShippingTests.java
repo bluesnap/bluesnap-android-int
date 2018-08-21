@@ -2,14 +2,18 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -60,6 +64,23 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
         amount_tax_view_before_choosing_shipping_same_as_billing();
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //annul shipping same as billing option
         amount_tax_view_after_choosing_shipping_same_as_billing();
+    }
+
+    @Test
+    public void full_billing_with_shipping_basic_flow_transaction() {
+        new_card_basic_flow_transaction(true, false, true, false);
+    }
+
+    @Test
+    public void returning_shopper_full_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(true, false, true, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(true, false, true);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(true, false, true);
     }
 
     /**

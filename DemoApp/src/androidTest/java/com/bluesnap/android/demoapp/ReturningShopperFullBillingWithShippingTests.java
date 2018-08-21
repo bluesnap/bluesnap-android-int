@@ -60,7 +60,7 @@ public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedT
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 7) {
             pay_button_in_billing_validation();
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
             billing_contact_info_content_validation();
@@ -69,7 +69,7 @@ public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedT
 
         shipping_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 7) {
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -91,7 +91,8 @@ public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedT
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        }
+        } else if (returningShopper.isWithShipping()) //TODO: change to else (without condition) after the bug is fixed (AS-119)
+            component_opens_when_pressing_buyNow_with_missing_info();
     }
 
     @Test
@@ -283,5 +284,14 @@ public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedT
     public void country_changes_per_shipping_validation() {
         ReturningShopperVisibilityTesterCommon.country_changes_per_fragment_validation("country_changes_per_shipping_validation in " + returningShopper.getShopperDescription(),
                 R.id.shippingViewSummarizedComponent, "IT", "Italy");
+    }
+
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public void component_opens_when_pressing_buyNow_with_missing_info() {
+        ReturningShopperVisibilityTesterCommon.component_opens_when_pressing_buyNow_with_missing_info("component_opens_when_pressing_buyNow_with_missing_info in " + returningShopper.getShopperDescription(), true, true, false, returningShopper);
     }
 }
