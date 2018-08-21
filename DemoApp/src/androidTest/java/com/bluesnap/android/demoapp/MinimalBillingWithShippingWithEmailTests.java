@@ -47,7 +47,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
     }
 
     @Test
-    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() {
+    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(false, true, true, false);
     }
 

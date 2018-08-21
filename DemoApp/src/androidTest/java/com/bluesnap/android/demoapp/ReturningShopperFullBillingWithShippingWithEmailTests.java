@@ -79,7 +79,7 @@ public class ReturningShopperFullBillingWithShippingWithEmailTests extends Espre
 //        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
 //        Espresso.pressBack();
             returning_shopper_edit_shipping_contact_info_using_done_button_validation();
-        } else if (returningShopper.isWithShipping()) //TODO: change to else (without condition) after the bug is fixed (AS-119)
+        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling()) //TODO: change to else (without condition) after the bug is fixed (AS-119)
             component_opens_when_pressing_buyNow_with_missing_info();
     }
 

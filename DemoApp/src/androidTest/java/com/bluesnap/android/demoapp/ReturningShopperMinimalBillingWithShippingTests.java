@@ -84,7 +84,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        } else
+        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling())
             component_opens_when_pressing_buyNow_with_missing_info();
     }
 

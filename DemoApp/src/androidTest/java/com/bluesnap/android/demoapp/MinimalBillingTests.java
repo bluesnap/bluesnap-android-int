@@ -48,12 +48,12 @@ public class MinimalBillingTests extends EspressoBasedTest {
     }
 
     @Test
-    public void minimal_billing_basic_flow_transaction() {
+    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(false, false, false, false);
     }
 
     @Test
-    public void change_currency_twice_back_to_usd_espresso_test() {
+    public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException {
         new_card_basic_fill_info(false, false, false, false);
         CurrencyChangeTesterCommon.changeCurrency("CAD");
         CurrencyChangeTesterCommon.changeCurrency("ILS");

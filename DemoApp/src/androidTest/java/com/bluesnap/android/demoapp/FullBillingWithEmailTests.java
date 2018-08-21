@@ -61,7 +61,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_with_email_basic_flow_transaction() {
+    public void full_billing_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(true, true, false, false);
     }
 
