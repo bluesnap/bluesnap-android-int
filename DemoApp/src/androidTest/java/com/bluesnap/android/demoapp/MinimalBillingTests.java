@@ -47,11 +47,27 @@ public class MinimalBillingTests extends EspressoBasedTest {
         change_currency_in_billing_amount_validation();
     }
 
+    /**
+     * This test verifies the flow of filling in credit card fields happens as it should.
+     */
+    @Test
+    public void check_focus_from_cvv_text_view_in_cc_line() {
+        CreditCardLineTesterCommon.check_focus_from_cvv_text_view_in_cc_line("check_focus_from_cvv_text_view_in_cc_line");
+    }
+
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing new shopper
+     */
     @Test
     public void minimal_billing_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(false, false, false, false);
     }
 
+    /**
+     * This test does an end-to-end existing card flow for minimal
+     * billing returning shopper
+     */
     @Test
     public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException {
         new_card_basic_fill_info(false, false, false, false);

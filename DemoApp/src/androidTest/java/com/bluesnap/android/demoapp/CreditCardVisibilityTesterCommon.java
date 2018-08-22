@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
@@ -14,8 +15,14 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by sivani on 04/06/2018.
@@ -72,9 +79,9 @@ public class CreditCardVisibilityTesterCommon {
     /**
      * This test verifies that the country image matches the parameter country
      */
-    public static void country_view_validation(String testName, Context context, String defaultCountry, int componentResourceId) {
+    public static void country_view_validation(String testName, Context context, String country, int componentResourceId) {
         //get the expected drawable id
-        Integer resourceId = context.getResources().getIdentifier(defaultCountry.toLowerCase(), "drawable", context.getPackageName());
+        Integer resourceId = context.getResources().getIdentifier(country.toLowerCase(), "drawable", context.getPackageName());
 
         //check image is as expected
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Country image button doesn't present the correct image"))

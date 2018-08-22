@@ -53,6 +53,47 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.cvvEditText)).perform(typeText("123"));
     }
 
+    public static void check_focus_from_cvv_text_view_in_cc_line(String testName) {
+        onView(withId(R.id.creditCardNumberEditText)).perform(typeText(cardNumberGeneratorTest()));
+        onView(withId(R.id.expEditText)).perform(typeText("12 26"));
+
+        //now cvv is focused
+        //verify focused is changed to exp date editText when clicking on it before filling in cvv number
+        onView(withId(R.id.expEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Exp date number editText is not focused, after clicking on it"))
+                .perform(click()).check(matches(TestUtils.isViewFocused()));
+
+        //verify focused is changed to input name editText when clicking on it before filling in cvv number
+        onView(withId(R.id.cvvEditText)).perform(click());
+        onView(withId(R.id.input_name))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input name number editText is not focused, after clicking on it"))
+                .perform(click()).check(matches(TestUtils.isViewFocused()));
+
+        //verify focused is changed to credit card number editText when clicking on it before filling in cvv number
+        onView(withId(R.id.cvvEditText)).perform(click());
+        onView(withId(R.id.creditCardNumberEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Credit card number editText is not focused, after clicking on it"))
+                .perform(click()).check(matches(TestUtils.isViewFocused()));
+
+//        //verify focused is changed to exp date editText when clicking on it after filling in cvv number
+//        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
+//        onView(withId(R.id.expEditText))
+//                .withFailureHandler(new CustomFailureHandler(testName + ": Exp date number editText is not focused, after clicking on it"))
+//                .perform(click()).check(matches(TestUtils.isViewFocused()));
+//
+//        //verify focused is changed to credit card number editText when clicking on it after filling in cvv number
+//        onView(withId(R.id.cvvEditText)).perform(click());
+//        onView(withId(R.id.creditCardNumberEditText))
+//                .withFailureHandler(new CustomFailureHandler(testName + ": credit card number editText is not focused, after clicking on it"))
+//                .perform(click()).check(matches(TestUtils.isViewFocused()));
+//
+//        //verify focused is changed to nampe editText when clicking on it after filling in cvv number
+//        onView(withId(R.id.cvvEditText)).perform(click());
+//        onView(withId(R.id.input_name))
+//                .withFailureHandler(new CustomFailureHandler(testName + ": Input name number editText is not focused, after clicking on it"))
+//                .perform(click()).check(matches(TestUtils.isViewFocused()));
+    }
+
     /**
      * This test verifies that the credit card line info is saved when
      * continuing to shipping and going back to billing,

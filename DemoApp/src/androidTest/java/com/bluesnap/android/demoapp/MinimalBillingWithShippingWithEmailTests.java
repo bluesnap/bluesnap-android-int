@@ -46,6 +46,10 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
         pay_button_in_shipping_validation();
     }
 
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email and shipping new shopper
+     */
     @Test
     public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(false, true, true, false);
