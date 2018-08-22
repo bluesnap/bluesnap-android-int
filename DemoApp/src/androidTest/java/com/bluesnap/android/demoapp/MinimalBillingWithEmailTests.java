@@ -47,8 +47,12 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
         check_ime_action_button_in_billing_contact_info();
     }
 
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email new shopper
+     */
     @Test
-    public void minimal_billing_with_email_basic_flow_transaction() {
+    public void minimal_billing_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(false, true, false, false);
     }
 
@@ -93,7 +97,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("billing_contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("billing_contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, false, true);
     }
 
     /**

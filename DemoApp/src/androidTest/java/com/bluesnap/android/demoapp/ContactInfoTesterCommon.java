@@ -71,33 +71,38 @@ public class ContactInfoTesterCommon {
         //Continue- leaving all fields empty
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
+        //verify input name editText is focused
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input name editText is not displayed"))
+                .check(matches(isDisplayed()));
+
         //verify error messages are displayed
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input name errorText is not visible"))
+                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input name errorText is not displayed"))
                 .check(matches(isDisplayed()));
 
         if (withEmail)
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_email)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input email errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input email errorText is not displayed"))
                     .check(matches(isDisplayed()));
 
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input zip errorText is not visible"))
+                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input zip errorText is not displayed"))
                 .check(matches(isDisplayed()));
 
         if (fullInfo) {
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_state)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input state errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input state errorText is not displayed"))
                     .check(matches(isDisplayed()));
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_city)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city errorText is not displayed"))
                     .perform(scrollTo()).check(matches(isDisplayed()));
 
             //onView(withId(R.id.input_address)).perform(scrollTo());
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_address)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address errorText is not displayed"))
                     .perform(scrollTo()).check(matches(isDisplayed()));
         }
 
@@ -253,17 +258,14 @@ public class ContactInfoTesterCommon {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
         //verify error message is displayed
-        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
+        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", true);
 
         //filling in Rio de Janeiro
-        onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(click());
+        onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
         onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-        Espresso.closeSoftKeyboard();
 
-        //waiting for this bug to be fixed
-//        //verify error message is not displayed anymore
-//        onView(allOf(withId(R.id.textinput_error),
-//                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
+        //verify error message is not displayed anymore
+        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", false);
     }
 
     public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail) throws IOException {

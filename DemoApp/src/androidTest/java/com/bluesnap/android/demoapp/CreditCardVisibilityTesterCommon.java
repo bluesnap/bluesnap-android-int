@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
@@ -14,8 +15,14 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by sivani on 04/06/2018.
@@ -56,25 +63,31 @@ public class CreditCardVisibilityTesterCommon {
 
     }
 
-    public static void contact_info_error_messages_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
+    public static void contact_info_error_messages_validation(String testName, int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
         Espresso.closeSoftKeyboard();
         //verify that all error messages are not displayed in the component
-        check_contact_info_invalid_error_visibility(testName, R.id.input_layout_name, componentResourceId, false);
+        check_contact_info_invalid_error_visibility(testName, R.id.input_layout_name, componentResourceId, "name", false);
         if (withEmail)
-            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_email, componentResourceId, false);
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_email, componentResourceId, "email", false);
+
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country)) //Country with zip
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_zip, componentResourceId, "zip", false);
 
         if (fullInfo) {
-            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_city, componentResourceId, false);
-            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_address, componentResourceId, false);
+            if (country.equals("US") || country.equals("CA") || country.equals("BR"))  //Country is one of US CA BR- has state
+                check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", false);
+
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_city, componentResourceId, "city", false);
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_address, componentResourceId, "address", false);
         }
     }
 
     /**
      * This test verifies that the country image matches the parameter country
      */
-    public static void country_view_validation(String testName, Context context, String defaultCountry, int componentResourceId) {
+    public static void country_view_validation(String testName, Context context, String country, int componentResourceId) {
         //get the expected drawable id
-        Integer resourceId = context.getResources().getIdentifier(defaultCountry.toLowerCase(), "drawable", context.getPackageName());
+        Integer resourceId = context.getResources().getIdentifier(country.toLowerCase(), "drawable", context.getPackageName());
 
         //check image is as expected
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Country image button doesn't present the correct image"))
@@ -259,11 +272,15 @@ public class CreditCardVisibilityTesterCommon {
     }
 
     public static void check_contact_info_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, boolean isDisplayed) {
+        check_contact_info_invalid_error_visibility(testName, layoutResourceId, componentResourceId, "", isDisplayed);
+    }
+
+    public static void check_contact_info_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, String fieldName, boolean isDisplayed) {
         if (isDisplayed) //Verify error message is displayed
             onView(allOf(withId(R.id.textinput_error),
                     isDescendantOfA(withId(layoutResourceId)),
                     isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not visible"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed for " + fieldName))
                     .perform(scrollTo()).check(matches(isDisplayed()));
 
         else //Verify error message is not displayed

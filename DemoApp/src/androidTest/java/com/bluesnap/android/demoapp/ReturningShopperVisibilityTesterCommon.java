@@ -193,7 +193,7 @@ public class ReturningShopperVisibilityTesterCommon {
         if ((fullBilling && !returningShopper.isFullBilling()) || (withEmail && !returningShopper.isWithEmail()))
             componentResourceId = R.id.billingViewComponent;
         else if (withShipping && !returningShopper.isWithShipping())
-            componentResourceId = R.id.newShoppershippingViewComponent;
+            componentResourceId = R.id.returningShoppershippingViewComponent;
         else
             componentResourceId = -1;
 

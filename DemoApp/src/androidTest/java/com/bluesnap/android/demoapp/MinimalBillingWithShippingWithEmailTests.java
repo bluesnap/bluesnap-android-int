@@ -46,8 +46,12 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
         pay_button_in_shipping_validation();
     }
 
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email and shipping new shopper
+     */
     @Test
-    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() {
+    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(false, true, true, false);
     }
 
@@ -92,7 +96,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, false, true);
     }
 
     /**
@@ -108,7 +112,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
      * fields are not displayed.
      */
     public void new_credit_shipping_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**

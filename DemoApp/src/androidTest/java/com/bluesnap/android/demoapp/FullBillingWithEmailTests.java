@@ -39,10 +39,10 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
+        empty_fields_invalid_error_validation_in_billing();
         check_ime_action_button_in_billing_contact_info();
         Espresso.closeSoftKeyboard(); //Close soft keyboard to make all fields visible
         //Pre-condition: All fields are empty
-        empty_fields_invalid_error_validation_in_billing();
     }
 
     @Test
@@ -61,7 +61,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_with_email_basic_flow_transaction() {
+    public void full_billing_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(true, true, false, false);
     }
 
@@ -106,7 +106,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, true);
     }
 
     /**

@@ -161,15 +161,6 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that all invalid error messages of billing contact info
-     * fields are not displayed.
-     */
-    public void billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("billing_contact_info_error_messages_validation in " + returningShopper.getShopperDescription(),
-                R.id.billingViewComponent, false, false);
-    }
-
-    /**
      * This test checks whether the zip field is visible to the user or not, according
      * to the default Country (the one that is chosen when entering billing).
      */

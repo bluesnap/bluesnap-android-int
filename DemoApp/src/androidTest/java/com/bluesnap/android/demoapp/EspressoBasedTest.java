@@ -25,6 +25,7 @@ import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
 import com.bluesnap.androidapi.http.HTTPOperationController;
+import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -73,6 +74,7 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
+import static java.lang.Thread.sleep;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
@@ -253,13 +255,13 @@ public class EspressoBasedTest {
                 });
         while (BlueSnapService.getInstance().getBlueSnapToken() == null) {
             Log.d(TAG, "Waiting for token setup");
-            Thread.sleep(200);
+            sleep(200);
 
         }
 
         while (BlueSnapService.getInstance().getsDKConfiguration() == null || BlueSnapService.getInstance().getsDKConfiguration().equals(sDKConfiguration)) {
             Log.d(TAG, "Waiting for SDK configuration to finish");
-            Thread.sleep(200);
+            sleep(200);
 
         }
 
@@ -267,7 +269,7 @@ public class EspressoBasedTest {
 
         while (!isSdkRequestNull) {
             Log.d(TAG, "Waiting for SDK request to finish");
-            Thread.sleep(500);
+            sleep(500);
         }
 
         isSdkRequestNull = false;
@@ -334,7 +336,7 @@ public class EspressoBasedTest {
         setupAndLaunch(sdkRequest);
     }
 
-    public void new_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) {
+    public void new_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
         intending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
 
         int buttonComponent = (withShipping && !shippingSameAsBilling) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
@@ -370,7 +372,7 @@ public class EspressoBasedTest {
      * This test does an end-to-end existing card of a returning shopper flow
      * for all 8 options: with/without full billing, shipping, email.
      */
-    public void returning_shopper_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping) {
+    public void returning_shopper_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping) throws InterruptedException {
         intending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
 
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
@@ -400,7 +402,23 @@ public class EspressoBasedTest {
         }
     }
 
-    public void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) {
+    private String getTokenizedSuccess(CreditCard shopperCreditCard) {
+        String creditCardDescription = shopperCreditCard.toString();
+        String tokenizedSuccess = creditCardDescription.substring(creditCardDescription.indexOf("tokenizedSuccess:") +
+                "tokenizedSuccess:".length(), creditCardDescription.indexOf(", cardLastFourDigits:"));
+
+        return tokenizedSuccess;
+    }
+
+    public void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
+        CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
+        while (getTokenizedSuccess(shopperCreditCard).equals("false")) {
+            Log.d(TAG, "Waiting for tokenized credit card service to finish");
+            sleep(1000);
+        }
+
+        sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
+
         //TODO: change this stupid thing. in demoApp as well
 //        shopperId = TestUtils.getText(withId(R.id.shopperId)).substring(13);
 //        if (returningShopperIndex >= 0)

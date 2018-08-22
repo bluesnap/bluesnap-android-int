@@ -48,7 +48,7 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_basic_flow_transaction() {
+    public void full_billing_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(true, false, false, false);
     }
 
@@ -93,7 +93,7 @@ public class FullBillingTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**

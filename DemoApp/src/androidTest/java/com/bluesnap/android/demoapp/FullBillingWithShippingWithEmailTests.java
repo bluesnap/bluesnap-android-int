@@ -71,12 +71,12 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
     }
 
     @Test
-    public void full_billing_with_shipping_with_email_basic_flow_transaction() {
+    public void full_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(true, true, true, false);
     }
 
     @Test
-    public void shipping_same_as_billing_basic_flow_transaction() {
+    public void shipping_same_as_billing_basic_flow_transaction() throws InterruptedException {
         new_card_basic_flow_transaction(true, true, true, true);
     }
 
@@ -121,7 +121,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, true);
     }
 
     /**
@@ -137,7 +137,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_shipping_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**
