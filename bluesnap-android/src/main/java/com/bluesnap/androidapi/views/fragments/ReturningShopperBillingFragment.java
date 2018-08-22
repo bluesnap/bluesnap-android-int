@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
@@ -24,6 +26,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperBillingFragment.class.getSimpleName();
     private BillingViewComponent billingViewComponent;
     private CreditCardInfo newCreditCardInfo;
+    private ScrollView scrollView;
 
     public static ReturningShopperBillingFragment newInstance(Activity activity, Bundle bundle) {
         FragmentManager fragmentManager = activity.getFragmentManager();
@@ -57,6 +60,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
         // set Billing Details
         billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
         billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
+        scrollView = inflate.findViewById(R.id.billingViewComponentScrollView);
 
         // set Credit Card View Component details
         OneLineCCViewComponent oneLineCCViewComponent = inflate.findViewById(R.id.oneLineCCViewComponent);
@@ -103,7 +107,8 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
         boolean isValid = billingViewComponent.validateInfo();
         if (isValid) {
             newCreditCardInfo.setBillingContactInfo(billingViewComponent.getViewResourceDetails());
-        }
+        } else
+            scrollView.post(() -> scrollView.smoothScrollTo(0, billingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition()));
         return isValid;
     }
 
