@@ -63,16 +63,22 @@ public class CreditCardVisibilityTesterCommon {
 
     }
 
-    public static void contact_info_error_messages_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail) {
+    public static void contact_info_error_messages_validation(String testName, int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
         Espresso.closeSoftKeyboard();
         //verify that all error messages are not displayed in the component
-        check_contact_info_invalid_error_visibility(testName, R.id.input_layout_name, componentResourceId, false);
+        check_contact_info_invalid_error_visibility(testName, R.id.input_layout_name, componentResourceId, "name", false);
         if (withEmail)
-            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_email, componentResourceId, false);
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_email, componentResourceId, "email", false);
+
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country)) //Country with zip
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_zip, componentResourceId, "zip", false);
 
         if (fullInfo) {
-            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_city, componentResourceId, false);
-            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_address, componentResourceId, false);
+            if (country.equals("US") || country.equals("CA") || country.equals("BR"))  //Country is one of US CA BR- has state
+                check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", false);
+
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_city, componentResourceId, "city", false);
+            check_contact_info_invalid_error_visibility(testName, R.id.input_layout_address, componentResourceId, "address", false);
         }
     }
 
@@ -266,11 +272,15 @@ public class CreditCardVisibilityTesterCommon {
     }
 
     public static void check_contact_info_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, boolean isDisplayed) {
+        check_contact_info_invalid_error_visibility(testName, layoutResourceId, componentResourceId, "", isDisplayed);
+    }
+
+    public static void check_contact_info_invalid_error_visibility(String testName, int layoutResourceId, int componentResourceId, String fieldName, boolean isDisplayed) {
         if (isDisplayed) //Verify error message is displayed
             onView(allOf(withId(R.id.textinput_error),
                     isDescendantOfA(withId(layoutResourceId)),
                     isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not visible"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed for " + fieldName))
                     .perform(scrollTo()).check(matches(isDisplayed()));
 
         else //Verify error message is not displayed
