@@ -1,5 +1,8 @@
 package com.bluesnap.androidapi;
 
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.PaymentSources;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
@@ -60,7 +63,7 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong first name", "aaa2", shopper.getFirstName());
         assertEquals("wrong last name", "bbb2", shopper.getLastName());
         assertEquals("wrong email", "two@two.com", shopper.getEmail());
-        assertEquals("wrong Country", "ca", shopper.getCountry());
+        assertEquals("wrong country", "ca", shopper.getCountry());
         assertEquals("wrong state", "ON", shopper.getState());
         assertEquals("wrong address", "billing address2", shopper.getAddress());
         assertEquals("wrong address2", "", shopper.getAddress2());
@@ -69,13 +72,36 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong shopperCurrency", "USD", shopper.getShopperCurrency());
         assertEquals("wrong vaulted shopper id", 22868797, shopper.getVaultedShopperId());
 
-        assertEquals("wrong shopperCurrency", "USD", shopper.getShopperCurrency());
+        sdkconfiguration_payment_sources_tests(shopper.getPreviousPaymentSources());
 
 
         //here
 
-        assertNotNull("paymentSources is null", shopper.getPreviousPaymentSources());
         //assertNotNull("lastPaymentInfo is null", shopper.getLastPaymentInfo());
+
+    }
+
+    public void sdkconfiguration_payment_sources_tests(PaymentSources paymentSources) {
+        assertNotNull("PreviousPaymentSources is null", paymentSources);
+        assertNotNull("previousCreditCardInfos is null", paymentSources.getPreviousCreditCardInfos());
+        sdkconfiguration_credit_card_info_tests(paymentSources.getPreviousCreditCardInfos().get(0));
+    }
+
+    public void sdkconfiguration_credit_card_info_tests(CreditCardInfo creditCardInfo) {
+        assertNotNull("creditCardInfo is null", creditCardInfo);
+        BillingContactInfo billingContactInfo = creditCardInfo.getBillingContactInfo();
+        assertNotNull("billingContactInfo is null", billingContactInfo);
+
+        assertEquals("wrong first name", "billingFirstName", billingContactInfo.getFirstName());
+        assertEquals("wrong last name", "billingLastName", billingContactInfo.getLastName());
+        assertEquals("wrong address", "10 Main St", billingContactInfo.getAddress());
+        assertEquals("wrong address2", "Apt 1", billingContactInfo.getAddress2());
+        assertEquals("wrong state", "MA", billingContactInfo.getState());
+        assertEquals("wrong zip", "01752", billingContactInfo.getZip());
+        assertEquals("wrong Country", "us", billingContactInfo.getCountry());
+        assertEquals("wrong city", "", billingContactInfo.getCity());
+        assertEquals("wrong email", "", billingContactInfo.getEmail());
+
 
     }
 
