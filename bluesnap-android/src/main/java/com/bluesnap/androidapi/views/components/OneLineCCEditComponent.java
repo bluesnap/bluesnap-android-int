@@ -444,10 +444,11 @@ public class OneLineCCEditComponent extends LinearLayout {
                                     }
                                 });
                             } else if ("CARD_TYPE_NOT_SUPPORTED".equals(rs3.get("errorName"))) {
-                                BluesnapAlertDialog.setDialog(getContext(), rs3.get("description").toString(), "CARD NOT SUPPORTED");
+                                final String description = rs3.get("description").toString();
                                 post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        BluesnapAlertDialog.setDialog(getContext(), description, "CARD NOT SUPPORTED");
                                         changeInputColorAndErrorVisibility(creditCardNumberEditText, creditCardNumberErrorTextView, false);
                                     }
                                 });

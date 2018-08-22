@@ -265,12 +265,24 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
                         title = getString(R.string.ERROR);
                     }
-                    if (null != message)
-                        BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this
-                                , message, title);
+                    if (null != message) {
+                        String finalMessage = message;
+                        String finalTitle = title;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, finalMessage, finalTitle);
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     Log.e(TAG, "json parsing exception", e);
-                    BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
+                        }
+                    });
                 } finally {
                     progressBar.setVisibility(View.INVISIBLE);
                 }
