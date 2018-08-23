@@ -239,7 +239,7 @@ public class BasicTransactionsFlows extends EspressoBasedTest {
 
     private void new_shopper_component_info_saved_validation(boolean isBillingInfo, JSONObject jsonObject) {
         String countryKey;
-        ShopperContactInfo contactInfo;
+        TestingShopperContactInfo contactInfo;
 
         if (!isReturningShoppper) { //New shopper
             countryKey = (!isBillingInfo && !shippingSameAsBilling) ? shippingCountryKey : billingCountryKey;

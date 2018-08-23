@@ -99,7 +99,7 @@ public class EspressoBasedTest {
     double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
 
     boolean isReturningShoppper = false;
-    protected ReturningShoppersFactory.Shopper returningShopper;
+    protected ReturningShoppersFactory.TestingShopper returningShopper;
 
 
     IdlingResource tokenProgressBarIR;
@@ -389,7 +389,7 @@ public class EspressoBasedTest {
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "Canada"); //TODO: Include the country value in contactInfo object (in addition to the key)
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountry(), withFullBilling, withEmail, ContactInfoTesterCommon.editBillingContactInfo);
-        TestUtils.go_back_to_credit_card_in_returning_shopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
+        TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
 
         if (withShipping) {
             if (defaultCountryKey.equals("US") || isReturningShoppper) //updating purchaseAmount to include tax
@@ -398,7 +398,7 @@ public class EspressoBasedTest {
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, "United States");
             ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountry(), true, false, ContactInfoTesterCommon.editShippingContactInfo);
-            TestUtils.go_back_to_credit_card_in_returning_shopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
+            TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
         }
     }
 
@@ -500,7 +500,7 @@ public class EspressoBasedTest {
 
     private void new_shopper_component_info_saved_validation(boolean fullInfo, boolean withEmail, boolean shippingSameAsBilling, boolean isBillingInfo, JSONObject jsonObject) {
         String countryKey;
-        ShopperContactInfo contactInfo;
+        TestingShopperContactInfo contactInfo;
 
         if (!isReturningShoppper) { //New shopper
             countryKey = (!isBillingInfo && !shippingSameAsBilling) ? defaultCountryKey : defaultCountryKey;

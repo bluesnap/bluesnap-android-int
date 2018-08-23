@@ -58,7 +58,7 @@ public class ReturningShopperFullBillingTests extends EspressoBasedTest {
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
             billing_contact_info_content_validation();
-            TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
+            TestUtils.goBackToCreditCardInReturningShopper(false, 0);
 
             //Pre-condition: current info is billingInfo
             //TODO: restore this when the bug is fixed (AS-148)

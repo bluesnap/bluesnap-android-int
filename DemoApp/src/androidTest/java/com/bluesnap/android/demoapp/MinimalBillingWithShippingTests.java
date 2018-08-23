@@ -50,7 +50,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         default_country_zip_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_view_validation_in_shipping();
@@ -75,7 +75,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
     @Test
     public void minimal_billing_with_shipping_test_inputs() {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
         empty_fields_invalid_error_validation_in_shipping();
         name_invalid_error_validation_in_shipping();
         name_invalid_error_validation_using_ime_button_in_shipping();
@@ -371,7 +371,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "BR", true, false);
 
         //go back and forward
-        TestUtils.go_back_to_billing_in_new_card();
+        TestUtils.goBackToBillingInNewCard();
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
 
         //verify info has been saved
@@ -434,7 +434,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_in_shipping_validation", R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
     }
 
 }

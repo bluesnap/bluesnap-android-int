@@ -58,7 +58,7 @@ public class ReturningShopperMinimalBillingTests extends EspressoBasedTest {
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
             billing_contact_info_content_validation();
-            TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
+            TestUtils.goBackToCreditCardInReturningShopper(false, 0);
 
             initial_currency_view_validation_in_billing();
             change_currency_in_billing_validation();

@@ -24,11 +24,7 @@ import static org.hamcrest.Matchers.not;
  */
 public class CreditCardLineTesterCommon {
 
-    static Matcher<View> creditCardNumberErrorTextVM = withId(R.id.creditCardNumberErrorTextView);
-    static Matcher<View> ccNumberEditTextVM = withId(R.id.creditCardNumberEditText);
-    static Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
     static Matcher<View> expEditTextVM = withId(R.id.expEditText);
-    static Matcher<View> expErrorTextVM = withId(R.id.expErrorTextView);
     static Matcher<View> cvvEditTextVM = withId(R.id.cvvEditText);
 
 
@@ -97,7 +93,7 @@ public class CreditCardLineTesterCommon {
     /**
      * This test verifies that the credit card line info is saved when
      * continuing to shipping and going back to billing,
-     * while using the back button.
+     * while using the back button.r
      */
     public static void credit_card_info_saved_validation(String testName, String creditCardNum, String expDate, String cvvNum) {
         //Verify cc number has been saved
@@ -130,7 +126,6 @@ public class CreditCardLineTesterCommon {
 
         onView(withId(R.id.buyNowButton)).perform(click());
 
-
         onView(withId(R.id.creditCardNumberErrorTextView))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed"))
                 .check(matches(ViewMatchers.isDisplayed()));
@@ -142,9 +137,9 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(typeText(cardNumberGeneratorTest()));
 
-        onView(expEditTextVM).perform(typeText("12 26"));
+        onView(withId(R.id.expEditText)).perform(typeText("12 26"));
 
-        onView(cvvEditTextVM).perform(typeText("123"));
+        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
 
     }
 

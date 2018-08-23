@@ -5,23 +5,22 @@ package com.bluesnap.android.demoapp;
  */
 
 public class ReturningShoppersFactory {
-    public static class Shopper {
+    public static class TestingShopper {
         private String shopperDescription; //which option is this shopper (from the 8 possible)
         private String shopperId;
         private boolean fullBilling;
         private boolean withEmail;
         private boolean withShipping;
-        private ShopperContactInfo billingContactInfo;
-        private ShopperContactInfo shippingContactInfo;
+        private TestingShopperContactInfo billingContactInfo;
+        private TestingShopperContactInfo shippingContactInfo;
 
-        Shopper(String shopperDescription_, String shopperId_, String billingCountry_, String shippingCountry_) {
-            shopperDescription = shopperDescription_;
-            shopperId = shopperId_;
-            billingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.billingContactInfo);
-            billingContactInfo.setCountry(billingCountry_);
-            shippingContactInfo = new ShopperContactInfo(ContactInfoTesterCommon.shippingContactInfo);
-            shippingContactInfo.setCountry(shippingCountry_);
-
+        TestingShopper(String shopperDescription, String shopperId, String billingCountry, String shippingCountry) {
+            this.shopperDescription = shopperDescription;
+            this.shopperId = shopperId;
+            this.billingContactInfo = new TestingShopperContactInfo(ContactInfoTesterCommon.billingContactInfo);
+            this.billingContactInfo.setCountry(billingCountry);
+            this.shippingContactInfo = new TestingShopperContactInfo(ContactInfoTesterCommon.shippingContactInfo);
+            this.shippingContactInfo.setCountry(shippingCountry);
         }
 
         String getShopperDescription() {
@@ -32,11 +31,11 @@ public class ReturningShoppersFactory {
             return shopperId;
         }
 
-        ShopperContactInfo getBillingContactInfo() {
+        TestingShopperContactInfo getBillingContactInfo() {
             return billingContactInfo;
         }
 
-        ShopperContactInfo getShippingContactInfo() {
+        TestingShopperContactInfo getShippingContactInfo() {
             return shippingContactInfo;
         }
 
@@ -75,7 +74,7 @@ public class ReturningShoppersFactory {
     private static final String[] returningShopperShippingCountries = {"", "", "CH", "TH", "", "", "GA", "KH"};
 
 
-    private static Shopper[] shoppers = new Shopper[8];
+    private static TestingShopper[] shoppers = new TestingShopper[8];
 
     static int COUNTER = 0;
     //private static Map<String,String> shoppersIds = new HashMap();
@@ -87,12 +86,12 @@ public class ReturningShoppersFactory {
             bitCode = Integer.toBinaryString(i);
             for (int j = bitCode.length(); j < 3; j++)
                 bitCode = "0" + bitCode;
-            shoppers[i] = new Shopper(returningShopperOptions[i], returningShopperIDs[i], returningShopperBillingCountries[i], returningShopperShippingCountries[i]);
+            shoppers[i] = new TestingShopper(returningShopperOptions[i], returningShopperIDs[i], returningShopperBillingCountries[i], returningShopperShippingCountries[i]);
             setFlags(shoppers[i], bitCode);
         }
     }
 
-    private static void setFlags(Shopper shopper, String bitCode) {
+    private static void setFlags(TestingShopper shopper, String bitCode) {
         boolean fullBilling = getBooleanFromChar(bitCode.charAt(0));
         boolean withShipping = getBooleanFromChar(bitCode.charAt(1));
         boolean withEmail = getBooleanFromChar(bitCode.charAt(2));
@@ -107,8 +106,8 @@ public class ReturningShoppersFactory {
     }
 
 
-    public static Shopper getReturningShopper() {
-        Shopper returningShopper = shoppers[COUNTER];
+    public static TestingShopper getReturningShopper() {
+        TestingShopper returningShopper = shoppers[COUNTER];
         COUNTER++;
         if (COUNTER == 8)
             COUNTER = 0;

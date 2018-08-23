@@ -96,9 +96,13 @@ public class ReturningShopperAllowCurrencyChangeTest extends EspressoBasedTest {
 
     private void checkCurrencyHamburgerButtonVisibility(boolean isAllowed) {
         if (isAllowed)
-            onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+            onView(withId(R.id.hamburger_button))
+                    .withFailureHandler(new CustomFailureHandler("currency_change_hamburger_view_validation: Hamburger button is not displayed"))
+                    .check(matches(ViewMatchers.isDisplayed()));
         else
-            onView(withId(R.id.hamburger_button)).check(matches(not(ViewMatchers.isDisplayed())));
+            onView(withId(R.id.hamburger_button))
+                    .withFailureHandler(new CustomFailureHandler("currency_change_hamburger_view_validation: Hamburger button is displayed"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
 
     }
 }

@@ -38,7 +38,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
         default_country_zip_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, true);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, true);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_shipping();

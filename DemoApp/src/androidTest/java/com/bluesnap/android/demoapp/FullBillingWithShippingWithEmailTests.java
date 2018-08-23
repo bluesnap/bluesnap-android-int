@@ -55,14 +55,14 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         default_country_state_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, true, true);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, true);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_shipping();
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
 
-        TestUtils.go_back_to_billing_in_new_card();
+        TestUtils.goBackToBillingInNewCard();
         contact_info_saved_validation_in_billing();
         shipping_same_as_billing_view_validation();
         shipping_same_as_billing_info_saved_in_billing_validation();
@@ -267,7 +267,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "BR", true, false);
 
         //return to billing
-        TestUtils.go_back_to_billing_in_new_card();
+        TestUtils.goBackToBillingInNewCard();
 
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
