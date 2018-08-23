@@ -1,16 +1,8 @@
 package com.bluesnap.androidapi;
 
-import com.bluesnap.androidapi.models.BillingContactInfo;
-import com.bluesnap.androidapi.models.CreditCard;
-import com.bluesnap.androidapi.models.CreditCardInfo;
-import com.bluesnap.androidapi.models.PaymentSources;
-import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.bluesnap.androidapi.models.ShippingContactInfo;
-import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.models.*;
 import com.bluesnap.androidapi.utils.JsonParser;
-
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -117,8 +109,8 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong card last four digits", "1111", creditCard.getCardLastFourDigits());
         assertEquals("wrong card type", "VISA", creditCard.getCardType());
         assertEquals("wrong card sub type", "CREDIT", creditCard.getCardSubType());
-        assertEquals("wrong expiration month", "12", creditCard.getExpirationMonth());
-        assertEquals("wrong expiration year", "2020", creditCard.getExpirationYear());
+        assertEquals("wrong expiration month", 12, creditCard.getExpirationMonth().intValue());
+        assertEquals("wrong expiration year", 2020, creditCard.getExpirationYear().intValue());
     }
 
     @Test
