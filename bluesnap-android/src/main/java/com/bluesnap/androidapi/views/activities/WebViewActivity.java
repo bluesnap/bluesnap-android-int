@@ -137,15 +137,20 @@ public class WebViewActivity extends Activity {
     }
 
     private void finishWithAlertDialog(String message, String title) {
-        BluesnapAlertDialog.setDialog(WebViewActivity.this, message, title, new BluesnapAlertDialog.BluesnapDialogCallback() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void setPositiveDialog() {
-                finish();
-            }
+            public void run() {
+                BluesnapAlertDialog.setDialog(WebViewActivity.this, message, title, new BluesnapAlertDialog.BluesnapDialogCallback() {
+                    @Override
+                    public void setPositiveDialog() {
+                        finish();
+                    }
 
-            @Override
-            public void setNegativeDialog() {
-                finish();
+                    @Override
+                    public void setNegativeDialog() {
+                        finish();
+                    }
+                });
             }
         });
     }

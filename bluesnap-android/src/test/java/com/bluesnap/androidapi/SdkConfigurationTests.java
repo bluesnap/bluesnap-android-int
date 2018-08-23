@@ -1,12 +1,8 @@
 package com.bluesnap.androidapi;
 
-import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.bluesnap.androidapi.models.ShippingContactInfo;
-import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.models.*;
 import com.bluesnap.androidapi.utils.JsonParser;
-
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -60,7 +56,7 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong first name", "aaa2", shopper.getFirstName());
         assertEquals("wrong last name", "bbb2", shopper.getLastName());
         assertEquals("wrong email", "two@two.com", shopper.getEmail());
-        assertEquals("wrong Country", "ca", shopper.getCountry());
+        assertEquals("wrong country", "ca", shopper.getCountry());
         assertEquals("wrong state", "ON", shopper.getState());
         assertEquals("wrong address", "billing address2", shopper.getAddress());
         assertEquals("wrong address2", "", shopper.getAddress2());
@@ -69,14 +65,52 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong shopperCurrency", "USD", shopper.getShopperCurrency());
         assertEquals("wrong vaulted shopper id", 22868797, shopper.getVaultedShopperId());
 
-        assertEquals("wrong shopperCurrency", "USD", shopper.getShopperCurrency());
+        sdkconfiguration_payment_sources_tests(shopper.getPreviousPaymentSources());
 
 
         //here
 
-        assertNotNull("paymentSources is null", shopper.getPreviousPaymentSources());
         //assertNotNull("lastPaymentInfo is null", shopper.getLastPaymentInfo());
 
+    }
+
+    public void sdkconfiguration_payment_sources_tests(PaymentSources paymentSources) {
+        assertNotNull("PreviousPaymentSources is null", paymentSources);
+        assertNotNull("previousCreditCardInfos is null", paymentSources.getPreviousCreditCardInfos());
+        sdkconfiguration_credit_card_info_tests(paymentSources.getPreviousCreditCardInfos().get(0));
+    }
+
+    public void sdkconfiguration_credit_card_info_tests(CreditCardInfo creditCardInfo) {
+        assertNotNull("creditCardInfo is null", creditCardInfo);
+        BillingContactInfo billingContactInfo = creditCardInfo.getBillingContactInfo();
+        CreditCard creditCard = creditCardInfo.getCreditCard();
+
+        sdkconfiguration_billing_info_tests(billingContactInfo);
+        sdkconfiguration_credit_card_tests(creditCard);
+    }
+
+    public void sdkconfiguration_billing_info_tests(BillingContactInfo billingContactInfo) {
+        assertNotNull("billingContactInfo is null", billingContactInfo);
+
+        assertEquals("wrong first name", "billingFirstName", billingContactInfo.getFirstName());
+        assertEquals("wrong last name", "billingLastName", billingContactInfo.getLastName());
+        assertEquals("wrong address", "10 Main St", billingContactInfo.getAddress());
+        assertEquals("wrong address2", "Apt 1", billingContactInfo.getAddress2());
+        assertEquals("wrong state", "MA", billingContactInfo.getState());
+        assertEquals("wrong zip", "01752", billingContactInfo.getZip());
+        assertEquals("wrong Country", "us", billingContactInfo.getCountry());
+        assertEquals("wrong city", "", billingContactInfo.getCity());
+        assertEquals("wrong email", "", billingContactInfo.getEmail());
+    }
+
+    public void sdkconfiguration_credit_card_tests(CreditCard creditCard) {
+        assertNotNull("creditCard is null", creditCard);
+
+        assertEquals("wrong card last four digits", "1111", creditCard.getCardLastFourDigits());
+        assertEquals("wrong card type", "VISA", creditCard.getCardType());
+        assertEquals("wrong card sub type", "CREDIT", creditCard.getCardSubType());
+        assertEquals("wrong expiration month", 12, creditCard.getExpirationMonth().intValue());
+        assertEquals("wrong expiration year", 2020, creditCard.getExpirationYear().intValue());
     }
 
     @Test
@@ -87,7 +121,6 @@ public class SdkConfigurationTests extends TestCase {
         assertNotNull("missing shipping contact info", shippingContactInfo);
         assertEquals("Missing country", "us", shippingContactInfo.getCountry());
     }
-
 
 
 }

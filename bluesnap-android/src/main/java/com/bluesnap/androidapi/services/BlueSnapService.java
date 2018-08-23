@@ -5,11 +5,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.AppExecutors;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
+import com.bluesnap.androidapi.models.Currency;
+import com.bluesnap.androidapi.models.PriceDetails;
+import com.bluesnap.androidapi.models.PurchaseDetails;
+import com.bluesnap.androidapi.models.Rates;
+import com.bluesnap.androidapi.models.SDKConfiguration;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.utils.JsonParser;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -392,7 +405,6 @@ public class BlueSnapService {
                     } catch (JSONException e) {
                         Log.e(TAG, "json parsing exception", e);
                     }
-                    Log.e(TAG, "PayPal service error");
                     getAppExecutors().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -403,10 +415,11 @@ public class BlueSnapService {
                 } else {
                     errorDescription = new JSONObject();
                     try {
-                        //todo
-                        // errorDescription.put("errorName", responseString.replaceAll("\"", "").toUpperCase());
-                        errorDescription.put("code", response.getResponseCode());
-                        //  errorDescription.put("description", responseString.replaceAll("\"", ""));
+                        if (response.getErrorResponseString() != null) {
+                            errorDescription.put("errorName", response.getErrorResponseString().replaceAll("\"", "").toUpperCase());
+                            errorDescription.put("code", response.getResponseCode());
+                            errorDescription.put("description", response.getErrorResponseString().replaceAll("\"", ""));
+                        }
                         Log.e(TAG, "PayPal service error");
                     } catch (JSONException e) {
                         Log.e(TAG, "json parsing exception", e);

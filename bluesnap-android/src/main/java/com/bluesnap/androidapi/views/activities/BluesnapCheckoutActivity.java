@@ -12,13 +12,21 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.PriceDetails;
+import com.bluesnap.androidapi.models.SDKConfiguration;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -265,16 +273,32 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
                         title = getString(R.string.ERROR);
                     }
-                    if (null != message)
-                        BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this
-                                , message, title);
+                    if (null != message) {
+                        String finalMessage = message;
+                        String finalTitle = title;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, finalMessage, finalTitle);
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     Log.e(TAG, "json parsing exception", e);
-                    BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
+                        }
+                    });
                 } finally {
-                    progressBar.setVisibility(View.INVISIBLE);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
-
             }
         });
 
