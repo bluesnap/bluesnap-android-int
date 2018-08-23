@@ -63,6 +63,111 @@ public class SdkConfigurationTests extends TestCase {
     }
 
     @Test
+    public void sdkConfiguration_shopper_tests() {
+        assertNotNull(sdkConfiguration);
+        Shopper shopper = sdkConfiguration.getShopper();
+        assertNotNull("Shopper is null", shopper);
+
+
+        assertEquals("wrong first name", "aaa2", shopper.getFirstName());
+        assertEquals("wrong last name", "bbb2", shopper.getLastName());
+        assertEquals("wrong email", "two@two.com", shopper.getEmail());
+        assertEquals("wrong country", "ca", shopper.getCountry());
+        assertEquals("wrong state", "ON", shopper.getState());
+        assertEquals("wrong address", "billing address2", shopper.getAddress());
+        assertEquals("wrong address2", "", shopper.getAddress2());
+        assertEquals("wrong city", "billing city2", shopper.getCity());
+        assertEquals("wrong zip", "123452", shopper.getZip());
+        assertEquals("wrong shopper currency", "USD", shopper.getShopperCurrency());
+        assertEquals("wrong vaulted shopper id", 22868797, shopper.getVaultedShopperId());
+        assertNull("lastPaymentInfo is not null", shopper.getLastPaymentInfo());
+
+        sdkConfiguration_payment_sources_test(shopper.getPreviousPaymentSources());
+        assertEquals("wrong newCreditCardInfo", shopper.getNewCreditCardInfo(), shopper.getPreviousPaymentSources().getPreviousCreditCardInfos().get(0));
+    }
+
+    public void sdkConfiguration_payment_sources_test(PaymentSources paymentSources) {
+        assertNotNull("PreviousPaymentSources is null", paymentSources);
+        assertNotNull("previousCreditCardInfos is null", paymentSources.getPreviousCreditCardInfos());
+        sdkConfiguration_credit_card_info_test(paymentSources.getPreviousCreditCardInfos().get(0));
+    }
+
+    public void sdkConfiguration_credit_card_info_test(CreditCardInfo creditCardInfo) {
+        assertNotNull("creditCardInfo is null", creditCardInfo);
+        BillingContactInfo billingContactInfo = creditCardInfo.getBillingContactInfo();
+        CreditCard creditCard = creditCardInfo.getCreditCard();
+
+        sdkConfiguration_billing_info_test(billingContactInfo);
+        sdkConfiguration_credit_card_test(creditCard);
+    }
+
+    public void sdkConfiguration_billing_info_test(BillingContactInfo billingContactInfo) {
+        assertNotNull("billingContactInfo is null", billingContactInfo);
+
+        assertEquals("wrong first name", "billingFirstName", billingContactInfo.getFirstName());
+        assertEquals("wrong last name", "billingLastName", billingContactInfo.getLastName());
+        assertEquals("wrong address", "10 Main St", billingContactInfo.getAddress());
+        assertEquals("wrong address2", "Apt 1", billingContactInfo.getAddress2());
+        assertEquals("wrong state", "MA", billingContactInfo.getState());
+        assertEquals("wrong zip", "01752", billingContactInfo.getZip());
+        assertEquals("wrong Country", "us", billingContactInfo.getCountry());
+        assertEquals("wrong city", "", billingContactInfo.getCity());
+        assertEquals("wrong email", "", billingContactInfo.getEmail());
+    }
+
+    public void sdkConfiguration_credit_card_test(CreditCard creditCard) {
+        assertNotNull("creditCard is null", creditCard);
+
+        assertEquals("wrong card last four digits", "1111", creditCard.getCardLastFourDigits());
+        assertEquals("wrong card type", "VISA", creditCard.getCardType());
+        assertEquals("wrong card sub type", "CREDIT", creditCard.getCardSubType());
+        assertEquals("wrong expiration month", new Integer(12), creditCard.getExpirationMonth());
+        assertEquals("wrong expiration year", new Integer(2020), creditCard.getExpirationYear());
+    }
+
+    @Test
+    public void sdkConfiguration_shipping_contact_info_tests() {
+        ShippingContactInfo shippingContactInfo = sdkConfiguration.getShopper().getShippingContactInfo();
+        assertNotNull("shippingContactInfo is null", shippingContactInfo);
+        assertEquals("wrong first name", "aaa2", shippingContactInfo.getFirstName());
+        assertEquals("wrong last name", "bbb2", shippingContactInfo.getLastName());
+        assertEquals("wrong address", "shipping address2", shippingContactInfo.getAddress());
+        assertEquals("wrong address2", "", shippingContactInfo.getAddress2());
+        assertEquals("wrong state", "NY", shippingContactInfo.getState());
+        assertEquals("wrong zip", "123452", shippingContactInfo.getZip());
+        assertEquals("wrong Country", "us", shippingContactInfo.getCountry());
+        assertEquals("wrong city", "shipping city2", shippingContactInfo.getCity());
+    }
+
+    @Test
+    public void sdkConfiguration_kount_tests() {
+        assertNotNull(sdkConfiguration);
+        assertEquals("wrong kount merchant Id", 700000, sdkConfiguration.getKountMerchantId());
+    }
+
+    @Test
+    public void sdkConfiguration_rates_tests() {
+        assertNotNull(sdkConfiguration);
+        Rates rates = sdkConfiguration.getRates();
+        assertNotNull("Rates is null", rates);
+        assertEquals("wrong merchant store currency", "USD", rates.getMerchantStoreCurrency());
+        assertEquals("wrong merchant store currency name", "US Dollar", rates.getMerchantStoreCurrencyName());
+
+        ArrayList<Currency> currenciesArrayList = rates.getCurrencies();
+        assertNotNull("Currencies is null", currenciesArrayList);
+        assertEquals("wrong number of currencies", NUMBER_OF_CURRENCIES, currenciesArrayList.size());
+
+        sdkConfiguration_currency_test(currenciesArrayList.get(0));
+    }
+
+    public void sdkConfiguration_currency_test(Currency firstCurrency) {
+        assertEquals("wrong quote currency", "EUR", firstCurrency.getQuoteCurrency());
+        assertEquals("wrong quote currency name", "Euro", firstCurrency.getQuoteCurrencyName());
+        assertEquals("wrong fraction digits", Double.parseDouble("2"), firstCurrency.getFractionDigits());
+        assertEquals("wrong conversion rate", Double.parseDouble("0.776349"), firstCurrency.getConversionRate());
+    }
+
+    @Test
     public void sdkConfiguration_supportedPaymentMethods_tests() {
         assertNotNull(sdkConfiguration);
         SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
@@ -142,111 +247,4 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong credit card regex number 14", "(^62(([4-6]|8)[0-9]{13,16}|2[2-9][0-9]{12,15}))$", creditCardRegex.get("CHINA_UNION_PAY"));
         assertEquals("wrong credit card regex number 15", "^((3(6[1-4]|77451))|(4(059(?!34)|150|201|561|562|533|556|97))|(5(0[1-4]|13|30066|341[0-1]|587[0-2]|6|8))|(6(27244|390|75[1-6]|799999998))).*", creditCardRegex.get("CARTE_BLEUE"));
     }
-
-    @Test
-    public void sdkConfiguration_shopper_tests() {
-        assertNotNull(sdkConfiguration);
-        Shopper shopper = sdkConfiguration.getShopper();
-        assertNotNull("Shopper is null", shopper);
-
-
-        assertEquals("wrong first name", "aaa2", shopper.getFirstName());
-        assertEquals("wrong last name", "bbb2", shopper.getLastName());
-        assertEquals("wrong email", "two@two.com", shopper.getEmail());
-        assertEquals("wrong country", "ca", shopper.getCountry());
-        assertEquals("wrong state", "ON", shopper.getState());
-        assertEquals("wrong address", "billing address2", shopper.getAddress());
-        assertEquals("wrong address2", "", shopper.getAddress2());
-        assertEquals("wrong city", "billing city2", shopper.getCity());
-        assertEquals("wrong zip", "123452", shopper.getZip());
-        assertEquals("wrong shopper currency", "USD", shopper.getShopperCurrency());
-        assertEquals("wrong vaulted shopper id", 22868797, shopper.getVaultedShopperId());
-        assertNull("lastPaymentInfo is not null", shopper.getLastPaymentInfo());
-
-        sdkConfiguration_payment_sources_test(shopper.getPreviousPaymentSources());
-        assertEquals("wrong newCreditCardInfo", shopper.getNewCreditCardInfo(), shopper.getPreviousPaymentSources().getPreviousCreditCardInfos().get(0));
-    }
-
-    public void sdkConfiguration_payment_sources_test(PaymentSources paymentSources) {
-        assertNotNull("PreviousPaymentSources is null", paymentSources);
-        assertNotNull("previousCreditCardInfos is null", paymentSources.getPreviousCreditCardInfos());
-        sdkConfiguration_credit_card_info_test(paymentSources.getPreviousCreditCardInfos().get(0));
-    }
-
-    public void sdkConfiguration_credit_card_info_test(CreditCardInfo creditCardInfo) {
-        assertNotNull("creditCardInfo is null", creditCardInfo);
-        BillingContactInfo billingContactInfo = creditCardInfo.getBillingContactInfo();
-        CreditCard creditCard = creditCardInfo.getCreditCard();
-
-        sdkConfiguration_billing_info_test(billingContactInfo);
-        sdkConfiguration_credit_card_test(creditCard);
-    }
-
-    public void sdkConfiguration_billing_info_test(BillingContactInfo billingContactInfo) {
-        assertNotNull("billingContactInfo is null", billingContactInfo);
-
-        assertEquals("wrong first name", "billingFirstName", billingContactInfo.getFirstName());
-        assertEquals("wrong last name", "billingLastName", billingContactInfo.getLastName());
-        assertEquals("wrong address", "10 Main St", billingContactInfo.getAddress());
-        assertEquals("wrong address2", "Apt 1", billingContactInfo.getAddress2());
-        assertEquals("wrong state", "MA", billingContactInfo.getState());
-        assertEquals("wrong zip", "01752", billingContactInfo.getZip());
-        assertEquals("wrong Country", "us", billingContactInfo.getCountry());
-        assertEquals("wrong city", "", billingContactInfo.getCity());
-        assertEquals("wrong email", "", billingContactInfo.getEmail());
-    }
-
-    public void sdkConfiguration_credit_card_test(CreditCard creditCard) {
-        assertNotNull("creditCard is null", creditCard);
-
-        assertEquals("wrong card last four digits", "1111", creditCard.getCardLastFourDigits());
-        assertEquals("wrong card type", "VISA", creditCard.getCardType());
-        assertEquals("wrong card sub type", "CREDIT", creditCard.getCardSubType());
-        assertEquals("wrong expiration month", new Integer(12), creditCard.getExpirationMonth());
-        assertEquals("wrong expiration year", new Integer(2020), creditCard.getExpirationYear());
-    }
-
-    @Test
-    public void sdkConfiguration_kount_tests() {
-        assertNotNull(sdkConfiguration);
-        assertEquals("wrong kount merchant Id", 700000, sdkConfiguration.getKountMerchantId());
-    }
-
-    @Test
-    public void sdkConfiguration_rates_tests() {
-        assertNotNull(sdkConfiguration);
-        Rates rates = sdkConfiguration.getRates();
-        assertNotNull("Rates is null", rates);
-        assertEquals("wrong merchant store currency", "USD", rates.getMerchantStoreCurrency());
-        assertEquals("wrong merchant store currency name", "US Dollar", rates.getMerchantStoreCurrencyName());
-
-        ArrayList<Currency> currenciesArrayList = rates.getCurrencies();
-        assertNotNull("Currencies is null", currenciesArrayList);
-        assertEquals("wrong number of currencies", NUMBER_OF_CURRENCIES, currenciesArrayList.size());
-
-        sdkConfiguration_currency_test(currenciesArrayList.get(0));
-    }
-
-    public void sdkConfiguration_currency_test(Currency firstCurrency) {
-        assertEquals("wrong quote currency", "EUR", firstCurrency.getQuoteCurrency());
-        assertEquals("wrong quote currency name", "Euro", firstCurrency.getQuoteCurrencyName());
-        assertEquals("wrong fraction digits", Double.parseDouble("2"), firstCurrency.getFractionDigits());
-        assertEquals("wrong conversion rate", Double.parseDouble("0.776349"), firstCurrency.getConversionRate());
-    }
-
-    @Test
-    public void sdkConfiguration_shipping_contact_info_tests() {
-        ShippingContactInfo shippingContactInfo = sdkConfiguration.getShopper().getShippingContactInfo();
-        assertNotNull("shippingContactInfo is null", shippingContactInfo);
-        assertEquals("wrong first name", "aaa2", shippingContactInfo.getFirstName());
-        assertEquals("wrong last name", "bbb2", shippingContactInfo.getLastName());
-        assertEquals("wrong address", "shipping address2", shippingContactInfo.getAddress());
-        assertEquals("wrong address2", "", shippingContactInfo.getAddress2());
-        assertEquals("wrong state", "NY", shippingContactInfo.getState());
-        assertEquals("wrong zip", "123452", shippingContactInfo.getZip());
-        assertEquals("wrong Country", "us", shippingContactInfo.getCountry());
-        assertEquals("wrong city", "shipping city2", shippingContactInfo.getCity());
-    }
-
-
 }
