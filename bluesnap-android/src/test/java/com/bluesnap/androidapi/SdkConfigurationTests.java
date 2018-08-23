@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi;
 
 import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PaymentSources;
 import com.bluesnap.androidapi.models.SDKConfiguration;
@@ -90,6 +91,13 @@ public class SdkConfigurationTests extends TestCase {
     public void sdkconfiguration_credit_card_info_tests(CreditCardInfo creditCardInfo) {
         assertNotNull("creditCardInfo is null", creditCardInfo);
         BillingContactInfo billingContactInfo = creditCardInfo.getBillingContactInfo();
+        CreditCard creditCard = creditCardInfo.getCreditCard();
+
+        sdkconfiguration_billing_info_tests(billingContactInfo);
+        sdkconfiguration_credit_card_tests(creditCard);
+    }
+
+    public void sdkconfiguration_billing_info_tests(BillingContactInfo billingContactInfo) {
         assertNotNull("billingContactInfo is null", billingContactInfo);
 
         assertEquals("wrong first name", "billingFirstName", billingContactInfo.getFirstName());
@@ -101,8 +109,16 @@ public class SdkConfigurationTests extends TestCase {
         assertEquals("wrong Country", "us", billingContactInfo.getCountry());
         assertEquals("wrong city", "", billingContactInfo.getCity());
         assertEquals("wrong email", "", billingContactInfo.getEmail());
+    }
 
+    public void sdkconfiguration_credit_card_tests(CreditCard creditCard) {
+        assertNotNull("creditCard is null", creditCard);
 
+        assertEquals("wrong card last four digits", "1111", creditCard.getCardLastFourDigits());
+        assertEquals("wrong card type", "VISA", creditCard.getCardType());
+        assertEquals("wrong card sub type", "CREDIT", creditCard.getCardSubType());
+        assertEquals("wrong expiration month", "12", creditCard.getExpirationMonth());
+        assertEquals("wrong expiration year", "2020", creditCard.getExpirationYear());
     }
 
     @Test
@@ -113,7 +129,6 @@ public class SdkConfigurationTests extends TestCase {
         assertNotNull("missing shipping contact info", shippingContactInfo);
         assertEquals("Missing country", "us", shippingContactInfo.getCountry());
     }
-
 
 
 }
