@@ -12,7 +12,7 @@ import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
@@ -85,7 +85,7 @@ import static org.hamcrest.Matchers.containsString;
  *
  */
 public class EspressoBasedTest {
-    private static final String TAG = EspressoBasedTest.class.getSimpleName();
+    public static final String TAG = EspressoBasedTest.class.getSimpleName();
     BlueSnapService blueSnapService = BlueSnapService.getInstance();
     SDKConfiguration sDKConfiguration = null;
     NumberFormat df;
@@ -146,7 +146,7 @@ public class EspressoBasedTest {
     }
 
     @Rule
-    public IntentsTestRule<BluesnapCheckoutActivity> mActivityRule = new IntentsTestRule<>(
+    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, false, false);
     protected BluesnapCheckoutActivity mActivity;
 
@@ -337,7 +337,7 @@ public class EspressoBasedTest {
     }
 
     public void new_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
-        intending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
+        //ƒintending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
 
         int buttonComponent = (withShipping && !shippingSameAsBilling) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
