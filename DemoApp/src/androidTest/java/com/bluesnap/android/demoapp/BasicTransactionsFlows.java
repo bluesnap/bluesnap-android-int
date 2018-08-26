@@ -153,7 +153,7 @@ public class BasicTransactionsFlows extends EspressoBasedTest {
 
         // onView(withId(R.id.rateSpinner)).perform(click(), closeSoftKeyboard());
         onView(withId(R.id.productPriceEditText))
-                .perform(typeText(Double.toString(purchaseAmount)), ViewActions.closeSoftKeyboard());
+                .perform(typeText(Double.toString(roundedPurchaseAmount)), ViewActions.closeSoftKeyboard());
 
         if (fullInfo)
             onView(withId(R.id.billingSwitch)).perform(swipeRight());
@@ -165,7 +165,7 @@ public class BasicTransactionsFlows extends EspressoBasedTest {
             onView(withId(R.id.emailSwitch)).perform(swipeRight());
 
         onView(withId(R.id.merchantAppSubmitButton)).perform(click());
-        return purchaseAmount;
+        return roundedPurchaseAmount;
     }
 
 
@@ -184,7 +184,7 @@ public class BasicTransactionsFlows extends EspressoBasedTest {
 //        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
+        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - roundedPurchaseAmount) < 0.00000000001);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
     }
 

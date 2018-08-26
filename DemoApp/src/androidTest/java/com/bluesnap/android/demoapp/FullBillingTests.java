@@ -23,7 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class FullBillingTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.setBillingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
@@ -155,7 +155,7 @@ public class FullBillingTests extends EspressoBasedTest {
      */
 
     public void pay_button_in_billing_validation() {
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, 0.0);
     }
 
     /**

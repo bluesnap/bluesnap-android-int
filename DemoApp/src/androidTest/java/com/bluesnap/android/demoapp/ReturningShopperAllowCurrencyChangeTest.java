@@ -38,7 +38,7 @@ public class ReturningShopperAllowCurrencyChangeTest extends EspressoBasedTest {
 
     @Before
     public void setup() throws BSPaymentRequestException, InterruptedException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.setShippingRequired(true);
         sdkRequest.setAllowCurrencyChange(isAllowed);
         setupAndLaunch(sdkRequest);

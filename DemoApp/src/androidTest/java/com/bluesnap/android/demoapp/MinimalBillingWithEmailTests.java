@@ -29,7 +29,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.setEmailRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
@@ -113,7 +113,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * the correct currency symbol and amount
      */
     public void pay_button_in_billing_validation() {
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_billing_validation", R.id.billingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, 0.0);
     }
 
     /**

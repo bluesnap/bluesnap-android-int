@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.hasToString;
 public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.setBillingRequired(true);
         sdkRequest.setShippingRequired(true);
         sdkRequest.setEmailRequired(true);
@@ -182,7 +182,7 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      */
     public void pay_button_in_shipping_validation() {
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, tax);
     }
 
     /**
@@ -208,13 +208,13 @@ public class FullBillingWithShippingWithEmailTests extends EspressoBasedTest {
      * It checks that the shipping button changed to pay, and that it presents the correct amount.
      */
     public void shipping_same_as_billing_view_validation() {
-//        Double amountAfterTax = TestUtils.round_amount(purchaseAmount + taxAmount);
+//        Double amountAfterTax = TestUtils.round_amount(roundedPurchaseAmount + taxAmount);
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
 
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
 //        String buyNowButtonText = TestUtils.getText(withId(R.id.buyNowButton));
         //verify that the "Shipping" button has changed to "Pay ..."
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("shipping_same_as_billing_view_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("shipping_same_as_billing_view_validation", R.id.billingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, tax);
 
         if (defaultCountryKey.equals("US"))
             //verify that the amount tax shipping component is displayed

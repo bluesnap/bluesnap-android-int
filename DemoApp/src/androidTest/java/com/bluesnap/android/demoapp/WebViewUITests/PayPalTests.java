@@ -1,17 +1,27 @@
 package com.bluesnap.android.demoapp.WebViewUITests;
 
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.web.webdriver.DriverAtoms;
 import android.support.test.espresso.web.webdriver.Locator;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.bluesnap.android.demoapp.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.EspressoBasedTest;
 import com.bluesnap.android.demoapp.R;
+import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.activities.WebViewActivity;
 
+import junit.framework.Assert;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,10 +30,17 @@ import org.junit.runner.RunWith;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.web.assertion.WebViewAssertions.webMatches;
+import static android.support.test.espresso.web.model.Atoms.getCurrentUrl;
 import static android.support.test.espresso.web.sugar.Web.onWebView;
 import static android.support.test.espresso.web.webdriver.DriverAtoms.clearElement;
 import static android.support.test.espresso.web.webdriver.DriverAtoms.findElement;
 import static android.support.test.espresso.web.webdriver.DriverAtoms.webClick;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
+import static java.lang.Thread.sleep;
+import static junit.framework.Assert.fail;
+import static org.hamcrest.CoreMatchers.containsString;
 
 /**
  * Created by sivani on 23/08/2018.
@@ -31,6 +48,12 @@ import static android.support.test.espresso.web.webdriver.DriverAtoms.webClick;
 
 @RunWith(AndroidJUnit4.class)
 public class PayPalTests extends EspressoBasedTest {
+
+    private final String SANDBOX_RETRIEVE_PAYPAL_TRANSACTION = "alt-transactions/";
+    private final String SANDBOX_PAYPAL_EMAIL = "apiShopper@bluesnap.com";
+    private final String SANDBOX_PAYPAL_PASSWORD = "Plimus123";
+    private String paypalInvoiceId;
+    private String retrievsTransactionResponse;
 
     @Rule
     public ActivityTestRule<WebViewActivity> mActivityRule =
@@ -46,16 +69,65 @@ public class PayPalTests extends EspressoBasedTest {
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         setupAndLaunch(sdkRequest);
-        onView(withId(R.id.payPalButton)).perform(click());
     }
 
     @Test
-    public void pay_pal_transaction_test() {
+    public void pay_pal_basic_transaction_test() throws InterruptedException {
+        onView(withId(R.id.payPalButton)).perform(click());
+
+        //wait for web to load
+        sleep(15000);
+
+        //verify that paypal url opened up
+        onWebView().check(webMatches(getCurrentUrl(), containsString(Constants.getPaypalSandUrl())));
+
+        loginToPayPal();
+        submitPayPalPayment();
+
+        sdkResult = BlueSnapService.getInstance().getSdkResult();
+
+        //wait for transaction to finish
+        while ((paypalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)
+            sleep(5000);
+
+        //verify transaction status
+        retrievePayPalTransaction();
+    }
+
+    @Test
+    public void pay_pal_transaction_after_changing_currency_test() throws InterruptedException {
+        onView(withId(R.id.newCardButton)).perform(click());
+        CurrencyChangeTesterCommon.changeCurrency("GBP");
+        updateCurrencyAndAmount("GBP");
+
+        Espresso.pressBack();
+
+        onView(withId(R.id.payPalButton)).perform(click());
+
+        //wait for web to load
+        sleep(20000);
+
+        loginToPayPal();
+        submitPayPalPayment();
+
+        sdkResult = blueSnapService.getSdkResult();
+
+        //wait for transaction to finish
+        while ((paypalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)
+            sleep(5000);
+
+        //verify transaction status
+        retrievePayPalTransaction();
+    }
+
+    void loginToPayPal() throws InterruptedException {
         try {
+//            onWebView()
+//                    .check(webContent(hasElementWithId("email")));
             onWebView()
                     .withElement(findElement(Locator.ID, "email")) // similar to onView(withId(...))
                     .perform(clearElement())
-                    .perform(DriverAtoms.webKeys("apiShopper@bluesnap.com"))
+                    .perform(DriverAtoms.webKeys(SANDBOX_PAYPAL_EMAIL))
 
                     .withElement(findElement(Locator.ID, "btnNext"))
                     .perform(webClick());
@@ -68,7 +140,7 @@ public class PayPalTests extends EspressoBasedTest {
             onWebView()
                     .withElement(findElement(Locator.ID, "password"))
                     .perform(clearElement())
-                    .perform(DriverAtoms.webKeys("Plimus123")) // Similar to perform(click())
+                    .perform(DriverAtoms.webKeys(SANDBOX_PAYPAL_PASSWORD)) // Similar to perform(click())
 
                     .withElement(findElement(Locator.ID, "btnLogin"))
                     .perform(webClick());
@@ -77,11 +149,71 @@ public class PayPalTests extends EspressoBasedTest {
             Log.d(TAG, "Password is already filled in");
         }
 
-//        //check the id of this element
-//        onWebView().withNoTimeout()
-//                .withElement(findElement(Locator.ID, "btnPay"))
-//                .perform(webClick());
+        //wait for login
+        sleep(30000);
+    }
 
+    void submitPayPalPayment() throws InterruptedException {
+        onWebView()
+                .withElement(findElement(Locator.ID, "confirmButtonTop"))
+                .perform(webClick());
+    }
+
+    public void updateCurrencyAndAmount(String currencyCode) {
+        checkoutCurrency = currencyCode;
+        double conversionRate = blueSnapService.getsDKConfiguration().getRates().getCurrencyByCode(currencyCode).getConversionRate();
+        purchaseAmount = purchaseAmount * conversionRate;
+    }
+
+    void retrievePayPalTransaction() {
+        retrievePayPalTransactionService(new RetrievePayPalTransactionInterface() {
+            @Override
+            public void onServiceSuccess() {
+                getTransactionStatus();
+            }
+
+            @Override
+            public void onServiceFailure() {
+                fail("Cannot obtain transaction status from merchant server");
+            }
+        });
+    }
+
+    private void retrievePayPalTransactionService(final RetrievePayPalTransactionInterface retrievePayPalTransaction) {
+        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_RETRIEVE_PAYPAL_TRANSACTION + paypalInvoiceId, "application/json", "application/json", sahdboxHttpHeaders);
+        int code = response.getResponseCode();
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+            retrievsTransactionResponse = response.getResponseString();
+            retrievePayPalTransaction.onServiceSuccess();
+        } else {
+            Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
+            retrievePayPalTransaction.onServiceFailure();
+        }
+    }
+
+    private void getTransactionStatus() {
+        try {
+            JSONObject jsonObject = new JSONObject(retrievsTransactionResponse);
+
+            JSONObject jsonObjectProcessingInfo = jsonObject.getJSONObject("processingInfo");
+//            JSONObject jsonObjectProcessingStatus = jsonObject.getJSONObject("processingStatus");
+//            JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
+//            JSONObject jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(0).getJSONObject("billingContactInfo");
+
+            String transactionStatus = getOptionalString(jsonObjectProcessingInfo, "processingStatus");
+            Assert.assertEquals("PayPal transaction failed!", "SUCCESS", transactionStatus);
+
+            String transactionCurrency = getOptionalString(jsonObject, "currency");
+            Assert.assertEquals("Wrong transaction amount", checkoutCurrency, transactionCurrency);
+
+            String transactionAmount = getOptionalString(jsonObject, "amount");
+            Assert.assertEquals("Wrong transaction amount", Double.toString(purchaseAmount), transactionAmount);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail("Error on parse transaction status");
+        }
     }
 
 }

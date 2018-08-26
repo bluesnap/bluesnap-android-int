@@ -114,8 +114,8 @@ public class ReturningShopperExistingCardBasicFlows extends BasicTransactionsFlo
         TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
 
         if (withShipping) {
-            if (billingCountryKey.equals("US")) //updating purchaseAmount to include tax
-                purchaseAmount *= 1.05;
+            if (billingCountryKey.equals("US")) //updating roundedPurchaseAmount to include tax
+                roundedPurchaseAmount *= 1.05;
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, "United States");

@@ -34,7 +34,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountry();
@@ -159,7 +159,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
     public void pay_button_in_billing_validation() {
         double tax = BILLING_COUNTRY.equals("US") ? taxAmount : 0.00;
         CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation in " + returningShopper.getShopperDescription(),
-                R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+                R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, roundedPurchaseAmount, tax);
     }
 
     /**
@@ -249,7 +249,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_in_shipping_validation in " + returningShopper.getShopperDescription(), R.id.amountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
+                TestUtils.getAmountInString(df, roundedPurchaseAmount), TestUtils.getAmountInString(df, taxAmount));
     }
 
     /**

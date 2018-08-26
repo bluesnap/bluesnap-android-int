@@ -34,7 +34,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.setShippingRequired(true);
         setupAndLaunch(sdkRequest);
         onView(withId(R.id.newCardButton)).perform(click());
@@ -349,7 +349,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void pay_button_in_shipping_validation() {
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, defaultCountryValue);
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, tax);
     }
 
     /**
@@ -421,7 +421,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
     public void change_currency_in_shipping_amount_validation() {
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, defaultCountryValue);
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
-        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_shipping_amount_validation", R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount + tax));
+        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_shipping_amount_validation", R.id.shippingButtonComponentView, checkoutCurrency, Double.toString(roundedPurchaseAmount + tax));
     }
 
     /**
@@ -434,7 +434,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_in_shipping_validation", R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
+                TestUtils.getAmountInString(df, roundedPurchaseAmount), TestUtils.getAmountInString(df, taxAmount));
     }
 
 }
