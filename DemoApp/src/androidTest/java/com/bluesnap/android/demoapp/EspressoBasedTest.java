@@ -173,6 +173,10 @@ public class EspressoBasedTest {
     }
 
     public void setupAndLaunch(SdkRequest sdkRequest) throws InterruptedException, BSPaymentRequestException {
+        setupAndLaunch(sdkRequest, "USD");
+    }
+
+    public void setupAndLaunch(SdkRequest sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
         doSetup();
         setNumberFormat();
         sdkRequest.setTaxCalculator(new TaxCalculator() {
@@ -190,7 +194,7 @@ public class EspressoBasedTest {
             }
         });
 
-        setSDKToken();
+        setSDKToken(merchantStoreCurrency);
         Intent intent = new Intent();
         blueSnapService.setSdkRequest(sdkRequest);
         mActivityRule.launchActivity(intent);
@@ -203,7 +207,7 @@ public class EspressoBasedTest {
         defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
     }
 
-    public void setSDKToken() throws InterruptedException {
+    public void setSDKToken(String merchantStoreCurrency) throws InterruptedException {
         try {
             String userCredentials = SANDBOX_USER + ":" + SANDBOX_PASS;
             String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), 0));
@@ -238,7 +242,7 @@ public class EspressoBasedTest {
                                 };
                             }
                         };
-                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, null, new BluesnapServiceCallback() {
+                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, merchantStoreCurrency, null, new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");

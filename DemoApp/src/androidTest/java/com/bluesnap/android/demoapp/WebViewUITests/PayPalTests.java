@@ -52,8 +52,8 @@ public class PayPalTests extends EspressoBasedTest {
     private final String SANDBOX_RETRIEVE_PAYPAL_TRANSACTION = "alt-transactions/";
     private final String SANDBOX_PAYPAL_EMAIL = "apiShopper@bluesnap.com";
     private final String SANDBOX_PAYPAL_PASSWORD = "Plimus123";
-    private String paypalInvoiceId;
-    private String retrievsTransactionResponse;
+    protected String payPalInvoiceId;
+    private String retrieveTransactionResponse;
 
     @Rule
     public ActivityTestRule<WebViewActivity> mActivityRule =
@@ -87,7 +87,7 @@ public class PayPalTests extends EspressoBasedTest {
         sdkResult = BlueSnapService.getInstance().getSdkResult();
 
         //wait for transaction to finish
-        while ((paypalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)
+        while ((payPalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)
             sleep(5000);
 
         //verify transaction status
@@ -98,7 +98,7 @@ public class PayPalTests extends EspressoBasedTest {
     public void pay_pal_transaction_after_changing_currency_test() throws InterruptedException {
         onView(withId(R.id.newCardButton)).perform(click());
         CurrencyChangeTesterCommon.changeCurrency("GBP");
-        updateCurrencyAndAmount("GBP");
+        updateCurrencyAndAmount("USD", "GBP");
 
         Espresso.pressBack();
 
@@ -113,12 +113,13 @@ public class PayPalTests extends EspressoBasedTest {
         sdkResult = blueSnapService.getSdkResult();
 
         //wait for transaction to finish
-        while ((paypalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)
+        while ((payPalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)
             sleep(5000);
 
         //verify transaction status
         retrievePayPalTransaction();
     }
+
 
     void loginToPayPal() throws InterruptedException {
         try {
@@ -159,10 +160,15 @@ public class PayPalTests extends EspressoBasedTest {
                 .perform(webClick());
     }
 
-    public void updateCurrencyAndAmount(String currencyCode) {
-        checkoutCurrency = currencyCode;
-        double conversionRate = blueSnapService.getsDKConfiguration().getRates().getCurrencyByCode(currencyCode).getConversionRate();
-        purchaseAmount = purchaseAmount * conversionRate;
+    public void updateCurrencyAndAmount(String oldCurrencyCode, String newCurrencyCode) {
+        checkoutCurrency = newCurrencyCode;
+        if (!oldCurrencyCode.equals("USD")) {
+            double conversionRateToUSD = blueSnapService.getsDKConfiguration().getRates().getCurrencyByCode(oldCurrencyCode).getConversionRate();
+            purchaseAmount = purchaseAmount / conversionRateToUSD;
+        }
+
+        double conversionRateFromUSD = blueSnapService.getsDKConfiguration().getRates().getCurrencyByCode(newCurrencyCode).getConversionRate();
+        purchaseAmount = purchaseAmount * conversionRateFromUSD;
     }
 
     void retrievePayPalTransaction() {
@@ -180,10 +186,9 @@ public class PayPalTests extends EspressoBasedTest {
     }
 
     private void retrievePayPalTransactionService(final RetrievePayPalTransactionInterface retrievePayPalTransaction) {
-        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_RETRIEVE_PAYPAL_TRANSACTION + paypalInvoiceId, "application/json", "application/json", sahdboxHttpHeaders);
-        int code = response.getResponseCode();
+        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_RETRIEVE_PAYPAL_TRANSACTION + payPalInvoiceId, "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
-            retrievsTransactionResponse = response.getResponseString();
+            retrieveTransactionResponse = response.getResponseString();
             retrievePayPalTransaction.onServiceSuccess();
         } else {
             Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
@@ -193,7 +198,7 @@ public class PayPalTests extends EspressoBasedTest {
 
     private void getTransactionStatus() {
         try {
-            JSONObject jsonObject = new JSONObject(retrievsTransactionResponse);
+            JSONObject jsonObject = new JSONObject(retrieveTransactionResponse);
 
             JSONObject jsonObjectProcessingInfo = jsonObject.getJSONObject("processingInfo");
 //            JSONObject jsonObjectProcessingStatus = jsonObject.getJSONObject("processingStatus");
