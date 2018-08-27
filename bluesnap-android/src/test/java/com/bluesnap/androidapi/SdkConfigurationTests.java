@@ -1,6 +1,13 @@
 package com.bluesnap.androidapi;
 
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
+import com.bluesnap.androidapi.models.PaymentSources;
+import com.bluesnap.androidapi.models.SDKConfiguration;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.utils.JsonParser;
 
 import junit.framework.TestCase;
@@ -81,8 +88,8 @@ public class SdkConfigurationTests extends TestCase {
 
     public void sdkconfiguration_payment_sources_tests(PaymentSources paymentSources) {
         assertNotNull("PreviousPaymentSources is null", paymentSources);
-        assertNotNull("previousCreditCardInfos is null", paymentSources.getPreviousCreditCardInfos());
-        sdkconfiguration_credit_card_info_tests(paymentSources.getPreviousCreditCardInfos().get(0));
+        assertNotNull("previousCreditCardInfos is null", paymentSources.getCreditCardInfos());
+        sdkconfiguration_credit_card_info_tests(paymentSources.getCreditCardInfos().get(0));
     }
 
     public void sdkconfiguration_credit_card_info_tests(CreditCardInfo creditCardInfo) {

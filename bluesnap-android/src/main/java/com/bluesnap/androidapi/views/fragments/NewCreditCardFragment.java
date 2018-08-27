@@ -179,9 +179,9 @@ public class NewCreditCardFragment extends BlueSnapFragment {
      * with the shopper created in this fragment
      */
     private void finishFromFragment() {
-        Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
-        Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
-        Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
+        //Log.d(TAG, "getCreditCard: " + newCreditCardInfo.getCreditCard());
+        //Log.d(TAG, "getBillingContactInfo: " + newCreditCardInfo.getBillingContactInfo());
+        //Log.d(TAG, "getShippingContactInfo: " + shopper.getShippingContactInfo());
         ((CreditCardActivity) getActivity()).finishFromFragment(shopper);
     }
 

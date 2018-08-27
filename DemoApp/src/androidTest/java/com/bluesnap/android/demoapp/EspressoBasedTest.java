@@ -413,7 +413,7 @@ public class EspressoBasedTest {
 
     public void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
         CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
-        while (getTokenizedSuccess(shopperCreditCard).equals("false")) {
+        while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
         }
