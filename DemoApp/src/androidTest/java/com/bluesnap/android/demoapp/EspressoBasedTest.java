@@ -329,9 +329,9 @@ public class EspressoBasedTest {
         setUrlConnection(returningShopperId);
         purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.setBillingRequired(withFullBilling);
-        sdkRequest.setEmailRequired(withEmail);
-        sdkRequest.setShippingRequired(withShipping);
+        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(withFullBilling);
+        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(withEmail);
+        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(withShipping);
 
         setupAndLaunch(sdkRequest);
     }
