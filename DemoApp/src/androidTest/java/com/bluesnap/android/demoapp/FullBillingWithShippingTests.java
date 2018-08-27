@@ -29,7 +29,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
         sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
         setupAndLaunch(sdkRequest);
@@ -174,7 +174,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
     public void pay_button_in_shipping_validation() {
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, tax);
     }
 
     /**
@@ -207,7 +207,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_before_choosing_shipping_same_as_billing", R.id.amountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
+                TestUtils.getAmountInString(df, roundedPurchaseAmount), TestUtils.getAmountInString(df, taxAmount));
 
         //change to Spain- a country without shipping tax
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "Spain");
@@ -240,7 +240,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_after_choosing_shipping_same_as_billing", R.id.amountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
+                TestUtils.getAmountInString(df, roundedPurchaseAmount), TestUtils.getAmountInString(df, taxAmount));
 
     }
 

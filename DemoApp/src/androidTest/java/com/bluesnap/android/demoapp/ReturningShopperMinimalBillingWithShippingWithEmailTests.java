@@ -33,7 +33,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
         sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
         setupAndLaunch(sdkRequest);
@@ -147,7 +147,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
     public void pay_button_in_billing_validation() {
         double tax = BILLING_COUNTRY.equals("US") ? taxAmount : 0.00;
         CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation in " + returningShopper.getShopperDescription(),
-                R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+                R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, roundedPurchaseAmount, tax);
     }
 
     /**

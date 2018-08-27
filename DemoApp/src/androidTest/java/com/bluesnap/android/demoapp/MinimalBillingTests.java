@@ -25,7 +25,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         setupAndLaunch(sdkRequest);
 
         onView(withId(R.id.newCardButton)).perform(click());
@@ -136,7 +136,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * the correct currency symbol and amount
      */
     public void pay_button_in_billing_validation() {
-        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, 0.0);
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.billingButtonComponentView, checkoutCurrency, roundedPurchaseAmount, 0.0);
     }
 
     /**
@@ -184,7 +184,7 @@ public class MinimalBillingTests extends EspressoBasedTest {
      * and back to the origin one in billing, the amount remains the same
      */
     public void change_currency_in_billing_amount_validation() {
-        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_billing_amount_validation", R.id.billingButtonComponentView, checkoutCurrency, Double.toString(purchaseAmount));
+        CurrencyChangeTesterCommon.change_currency_amount_validation("change_currency_in_billing_amount_validation", R.id.billingButtonComponentView, checkoutCurrency, Double.toString(roundedPurchaseAmount));
     }
 
     /**

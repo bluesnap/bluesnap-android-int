@@ -12,8 +12,7 @@ import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
@@ -64,8 +63,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.intent.Intents.intending;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtraWithKey;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -86,18 +83,19 @@ import static org.hamcrest.Matchers.containsString;
  *
  */
 public class EspressoBasedTest {
-    private static final String TAG = EspressoBasedTest.class.getSimpleName();
-    BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    public static final String TAG = EspressoBasedTest.class.getSimpleName();
+    protected BlueSnapService blueSnapService = BlueSnapService.getInstance();
     SDKConfiguration sDKConfiguration = null;
-    NumberFormat df;
+    protected NumberFormat df;
     RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
 
     protected String defaultCountryKey;
     String defaultCountryValue;
     protected String checkoutCurrency = "USD";
-    protected double purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
+    protected double purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
+    protected double roundedPurchaseAmount = TestUtils.round_amount(purchaseAmount);
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
-    double taxAmount = TestUtils.round_amount(purchaseAmount * taxPercent);
+    double taxAmount = TestUtils.round_amount(roundedPurchaseAmount * taxPercent);
 
     boolean isReturningShoppper = false;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
@@ -107,7 +105,7 @@ public class EspressoBasedTest {
     IdlingResource transactionMessageIR;
     private boolean isSdkRequestNull = false;
     DemoTransactions transactions;
-    SdkResult sdkResult;
+    protected SdkResult sdkResult;
     String emailFromServer;
 
     private static final String SANDBOX_GET_SHOPPER = "vaulted-shoppers/";
@@ -121,7 +119,7 @@ public class EspressoBasedTest {
     public Context applicationContext;
 //    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
 
-    List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
+    protected List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
 
 
     public EspressoBasedTest() {
@@ -147,7 +145,7 @@ public class EspressoBasedTest {
     }
 
     @Rule
-    public IntentsTestRule<BluesnapCheckoutActivity> mActivityRule = new IntentsTestRule<>(
+    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, false, false);
     protected BluesnapCheckoutActivity mActivity;
 
@@ -173,6 +171,10 @@ public class EspressoBasedTest {
     }
 
     public void setupAndLaunch(SdkRequest sdkRequest) throws InterruptedException, BSPaymentRequestException {
+        setupAndLaunch(sdkRequest, "USD");
+    }
+
+    public void setupAndLaunch(SdkRequest sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
         doSetup();
         setNumberFormat();
         sdkRequest.setTaxCalculator(new TaxCalculator() {
@@ -190,7 +192,7 @@ public class EspressoBasedTest {
             }
         });
 
-        setSDKToken();
+        setSDKToken(merchantStoreCurrency);
         Intent intent = new Intent();
         blueSnapService.setSdkRequest(sdkRequest);
         mActivityRule.launchActivity(intent);
@@ -203,7 +205,7 @@ public class EspressoBasedTest {
         defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
     }
 
-    public void setSDKToken() throws InterruptedException {
+    public void setSDKToken(String merchantStoreCurrency) throws InterruptedException {
         try {
             String userCredentials = SANDBOX_USER + ":" + SANDBOX_PASS;
             String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), 0));
@@ -238,7 +240,7 @@ public class EspressoBasedTest {
                                 };
                             }
                         };
-                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, null, new BluesnapServiceCallback() {
+                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, merchantStoreCurrency, null, new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");
@@ -325,11 +327,10 @@ public class EspressoBasedTest {
 
     public void returningShopperSetUp(boolean withFullBilling, boolean withEmail, boolean withShipping) throws BSPaymentRequestException, InterruptedException {
         String returningShopperId = "?shopperId=" + shopperId; //get the shopper id from last transaction
-        Intents.release();
         isReturningShoppper = true;
         setUrlConnection(returningShopperId);
-        purchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        roundedPurchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
+        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
         sdkRequest.getShopperCheckoutRequirements().setBillingRequired(withFullBilling);
         sdkRequest.getShopperCheckoutRequirements().setEmailRequired(withEmail);
         sdkRequest.getShopperCheckoutRequirements().setShippingRequired(withShipping);
@@ -338,7 +339,7 @@ public class EspressoBasedTest {
     }
 
     public void new_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
-        intending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
+        //ƒintending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
 
         int buttonComponent = (withShipping && !shippingSameAsBilling) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
@@ -360,8 +361,8 @@ public class EspressoBasedTest {
 
 
         if (withShipping) {
-            if (defaultCountryKey.equals("US")) //updating purchaseAmount to include tax
-                purchaseAmount = purchaseAmount * (1 + taxPercent); //TODO: add comment
+            if (defaultCountryKey.equals("US")) //updating roundedPurchaseAmount to include tax
+                roundedPurchaseAmount = roundedPurchaseAmount * (1 + taxPercent); //TODO: add comment
             if (!shippingSameAsBilling) {
                 onView(withId(R.id.buyNowButton)).perform(click());
                 ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, defaultCountryValue);
@@ -375,8 +376,6 @@ public class EspressoBasedTest {
      * for all 8 options: with/without full billing, shipping, email.
      */
     public void returning_shopper_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping) throws InterruptedException {
-        intending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
-
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
         //onView(withId(R.id.newCardButton)).perform(click());
@@ -394,8 +393,8 @@ public class EspressoBasedTest {
         TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
 
         if (withShipping) {
-            if (defaultCountryKey.equals("US") || isReturningShoppper) //updating purchaseAmount to include tax
-                purchaseAmount = purchaseAmount * (1 + taxPercent); //TODO: add comment
+            if (defaultCountryKey.equals("US") || isReturningShoppper) //updating roundedPurchaseAmount to include tax
+                roundedPurchaseAmount = roundedPurchaseAmount * (1 + taxPercent); //TODO: add comment
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, "United States");
@@ -428,7 +427,7 @@ public class EspressoBasedTest {
 //        Espresso.unregisterIdlingResources(transactionMessageIR);
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
+        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - roundedPurchaseAmount) < 0.00000000001);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
 
         makeTransaction(sdkResult, withFullBilling, withEmail, withShipping, shippingSameAsBilling);

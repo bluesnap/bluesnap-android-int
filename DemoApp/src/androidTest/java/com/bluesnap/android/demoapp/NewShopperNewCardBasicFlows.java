@@ -125,8 +125,8 @@ public class NewShopperNewCardBasicFlows extends BasicTransactionsFlows {
         onView(withId(R.id.buyNowButton)).perform(click());
 
         if (withShipping) {
-            if (billingCountryKey.equals("US")) //updating purchaseAmount to include tax
-                purchaseAmount *= 1.05; //TODO: add comment
+            if (billingCountryKey.equals("US")) //updating roundedPurchaseAmount to include tax
+                roundedPurchaseAmount *= 1.05; //TODO: add comment
             if (!shippingSameAsBilling) {
                 ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, shippingCountryValue);
                 ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, shippingCountryKey, true, false);
