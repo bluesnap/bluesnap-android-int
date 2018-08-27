@@ -11,6 +11,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
@@ -342,7 +343,8 @@ public class EspressoBasedTest {
         int buttonComponent = (withShipping && !shippingSameAsBilling) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
         new_card_basic_fill_info(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
+        ViewInteraction viewInteraction = onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))));
+        viewInteraction.perform(click());
         sdkResult = BlueSnapService.getInstance().getSdkResult();
         finish_demo_purchase(sdkResult, withFullBilling, withEmail, withShipping, shippingSameAsBilling);
     }
