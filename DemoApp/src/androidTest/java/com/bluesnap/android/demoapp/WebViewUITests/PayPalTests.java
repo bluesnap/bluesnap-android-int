@@ -1,6 +1,7 @@
 package com.bluesnap.android.demoapp.WebViewUITests;
 
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.espresso.web.webdriver.DriverAtoms;
 import android.support.test.espresso.web.webdriver.Locator;
 import android.support.test.rule.ActivityTestRule;
@@ -8,6 +9,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.bluesnap.android.demoapp.CurrencyChangeTesterCommon;
+import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.EspressoBasedTest;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.androidapi.Constants;
@@ -29,6 +31,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.web.assertion.WebViewAssertions.webMatches;
 import static android.support.test.espresso.web.model.Atoms.getCurrentUrl;
@@ -69,6 +72,43 @@ public class PayPalTests extends EspressoBasedTest {
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         setupAndLaunch(sdkRequest);
+    }
+
+    @Test
+    public void pay_pal_back_button_test() throws InterruptedException {
+        onView(withId(R.id.payPalButton)).perform(click());
+
+        //wait for web to load
+        sleep(15000);
+
+        //verify that paypal url opened up
+        onWebView().check(webMatches(getCurrentUrl(), containsString(Constants.getPaypalSandUrl())));
+
+        Espresso.pressBack();
+
+        //verify we are back in choose payment methods
+        onView(withId(R.id.newCardButton))
+                .withFailureHandler(new CustomFailureHandler("pay_pal_back_button_test: New Card button is not displayed after pressing back"))
+                .check(matches(ViewMatchers.isDisplayed()));
+        onView(withId(R.id.payPalButton))
+                .withFailureHandler(new CustomFailureHandler("pay_pal_back_button_test: PayPal button is not displayed after pressing back"))
+                .check(matches(ViewMatchers.isDisplayed()));
+    }
+
+    @Test
+    public void pay_pal_entering_twice_test() throws InterruptedException {
+        onView(withId(R.id.payPalButton)).perform(click());
+
+        //wait for web to load
+        sleep(15000);
+
+        //verify that paypal url opened up
+        onWebView().check(webMatches(getCurrentUrl(), containsString(Constants.getPaypalSandUrl())));
+
+        Espresso.pressBack();
+
+        loginToPayPal();
+        submitPayPalPayment();
     }
 
     @Test

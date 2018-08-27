@@ -11,7 +11,6 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
-import android.support.test.espresso.intent.Intents;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
@@ -63,8 +62,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.intent.Intents.intending;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtraWithKey;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -329,7 +326,6 @@ public class EspressoBasedTest {
 
     public void returningShopperSetUp(boolean withFullBilling, boolean withEmail, boolean withShipping) throws BSPaymentRequestException, InterruptedException {
         String returningShopperId = "?shopperId=" + shopperId; //get the shopper id from last transaction
-        Intents.release();
         isReturningShoppper = true;
         setUrlConnection(returningShopperId);
         roundedPurchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
@@ -378,8 +374,6 @@ public class EspressoBasedTest {
      * for all 8 options: with/without full billing, shipping, email.
      */
     public void returning_shopper_card_basic_flow_transaction(boolean withFullBilling, boolean withEmail, boolean withShipping) throws InterruptedException {
-        intending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
-
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
         //onView(withId(R.id.newCardButton)).perform(click());
