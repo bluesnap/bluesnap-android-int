@@ -21,52 +21,59 @@ import static org.hamcrest.Matchers.not;
  */
 
 public class ReturningShopperVisibilityTesterCommon {
-    static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
+    static TestingShopperContactInfo billingContactInfo = new TestingShopperContactInfo("La Fleur", "test@sdk.com",
             "New York", "555 Broadway street", "New York", "3abc 324a", "US");
 
-    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "email@test.com",
+    static TestingShopperContactInfo shippingContactInfo = new TestingShopperContactInfo("Taylor Love", "email@test.com",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
 
 
     public static void credit_card_in_list_visibility_validation(String testName, String lastFourDigits, String expDate) {
 //        String cardLastDigit = TestUtils.getText(isDescendantOfA(withId(R.id.oneLineCCViewComponentsListView)));
-        onView(withId(R.id.ccLastFourDigitsTextView)).withFailureHandler(new CustomFailureHandler(testName + ": Credit card last four digit TextView does not display the correct content"))
+        onView(withId(R.id.ccLastFourDigitsTextView))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Credit card last four digit TextView does not display the correct content"))
                 .check(matches(withText(lastFourDigits)));
-        onView(withId(R.id.expTextView)).withFailureHandler(new CustomFailureHandler(testName + ": Expiration date TextView does not display the correct content"))
+        onView(withId(R.id.expTextView))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Expiration date TextView does not display the correct content"))
                 .check(matches(withText(expDate)));
     }
 
     public static void credit_card_view_visibility_validation(String testName, String lastFourDigits, String expDate) {
-        onView(withId(R.id.oneLineCCViewComponent)).withFailureHandler(new CustomFailureHandler(testName + ": One line CC TextView is not displayed"))
+        onView(withId(R.id.oneLineCCViewComponent))
+                .withFailureHandler(new CustomFailureHandler(testName + ": One line CC TextView is not displayed"))
                 .check(matches(isDisplayed()));
-        onView(withId(R.id.ccLastFourDigitsTextView)).withFailureHandler(new CustomFailureHandler(testName + ": Credit card last four digit TextView does not display the correct content"))
+        onView(withId(R.id.ccLastFourDigitsTextView))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Credit card last four digit TextView does not display the correct content"))
                 .check(matches(withText(lastFourDigits)));
-        onView(withId(R.id.expTextView)).withFailureHandler(new CustomFailureHandler(testName + ": Expiration date TextView does not display the correct content"))
+        onView(withId(R.id.expTextView))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Expiration date TextView does not display the correct content"))
                 .check(matches(withText(expDate)));
     }
 
     public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
-        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewSummarizedComponent) ? ContactInfoTesterCommon.billingContactInfo : ContactInfoTesterCommon.shippingContactInfo;
+        TestingShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewSummarizedComponent) ? ContactInfoTesterCommon.billingContactInfo : ContactInfoTesterCommon.shippingContactInfo;
         summarized_contact_info_visibility_validation(testName, componentResourceId, fullInfo, withEmail, contactInfo);
     }
 
-    public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail, ShopperContactInfo contactInfo) {
+    public static void summarized_contact_info_visibility_validation(String testName, int componentResourceId, boolean fullInfo, boolean withEmail, TestingShopperContactInfo contactInfo) {
         //verifies that the right component(billing/shipping) is displayed
-        onView(withId(componentResourceId)).check(matches(isDisplayed()));
+        onView(withId(componentResourceId))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Component is not displayed"))
+                .check(matches(isDisplayed()));
 
         //verifies that all right fields in the component are displayed and contain the correct data
         if (!contactInfo.getCountry().equals(""))
             onView(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Country TextView doesn't present the correct content"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Country TextView doesn't display the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getCountry()))));
 
         onView(allOf(withId(R.id.nameTextView), isDescendantOfA(withId(componentResourceId))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Name TextView doesn't present the correct content"))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Name TextView doesn't display the correct content"))
                 .check(matches(allOf(isDisplayed(), withText(contactInfo.getFirstName() + " " + contactInfo.getLastName()))));
 
         if (withEmail) {
             onView(allOf(withId(R.id.emailTextView), isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": email TextView doesn't present the correct content"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": email TextView doesn't display the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getEmail()))));
         } else if (componentResourceId == R.id.billingViewSummarizedComponent)
             onView(allOf(withId(R.id.emailTextView), isDescendantOfA(withId(componentResourceId))))
@@ -75,7 +82,7 @@ public class ReturningShopperVisibilityTesterCommon {
 
         if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(contactInfo.getCountry())) {
             onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Zip TextView doesn't present the correct content"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Zip TextView doesn't display the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getZip()))));
         } else
             onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(componentResourceId))))
@@ -85,7 +92,7 @@ public class ReturningShopperVisibilityTesterCommon {
         if (fullInfo) {
             if (contactInfo.getCountry().equals("US") || contactInfo.getCountry().equals("CA") || contactInfo.getCountry().equals("BR")) {
                 onView(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(componentResourceId))))
-                        .withFailureHandler(new CustomFailureHandler(testName + ": State TextView doesn't present the correct content"))
+                        .withFailureHandler(new CustomFailureHandler(testName + ": State TextView doesn't display the correct content"))
                         .check(matches(allOf(isDisplayed(), withText(contactInfo.getState()))));
             } else
                 onView(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(componentResourceId))))
@@ -93,11 +100,11 @@ public class ReturningShopperVisibilityTesterCommon {
                         .check(matches(not(isDisplayed())));
 
             onView(allOf(withId(R.id.cityTextView), isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": City TextView doesn't present the correct content"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": City TextView doesn't display the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getCity()))));
 
             onView(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(componentResourceId))))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Address TextView doesn't present the correct content"))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Address TextView doesn't display the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getAddress() + ','))));
         } else {
             onView(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(componentResourceId))))
@@ -113,47 +120,6 @@ public class ReturningShopperVisibilityTesterCommon {
 
     }
 
-    public static void shipping_empty_summarized_contact_info_visibility_validation(String testName) {
-        //verifies that the right component(billing/shipping) is displayed
-        onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(isDisplayed()));
-
-        String countryTry = TestUtils.getText(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
-        String zipTry = TestUtils.getText(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
-
-        //verifies that all right fields in the component are displayed and contain the correct data
-        onView(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Country TextView is displayed"))
-                .check(matches(not(isDisplayed())));
-
-        onView(allOf(withId(R.id.nameTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Name TextView is displayed"))
-                .check(matches(allOf(isDisplayed(), withText(" "))));
-
-
-        onView(allOf(withId(R.id.emailTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": email TextView is displayed"))
-                .check(matches(not(isDisplayed())));
-
-        onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Zip TextView is displayed"))
-                .check(matches(allOf(isDisplayed(), withText(""))));
-
-
-        String cityTry = TestUtils.getText(allOf(withId(R.id.cityTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
-        String addressTry = TestUtils.getText(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))));
-
-        onView(allOf(withId(R.id.stateTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": State TextView is displayed"))
-                .check(matches(not(isDisplayed())));
-
-        onView(allOf(withId(R.id.cityTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": City TextView is displayed"))
-                .check(matches(not(isDisplayed())));
-
-        onView(allOf(withId(R.id.addressTextView), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Address TextView is displayed"))
-                .check(matches(not(isDisplayed())));
-    }
 
     /**
      * This test verifies that changing the country in one component (billing/shipping contact
@@ -173,7 +139,7 @@ public class ReturningShopperVisibilityTesterCommon {
         ContactInfoTesterCommon.changeCountry(editableComponent, countryValue);
 
         //go back to credit card
-        TestUtils.go_back_to_credit_card_in_returning_shopper(true, buttonComponent);
+        TestUtils.goBackToCreditCardInReturningShopper(true, buttonComponent);
 
         //Verify country hasn't change in other info component
         onView(allOf(withId(R.id.countryTextView), isDescendantOfA(withId(secondSummarizedComponent))))
@@ -181,4 +147,30 @@ public class ReturningShopperVisibilityTesterCommon {
                 .check(matches(not(withText(countryKey))));
     }
 
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public static void component_opens_when_pressing_buyNow_with_missing_info(String testName, boolean fullBilling, boolean withShipping, boolean withEmail, ReturningShoppersFactory.TestingShopper returningShopper) {
+        int componentResourceId;
+        String componentName = "";
+        if ((fullBilling && !returningShopper.isFullBilling()) || (withEmail && !returningShopper.isWithEmail())) {
+            componentName = "Billing";
+            componentResourceId = R.id.billingViewComponent;
+        } else if (withShipping && !returningShopper.isWithShipping()) {
+            componentName = "Shipping";
+            componentResourceId = R.id.returningShoppershippingViewComponent;
+        }
+        else
+            componentResourceId = -1;
+
+        if (componentResourceId != -1) {
+            onView(withId(R.id.buyNowButton)).perform(click());
+            //verifies that the right component(billing/shipping) with the missing info is displayed
+            onView(withId(componentResourceId))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": " + componentName + " component didn't open"))
+                    .check(matches(isDisplayed()));
+        }
+    }
 }

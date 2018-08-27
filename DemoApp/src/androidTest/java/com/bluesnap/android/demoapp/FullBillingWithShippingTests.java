@@ -2,14 +2,18 @@ package com.bluesnap.android.demoapp;
 
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -44,7 +48,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
         default_country_state_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, true, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, false);
         //Pre-condition: The current fragment displayed is shipping
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
@@ -53,13 +57,30 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
 
-        TestUtils.go_back_to_billing_in_new_card();
+        TestUtils.goBackToBillingInNewCard();
 
         //Pre-condition: Current country is the default one
         country_changes_per_fragment_validation();
         amount_tax_view_before_choosing_shipping_same_as_billing();
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //annul shipping same as billing option
         amount_tax_view_after_choosing_shipping_same_as_billing();
+    }
+
+    @Test
+    public void full_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction(true, false, true, false);
+    }
+
+    @Test
+    public void returning_shopper_full_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(true, false, true, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(true, false, true);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(true, false, true);
     }
 
     /**
@@ -91,7 +112,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**
@@ -107,7 +128,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_shipping_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**
@@ -186,14 +207,14 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_before_choosing_shipping_same_as_billing", R.id.amountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
 
         //change to Spain- a country without shipping tax
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "Spain");
 
-        //verify that the amount tax shipping component isn't presented
+        //verify that the amount tax shipping component isn't displayed
         onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(R.id.amountTaxShippingComponentView))))
-                .withFailureHandler(new CustomFailureHandler("amount_tax_view_before_choosing_shipping_same_as_billing" + ": Amount-tax component is visible in a country without tax"))
+                .withFailureHandler(new CustomFailureHandler("amount_tax_view_before_choosing_shipping_same_as_billing: Amount-tax component is displayed in a country without tax"))
                 .check(matches(not(ViewMatchers.isDisplayed())));
     }
 
@@ -209,8 +230,9 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
 
-        //verify that the amount tax shipping component isn't presented
+        //verify that the amount tax shipping component isn't displayed
         onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(R.id.amountTaxShippingComponentView))))
+                .withFailureHandler(new CustomFailureHandler("amount_tax_view_after_choosing_shipping_same_as_billing: Amount-tax component is displayed in a country without tax"))
                 .check(matches(not(ViewMatchers.isDisplayed())));
 
         //change to United States, which has shipping tax
@@ -218,7 +240,7 @@ public class FullBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_after_choosing_shipping_same_as_billing", R.id.amountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
 
     }
 

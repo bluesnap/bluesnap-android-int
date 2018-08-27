@@ -59,7 +59,7 @@ public class CurrencyChangeTesterCommon {
         //String buyNowButtonText = TestUtils.getText(withText(containsString("Currency")));
 
         onView(withText(containsString("Currency")))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Hamburger button doesn't present the correct currency"))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Hamburger button doesn't display the correct currency"))
                 .check(matches(withText(containsString(currencyCode))));
         Espresso.pressBack();
     }
@@ -67,7 +67,7 @@ public class CurrencyChangeTesterCommon {
     private static void checkCurrencyInBuyButton(String testName, int buttonComponent, String currencyCode) {
         //verify "Pay" button displays the correct currency when clicking on it
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't present the correct currency"))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't display the correct currency"))
                 .check(matches(withText(containsString(AndroidUtil.getCurrencySymbol(currencyCode)))));
     }
 

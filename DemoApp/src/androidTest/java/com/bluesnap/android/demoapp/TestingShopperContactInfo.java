@@ -4,11 +4,8 @@ package com.bluesnap.android.demoapp;
  * Created by sivani on 28/07/2018.
  */
 
-public class ShopperContactInfo {
+public class TestingShopperContactInfo {
     private String name;
-    private String firstName;
-    private String lastName;
-
     private String email;
 
     private String city;
@@ -18,18 +15,18 @@ public class ShopperContactInfo {
     private String zip;
     private String country;
 
-    public ShopperContactInfo(String name_, String email_, String city_, String address_,
-                              String state_, String zip_, String country_) {
-        name = name_;
-        email = email_;
-        city = city_;
-        address = address_;
-        state = state_;
-        zip = zip_;
-        country = country_;
+    public TestingShopperContactInfo(String name, String email, String city, String address,
+                                     String state, String zip, String country) {
+        this.name = name;
+        this.email = email;
+        this.city = city;
+        this.address = address;
+        this.state = state;
+        this.zip = zip;
+        this.country = country;
     }
 
-    public ShopperContactInfo(ShopperContactInfo contactInfo) {
+    public TestingShopperContactInfo(TestingShopperContactInfo contactInfo) {
         name = contactInfo.name;
         email = contactInfo.email;
         city = contactInfo.city;

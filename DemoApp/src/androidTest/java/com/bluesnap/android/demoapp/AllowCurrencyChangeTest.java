@@ -4,8 +4,10 @@ import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +18,10 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by sivani on 17/07/2018.
@@ -72,9 +77,13 @@ public class AllowCurrencyChangeTest extends EspressoBasedTest {
 
     private void checkCurrencyHamburgerButtonVisibility() {
         if (isAllowed)
-            onView(withId(R.id.hamburger_button)).check(matches(ViewMatchers.isDisplayed()));
+            onView(withId(R.id.hamburger_button))
+                    .withFailureHandler(new CustomFailureHandler("currency_change_hamburger_view_validation: Hamburger button is not displayed"))
+                    .check(matches(ViewMatchers.isDisplayed()));
         else
-            onView(withId(R.id.hamburger_button)).check(matches(not(ViewMatchers.isDisplayed())));
+            onView(withId(R.id.hamburger_button))
+                    .withFailureHandler(new CustomFailureHandler("currency_change_hamburger_view_validation: Hamburger button is displayed"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
 
     }
 }

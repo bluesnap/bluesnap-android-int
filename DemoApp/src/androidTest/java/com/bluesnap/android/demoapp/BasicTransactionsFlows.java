@@ -181,6 +181,7 @@ public class BasicTransactionsFlows extends EspressoBasedTest {
         if (returningShopperIndex >= 0)
             returningShoppersIDs[returningShopperIndex] = shopperId;
         Espresso.unregisterIdlingResources(transactionMessageIR);
+//        SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
@@ -238,7 +239,7 @@ public class BasicTransactionsFlows extends EspressoBasedTest {
 
     private void new_shopper_component_info_saved_validation(boolean isBillingInfo, JSONObject jsonObject) {
         String countryKey;
-        ShopperContactInfo contactInfo;
+        TestingShopperContactInfo contactInfo;
 
         if (!isReturningShoppper) { //New shopper
             countryKey = (!isBillingInfo && !shippingSameAsBilling) ? shippingCountryKey : billingCountryKey;

@@ -1,8 +1,10 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,12 +38,33 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
         default_country_zip_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, true);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, true);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_shipping();
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
+    }
+
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email and shipping new shopper
+     */
+    @Test
+    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction(false, true, true, false);
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(false, true, true, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(false, true, true);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(false, true, true);
     }
 
     /**
@@ -73,7 +96,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, false, true);
     }
 
     /**
@@ -89,7 +112,7 @@ public class MinimalBillingWithShippingWithEmailTests extends EspressoBasedTest 
      * fields are not displayed.
      */
     public void new_credit_shipping_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**

@@ -51,7 +51,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 4) {
 
             pay_button_in_billing_validation();
 
@@ -62,7 +62,7 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
 
         shipping_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 4) {
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -78,7 +78,8 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
 //        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
 //        Espresso.pressBack();
             returning_shopper_edit_shipping_contact_info_using_done_button_validation();
-        }
+        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling())
+            component_opens_when_pressing_buyNow_with_missing_info();
     }
 
     @Test
@@ -231,5 +232,14 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Es
     public void returning_shopper_edit_shipping_contact_info_using_back_button_validation() throws IOException {
         ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_contact_info_validation in " + returningShopper.getShopperDescription(),
                 applicationContext, R.id.shippingViewSummarizedComponent, true, false, false, returningShopper.getShippingContactInfo());
+    }
+
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public void component_opens_when_pressing_buyNow_with_missing_info() {
+        ReturningShopperVisibilityTesterCommon.component_opens_when_pressing_buyNow_with_missing_info("component_opens_when_pressing_buyNow_with_missing_info in " + returningShopper.getShopperDescription(), false, true, true, returningShopper);
     }
 }

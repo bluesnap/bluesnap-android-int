@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.Shopper;
@@ -22,6 +24,7 @@ import com.bluesnap.androidapi.views.components.ShippingViewComponent;
 public class ReturningShopperShippingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperShippingFragment.class.getSimpleName();
     private ShippingViewComponent shippingViewComponent;
+    private ScrollView scrollView;
     private Shopper shopper;
 
     public static ReturningShopperShippingFragment newInstance(Activity activity, Bundle bundle) {
@@ -55,6 +58,7 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
         // set Shipping Details
         shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
         shippingViewComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
+        scrollView = inflate.findViewById(R.id.shippingViewComponentScrollView);
 
         ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.DONE, new View.OnClickListener() {
@@ -99,7 +103,8 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
         boolean isValid = shippingViewComponent.validateInfo();
         if (isValid) {
             shopper.setShippingContactInfo(shippingViewComponent.getViewResourceDetails());
-        }
+        } else
+            scrollView.post(() -> scrollView.smoothScrollTo(0, shippingViewComponent.getFirstErrorEnabledOfTextInputEditTextTopPosition()));
         return isValid;
     }
 }

@@ -14,13 +14,9 @@ import java.io.IOException;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.anything;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasToString;
 
 /**
  * Created by sivani on 02/08/2018.
@@ -54,7 +50,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 3) {
 
             pay_button_in_billing_validation();
 
@@ -64,7 +60,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         }
 
         shipping_summarized_contact_info_visibility_validation();
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 3) {
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -80,11 +76,12 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
 //        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
 //        Espresso.pressBack();
             returning_shopper_edit_shipping_contact_info_using_done_button_validation();
-            TestUtils.go_back_to_credit_card_in_returning_shopper(false, 0);
+            TestUtils.goBackToCreditCardInReturningShopper(false, 0);
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        }
+        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling())
+            component_opens_when_pressing_buyNow_with_missing_info();
     }
 
     @Test
@@ -246,14 +243,13 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
         if (!SHIPPING_COUNTRY.equals("US")) {
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, "United States");
-            onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(R.id.returningShoppershippingViewComponent)))).perform(scrollTo(), click());
-            onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-            TestUtils.go_back_to_credit_card_in_returning_shopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
+            ContactInfoTesterCommon.changeState(R.id.returningShoppershippingViewComponent, "New York");
+            TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
         }
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_in_shipping_validation in " + returningShopper.getShopperDescription(), R.id.amountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
     }
 
     /**
@@ -272,5 +268,14 @@ public class ReturningShopperMinimalBillingWithShippingTests extends EspressoBas
     public void country_changes_per_shipping_validation() {
         ReturningShopperVisibilityTesterCommon.country_changes_per_fragment_validation("country_changes_per_shipping_validation in " + returningShopper.getShopperDescription(),
                 R.id.shippingViewSummarizedComponent, "IT", "Italy");
+    }
+
+    /**
+     * This test verifies that when there is missing info in returning shopper,
+     * and we press "pay", it passes to the edit component,
+     * and not making a transaction.
+     */
+    public void component_opens_when_pressing_buyNow_with_missing_info() {
+        ReturningShopperVisibilityTesterCommon.component_opens_when_pressing_buyNow_with_missing_info("component_opens_when_pressing_buyNow_with_missing_info in " + returningShopper.getShopperDescription(), false, true, false, returningShopper);
     }
 }

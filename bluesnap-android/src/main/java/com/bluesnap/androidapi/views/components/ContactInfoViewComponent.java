@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
@@ -185,6 +186,26 @@ public class ContactInfoViewComponent extends LinearLayout {
         validInput &= validateField(inputCity, inputLayoutCity, BlueSnapValidator.EditTextFields.CITY_FIELD);
         validInput &= validateField(inputAddress, inputLayoutAddress, BlueSnapValidator.EditTextFields.ADDRESS_FIELD);
         return validInput;
+    }
+
+    /**
+     * get First Error Enabled of TextInputEditText
+     *
+     * @return TextInputLayout.getTop() or -1 if null
+     */
+    public int getFirstErrorEnabledOfTextInputEditTextTopPosition() {
+        if (inputLayoutName.isErrorEnabled())
+            return inputLayoutName.getTop();
+        else if (isCountryRequiresZip() && inputLayoutZip.isErrorEnabled())
+            return inputLayoutZip.getTop();
+        else if (BlueSnapValidator.checkCountryHasState(getUserCountry()) && inputLayoutState.isErrorEnabled())
+            return inputLayoutState.getTop();
+        else if (inputLayoutCity.isErrorEnabled())
+            return inputLayoutCity.getTop();
+        else if (inputLayoutAddress.isErrorEnabled())
+            return inputLayoutAddress.getTop();
+        else
+            return inputLayoutName.getTop();
     }
 
     /**
@@ -500,6 +521,8 @@ public class ContactInfoViewComponent extends LinearLayout {
 
     public void setState(String state) {
         this.inputState.setText(state);
+        if (!"".equals(state))
+            validateField(this.inputState, this.inputLayoutState, BlueSnapValidator.EditTextFields.STATE_FIELD);
 
     }
 }

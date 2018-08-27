@@ -1,9 +1,11 @@
 package com.bluesnap.android.demoapp;
 
 import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +48,27 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
     }
 
     /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email new shopper
+     */
+    @Test
+    public void minimal_billing_with_email_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction(false, true, false, false);
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(false, true, false, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(false, true, false);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(false, true, false);
+    }
+
+    /**
      * This test verifies that the all credit card fields are displayed as they should
      * when choosing new credit card.
      */
@@ -74,7 +97,7 @@ public class MinimalBillingWithEmailTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("billing_contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("billing_contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, false, true);
     }
 
     /**

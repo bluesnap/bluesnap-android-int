@@ -50,7 +50,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         default_country_zip_view_validation_in_billing();
         shipping_button_validation();
 
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_view_validation_in_shipping();
@@ -75,7 +75,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
     @Test
     public void minimal_billing_with_shipping_test_inputs() {
-        TestUtils.continue_to_shipping_or_pay_in_new_card(defaultCountryKey, false, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
         empty_fields_invalid_error_validation_in_shipping();
         name_invalid_error_validation_in_shipping();
         name_invalid_error_validation_using_ime_button_in_shipping();
@@ -86,6 +86,27 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         address_invalid_error_validation_in_shipping();
         state_invalid_error_in_shipping();
 
+    }
+
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with shipping new shopper
+     */
+    @Test
+    public void minimal_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction(false, false, true, false);
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
+        //make transaction to create a new shopper
+        new_card_basic_flow_transaction(false, false, true, false);
+
+        //setup sdk for the returning shopper
+        returningShopperSetUp(false, false, true);
+
+        //make a transaction with the returning shopper
+        returning_shopper_card_basic_flow_transaction(false, false, true);
     }
 
     /**
@@ -117,7 +138,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_billing_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, false, true);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, false, true);
     }
 
     /**
@@ -133,7 +154,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
      * fields are not displayed.
      */
     public void new_credit_shipping_contact_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, true, false);
+        CreditCardVisibilityTesterCommon.contact_info_error_messages_validation("contact_info_error_messages_validation", R.id.billingViewComponent, defaultCountryKey, true, false);
     }
 
     /**
@@ -350,7 +371,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "BR", true, false);
 
         //go back and forward
-        TestUtils.go_back_to_billing_in_new_card();
+        TestUtils.goBackToBillingInNewCard();
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
 
         //verify info has been saved
@@ -413,7 +434,7 @@ public class MinimalBillingWithShippingTests extends EspressoBasedTest {
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_in_shipping_validation", R.id.shippingAmountTaxShippingComponentView, checkoutCurrency,
-                TestUtils.get_amount_in_string(df, purchaseAmount), TestUtils.get_amount_in_string(df, taxAmount));
+                TestUtils.getAmountInString(df, purchaseAmount), TestUtils.getAmountInString(df, taxAmount));
     }
 
 }

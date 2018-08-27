@@ -5,8 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,7 +19,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static java.net.HttpURLConnection.*;
+import javax.net.ssl.HttpsURLConnection;
+
+import static java.net.HttpURLConnection.HTTP_CREATED;
+import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
  * Created by oz
@@ -142,7 +151,7 @@ public class HTTPOperationController {
                 return new BlueSnapHTTPResponse(statusCode, response);
             default:
                 String errorResponse = new String(readFullyBytes(connection.getErrorStream()));
-                return new BlueSnapHTTPResponse(statusCode, errorResponse);
+                return new BlueSnapHTTPResponse(statusCode, "", errorResponse);
         }
     }
 

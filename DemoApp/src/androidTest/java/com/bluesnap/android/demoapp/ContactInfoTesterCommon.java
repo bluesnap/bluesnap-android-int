@@ -32,31 +32,35 @@ import static org.hamcrest.Matchers.hasToString;
  */
 
 public class ContactInfoTesterCommon {
-    static ShopperContactInfo billingContactInfo = new ShopperContactInfo("La Fleur", "test@sdk.com",
+    static TestingShopperContactInfo billingContactInfo = new TestingShopperContactInfo("La Fleur", "test@sdk.com",
             "New York", "555 Broadway street", "NY", "3abc 324a", "US");
 
-    static ShopperContactInfo shippingContactInfo = new ShopperContactInfo("Taylor Love", "null",
+    static TestingShopperContactInfo shippingContactInfo = new TestingShopperContactInfo("Taylor Love", "null",
             "CityTest", "AddressTest", "RJ", "12345", "BR");
 
-    static ShopperContactInfo editBillingContactInfo = new ShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
+    static TestingShopperContactInfo editBillingContactInfo = new TestingShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
             "Barcelona", "77 Rambla street", "QC", "4815", "CA");
 
-    static ShopperContactInfo editShippingContactInfo = new ShopperContactInfo("Janet Weiss", "null",
+    static TestingShopperContactInfo editShippingContactInfo = new TestingShopperContactInfo("Janet Weiss", "null",
             "Denton", "75 some street", "TX", "162342", "US");
 
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), pressImeActionButton());
         if (withEmail)
-            onView(withId(R.id.input_email)).withFailureHandler(new CustomFailureHandler(testName + ": Input email editText is not focused, after pressing the ime button"))
+            onView(withId(R.id.input_email))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input email editText is not focused, after pressing the ime button"))
                     .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
         if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
-            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input zip editText is not focused, after pressing the ime button"))
+            onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input zip editText is not focused, after pressing the ime button"))
                     .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
 
         if (fullInfo) {
-            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city editText is not focused, after pressing the ime button"))
+            onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input city editText is not focused, after pressing the ime button"))
                     .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
-            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address editText is not focused, after pressing the ime button"))
+            onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input address editText is not focused, after pressing the ime button"))
                     .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
         }
     }
@@ -71,33 +75,44 @@ public class ContactInfoTesterCommon {
         //Continue- leaving all fields empty
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
+        //verify input name editText is focused
+        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input name editText is not displayed"))
+                .check(matches(isDisplayed()));
+
         //verify error messages are displayed
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_name)),
-                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input name errorText is not visible"))
+                isDescendantOfA(withId(componentResourceId))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input name errorText is not displayed"))
                 .check(matches(isDisplayed()));
 
         if (withEmail)
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_email)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input email errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input email errorText is not displayed"))
                     .check(matches(isDisplayed()));
 
         onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_zip)),
-                isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input zip errorText is not visible"))
+                isDescendantOfA(withId(componentResourceId))))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input zip errorText is not displayed"))
                 .check(matches(isDisplayed()));
 
         if (fullInfo) {
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_state)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input state errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input state errorText is not displayed"))
                     .check(matches(isDisplayed()));
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_city)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input city errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input city errorText is not displayed"))
                     .perform(scrollTo()).check(matches(isDisplayed()));
 
             //onView(withId(R.id.input_address)).perform(scrollTo());
 
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_address)),
-                    isDescendantOfA(withId(componentResourceId)))).withFailureHandler(new CustomFailureHandler(testName + ": Input address errorText is not visible"))
+                    isDescendantOfA(withId(componentResourceId))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Input address errorText is not displayed"))
                     .perform(scrollTo()).check(matches(isDisplayed()));
         }
 
@@ -253,21 +268,17 @@ public class ContactInfoTesterCommon {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 
         //verify error message is displayed
-        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, true);
+        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", true);
 
         //filling in Rio de Janeiro
-        onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(click());
-        onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
-        Espresso.closeSoftKeyboard();
+        ContactInfoTesterCommon.changeState(componentResourceId, "Rio de Janeiro");
 
-        //waiting for this bug to be fixed
-//        //verify error message is not displayed anymore
-//        onView(allOf(withId(R.id.textinput_error),
-//                isDescendantOfA(withId(R.id.input_layout_state)))).check(matches(not(isDisplayed())));
+        //verify error message is not displayed anymore
+        CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", false);
     }
 
     public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail) throws IOException {
-        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
+        TestingShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
         contact_info_content_validation(testName, context, componentResourceId, country, fullInfo, withEmail, contactInfo);
     }
 
@@ -277,7 +288,7 @@ public class ContactInfoTesterCommon {
      * while using the back button summarized_contact_info_visibility_validation
      */
     public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail,
-                                                       ShopperContactInfo contactInfo) throws IOException {
+                                                       TestingShopperContactInfo contactInfo) throws IOException {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
@@ -323,7 +334,7 @@ public class ContactInfoTesterCommon {
      * o.w. it uses the "Back" button and verifies the info doesn't change.
      */
     public static void returning_shopper_edit_contact_info_validation(String testName, Context context, int summarizedComponentResourceId, boolean fullInfo,
-                                                                      boolean withEmail, boolean useDoneButton, ShopperContactInfo verifyContactInfo) throws IOException {
+                                                                      boolean withEmail, boolean useDoneButton, TestingShopperContactInfo verifyContactInfo) throws IOException {
         int buttonComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.returningShopperBillingFragmentButtonComponentView : R.id.returningShopperShippingFragmentButtonComponentView;
         int editableComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.billingViewComponent : R.id.returningShoppershippingViewComponent;
 
@@ -349,7 +360,7 @@ public class ContactInfoTesterCommon {
         fillInContactInfo(editableComponent, "CA", fullInfo, withEmail, editBillingContactInfo);
 
         //go back and verify info has changed or was saved in the summarized component
-        TestUtils.go_back_to_credit_card_in_returning_shopper(useDoneButton, buttonComponent);
+        TestUtils.goBackToCreditCardInReturningShopper(useDoneButton, buttonComponent);
         ReturningShopperVisibilityTesterCommon.summarized_contact_info_visibility_validation(testName, summarizedComponentResourceId, shopperHasFullBilling, shopperHasEmail, verifyContactInfo);
 
         //Press edit to verify info was saved in the edit component
@@ -358,11 +369,11 @@ public class ContactInfoTesterCommon {
     }
 
     public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
-        ShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
+        TestingShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
         fillInContactInfo(componentResourceId, country, fullInfo, withEmail, contactInfo);
     }
 
-    public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail, ShopperContactInfo contactInfo) {
+    public static void fillInContactInfo(int componentResourceId, String country, boolean fullInfo, boolean withEmail, TestingShopperContactInfo contactInfo) {
 //        if (changeCountry)
 //            changeCountry(componentResourceId, country);
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getName()), pressImeActionButton());
@@ -377,13 +388,12 @@ public class ContactInfoTesterCommon {
             onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getCity()), pressImeActionButton());
             onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getAddress()));
             if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
-                onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
                 if (country.equals("US"))
-                    onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+                    changeState(componentResourceId, "New York");
                 else if (country.equals("CA"))
-                    onData(hasToString(containsString("Quebec"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+                    changeState(componentResourceId, "Quebec");
                 else
-                    onData(hasToString(containsString("Rio de Janeiro"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
+                    changeState(componentResourceId, "Rio de Janeiro");
             }
         }
     }
@@ -398,6 +408,11 @@ public class ContactInfoTesterCommon {
     public static void changeCountry(int componentResourceId, String country) {
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
         onData(hasToString(containsString(country))).inAdapterView(withId(R.id.country_list_view)).perform(click());
+    }
+
+    public static void changeState(int componentResourceId, String state) {
+        onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
+        onData(hasToString(containsString(state))).inAdapterView(withId(R.id.state_list_view)).perform(click());
     }
 
     public static void check_input_validation(String testName, int fieldResourceId, int layoutResourceId, int componentResourceId, boolean withImeButton, int nextFieldResourceId, String input, boolean isInvalid) {

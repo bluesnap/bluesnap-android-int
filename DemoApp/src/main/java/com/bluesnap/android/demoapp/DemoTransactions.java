@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
+
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
 import com.bluesnap.androidapi.http.HTTPOperationController;
@@ -14,7 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bluesnap.android.demoapp.DemoToken.*;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_CREATE_TRANSACTION;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
@@ -78,8 +82,8 @@ public class DemoTransactions {
                 if (responseString != null)
                     errorName = responseString.substring(responseString.indexOf("<error-name>") + "<error-name>".length(), responseString.indexOf("</error-name>"));
             } catch (Exception e) {
-                Log.w(TAG, "failed to get error name from response string");
-                Log.w(TAG, "Failed TX Response:  " + responseString);
+                Log.e(TAG, "failed to get error name from response string");
+                Log.e(TAG, "Failed TX Response:  " + responseString);
             }
             setMessage(errorName);
             setTitle("Merchant Server");
