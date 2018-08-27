@@ -19,6 +19,7 @@ import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
