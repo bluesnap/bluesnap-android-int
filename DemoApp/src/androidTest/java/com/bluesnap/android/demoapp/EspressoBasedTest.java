@@ -29,6 +29,7 @@ import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -170,11 +171,11 @@ public class EspressoBasedTest {
         }
     }
 
-    public void setupAndLaunch(SdkRequest sdkRequest) throws InterruptedException, BSPaymentRequestException {
+    public void setupAndLaunch(SdkRequestBase sdkRequest) throws InterruptedException, BSPaymentRequestException {
         setupAndLaunch(sdkRequest, "USD");
     }
 
-    public void setupAndLaunch(SdkRequest sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
+    public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
         doSetup();
         setNumberFormat();
         sdkRequest.setTaxCalculator(new TaxCalculator() {

@@ -16,7 +16,7 @@ public class PayPalFallbackToUSDCurrencyTest extends PayPalWebViewTests {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, "ILS"); //choose ILS as checkout currency
         setupAndLaunch(sdkRequest, "ILS");  //choose EUR as base currency
 
-        //update currency and amount according to fallback to default currency, i.e. USD
+        //update currency and amount, according to expected fallback, to default currency, i.e. USD
         updateCurrencyAndAmount("ILS", "USD");
     }
 
