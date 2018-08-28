@@ -21,6 +21,9 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShoppersFactory;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
@@ -48,12 +51,9 @@ import org.json.JSONObject;
 import org.junit.Rule;
 
 import java.io.IOException;
-import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,41 +84,39 @@ import static org.hamcrest.Matchers.containsString;
  *
  */
 public class EspressoBasedTest {
-    public static final String TAG = EspressoBasedTest.class.getSimpleName();
+    protected static final String TAG = EspressoBasedTest.class.getSimpleName();
     protected BlueSnapService blueSnapService = BlueSnapService.getInstance();
-    SDKConfiguration sDKConfiguration = null;
-    protected NumberFormat df;
-    RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
+    private SDKConfiguration sDKConfiguration = null;
+    //    protected NumberFormat df;
+    protected RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
 
     protected String defaultCountryKey;
-    String defaultCountryValue;
+    protected String defaultCountryValue;
     protected String checkoutCurrency = "USD";
     protected double purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
-    protected double roundedPurchaseAmount = TestUtils.round_amount(purchaseAmount);
+    //    protected double roundedPurchaseAmount = TestUtils.round_amount(purchaseAmount);
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
-    double taxAmount = TestUtils.round_amount(roundedPurchaseAmount * taxPercent);
+    protected double taxAmount = purchaseAmount * taxPercent;
 
-    boolean isReturningShoppper = false;
+    private boolean isReturningShopper = false;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
 
 
     IdlingResource tokenProgressBarIR;
     IdlingResource transactionMessageIR;
     private boolean isSdkRequestNull = false;
-    DemoTransactions transactions;
+    private DemoTransactions transactions;
     protected SdkResult sdkResult;
-    String emailFromServer;
+    private String emailFromServer;
 
     private static final String SANDBOX_GET_SHOPPER = "vaulted-shoppers/";
     protected String shopperId;
-    protected String getShopperResponse;
+    private String getShopperResponse;
 
-    private URL myURL;
     private HttpURLConnection myURLConnection;
     private String merchantToken;
 
     public Context applicationContext;
-//    private static final IdlingRegistry INSTANCE = new IdlingRegistry();
 
     protected List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
 
@@ -135,9 +133,9 @@ public class EspressoBasedTest {
         setUrlConnection(returningOrNewShopper);
     }
 
-    protected void setUrlConnection(String returningOrNewShopper) {
+    private void setUrlConnection(String returningOrNewShopper) {
         try {
-            myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper);
+            URL myURL = new URL(SANDBOX_URL + SANDBOX_TOKEN_CREATION + returningOrNewShopper);
             myURLConnection = (HttpURLConnection) myURL.openConnection();
         } catch (IOException e) {
             fail("Network error open server connection:" + e.getMessage());
@@ -148,10 +146,10 @@ public class EspressoBasedTest {
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, false, false);
-    protected BluesnapCheckoutActivity mActivity;
+    private BluesnapCheckoutActivity mActivity;
 
     //    @Before
-    public void doSetup() {
+    private void doSetup() {
         try {
             wakeUpDeviceScreen();
         } catch (RemoteException e) {
@@ -177,7 +175,6 @@ public class EspressoBasedTest {
 
     public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
         doSetup();
-        setNumberFormat();
         sdkRequest.setTaxCalculator(new TaxCalculator() {
             @Override
             public void updateTax(String shippingCountry, String shippingState, PriceDetails priceDetails) {
@@ -206,7 +203,7 @@ public class EspressoBasedTest {
         defaultCountryValue = countryValueArray[Arrays.asList(countryKeyArray).indexOf(defaultCountryKey)];
     }
 
-    public void setSDKToken(String merchantStoreCurrency) throws InterruptedException {
+    private void setSDKToken(String merchantStoreCurrency) throws InterruptedException {
         try {
             String userCredentials = SANDBOX_USER + ":" + SANDBOX_PASS;
             String basicAuth = "Basic " + new String(Base64.encode(userCredentials.getBytes(), 0));
@@ -319,19 +316,13 @@ public class EspressoBasedTest {
         });
     }
 
-    public void setNumberFormat() {
-        df = DecimalFormat.getInstance();
-        df.setMinimumFractionDigits(2);
-        df.setMaximumFractionDigits(2);
-        df.setRoundingMode(RoundingMode.DOWN);
-    }
 
     public void returningShopperSetUp(boolean withFullBilling, boolean withEmail, boolean withShipping) throws BSPaymentRequestException, InterruptedException {
         String returningShopperId = "?shopperId=" + shopperId; //get the shopper id from last transaction
-        isReturningShoppper = true;
+        isReturningShopper = true;
         setUrlConnection(returningShopperId);
-        roundedPurchaseAmount = TestUtils.round_amount(randomTestValuesGenerator.randomDemoAppPrice());
-        SdkRequest sdkRequest = new SdkRequest(roundedPurchaseAmount, checkoutCurrency);
+        purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.getShopperCheckoutRequirements().setBillingRequired(withFullBilling);
         sdkRequest.getShopperCheckoutRequirements().setEmailRequired(withEmail);
         sdkRequest.getShopperCheckoutRequirements().setShippingRequired(withShipping);
@@ -357,17 +348,18 @@ public class EspressoBasedTest {
 
         //fill in info in billing and continue to shipping or paying
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, defaultCountryValue);
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, defaultCountryKey, withFullBilling, withEmail);
+        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryValue());
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryKey(), withFullBilling, withEmail);
 
 
         if (withShipping) {
-            if (defaultCountryKey.equals("US")) //updating roundedPurchaseAmount to include tax
-                roundedPurchaseAmount = roundedPurchaseAmount * (1 + taxPercent); //TODO: add comment
+            if (shippingSameAsBilling) { //updating roundedPurchaseAmount to include tax
+                updatePurchaseAmountForTax();
+            }
             if (!shippingSameAsBilling) {
                 onView(withId(R.id.buyNowButton)).perform(click());
-                ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, defaultCountryValue);
-                ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, defaultCountryKey, true, false);
+                ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryValue());
+                ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryKey(), true, false);
             }
         }
     }
@@ -389,27 +381,19 @@ public class EspressoBasedTest {
     public void existing_card_edit_info(boolean withFullBilling, boolean withEmail, boolean withShipping) {
         //fill in info in billing and continue to shipping or paying
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
-        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "Canada"); //TODO: Include the country value in contactInfo object (in addition to the key)
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountry(), withFullBilling, withEmail, ContactInfoTesterCommon.editBillingContactInfo);
+        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryValue());
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryKey(), withFullBilling, withEmail, ContactInfoTesterCommon.editBillingContactInfo);
         TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
 
         if (withShipping) {
-            if (defaultCountryKey.equals("US") || isReturningShoppper) //updating roundedPurchaseAmount to include tax
-                roundedPurchaseAmount = roundedPurchaseAmount * (1 + taxPercent); //TODO: add comment
+//            if (defaultCountryKey.equals("US") || isReturningShopper) //updating roundedPurchaseAmount to include tax
+            updatePurchaseAmountForTax();
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
-            ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, "United States");
-            ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountry(), true, false, ContactInfoTesterCommon.editShippingContactInfo);
+            ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryValue());
+            ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryKey(), true, false, ContactInfoTesterCommon.editShippingContactInfo);
             TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
         }
-    }
-
-    private String getTokenizedSuccess(CreditCard shopperCreditCard) {
-        String creditCardDescription = shopperCreditCard.toString();
-        String tokenizedSuccess = creditCardDescription.substring(creditCardDescription.indexOf("tokenizedSuccess:") +
-                "tokenizedSuccess:".length(), creditCardDescription.indexOf(", cardLastFourDigits:"));
-
-        return tokenizedSuccess;
     }
 
     public void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
@@ -428,7 +412,9 @@ public class EspressoBasedTest {
 //        Espresso.unregisterIdlingResources(transactionMessageIR);
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - roundedPurchaseAmount) < 0.00000000001);
+        double expectedAmount = sdkResult.getAmount();
+        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
+//        Assert.assertEquals("SDKResult amount not equals", TestUtils.round_amount(sdkResult.getAmount()), roundedPurchaseAmount);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
 
         makeTransaction(sdkResult, withFullBilling, withEmail, withShipping, shippingSameAsBilling);
@@ -504,9 +490,9 @@ public class EspressoBasedTest {
         String countryKey;
         TestingShopperContactInfo contactInfo;
 
-        if (!isReturningShoppper) { //New shopper
-            countryKey = (!isBillingInfo && !shippingSameAsBilling) ? defaultCountryKey : defaultCountryKey;
+        if (!isReturningShopper) { //New shopper
             contactInfo = (!isBillingInfo && !shippingSameAsBilling) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
+            countryKey = contactInfo.getCountryKey();
         } else { //Returning shopper
             countryKey = (isBillingInfo) ? "ca" : "us";
             contactInfo = (isBillingInfo) ? ContactInfoTesterCommon.editBillingContactInfo : ContactInfoTesterCommon.editShippingContactInfo;
@@ -550,6 +536,10 @@ public class EspressoBasedTest {
         }
 
         Assert.assertEquals(fieldName + " was not saved correctly in DataBase", expectedResult, fieldContent);
+    }
+
+    private void updatePurchaseAmountForTax() {
+        purchaseAmount = purchaseAmount * (1 + taxPercent); //TODO: add comment
     }
 
 }

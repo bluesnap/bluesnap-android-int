@@ -28,9 +28,12 @@ import static org.hamcrest.CoreMatchers.anything;
 public class ChoosePaymentMethodTester extends EspressoBasedTest {
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL = "29632264";
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING = "29632268";
+    private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_EMAIL = "29632260";
+    private static final String RETURNING_SHOPPER_ID_FULL_BILLING = "29632260";
+
 
     public ChoosePaymentMethodTester() {
-        super(true, "?shopperId=" + RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL);
+        super(true, "?shopperId=" + RETURNING_SHOPPER_ID_FULL_BILLING);
     }
 
     @Rule
@@ -39,7 +42,7 @@ public class ChoosePaymentMethodTester extends EspressoBasedTest {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements(true, true, true);
+        SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements(true, false, false);
         setupAndLaunch(sdkRequest);  //choose EUR as base currency
 
     }

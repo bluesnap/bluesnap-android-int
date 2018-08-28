@@ -9,7 +9,16 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
@@ -21,19 +30,32 @@ import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.models.SdkResult;
-import com.bluesnap.androidapi.models.ShopperCheckoutRequirements;
 import com.bluesnap.androidapi.models.ShopperConfiguration;
-import com.bluesnap.androidapi.services.*;
+import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BluesnapAlertDialog;
+import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TaxCalculator;
+import com.bluesnap.androidapi.services.TokenProvider;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
 import com.bluesnap.androidapi.views.activities.BluesnapCreatePaymentActivity;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.net.ssl.HttpsURLConnection;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import static com.bluesnap.android.demoapp.DemoToken.*;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 
 public class DemoMainActivity extends AppCompatActivity {
@@ -117,7 +139,7 @@ public class DemoMainActivity extends AppCompatActivity {
         returningShopperEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && returningShopperEditText.getText().toString().length() > 0) {
+                if (!hasFocus && returningShopperEditText.getText().toString().length() > 7) {
                     generateMerchantToken();
                 }
             }

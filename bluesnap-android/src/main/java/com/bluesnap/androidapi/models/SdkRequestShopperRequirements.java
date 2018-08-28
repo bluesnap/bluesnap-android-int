@@ -16,7 +16,7 @@ public class SdkRequestShopperRequirements extends SdkRequestBase {
     }
 
     public SdkRequestShopperRequirements(boolean billingRequired, boolean emailRequired, boolean shippingRequired) {
-        shopperCheckoutRequirements = new ShopperCheckoutRequirements(billingRequired, emailRequired, shippingRequired);
+        shopperCheckoutRequirements = new ShopperCheckoutRequirements(shippingRequired, billingRequired, emailRequired);
     }
 
     @Override
