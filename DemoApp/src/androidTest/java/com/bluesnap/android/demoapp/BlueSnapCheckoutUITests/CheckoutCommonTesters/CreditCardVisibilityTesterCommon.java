@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.not;
  * Created by sivani on 04/06/2018.
  */
 public class CreditCardVisibilityTesterCommon {
-    public static void new_credit_card_info_visibility_validation(String testName) {
+    public static void cc_line_fields_visibility_validation(String testName) {
         onView(ViewMatchers.withId(R.id.oneLineCCEditComponent))
                 .withFailureHandler(new CustomFailureHandler(testName + ": One line credit card is not displayed")).check(matches(isDisplayed()));
         onView(withId(R.id.creditCardNumberEditText))
@@ -42,7 +42,7 @@ public class CreditCardVisibilityTesterCommon {
                 .withFailureHandler(new CustomFailureHandler(testName + ": Cvv number editText is displayed")).check(matches(not(isDisplayed())));
     }
 
-    public static void new_credit_card_info_error_messages_validation(String testName) {
+    public static void cc_line_error_messages_not_displayed_validation(String testName) {
         check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, false);
         check_cc_info_invalid_error_visibility(testName, R.id.expErrorTextView, false);
         check_cc_info_invalid_error_visibility(testName, R.id.cvvErrorTextView, false);
@@ -336,15 +336,15 @@ public class CreditCardVisibilityTesterCommon {
                     .check(doesNotExist());
     }
 
-    public static void check_cc_info_invalid_error_visibility(String testName, int fieldResourceId, boolean isDisplayed) {
+    public static void check_cc_info_invalid_error_visibility(String testName, int errorFieldResourceId, boolean isDisplayed) {
         if (isDisplayed) //Verify error message is displayed
-            onView(withId(fieldResourceId))
+            onView(withId(errorFieldResourceId))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed"))
                     .check(matches(ViewMatchers.isDisplayed()));
 
 
         else //Verify error message is not displayed
-            onView(withId(fieldResourceId))
+            onView(withId(errorFieldResourceId))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is displayed"))
                     .check(matches(not(ViewMatchers.isDisplayed())));
 

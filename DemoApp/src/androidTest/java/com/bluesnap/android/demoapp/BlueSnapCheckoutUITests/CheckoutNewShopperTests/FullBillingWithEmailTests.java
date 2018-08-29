@@ -5,6 +5,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.EspressoBasedTest;
 import com.bluesnap.android.demoapp.R;
@@ -37,7 +38,7 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
 
     @Test
     public void full_billing_with_email_test() {
-        new_credit_card_info_visibility_validation();
+        cc_line_fields_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
         new_credit_billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
@@ -51,8 +52,20 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
 
     @Test
     public void full_billing_with_email_test_inputs() {
+        cc_line_error_messages_not_displayed_validation();
+
+        cc_number_invalid_error_validation();
+        cc_number_invalid_error_validation_using_ime_button();
+
+        //Pre-condition: exp date field is displayed
+        exp_date_invalid_error_validation();
+        exp_date_invalid_error_validation_using_ime_button();
+
+        //Pre-condition: cvv field is displayed
+        cvv_number_invalid_error_validation();
+        cvv_number_invalid_error_validation_using_ime_button();
+
         name_invalid_error_validation_in_billing();
-        new_credit_card_info_error_messages_validation();
         name_invalid_error_validation_using_ime_button_in_billing();
         email_invalid_error_validation_in_billing();
         email_invalid_error_validation_using_ime_button_in_billing();
@@ -85,16 +98,16 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.
      */
-    public void new_credit_card_info_visibility_validation() {
-        CreditCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_cc_info_visibility_validation");
+    public void cc_line_fields_visibility_validation() {
+        CreditCardVisibilityTesterCommon.cc_line_fields_visibility_validation("cc_line_fields_visibility_validation");
     }
 
     /**
      * This test verifies that all invalid error messages of credit card info
-     * fields are not displayed.
+     * fields are not displayed before clicking/entering any text.
      */
-    public void new_credit_card_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
+    public void cc_line_error_messages_not_displayed_validation() {
+        CreditCardVisibilityTesterCommon.cc_line_error_messages_not_displayed_validation("cc_line_error_messages_not_displayed_validation");
     }
 
     /**
@@ -154,6 +167,60 @@ public class FullBillingWithEmailTests extends EspressoBasedTest {
      */
     public void empty_fields_invalid_error_validation_in_billing() {
         ContactInfoTesterCommon.contact_info_empty_fields_invalid_error_validation("empty_fields_invalid_error_validation_in_billing", R.id.billingViewComponent, true, true);
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the cc number
+     * input field in billing.
+     * It checks validity by clicking on another field
+     */
+    public void cc_number_invalid_error_validation() {
+        CreditCardLineTesterCommon.cc_number_invalid_error_validation("cc_number_invalid_error_validation", false, R.id.input_name);
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the cc number
+     * input field in billing.
+     * It checks validity by pressing the Ime button
+     */
+    public void cc_number_invalid_error_validation_using_ime_button() {
+        CreditCardLineTesterCommon.cc_number_invalid_error_validation("cc_number_invalid_error_validation_using_ime_button", true, 0);
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the exp date
+     * input field in billing.
+     * It checks validity by clicking on another field
+     */
+    public void exp_date_invalid_error_validation() {
+        CreditCardLineTesterCommon.exp_date_invalid_error_validation("exp_date_invalid_error_validation", false, R.id.input_name);
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the exp_date
+     * input field in billing.
+     * It checks validity by pressing the Ime button
+     */
+    public void exp_date_invalid_error_validation_using_ime_button() {
+        CreditCardLineTesterCommon.exp_date_invalid_error_validation("exp_date_invalid_error_validation_using_ime_button", true, 0);
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the cvv number
+     * input field in billing.
+     * It checks validity by clicking on another field
+     */
+    public void cvv_number_invalid_error_validation() {
+        CreditCardLineTesterCommon.cvv_number_invalid_error_validation("cvv_number_invalid_error_validation", false, R.id.input_name);
+    }
+
+    /**
+     * This test verifies the invalid error appearance for the cvv number
+     * input field in billing.
+     * It checks validity by pressing the Ime button
+     */
+    public void cvv_number_invalid_error_validation_using_ime_button() {
+        CreditCardLineTesterCommon.cvv_number_invalid_error_validation("cvv_number_invalid_error_validation_using_ime_button", true, 0);
     }
 
     /**

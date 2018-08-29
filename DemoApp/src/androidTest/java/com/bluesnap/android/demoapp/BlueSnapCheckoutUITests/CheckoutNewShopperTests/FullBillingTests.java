@@ -35,8 +35,8 @@ public class FullBillingTests extends EspressoBasedTest {
 
     @Test
     public void full_billing_test() throws IOException {
-        new_credit_cc_info_visibility_validation();
-        new_credit_card_info_error_messages_validation();
+        cc_line_fields_visibility_validation();
+        cc_line_error_messages_not_displayed_validation();
         new_credit_billing_contact_info_visibility_validation();
         new_credit_billing_contact_info_error_messages_validation();
         default_country_view_validation_in_billing();
@@ -69,19 +69,19 @@ public class FullBillingTests extends EspressoBasedTest {
     }
 
     /**
-     * This test verifies that all the credit card and billing contact info fields
+     * This test verifies that all the credit card line fields
      * are displayed as they should when choosing new credit card.
      */
-    public void new_credit_cc_info_visibility_validation() {
-        CreditCardVisibilityTesterCommon.new_credit_card_info_visibility_validation("new_credit_cc_info_visibility_validation");
+    public void cc_line_fields_visibility_validation() {
+        CreditCardVisibilityTesterCommon.cc_line_fields_visibility_validation("cc_line_fields_visibility_validation");
     }
 
     /**
      * This test verifies that all invalid error messages of credit card info
      * fields are not displayed.
      */
-    public void new_credit_card_info_error_messages_validation() {
-        CreditCardVisibilityTesterCommon.new_credit_card_info_error_messages_validation("new_credit_card_info_error_messages_validation");
+    public void cc_line_error_messages_not_displayed_validation() {
+        CreditCardVisibilityTesterCommon.cc_line_error_messages_not_displayed_validation("cc_line_error_messages_not_displayed_validation");
     }
 
     /**

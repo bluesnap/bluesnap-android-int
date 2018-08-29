@@ -1,26 +1,20 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters;
 
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.view.View;
 
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 
-import org.hamcrest.Matcher;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
 
 /**
  * Helper class for UI tests, handles the New CC form.
@@ -153,164 +147,93 @@ public class CreditCardLineTesterCommon {
 
     }
 
-    //TODO: integrate the following tests
-    public static void name_invalid_error_validation(String testName, int componentResourceId, boolean withImeButton, int nextFieldResourceId) {
+    public static void cc_number_invalid_error_validation(String testName, boolean withImeButton, int nextFieldResourceId) {
+        //Entering an invalid cc number- not lan, and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.creditCardNumberEditText, R.id.creditCardNumberErrorTextView, false, withImeButton, nextFieldResourceId, invalidCardNumberGeneratorTest(), true);
+
+        //enter a valid cc number and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.creditCardNumberEditText, R.id.creditCardNumberErrorTextView, false, withImeButton, nextFieldResourceId, cardNumberGeneratorTest(), false);
+
+        //TODO: restore this after the bug is fixed
+//        //Entering an invalid cc number- too few digits and verify error message is displayed
+//        check_cc_line_input_validation(testName, R.id.creditCardNumberErrorTextView,true, withImeButton, nextFieldResourceId, "557275888601", true);
+//
+//        //enter a valid cc number and verify error message is not displayed anymore
+//        check_cc_line_input_validation(testName, R.id.creditCardNumberErrorTextView,false, withImeButton, nextFieldResourceId, cardNumberGeneratorTest(), false);
+    }
+
+    //Pre-condition: exp date field is displayed
+    public static void exp_date_invalid_error_validation(String testName, boolean withImeButton, int nextFieldResourceId) {
         //Click the field and leave it empty and verify error message is displayed
-        check_input_validation(testName, R.id.creditCardNumberErrorTextView, withImeButton, nextFieldResourceId, "", true);
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, true, withImeButton, nextFieldResourceId, "", true);
 
-        //enter a valid cc number and verify error message is not displayed anymore
-        check_input_validation(testName, R.id.creditCardNumberErrorTextView, withImeButton, nextFieldResourceId, invalidCardNumberGeneratorTest(), false);
+        //enter a valid exp date and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "11 19", false);
 
-        //Entering an invalid cc number- only one word and verify error message is displayed
-        check_input_validation(testName, R.id.creditCardNumberErrorTextView, withImeButton, nextFieldResourceId, "", true);
+        //Entering an invalid exp date- invalid month, and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "20 20", true);
 
-        //enter a valid cc number and verify error message is not displayed anymore
-        check_input_validation(testName, R.id.creditCardNumberErrorTextView, withImeButton, nextFieldResourceId, "", false);
+        //enter a valid exp date and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "11 19", false);
 
+        //Entering an invalid exp date- past date, and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "10 17", true);
+
+        //enter a valid exp date and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "11 19", false);
+
+        //Entering an invalid exp date- only month, and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, true, withImeButton, nextFieldResourceId, "12", true);
+
+        //enter a valid exp date and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "12 26", false);
+
+    }
+
+    //Pre-condition: cvv field is displayed
+    public static void cvv_number_invalid_error_validation(String testName, boolean withImeButton, int nextFieldResourceId) {
+        //Click the field and leave it empty and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "", true);
+
+        //enter a valid cvv number and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "123", false);
+
+        //Entering an invalid cvv number- too few digits, and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "56", true);
+
+        //enter a valid cvv number and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "123", false);
+
+        //Entering an invalid cc number- more than 3 digits , and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "1234", true);
+
+        //enter a valid cvv number and verify error message is not displayed anymore
+        check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "123", false);
     }
 
     //here
-    public void ccn_new_card_validation_messages() {
-        Matcher<View> ccNumberEditTextVM = withId(R.id.creditCardNumberEditText);
-        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
-
-        //Test validation of invalid number
-        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-        onView(ccNumberEditTextVM)
-                .perform(typeText(invalidCardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(buynowButtonVM).perform(click());
-        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
-
-        // Clear the invalid number
-        onView(ccNumberEditTextVM).perform(clearText());
-
-        // Put a valid number
-        onView(ccNumberEditTextVM)
-                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-
-        //------------------------------------------
-        // EXP date
-        //------------------------------------------
-
-        Matcher<View> expErrorTextVM = withId(R.id.expErrorTextView);
-        Matcher<View> expEditTextVM = withId(R.id.expEditText);
-
-        // Test validation of invalid exp date: invalid Month (56)
-        onView(withId(R.id.expErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-        onView(expEditTextVM)
-                .perform(typeText("56 44"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.expErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
-
-        // Now enter a valid month
-        onView(expEditTextVM).perform(click());
-        onView(expEditTextVM).perform(clearText());
-        onView(expEditTextVM)
-                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(withId(R.id.expErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-
-        // Test validation of past date
-        onView(expEditTextVM).perform(click());
-        onView(expEditTextVM).perform(clearText());
-        onView(expEditTextVM)
-                .perform(typeText("11 17"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(expErrorTextVM).check(matches(ViewMatchers.isDisplayed()));
-
-        // Now enter a valid month
-        onView(expEditTextVM).perform(click());
-        onView(expEditTextVM).perform(clearText());
-        onView(expEditTextVM)
-                .perform(typeText("12 26"), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.buyNowButton)).perform(click());
-        onView(expErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
-
-
-        //------------------------------------------
-        // CVV
-        //------------------------------------------
-
-        Matcher<View> cvvErrorTextVM = withId(R.id.cvvErrorTextView);
-        Matcher<View> cvvEditTextVM = withId(R.id.cvvEditText);
-
-        // Test validation of invalid exp date: invalid cvv (56)
-        onView(cvvEditTextVM)
-                .perform(typeText("56"), ViewActions.closeSoftKeyboard());
-        onView(buynowButtonVM).perform(click());
-        onView(withId(R.id.cvvErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
-
-        // Now enter a valid cvv
-        onView(cvvEditTextVM).perform(click());
-        onView(cvvEditTextVM).perform(clearText());
-        onView(cvvEditTextVM)
-                .perform(typeText("123"), ViewActions.closeSoftKeyboard());
-        onView(buynowButtonVM).perform(click());
-        onView(withId(R.id.cvvErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-
-        // Test that when entering valid data and then modifying it eventually invalidates the form.
-//        onView(creditCardNumberErrorTextVM).check(matches(not(ViewMatchers.isDisplayed())));
-//        onView(ccNumberEditTextVM).perform(click());
-//        onView(ccNumberEditTextVM).perform(clearText());
-//        onView(ccNumberEditTextVM).perform(clearText(), typeText("1876987"), ViewActions.closeSoftKeyboard());
-//        onView(buynowButtonVM).perform(click());
-//        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(ViewMatchers.isDisplayed()));
-
-    }
-
-
-    /**
-     * @throws InterruptedException
-     */
-    public void cc_new_Card_ccn_first() {
-        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
-
-        onView(withId(R.id.creditCardNumberEditText))
-                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.expEditText)).perform(typeText(""));
-        onView(buynowButtonVM).perform(click());
-        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-
-    }
-
-    /**
-     * This test is reproducing validation state where no input is entered to make sure IndexOutOFBoundsException is not thrown
-     *
-     * @throws InterruptedException
-     */
-    public void cc_new_card_empty_name_then_ccn() {
-        Matcher<View> buynowButtonVM = withId(R.id.buyNowButton);
-
-        onView(withId(R.id.input_name)).perform(clearText(), typeText("john doe"));
-        onView(withId(R.id.creditCardNumberEditText))
-                .perform(typeText(cardNumberGeneratorTest()), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.expEditText)).perform(typeText(""));
-        onView(buynowButtonVM).perform(click());
-        onView(withId(R.id.creditCardNumberErrorTextView)).check(matches(not(ViewMatchers.isDisplayed())));
-
-    }
 
     public static String cardNumberGeneratorTest() {
         return "5572758886015288";
     }
 
     public static String invalidCardNumberGeneratorTest() {
-        return "557275888112233";
+        return "5572758881122333";
     }
 
-    private static void check_input_validation(String testName, int fieldResourceId, boolean withImeButton, int nextFieldResourceId, String input, boolean isInvalid) {
-        onView(withId(fieldResourceId)).perform(scrollTo(), click(), clearText(), typeText(input));
-        moveToNextField(withImeButton, nextFieldResourceId, fieldResourceId);
-        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, fieldResourceId, isInvalid);
+    private static void check_cc_line_input_validation(String testName, int fieldResourceId, int errorFieldResourceId, boolean moveToNextField,
+                                                       boolean withImeButton, int nextFieldResourceId, String input, boolean isInvalid) {
+        onView(withId(fieldResourceId)).perform(click(), clearText(), typeText(input));
+        if (moveToNextField)
+            moveToNextField(withImeButton, nextFieldResourceId, fieldResourceId);
+        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, errorFieldResourceId, isInvalid);
     }
 
     private static void moveToNextField(boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {
         if (withImeButton)
             onView(withId(currFieldResourceId)).perform(pressImeActionButton());
         else
-            onView(withId(nextFieldResourceId)).perform(scrollTo(), click());
+            onView(withId(nextFieldResourceId)).perform(click());
     }
 
 }
