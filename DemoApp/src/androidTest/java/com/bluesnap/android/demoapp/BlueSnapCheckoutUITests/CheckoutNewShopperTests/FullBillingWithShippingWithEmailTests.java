@@ -6,7 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
-import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;

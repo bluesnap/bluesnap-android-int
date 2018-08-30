@@ -1,4 +1,4 @@
-package com.bluesnap.android.demoapp;
+package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +9,6 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
-import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
@@ -24,6 +23,14 @@ import android.view.WindowManager;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShoppersFactory;
+import com.bluesnap.android.demoapp.DemoTransactions;
+import com.bluesnap.android.demoapp.GetShopperServiceInterface;
+import com.bluesnap.android.demoapp.R;
+import com.bluesnap.android.demoapp.RandomTestValuesGenerator;
+import com.bluesnap.android.demoapp.TestUtils;
+import com.bluesnap.android.demoapp.TestingShopperContactInfo;
+import com.bluesnap.android.demoapp.TestingShopperCreditCard;
+import com.bluesnap.android.demoapp.TokenServiceInterface;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
@@ -101,8 +108,6 @@ public class CheckoutEspressoBasedTester {
     private boolean isReturningShopper = false;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
 
-    IdlingResource tokenProgressBarIR;
-    IdlingResource transactionMessageIR;
     private boolean isSdkRequestNull = false;
     private DemoTransactions transactions;
     protected SdkResult sdkResult;
@@ -395,15 +400,6 @@ public class CheckoutEspressoBasedTester {
         }
     }
 
-    public void chosenPaymentMethodValidationInServer(TestingShopperCreditCard creditCard) throws InterruptedException {
-        while (!mActivity.isDestroyed()) {
-            Log.d(TAG, "Waiting for tokenized credit card service to finish");
-            sleep(1000);
-        }
-
-        get_shopper_from_server(true, creditCard);
-    }
-
     protected void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
         CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
         while (!mActivity.isDestroyed()) {
@@ -454,7 +450,7 @@ public class CheckoutEspressoBasedTester {
                 if (isShopperConfig)
                     shopper_chosen_payment_method_validation(creditCard);
                 else
-                    new_shopper_info_saved_validation(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
+                    shopper_info_saved_validation(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
             }
 
             @Override
@@ -499,7 +495,7 @@ public class CheckoutEspressoBasedTester {
     }
 
     //TODO: add validation that the new credit card info has been saved correctly
-    private void new_shopper_info_saved_validation(boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) {
+    private void shopper_info_saved_validation(boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) {
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
             if (withEmail)

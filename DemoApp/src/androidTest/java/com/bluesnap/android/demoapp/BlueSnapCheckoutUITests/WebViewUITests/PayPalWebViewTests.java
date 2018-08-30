@@ -5,7 +5,7 @@ import android.support.test.espresso.web.webdriver.Locator;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.Constants;

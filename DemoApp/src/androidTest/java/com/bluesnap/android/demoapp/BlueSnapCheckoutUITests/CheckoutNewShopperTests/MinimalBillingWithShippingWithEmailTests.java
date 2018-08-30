@@ -4,7 +4,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
-import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.models.SdkRequest;

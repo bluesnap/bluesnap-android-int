@@ -5,7 +5,6 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.view.View;
 
-import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;

@@ -19,8 +19,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShoppersFactory;
-import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.GetShopperServiceInterface;
 import com.bluesnap.android.demoapp.RandomTestValuesGenerator;
 import com.bluesnap.android.demoapp.TestingShopperCreditCard;

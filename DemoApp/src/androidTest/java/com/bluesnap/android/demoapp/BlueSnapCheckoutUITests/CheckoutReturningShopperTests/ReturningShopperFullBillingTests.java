@@ -7,7 +7,7 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
-import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.models.SdkRequest;
