@@ -7,7 +7,7 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
-import com.bluesnap.android.demoapp.EspressoBasedTest;
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -35,7 +35,7 @@ import static org.hamcrest.CoreMatchers.not;
  */
 @RunWith(AndroidJUnit4.class)
 
-public class ReturningShopperFullBillingTests extends EspressoBasedTest {
+public class ReturningShopperFullBillingTests extends CheckoutEspressoBasedTester {
     private String BILLING_COUNTRY;
 
     public ReturningShopperFullBillingTests() {

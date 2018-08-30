@@ -7,7 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
-import com.bluesnap.android.demoapp.EspressoBasedTest;
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -32,7 +32,7 @@ import static org.hamcrest.CoreMatchers.anything;
  */
 @RunWith(AndroidJUnit4.class)
 
-public class ReturningShopperFullBillingWithShippingTests extends EspressoBasedTest {
+public class ReturningShopperFullBillingWithShippingTests extends CheckoutEspressoBasedTester {
     private String BILLING_COUNTRY;
     private String SHIPPING_COUNTRY;
 

@@ -5,17 +5,21 @@ import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.Checks;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 
+import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import junit.framework.Assert;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 
 import java.util.concurrent.TimeUnit;
@@ -39,7 +43,7 @@ import static org.hamcrest.Matchers.containsString;
 /**
  * Created by oz on 5/26/16.
  */
-public class DemoFlowTest extends EspressoBasedTest {
+public class DemoFlowTest extends CheckoutEspressoBasedTester {
     @Rule
     public ActivityTestRule<DemoMainActivity> mActivityRule = new ActivityTestRule<>(
             DemoMainActivity.class);
@@ -52,6 +56,18 @@ public class DemoFlowTest extends EspressoBasedTest {
         //Thread.sleep(1000);
     }
 
+    @Before
+    public void setup() throws InterruptedException, BSPaymentRequestException {
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        setupAndLaunch(sdkRequest);
+
+        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+    }
+
+    //    @Test
+    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction(false, false, false, false);
+    }
 
     public static Matcher<Object> itemListMatcher(final Matcher<String> itemListText) {
         Checks.checkNotNull(itemListText);

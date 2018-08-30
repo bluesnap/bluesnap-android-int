@@ -5,8 +5,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
-import com.bluesnap.android.demoapp.EspressoBasedTest;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -31,7 +31,7 @@ import static org.hamcrest.Matchers.not;
  */
 @RunWith(AndroidJUnit4.class)
 
-public class FullBillingWithShippingTests extends EspressoBasedTest {
+public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {

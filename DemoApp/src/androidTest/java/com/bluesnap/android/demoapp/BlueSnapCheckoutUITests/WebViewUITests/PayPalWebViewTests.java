@@ -5,7 +5,7 @@ import android.support.test.espresso.web.webdriver.Locator;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
-import com.bluesnap.android.demoapp.EspressoBasedTest;
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.Constants;
@@ -41,7 +41,7 @@ import static org.hamcrest.CoreMatchers.containsString;
  * Created by sivani on 23/08/2018.
  */
 
-public class PayPalWebViewTests extends EspressoBasedTest {
+public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
 
     private final String SANDBOX_RETRIEVE_PAYPAL_TRANSACTION = "alt-transactions/";
     private final String SANDBOX_PAYPAL_EMAIL = "apiShopper@bluesnap.com";

@@ -5,7 +5,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.SmallTest;
 import android.view.View;
 
-import com.bluesnap.android.demoapp.EspressoBasedTest;
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.not;
  */
 //@RunWith(AndroidJUnit4.class)
 @SmallTest
-public class CCFormValidityTest extends EspressoBasedTest {
+public class CCFormValidityTest extends CheckoutEspressoBasedTester {
     private static final String TAG = CCFormValidityTest.class.getSimpleName();
 
     @After

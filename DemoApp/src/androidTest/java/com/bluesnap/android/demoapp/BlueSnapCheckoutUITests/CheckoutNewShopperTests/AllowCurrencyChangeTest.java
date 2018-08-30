@@ -7,8 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
-import com.bluesnap.android.demoapp.EspressoBasedTest;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.not;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
-public class AllowCurrencyChangeTest extends EspressoBasedTest {
+public class AllowCurrencyChangeTest extends CheckoutEspressoBasedTester {
     protected boolean isAllowed = true;
 
     @Before

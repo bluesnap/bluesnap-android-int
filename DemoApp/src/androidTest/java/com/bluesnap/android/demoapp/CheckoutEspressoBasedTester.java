@@ -83,8 +83,8 @@ import static org.hamcrest.Matchers.containsString;
 /**
  *
  */
-public class EspressoBasedTest {
-    protected static final String TAG = EspressoBasedTest.class.getSimpleName();
+public class CheckoutEspressoBasedTester {
+    protected static final String TAG = CheckoutEspressoBasedTester.class.getSimpleName();
     protected BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SDKConfiguration sDKConfiguration = null;
     //    protected NumberFormat df;
@@ -100,7 +100,6 @@ public class EspressoBasedTest {
 
     private boolean isReturningShopper = false;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
-
 
     IdlingResource tokenProgressBarIR;
     IdlingResource transactionMessageIR;
@@ -121,11 +120,11 @@ public class EspressoBasedTest {
     protected List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
 
 
-    public EspressoBasedTest() {
+    public CheckoutEspressoBasedTester() {
         this(false, "");
     }
 
-    public EspressoBasedTest(boolean isReturningShopper, String returningOrNewShopper) {
+    public CheckoutEspressoBasedTester(boolean isReturningShopper, String returningOrNewShopper) {
         if (isReturningShopper && returningOrNewShopper.equals("")) {
             returningShopper = ReturningShoppersFactory.getReturningShopper();
             returningOrNewShopper = "?shopperId=" + returningShopper.getShopperId();
@@ -146,7 +145,7 @@ public class EspressoBasedTest {
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, false, false);
-    private BluesnapCheckoutActivity mActivity;
+    protected BluesnapCheckoutActivity mActivity;
 
     //    @Before
     private void doSetup() {
@@ -396,7 +395,16 @@ public class EspressoBasedTest {
         }
     }
 
-    public void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
+    public void chosenPaymentMethodValidationInServer(TestingShopperCreditCard creditCard) throws InterruptedException {
+        while (!mActivity.isDestroyed()) {
+            Log.d(TAG, "Waiting for tokenized credit card service to finish");
+            sleep(1000);
+        }
+
+        get_shopper_from_server(true, creditCard);
+    }
+
+    protected void finish_demo_purchase(SdkResult sdkResult, boolean withFullBilling, boolean withEmail, boolean withShipping, boolean shippingSameAsBilling) throws InterruptedException {
         CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
@@ -404,12 +412,6 @@ public class EspressoBasedTest {
         }
 
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
-
-        //TODO: change this stupid thing. in demoApp as well
-//        shopperId = TestUtils.getText(withId(R.id.shopperId)).substring(13);
-//        if (returningShopperIndex >= 0)
-//            returningShoppersIDs[returningShopperIndex] = shopperId;
-//        Espresso.unregisterIdlingResources(transactionMessageIR);
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         double expectedAmount = sdkResult.getAmount();
@@ -420,14 +422,14 @@ public class EspressoBasedTest {
         makeTransaction(sdkResult, withFullBilling, withEmail, withShipping, shippingSameAsBilling);
     }
 
-    public void makeTransaction(SdkResult sdkResult, final boolean withFullBilling, final boolean withEmail, final boolean withShipping, final boolean shippingSameAsBilling) {
+    private void makeTransaction(SdkResult sdkResult, final boolean withFullBilling, final boolean withEmail, final boolean withShipping, final boolean shippingSameAsBilling) {
         transactions = DemoTransactions.getInstance();
         transactions.setContext(applicationContext);
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 shopperId = transactions.getShopperId();
-                get_shopper_after_transaction(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
+                get_shopper_from_server(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
             }
 
             @Override
@@ -437,11 +439,22 @@ public class EspressoBasedTest {
         });
     }
 
-    void get_shopper_after_transaction(final boolean withFullBilling, final boolean withEmail, final boolean withShipping, final boolean shippingSameAsBilling) {
+    private void get_shopper_from_server(boolean isShopperConfig, TestingShopperCreditCard creditCard) {
+        get_shopper_from_server(false, false, false, false, isShopperConfig, creditCard);
+    }
+
+    private void get_shopper_from_server(final boolean withFullBilling, final boolean withEmail, final boolean withShipping, final boolean shippingSameAsBilling) {
+        get_shopper_from_server(withFullBilling, withEmail, withShipping, shippingSameAsBilling, false, null);
+    }
+
+    private void get_shopper_from_server(final boolean withFullBilling, final boolean withEmail, final boolean withShipping, final boolean shippingSameAsBilling, boolean isShopperConfig, TestingShopperCreditCard creditCard) {
         get_shopper_service(new GetShopperServiceInterface() {
             @Override
             public void onServiceSuccess() {
-                new_shopper_info_saved_validation(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
+                if (isShopperConfig)
+                    shopper_chosen_payment_method_validation(creditCard);
+                else
+                    new_shopper_info_saved_validation(withFullBilling, withEmail, withShipping, shippingSameAsBilling);
             }
 
             @Override
@@ -459,6 +472,29 @@ public class EspressoBasedTest {
         } else {
             Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
             getShopperServiceInterface.onServiceFailure();
+        }
+    }
+
+    private void shopper_chosen_payment_method_validation(TestingShopperCreditCard creditCard) {
+        try {
+            JSONObject jsonObject = new JSONObject(getShopperResponse);
+
+            JSONObject jsonObjectChosenPaymentMethod = jsonObject.getJSONObject("chosenPaymentMethod");
+            check_if_field_identify("chosenPaymentMethodType", "CC", jsonObjectChosenPaymentMethod);
+
+            JSONObject jsonObjectCreditCard = jsonObjectChosenPaymentMethod.getJSONObject("creditCard");
+            check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
+            check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
+//            check_if_field_identify("cardSubType", creditCard.getCardSubType(), jsonObjectCreditCard);
+            check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
+            check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail("Error on parse shopper info");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("missing field in server response:\n Expected fieldName: email" + "\n" + getShopperResponse);
         }
     }
 

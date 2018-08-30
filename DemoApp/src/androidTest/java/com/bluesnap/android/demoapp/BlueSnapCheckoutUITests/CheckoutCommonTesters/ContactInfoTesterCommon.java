@@ -37,16 +37,16 @@ import static org.hamcrest.Matchers.hasToString;
  */
 
 public class ContactInfoTesterCommon {
-    public static TestingShopperContactInfo billingContactInfo = new TestingShopperContactInfo("La Fleur", "test@sdk.com",
+    public static final TestingShopperContactInfo billingContactInfo = new TestingShopperContactInfo("La Fleur", "test@sdk.com",
             "New York", "555 Broadway street", "NY", "3abc 324a", "US", "United States");
 
-    public static TestingShopperContactInfo shippingContactInfo = new TestingShopperContactInfo("Taylor Love", "null",
+    public static final TestingShopperContactInfo shippingContactInfo = new TestingShopperContactInfo("Taylor Love", "null",
             "CityTest", "AddressTest", "RJ", "12345", "BR", "Brazil");
 
-    public static TestingShopperContactInfo editBillingContactInfo = new TestingShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
+    public static final TestingShopperContactInfo editBillingContactInfo = new TestingShopperContactInfo("Funny Brice", "broadwaydancecenter@gmail.com",
             "Barcelona", "77 Rambla street", "QC", "4815", "CA", "Canada");
 
-    public static TestingShopperContactInfo editShippingContactInfo = new TestingShopperContactInfo("Janet Weiss", "null",
+    public static final TestingShopperContactInfo editShippingContactInfo = new TestingShopperContactInfo("Janet Weiss", "null",
             "Denton", "75 some street", "TX", "162342", "US", "United States");
 
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {

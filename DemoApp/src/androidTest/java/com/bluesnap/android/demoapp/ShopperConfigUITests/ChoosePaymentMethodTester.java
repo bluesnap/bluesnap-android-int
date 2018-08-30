@@ -2,18 +2,16 @@ package com.bluesnap.android.demoapp.ShopperConfigUITests;
 
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
 
-import com.bluesnap.android.demoapp.EspressoBasedTest;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
+import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onData;
@@ -27,7 +25,7 @@ import static org.hamcrest.CoreMatchers.anything;
  * Created by sivani on 27/08/2018.
  */
 
-public class ChoosePaymentMethodTester extends EspressoBasedTest {
+public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedTester {
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL = "22946805";
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING = "29632268";
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_EMAIL = "29632260";
@@ -35,18 +33,15 @@ public class ChoosePaymentMethodTester extends EspressoBasedTest {
 
 
     public ChoosePaymentMethodTester() {
-        super(true, "?shopperId=" + RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL);
+        super(RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL);
     }
-
-    @Rule
-    public ActivityTestRule<BluesnapChoosePaymentMethodActivity> mActivityRule = new ActivityTestRule<>(
-            BluesnapChoosePaymentMethodActivity.class, false, false);
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException {
         SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements(true, true, true);
         setupAndLaunch(sdkRequest);  //choose EUR as base currency
 
+        shopperId = RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL;
     }
 
     @Test
@@ -78,10 +73,31 @@ public class ChoosePaymentMethodTester extends EspressoBasedTest {
         submit_button_visibility_and_content_in_new_card();
     }
 
-    //    @Test
-    public void choose_existing_card_submit_test() {
+    @Test
+    public void choose_first_existing_card_submit_test() throws InterruptedException {
+        //choose first credit card
+        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
+        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "US", true, false);
+        TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
 
+        //submit the choice
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        TestingShopperCreditCard chosenCreditCard = new TestingShopperCreditCard(TestingShopperCreditCard.VISA_CREDIT_CARD);
+        chosenPaymentMethodValidationInServer(chosenCreditCard);
+    }
+
+    @Test
+    public void choose_second_existing_card_submit_test() throws InterruptedException {
+        //choose first credit card
+        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(1).perform(click());
+        //submit the choice
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        TestingShopperCreditCard chosenCreditCard = new TestingShopperCreditCard(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
+        chosenPaymentMethodValidationInServer(chosenCreditCard);
     }
 
     //    @Test
@@ -126,5 +142,6 @@ public class ChoosePaymentMethodTester extends EspressoBasedTest {
     public void currency_hamburger_button_visibility_in_shipping() {
         ShopperConfigVisibilityTesterCommon.currency_hamburger_button_visibility("currency_hamburger_button_visibility_in_shipping");
     }
+
 
 }

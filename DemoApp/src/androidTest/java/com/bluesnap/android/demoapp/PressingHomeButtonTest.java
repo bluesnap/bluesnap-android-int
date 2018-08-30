@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -21,8 +23,13 @@ import org.junit.Before;
 import org.junit.Rule;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -31,7 +38,7 @@ import static org.hamcrest.Matchers.is;
 // Not working on Samsung device. need fixing
 //@LargeTest
 //@RunWith(AndroidJUnit4.class)
-public class PressingHomeButtonTest extends EspressoBasedTest {
+public class PressingHomeButtonTest extends CheckoutEspressoBasedTester {
     private static final String TAG = PressingHomeButtonTest.class.getSimpleName();
     @Rule
     public ActivityTestRule<DemoMainActivity> mActivityRule = new ActivityTestRule<>(

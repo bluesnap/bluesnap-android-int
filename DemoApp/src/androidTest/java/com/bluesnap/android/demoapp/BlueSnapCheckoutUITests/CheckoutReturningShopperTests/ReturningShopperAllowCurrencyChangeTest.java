@@ -3,8 +3,8 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningSh
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 
+import com.bluesnap.android.demoapp.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
-import com.bluesnap.android.demoapp.EspressoBasedTest;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.not;
  * Created by sivani on 05/08/2018.
  */
 
-public class ReturningShopperAllowCurrencyChangeTest extends EspressoBasedTest {
+public class ReturningShopperAllowCurrencyChangeTest extends CheckoutEspressoBasedTester {
 
     protected boolean isAllowed = true;
 
