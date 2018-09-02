@@ -201,6 +201,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
     public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency, boolean openURL, String returningShopperId) throws InterruptedException, BSPaymentRequestException {
         if (openURL)
             setUrlConnection("?shopperId=" + returningShopperId);
+
         doSetup();
         sdkRequest.setTaxCalculator(new TaxCalculator() {
             @Override
