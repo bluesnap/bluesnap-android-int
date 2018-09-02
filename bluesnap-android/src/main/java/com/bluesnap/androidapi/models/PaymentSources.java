@@ -21,6 +21,14 @@ public class PaymentSources extends BSModel {
     @Nullable
     private List<CreditCardInfo> creditCardInfos;
 
+    public PaymentSources(@NonNull CreditCardInfo creditCardInfo) {
+        this.creditCardInfos = new ArrayList<>();
+        this.creditCardInfos.add(creditCardInfo);
+    }
+
+    public PaymentSources() {
+    }
+
     @Nullable
     public static PaymentSources fromJson(@Nullable JSONObject previousPaymentSources) {
         if (previousPaymentSources == null) {
