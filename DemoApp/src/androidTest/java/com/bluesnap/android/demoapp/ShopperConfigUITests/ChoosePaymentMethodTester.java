@@ -73,7 +73,7 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
         submit_button_visibility_and_content_in_new_card();
     }
 
-    @Test
+    //@Test
     public void choose_first_existing_card_submit_test() throws InterruptedException {
         //choose first credit card
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
@@ -88,7 +88,7 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
         chosenPaymentMethodValidationInServer(true, true, true, TestingShopperCreditCard.VISA_CREDIT_CARD, 0);
     }
 
-    @Test
+    //@Test
     public void choose_second_existing_card_submit_test() throws InterruptedException {
         //choose first credit card
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(1).perform(click());

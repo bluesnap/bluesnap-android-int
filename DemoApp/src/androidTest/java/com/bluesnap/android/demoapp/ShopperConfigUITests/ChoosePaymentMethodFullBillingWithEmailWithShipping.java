@@ -76,7 +76,7 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
     /**
      * This test does a full billing with email and shipping
      * end-to-end choose payment flow, for both new card and existing card,
-     * for a minimal billing with email and shipping shopper.
+     * for a minimal billing with email with shipping shopper.
      *
      * @throws InterruptedException
      */
@@ -124,13 +124,13 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
     /**
      * This test does a full billing with email and shipping
      * end-to-end choose payment flow, for both new card and existing card,
-     * for a full billing with shipping shopper
+     * for a full billing with email with shipping shopper
      *
      * @throws InterruptedException
      */
     @Test
     public void choose_payment_flow_with_full_billing_with_email_with_shipping_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-        full_billing_with_email_with_shipping_choose_payment_flow(true, false, true);
+        full_billing_with_email_with_shipping_choose_payment_flow(true, true, true);
     }
 
 
