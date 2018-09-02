@@ -533,6 +533,8 @@ public class BlueSnapService {
             convertPrice(priceDetails, newCurrencyNameCode);
             sdkResult.setAmount(priceDetails.getAmount());
             sdkResult.setCurrencyNameCode(priceDetails.getCurrencyCode());
+            // any changes like currency and/or amount while not creating a new token should clear previous used PayPal token
+            clearPayPalToken();
             BlueSnapLocalBroadcastManager.sendMessage(context, BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT, TAG);
         }
     }

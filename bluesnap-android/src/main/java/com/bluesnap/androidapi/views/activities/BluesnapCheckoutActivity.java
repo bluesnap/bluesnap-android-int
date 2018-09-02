@@ -18,7 +18,6 @@ import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
-import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
@@ -26,6 +25,7 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
 
 import org.json.JSONObject;
@@ -237,6 +237,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                     String message = null;
                     String title = null;
                     if (errorDescription.getString("code").equals("20027")) {
+                        /* { "message": [ { "errorName": "PAYPAL_UNSUPPORTED_CURRENCY", "code": "20027", "description": "The given currency 'ILS' is not supported with PayPal." } ] } */
                         // not supported PayPal currency
                         String errorCurrency = priceDetails.getCurrencyCode();
                         // all supported PayPal currencies
@@ -276,6 +277,20 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
                             title = getString(R.string.CURRENCY_NOT_SUPPORTED_PART_TITLE);
                         }
+                    } else if (errorDescription.getString("code").equals("14050")) {
+                        /*  { "message": [ { "errorName": "PAYPAL_TOKEN_ALREADY_USED", "code": "14050", "description": "PayPal Token already used" } ] } */
+                        blueSnapService.getTokenProvider().getNewToken(new TokenServiceCallback() {
+                            @Override
+                            public void complete(String newToken) {
+                                blueSnapService.setNewToken(newToken);
+                                try {
+                                    startPayPal(priceDetails);
+                                } catch (Exception e) {
+                                    catchOnExceptionEWithAlertDialog(e);
+                                }
+                            }
+                        });
+
                     } else {
                         message = getString(R.string.SUPPORT_PLEASE)
                                 + " "
@@ -294,13 +309,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                         });
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "json parsing exception", e);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
-                        }
-                    });
+                    catchOnExceptionEWithAlertDialog(e);
                 } finally {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -343,5 +352,15 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    private void catchOnExceptionEWithAlertDialog(Exception e) {
+        Log.e(TAG, "json parsing exception", e);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
+            }
+        });
     }
 }
