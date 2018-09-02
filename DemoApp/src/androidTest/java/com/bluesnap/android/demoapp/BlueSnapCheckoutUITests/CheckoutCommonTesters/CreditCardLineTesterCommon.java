@@ -5,6 +5,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
+import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -136,15 +137,16 @@ public class CreditCardLineTesterCommon {
     }
 
     public static void fillInCCLineWithValidCard() {
+        fillInCCLineWithValidCard(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
+    }
 
-        //------------------------------------------
+    public static void fillInCCLineWithValidCard(TestingShopperCreditCard creditCard) {
         onView(withId(R.id.creditCardNumberEditText))
-                .perform(typeText(cardNumberGeneratorTest()));
+                .perform(typeText(creditCard.getCardNumber()));
 
-        onView(withId(R.id.expEditText)).perform(typeText("12 26"));
+        onView(withId(R.id.expEditText)).perform(typeText(Integer.toString(creditCard.getExpirationMonth()) + " " + creditCard.getExpirationYearLastTwoDigit()));
 
-        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
-
+        onView(withId(R.id.cvvEditText)).perform(typeText(creditCard.getCvv()));
     }
 
     public static void cc_number_invalid_error_validation(String testName, boolean withImeButton, int nextFieldResourceId) {

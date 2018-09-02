@@ -411,7 +411,7 @@ public class CheckoutEspressoBasedTester {
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         double expectedAmount = sdkResult.getAmount();
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.00000000001);
+        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
 //        Assert.assertEquals("SDKResult amount not equals", TestUtils.round_amount(sdkResult.getAmount()), roundedPurchaseAmount);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
 

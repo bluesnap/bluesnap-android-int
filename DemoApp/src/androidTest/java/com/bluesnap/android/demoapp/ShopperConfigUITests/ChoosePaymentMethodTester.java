@@ -85,8 +85,7 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
         //submit the choice
         onView(withId(R.id.buyNowButton)).perform(click());
 
-        TestingShopperCreditCard chosenCreditCard = new TestingShopperCreditCard(TestingShopperCreditCard.VISA_CREDIT_CARD);
-        chosenPaymentMethodValidationInServer(chosenCreditCard);
+        chosenPaymentMethodValidationInServer(true, true, true, TestingShopperCreditCard.VISA_CREDIT_CARD, 0);
     }
 
     @Test
@@ -96,8 +95,8 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
         //submit the choice
         onView(withId(R.id.buyNowButton)).perform(click());
 
-        TestingShopperCreditCard chosenCreditCard = new TestingShopperCreditCard(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
-        chosenPaymentMethodValidationInServer(chosenCreditCard);
+        chosenPaymentMethodValidationInServer(true, true, true, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD, 1);
+
     }
 
     //    @Test

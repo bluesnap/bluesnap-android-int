@@ -6,32 +6,56 @@ package com.bluesnap.android.demoapp;
 
 public class TestingShopperCreditCard {
 
-    public static final TestingShopperCreditCard VISA_CREDIT_CARD = new TestingShopperCreditCard("1111",
-            "VISA", "", 11, 2019);
-    public static final TestingShopperCreditCard MASTERCARD_CREDIT_CARD = new TestingShopperCreditCard("5288",
-            "MASTERCARD", "DEBIT", 12, 2026);
+    public static final TestingShopperCreditCard VISA_CREDIT_CARD = new TestingShopperCreditCard("4111111111111111", "123", "1111",
+            "VISA", "", 11, 2019, "19");
+    public static final TestingShopperCreditCard MASTERCARD_CREDIT_CARD = new TestingShopperCreditCard("5572758886015288", "123", "5288",
+            "MASTERCARD", "DEBIT", 12, 2026, "26");
 
+    private String cardNumber;
+    private String cvv;
     private String cardLastFourDigits;
     private String cardType;
     private String cardSubType;
     private int expirationMonth;
     private int expirationYear;
+    private String expirationYearLastTwoDigit;
 
-    public TestingShopperCreditCard(String cardLastFourDigits, String cardType,
-                                    String cardSubType, int expirationMonth, int expirationYear) {
+    public TestingShopperCreditCard(String cardNumber, String cvv, String cardLastFourDigits, String cardType,
+                                    String cardSubType, int expirationMonth, int expirationYear, String expirationYearLastTwoDigit) {
+        this.cardNumber = cardNumber;
+        this.cvv = cvv;
         this.cardLastFourDigits = cardLastFourDigits;
         this.cardType = cardType;
         this.cardSubType = cardSubType;
         this.expirationMonth = expirationMonth;
         this.expirationYear = expirationYear;
+        this.expirationYearLastTwoDigit = expirationYearLastTwoDigit;
     }
 
     public TestingShopperCreditCard(TestingShopperCreditCard creditCard) {
+        cardNumber = creditCard.getCardNumber();
+        cvv = creditCard.getCvv();
         cardLastFourDigits = creditCard.getCardLastFourDigits();
         cardType = creditCard.getCardType();
         cardSubType = creditCard.getCardSubType();
         expirationMonth = creditCard.getExpirationMonth();
         expirationYear = creditCard.getExpirationYear();
+    }
+
+    public String getCvv() {
+        return cvv;
+    }
+
+    public void setCvv(String cvv) {
+        this.cvv = cvv;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
     public String getCardLastFourDigits() {
@@ -72,5 +96,13 @@ public class TestingShopperCreditCard {
 
     public void setExpirationYear(int expirationYear) {
         this.expirationYear = expirationYear;
+    }
+
+    public String getExpirationYearLastTwoDigit() {
+        return expirationYearLastTwoDigit;
+    }
+
+    public void setExpirationYearLastTwoDigit(String expirationYearLastTwoDigit) {
+        this.expirationYearLastTwoDigit = expirationYearLastTwoDigit;
     }
 }
