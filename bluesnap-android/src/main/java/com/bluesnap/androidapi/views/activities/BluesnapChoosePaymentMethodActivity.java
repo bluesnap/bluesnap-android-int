@@ -11,6 +11,8 @@ import android.view.View;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.ChosenPaymentMethod;
+import com.bluesnap.androidapi.models.CreditCardInfo;
+import com.bluesnap.androidapi.models.PaymentSources;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -53,7 +55,9 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
         if (resultCode == Activity.RESULT_OK) {
             progressBar.setVisibility(View.VISIBLE);
             Shopper shopper = sdkConfiguration.getShopper();
-            shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, shopper.getNewCreditCardInfo().getCreditCard()));
+            CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
+            shopper.setNewPaymentSources(new PaymentSources(newCreditCardInfo));
+            shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, newCreditCardInfo.getCreditCard()));
             updateShopperOnServer(shopper);
         }
     }
