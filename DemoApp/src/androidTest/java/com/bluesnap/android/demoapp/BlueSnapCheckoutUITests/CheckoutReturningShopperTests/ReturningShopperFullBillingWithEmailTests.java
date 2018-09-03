@@ -43,7 +43,7 @@ public class ReturningShopperFullBillingWithEmailTests extends CheckoutEspressoB
         sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
         sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
         setupAndLaunch(sdkRequest);
-        int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
+        //int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
         if (!returningShopper.isFullBilling()) //reset full billing info for this shopper
             returningShopper.getBillingContactInfo().resetFullBillingFields();
         if (!returningShopper.isWithEmail()) //reset email for this shopper
