@@ -9,9 +9,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +28,14 @@ import static android.support.test.espresso.action.ViewActions.click;
 
 public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
 
+    public FullBillingWithEmailTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, false);
+    }
+
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -75,23 +78,6 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
         city_invalid_error_validation_using_ime_button_in_billing();
         address_invalid_error_validation_in_billing();
         state_invalid_error_in_billing();
-    }
-
-    @Test
-    public void full_billing_with_email_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(true, true, false, false);
-    }
-
-    @Test
-    public void returning_shopper_full_billing_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(true, true, false, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(true, true, false);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(true, true, false);
     }
 
     /**

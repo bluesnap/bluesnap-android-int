@@ -17,24 +17,24 @@ public class TestingShopperCheckoutRequirements {
      * Shopper Info Config
      *
      * @param shippingRequired - boolean, setShippingRequired
-     * @param billingRequired  - boolean, setFullBillingRequired
+     * @param fullBillingRequired  - boolean, setFullBillingRequired
      * @param emailRequired    - boolean, setEmailRequired
      */
-    public TestingShopperCheckoutRequirements(boolean shippingRequired, boolean billingRequired, boolean emailRequired) {
-        this(shippingRequired, billingRequired, emailRequired, false);
+    public TestingShopperCheckoutRequirements(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired) {
+        this(shippingRequired, fullBillingRequired, emailRequired, false);
     }
 
     /**
      * Shopper Info Config
      *
      * @param shippingRequired      - boolean, setShippingRequired
-     * @param billingRequired       - boolean, setFullBillingRequired
+     * @param fullBillingRequired       - boolean, setFullBillingRequired
      * @param emailRequired         - boolean, setEmailRequired
      * @param shippingSameAsBilling - boolean, setEmailRequired
      */
-    public TestingShopperCheckoutRequirements(boolean shippingRequired, boolean billingRequired, boolean emailRequired, boolean shippingSameAsBilling) {
+    public TestingShopperCheckoutRequirements(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling) {
         this.shippingRequired = shippingRequired;
-        this.fullBillingRequired = billingRequired;
+        this.fullBillingRequired = fullBillingRequired;
         this.emailRequired = emailRequired;
         this.shippingSameAsBilling = shippingSameAsBilling;
     }

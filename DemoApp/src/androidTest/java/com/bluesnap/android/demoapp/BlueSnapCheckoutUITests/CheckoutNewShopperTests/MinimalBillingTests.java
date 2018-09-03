@@ -10,10 +10,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,11 +30,13 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class MinimalBillingTests extends CheckoutEspressoBasedTester {
 
+    public MinimalBillingTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, false);
+    }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
 
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
@@ -63,14 +65,14 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
         CreditCardLineTesterCommon.check_focus_from_cvv_text_view_in_cc_line("check_focus_from_cvv_text_view_in_cc_line");
     }
 
-    /**
-     * This test does an end-to-end new card flow for minimal
-     * billing new shopper
-     */
-    @Test
-    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(false, false, false, false);
-    }
+//    /**
+//     * This test does an end-to-end new card flow for minimal
+//     * billing new shopper
+//     */
+//    @Test
+//    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
+//        new_card_basic_flow_transaction();
+//    }
 
     /**
      * This test does an end-to-end existing card flow for minimal
@@ -78,26 +80,18 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
      */
     @Test
     public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException {
-        new_card_basic_fill_info(false, false, false, false);
+        new_card_basic_fill_info();
         CurrencyChangeTesterCommon.changeCurrency("CAD");
         CurrencyChangeTesterCommon.changeCurrency("ILS");
         CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
         onView(withId(R.id.buyNowButton)).perform(click());
-        sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finish_demo_purchase(sdkResult, false, false, false, false);
+        uIAutoTestingBlueSnapService.finish_demo_purchase(shopperCheckoutRequirements);
     }
 
-    @Test
-    public void returning_shopper_minimal_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(false, false, false, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(false, false, false);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(false, false, false);
-    }
+//    @Test
+//    public void returning_shopper_minimal_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+//        returning_shopper_minimal_billing_test();
+//    }
 
     /**
      * This test verifies that the all credit card fields are displayed as they should

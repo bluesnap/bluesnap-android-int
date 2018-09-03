@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.espresso.NoMatchingViewException;
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
@@ -21,7 +20,6 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
-import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShoppersFactory;
 import com.bluesnap.androidapi.Constants;
@@ -43,7 +41,6 @@ import com.bluesnap.androidapi.services.TokenServiceCallback;
 
 import junit.framework.Assert;
 
-import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,14 +54,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
@@ -73,8 +65,6 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 import static java.lang.Thread.sleep;
 import static junit.framework.Assert.fail;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.Matchers.containsString;
 
 /**
@@ -139,6 +129,45 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     public void setmActivityRule(ActivityTestRule<StartUpActivity> mActivityRule) {
         this.mActivityRule = mActivityRule;
+    }
+
+    public ReturningShoppersFactory.TestingShopper getReturningShopper() {
+        return returningShopper;
+    }
+
+    public String getDefaultCountryKey() {
+        return defaultCountryKey;
+    }
+
+    public String getDefaultCountryValue() {
+        return defaultCountryValue;
+    }
+
+    public String getCheckoutCurrency() {
+        return checkoutCurrency;
+    }
+
+    public double getPurchaseAmount() {
+        return purchaseAmount;
+    }
+
+    public double getTaxPercent() {
+        return taxPercent;
+    }
+
+    public double getTaxAmount() {
+        return taxAmount;
+    }
+
+    public void setSdk(SdkRequestBase sdkRequest, TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws JSONException, BSPaymentRequestException, InterruptedException {
+        if (shopperCheckoutRequirements.isFullBillingRequired())
+            sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
+
+        if (shopperCheckoutRequirements.isEmailRequired())
+            sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
+
+        if (shopperCheckoutRequirements.isShippingRequired())
+            sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
     }
 
     /**
@@ -381,17 +410,15 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
-    public void returningShopperSetUp(boolean withFullBilling, boolean withEmail, boolean withShipping) throws BSPaymentRequestException, InterruptedException {
+    public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws BSPaymentRequestException, InterruptedException, JSONException {
         String returningShopperId = "?shopperId=" + shopperId; //get the shopper id from last transaction
         isReturningShopper = true;
         setUrlConnection(returningShopperId);
         purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(withFullBilling);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(withEmail);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(withShipping);
 
-        setupAndLaunch(sdkRequest);
+        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        setSdk(sdkRequest, shopperCheckoutRequirements);
+        setupAndLaunch(sdkRequest, true, returningShopperId);
     }
 
     private void createVaultedShopper() throws JSONException {
@@ -450,72 +477,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
 
-    public void new_card_basic_flow_transaction(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
-        //ƒintending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
-
-        int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
-        //onView(withId(R.id.newCardButton)).perform(click());
-        new_card_basic_fill_info(shopperCheckoutRequirements);
-        ViewInteraction viewInteraction = onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))));
-        viewInteraction.perform(click());
-        sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finish_demo_purchase(sdkResult, shopperCheckoutRequirements);
-    }
-
-    public void new_card_basic_fill_info(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        if (shopperCheckoutRequirements.isShippingSameAsBilling())
-            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
-
-        //fill in info in billing and continue to shipping or paying
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
-        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryValue());
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryKey(), shopperCheckoutRequirements.isFullBillingRequired(), shopperCheckoutRequirements.isEmailRequired());
-
-
-        if (shopperCheckoutRequirements.isShippingRequired()) {
-            if (shopperCheckoutRequirements.isShippingSameAsBilling()) { //updating roundedPurchaseAmount to include tax since billing country is US
-                updatePurchaseAmountForTax();
-            } else { //continue to fill in shipping
-                onView(withId(R.id.buyNowButton)).perform(click());
-                ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryValue());
-                ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryKey(), true, false);
-            }
-        }
-    }
-
-    /**
-     * This test does an end-to-end existing card of a returning shopper flow
-     * for all 8 options: with/without full billing, shipping, email.
-     */
-    public void returning_shopper_card_basic_flow_transaction(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
-        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
-
-        //onView(withId(R.id.newCardButton)).perform(click());
-        existing_card_edit_info(shopperCheckoutRequirements);
-        onView(withId(R.id.buyNowButton)).perform(click());
-        sdkResult = BlueSnapService.getInstance().getSdkResult();
-        finish_demo_purchase(sdkResult, shopperCheckoutRequirements);
-    }
-
-    public void existing_card_edit_info(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        //fill in info in billing and continue to shipping or paying
-        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
-        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryValue());
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryKey(), shopperCheckoutRequirements.isFullBillingRequired(), shopperCheckoutRequirements.isEmailRequired(), ContactInfoTesterCommon.editBillingContactInfo);
-        TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
-
-        if (shopperCheckoutRequirements.isShippingRequired()) {
-//            if (defaultCountryKey.equals("US") || isReturningShopper) //updating roundedPurchaseAmount to include tax
-            updatePurchaseAmountForTax();
-
-            onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
-            ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryValue());
-            ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryKey(), true, false, ContactInfoTesterCommon.editShippingContactInfo);
-            TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
-        }
-    }
-
-    protected void finish_demo_purchase(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
+    public void finish_demo_purchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
+        sdkResult = blueSnapService.getSdkResult();
         CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
@@ -678,9 +641,5 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         Assert.assertEquals(fieldName + " was not saved correctly in DataBase", expectedResult, fieldContent);
-    }
-
-    private void updatePurchaseAmountForTax() {
-        purchaseAmount = purchaseAmount * (1 + taxPercent); //TODO: add comment
     }
 }

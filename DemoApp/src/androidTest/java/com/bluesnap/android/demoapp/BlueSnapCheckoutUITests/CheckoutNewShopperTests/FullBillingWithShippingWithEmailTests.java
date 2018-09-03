@@ -10,10 +10,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBase
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BlueSnapService;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,15 +41,16 @@ import static org.hamcrest.Matchers.hasToString;
 @RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBasedTester {
+
+    public FullBillingWithShippingWithEmailTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
+    }
+
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
-        defaultCountryKey = BlueSnapService.getInstance().getUserCountry(this.applicationContext);
     }
 
     @Test
@@ -77,27 +78,12 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
 
     }
 
-    @Test
-    public void full_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(true, true, true, false);
-    }
+    //TODO: integrate this
+//    @Test
+//    public void shipping_same_as_billing_basic_flow_transaction() throws InterruptedException {
+//        new_card_basic_flow_transaction(true, true, true, true);
+//    }
 
-    @Test
-    public void shipping_same_as_billing_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(true, true, true, true);
-    }
-
-    @Test
-    public void returning_shopper_full_billing_with_shipping_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(true, true, true, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(true, true, true);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(true, true, true);
-    }
 
     /**
      * This test verifies that the all credit card fields are displayed as they should

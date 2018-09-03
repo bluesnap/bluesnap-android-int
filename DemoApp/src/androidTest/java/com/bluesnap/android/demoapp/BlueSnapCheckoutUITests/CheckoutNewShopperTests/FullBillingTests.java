@@ -7,9 +7,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +26,15 @@ import static android.support.test.espresso.action.ViewActions.click;
 
 @RunWith(AndroidJUnit4.class)
 public class FullBillingTests extends CheckoutEspressoBasedTester {
+
+    public FullBillingTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, false);
+    }
+
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -49,23 +54,6 @@ public class FullBillingTests extends CheckoutEspressoBasedTester {
         changing_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
-    }
-
-    @Test
-    public void full_billing_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(true, false, false, false);
-    }
-
-    @Test
-    public void returning_shopper_full_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(true, false, false, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(true, false, false);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(true, false, false);
     }
 
     /**

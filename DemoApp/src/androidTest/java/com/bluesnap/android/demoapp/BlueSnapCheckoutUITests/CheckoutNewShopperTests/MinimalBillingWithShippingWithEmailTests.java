@@ -7,9 +7,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,12 +25,14 @@ import static android.support.test.espresso.action.ViewActions.click;
 @RunWith(AndroidJUnit4.class)
 
 public class MinimalBillingWithShippingWithEmailTests extends CheckoutEspressoBasedTester {
+    public MinimalBillingWithShippingWithEmailTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, true, true);
+    }
+
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -48,27 +51,6 @@ public class MinimalBillingWithShippingWithEmailTests extends CheckoutEspressoBa
         default_country_zip_view_validation_in_shipping();
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
-    }
-
-    /**
-     * This test does an end-to-end new card flow for minimal
-     * billing with email and shipping new shopper
-     */
-    @Test
-    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(false, true, true, false);
-    }
-
-    @Test
-    public void returning_shopper_minimal_billing_with_shipping_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(false, true, true, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(false, true, true);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(false, true, true);
     }
 
     /**

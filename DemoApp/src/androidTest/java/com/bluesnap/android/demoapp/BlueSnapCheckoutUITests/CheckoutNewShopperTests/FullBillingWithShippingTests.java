@@ -9,9 +9,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBase
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +34,14 @@ import static org.hamcrest.Matchers.not;
 
 public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
 
+    public FullBillingWithShippingTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
+    }
+
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -70,23 +73,6 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         amount_tax_view_before_choosing_shipping_same_as_billing();
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //annul shipping same as billing option
         amount_tax_view_after_choosing_shipping_same_as_billing();
-    }
-
-    @Test
-    public void full_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(true, false, true, false);
-    }
-
-    @Test
-    public void returning_shopper_full_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(true, false, true, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(true, false, true);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(true, false, true);
     }
 
     /**

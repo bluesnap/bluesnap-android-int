@@ -11,10 +11,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
-import org.junit.After;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static java.lang.Thread.sleep;
 import static org.hamcrest.Matchers.allOf;
 
 /**
@@ -35,18 +34,15 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 
 public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester {
-    @After
-    public void keepRunning() throws InterruptedException {
-        sleep(1000);
+
+    public MinimalBillingWithShippingTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, true);
     }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup();
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
-
     }
 
     @Test
@@ -94,27 +90,6 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
         address_invalid_error_validation_in_shipping();
         state_invalid_error_in_shipping();
 
-    }
-
-    /**
-     * This test does an end-to-end new card flow for minimal
-     * billing with shipping new shopper
-     */
-    @Test
-    public void minimal_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(false, false, true, false);
-    }
-
-    @Test
-    public void returning_shopper_minimal_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException {
-        //make transaction to create a new shopper
-        new_card_basic_flow_transaction(false, false, true, false);
-
-        //setup sdk for the returning shopper
-        returningShopperSetUp(false, false, true);
-
-        //make a transaction with the returning shopper
-        returning_shopper_card_basic_flow_transaction(false, false, true);
     }
 
     /**
