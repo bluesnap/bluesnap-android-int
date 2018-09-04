@@ -3,7 +3,6 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 import android.content.Context;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
@@ -19,7 +18,6 @@ import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Rule;
-import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -34,8 +32,6 @@ import static org.hamcrest.CoreMatchers.anything;
 /**
  *
  */
-
-@RunWith(AndroidJUnit4.class)
 
 public class CheckoutEspressoBasedTester {
     public Context applicationContext;
@@ -52,21 +48,14 @@ public class CheckoutEspressoBasedTester {
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, false, false);
-    protected BluesnapCheckoutActivity mActivity;
 
-    protected UIAutoTestingBlueSnapService<BluesnapCheckoutActivity> uIAutoTestingBlueSnapService;
+    protected UIAutoTestingBlueSnapService<BluesnapCheckoutActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
 
     public CheckoutEspressoBasedTester() {
-        uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
-
-        applicationContext = uIAutoTestingBlueSnapService.applicationContext;
-        defaultCountryKey = uIAutoTestingBlueSnapService.getDefaultCountryKey();
-        defaultCountryValue = uIAutoTestingBlueSnapService.getDefaultCountryValue();
         checkoutCurrency = uIAutoTestingBlueSnapService.getCheckoutCurrency();
         purchaseAmount = uIAutoTestingBlueSnapService.getPurchaseAmount();
         taxPercent = uIAutoTestingBlueSnapService.getTaxPercent();
         taxAmount = uIAutoTestingBlueSnapService.getTaxAmount();
-        returningShopper = uIAutoTestingBlueSnapService.getReturningShopper();
     }
 
 
@@ -83,6 +72,10 @@ public class CheckoutEspressoBasedTester {
         sdkRequest.setAllowCurrencyChange(allowCurrencyChange);
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, forReturningShopper, returningShopperId);
+        returningShopper = uIAutoTestingBlueSnapService.getReturningShopper();
+        applicationContext = uIAutoTestingBlueSnapService.applicationContext;
+        defaultCountryKey = uIAutoTestingBlueSnapService.getDefaultCountryKey();
+        defaultCountryValue = uIAutoTestingBlueSnapService.getDefaultCountryValue();
     }
 
     public void new_card_basic_flow_transaction() throws InterruptedException {

@@ -6,7 +6,10 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -19,6 +22,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  */
 
 public class PayPalBasicTests extends PayPalWebViewTests {
+
+    @Before
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        payPalCheckoutSetup();
+    }
+
     @Test
     public void pay_pal_back_button_test() throws InterruptedException {
         loadPayPalWebView();

@@ -6,10 +6,11 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,15 +37,13 @@ public class ReturningShopperAllowCurrencyChangeTest extends CheckoutEspressoBas
     private static final String RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING = "22862697";
 
     public ReturningShopperAllowCurrencyChangeTest() {
-        super(true, "?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING);
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, true);
     }
 
     @Before
-    public void setup() throws BSPaymentRequestException, InterruptedException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        sdkRequest.setAllowCurrencyChange(isAllowed);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws BSPaymentRequestException, InterruptedException, JSONException {
+        checkoutSetup(true, RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING, isAllowed);
+
         onData(anything()).inAdapterView(ViewMatchers.withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
     }
 

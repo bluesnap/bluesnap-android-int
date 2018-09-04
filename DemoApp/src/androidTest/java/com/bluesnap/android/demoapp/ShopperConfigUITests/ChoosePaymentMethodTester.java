@@ -3,14 +3,13 @@ package com.bluesnap.android.demoapp.ShopperConfigUITests;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 
-import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.android.demoapp.TestingShopperCreditCard;
-import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,21 +32,18 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
 
 
     public ChoosePaymentMethodTester() {
-        super(RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL);
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
     }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements(true, true, true);
-        setupAndLaunch(sdkRequest);  //choose EUR as base currency
-
-        shopperId = RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL;
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        choosePaymentSetup(true);
     }
 
     @Test
     public void choose_existing_card_visibility_test() {
         //choose existing credit card
-        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(1).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
         currency_hamburger_button_visibility_in_credit_card();
         submit_button_visibility_and_content_in_existing_card();
 
@@ -71,38 +67,6 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
         currency_hamburger_button_visibility_in_shipping();
 
         submit_button_visibility_and_content_in_new_card();
-    }
-
-    //@Test
-    public void choose_first_existing_card_submit_test() throws InterruptedException {
-        //choose first credit card
-        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
-
-        onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "US", true, false);
-        TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
-
-        //submit the choice
-        onView(withId(R.id.buyNowButton)).perform(click());
-
-        chosenPaymentMethodValidationInServer(true, true, true, TestingShopperCreditCard.VISA_CREDIT_CARD, 0);
-    }
-
-    //@Test
-    public void choose_second_existing_card_submit_test() throws InterruptedException {
-        //choose first credit card
-        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(1).perform(click());
-        //submit the choice
-        onView(withId(R.id.buyNowButton)).perform(click());
-
-        chosenPaymentMethodValidationInServer(true, true, true, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD, 1);
-
-    }
-
-    //    @Test
-    public void choose_new_card_test() {
-        //choose new credit card
-        onView(withId(R.id.newCardButton)).perform(click());
     }
 
     /**

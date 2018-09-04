@@ -11,10 +11,11 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,16 +42,13 @@ public class ReturningShopperMinimalBillingTests extends CheckoutEspressoBasedTe
     private static String BILLING_COUNTRY;
 
     public ReturningShopperMinimalBillingTests() {
-        super(true, "");
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, false);
     }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        //sdkRequest.getShopperCheckoutRequirements().setFullBillingRequired(true);
-        setupAndLaunch(sdkRequest);
-        int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
-        //cardLastDigit = TestUtils.getText(withId(R.id.oneLineCCViewComponentsListView));
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup(true);
+
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountryKey();
     }
 

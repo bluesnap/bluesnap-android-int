@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningSh
 
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 
 /**
@@ -10,7 +11,7 @@ import org.junit.Before;
 
 public class ReturningShopperHideCurrencyHamburgerButtonTest extends ReturningShopperAllowCurrencyChangeTest {
     @Before
-    public void setup() throws BSPaymentRequestException, InterruptedException {
+    public void setup() throws BSPaymentRequestException, InterruptedException, JSONException {
         this.isAllowed = false;
         super.setup();
     }

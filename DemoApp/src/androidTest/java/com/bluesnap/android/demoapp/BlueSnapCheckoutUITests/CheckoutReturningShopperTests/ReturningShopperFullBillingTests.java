@@ -45,7 +45,7 @@ public class ReturningShopperFullBillingTests extends CheckoutEspressoBasedTeste
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
-        checkoutSetup();
+        checkoutSetup(true);
 
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountryKey();
         if (!returningShopper.isFullBilling()) //reset full billing info for this shopper

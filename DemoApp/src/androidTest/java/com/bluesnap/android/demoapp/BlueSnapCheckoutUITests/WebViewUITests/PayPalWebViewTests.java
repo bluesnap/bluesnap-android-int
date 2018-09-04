@@ -2,25 +2,27 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.WebViewUITests;
 
 import android.support.test.espresso.web.webdriver.DriverAtoms;
 import android.support.test.espresso.web.webdriver.Locator;
-import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.http.CustomHTTPParams;
 import com.bluesnap.androidapi.http.HTTPOperationController;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.views.activities.WebViewActivity;
+import com.bluesnap.androidapi.services.BlueSnapService;
 
 import junit.framework.Assert;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Rule;
+
+import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,27 +44,38 @@ import static org.hamcrest.CoreMatchers.containsString;
  */
 
 public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
+    private static final String TAG = PayPalWebViewTests.class.getSimpleName();
+    private BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    private List<CustomHTTPParams> sahdboxHttpHeaders = uIAutoTestingBlueSnapService.getHttpParamsForSandboxTests();
 
     private final String SANDBOX_RETRIEVE_PAYPAL_TRANSACTION = "alt-transactions/";
     private final String SANDBOX_PAYPAL_EMAIL = "apiShopper@bluesnap.com";
     private final String SANDBOX_PAYPAL_PASSWORD = "Plimus123";
-    protected String payPalInvoiceId;
+    private String payPalInvoiceId;
     private String retrieveTransactionResponse;
 
-    @Rule
-    public ActivityTestRule<WebViewActivity> mActivityRule =
-            new ActivityTestRule<WebViewActivity>(WebViewActivity.class,
-                    false, false) {
-                @Override
-                protected void afterActivityLaunched() {
-                    onWebView().forceJavascriptEnabled();
-                }
-            };
+//    @Rule
+//    public ActivityTestRule<WebViewActivity> mActivityRule =
+//            new ActivityTestRule<WebViewActivity>(WebViewActivity.class,
+//                    false, false) {
+//                @Override
+//                protected void afterActivityLaunched() {
+//                    onWebView().forceJavascriptEnabled();
+//                }
+//            };
 
-    @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
+    protected void payPalCheckoutSetup() throws BSPaymentRequestException, InterruptedException, JSONException {
+        payPalCheckoutSetup("USD", checkoutCurrency);
+    }
+
+    protected void payPalCheckoutSetup(String merchantStoreCurrency, String checkoutCurrency) throws BSPaymentRequestException, InterruptedException, JSONException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        setupAndLaunch(sdkRequest);
+        uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
+        uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, merchantStoreCurrency);
+    }
+
+    public PayPalWebViewTests() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, false);
     }
 
     void payPalBasicTransaction() throws InterruptedException {
@@ -70,7 +83,7 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
         loginToPayPal();
         submitPayPalPayment();
 
-        sdkResult = blueSnapService.getSdkResult();
+        SdkResult sdkResult = blueSnapService.getSdkResult();
 
         //wait for transaction to finish
         while ((payPalInvoiceId = sdkResult.getPaypalInvoiceId()) == null)

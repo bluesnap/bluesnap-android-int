@@ -2,9 +2,9 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.WebViewUITests;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,9 +17,8 @@ import org.junit.runner.RunWith;
 
 public class PayPalFallbackToBaseCurrencyTest extends PayPalWebViewTests {
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, "ILS"); //choose ILS as checkout currency
-        setupAndLaunch(sdkRequest, "EUR");  //choose EUR as base currency
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        payPalCheckoutSetup("EUR", "ILS"); //choose EUR as base currency, and ILS as checkout currency
 
         //update currency and amount according to fallback to store currency, i.e. EUR
         updateCurrencyAndAmountAfterConversion("ILS", "EUR");

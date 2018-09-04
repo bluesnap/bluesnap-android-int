@@ -8,10 +8,11 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,16 +31,13 @@ import static org.hamcrest.CoreMatchers.anything;
 
 public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspressoBasedTester {
     public ReturningShopperMinimalBillingWithEmailTests() {
-        //super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_EMAIL);
-        super(true, "");
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, true, false);
     }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
-        setupAndLaunch(sdkRequest);
-        int cardPosition = randomTestValuesGenerator.randomReturningShopperCardPosition();
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup(true);
+
         if (!returningShopper.isWithEmail())
             returningShopper.getBillingContactInfo().setEmail("");
     }

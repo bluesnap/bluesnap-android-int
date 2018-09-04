@@ -8,10 +8,11 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,17 +34,13 @@ public class ReturningShopperFullBillingWithShippingWithEmailTests extends Check
     private String SHIPPING_COUNTRY;
 
     public ReturningShopperFullBillingWithShippingWithEmailTests() {
-//        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING_WITH_EMAIL);
-        super(true, "");
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
     }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup(true);
+
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountryKey();
         SHIPPING_COUNTRY = returningShopper.getShippingContactInfo().getCountryKey();
         if (!returningShopper.isFullBilling()) //reset full billing info for this shopper

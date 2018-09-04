@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
-import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShoppersFactory;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
@@ -72,11 +71,11 @@ import static org.hamcrest.Matchers.containsString;
  */
 
 public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
-    protected static final String TAG = CheckoutEspressoBasedTester.class.getSimpleName();
+    private static final String TAG = UIAutoTestingBlueSnapService.class.getSimpleName();
     private ActivityTestRule<StartUpActivity> mActivityRule;
     private StartUpActivity mActivity;
     public Context applicationContext;
-    protected BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    private BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SDKConfiguration sDKConfiguration = null;
     private DemoTransactions transactions;
 
@@ -86,14 +85,14 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private boolean isSdkRequestNull = false;
 
     private String vaultedShopperId;
-    protected String shopperId;
+    private String shopperId;
 
-    protected SdkResult sdkResult;
+    private SdkResult sdkResult;
 
     private HttpURLConnection myURLConnection;
     private String merchantToken;
 
-    protected List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
+    private List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
     private static final String SANDBOX_VAULTED_SHOPPER = "vaulted-shoppers";
     private String getShopperResponse;
     private String createVaultedShopperResponse;
@@ -101,10 +100,10 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private String emailFromServer;
 
 
-    protected RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
+    private RandomTestValuesGenerator randomTestValuesGenerator = new RandomTestValuesGenerator();
 
     protected String defaultCountryKey;
-    protected String defaultCountryValue;
+    private String defaultCountryValue;
     protected String checkoutCurrency = "USD";
     protected double purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
@@ -159,15 +158,16 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return taxAmount;
     }
 
+    public String getVaultedShopperId() {
+        return vaultedShopperId;
+    }
+
     public void setSdk(SdkRequestBase sdkRequest, TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws JSONException, BSPaymentRequestException, InterruptedException {
-        if (shopperCheckoutRequirements.isFullBillingRequired())
-            sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(shopperCheckoutRequirements.isFullBillingRequired());
 
-        if (shopperCheckoutRequirements.isEmailRequired())
-            sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(shopperCheckoutRequirements.isEmailRequired());
 
-        if (shopperCheckoutRequirements.isShippingRequired())
-            sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
+        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(shopperCheckoutRequirements.isShippingRequired());
     }
 
     /**
@@ -241,33 +241,35 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void setupAndLaunch(SdkRequestBase sdkRequest) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, "USD", false, "");
+        setupAndLaunch(sdkRequest, "USD", false, "", true);
     }
 
     public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, merchantStoreCurrency, false, "");
+        setupAndLaunch(sdkRequest, merchantStoreCurrency, false, "", true);
     }
 
     public void setupAndLaunch(SdkRequestBase sdkRequest, boolean forReturningShopper, String returningShopperId) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, "USD", forReturningShopper, returningShopperId);
+        setupAndLaunch(sdkRequest, "USD", forReturningShopper, returningShopperId, true);
     }
 
-    public void setupAndLaunch(SdkRequestBase sdkRequest, boolean forReturningShopper) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, "USD", forReturningShopper, "");
+    public void setupAndLaunch(SdkRequestBase sdkRequest, String returningShopperId, boolean openURL) throws InterruptedException, BSPaymentRequestException {
+        setupAndLaunch(sdkRequest, "USD", true, returningShopperId, openURL);
     }
 
     /**
      * Setup app and sdk:
      * set URL connection, setup device, create token, setup sdk and lunch activity.
      */
-    public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency, boolean forReturningShopper, String returningShopperId) throws InterruptedException, BSPaymentRequestException {
-        if (forReturningShopper) {
-            if (!returningShopperId.isEmpty())
-                setUrlConnection("?shopperId=" + returningShopperId);
-            else
-                setUrlConnection(true);
-        } else
-            setUrlConnection();
+    public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency, boolean forReturningShopper, String returningShopperId, boolean openURL) throws InterruptedException, BSPaymentRequestException {
+        if (openURL) {
+            if (forReturningShopper) {
+                if (!returningShopperId.isEmpty())
+                    setUrlConnection(returningShopperId);
+                else
+                    setUrlConnection(true);
+            } else
+                setUrlConnection();
+        }
 
         doSetup();
         sdkRequest.setTaxCalculator(new TaxCalculator() {
@@ -373,7 +375,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
 
     @NonNull
-    List<CustomHTTPParams> getHttpParamsForSandboxTests() {
+    public List<CustomHTTPParams> getHttpParamsForSandboxTests() {
         String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
         List<CustomHTTPParams> headerParams = new ArrayList<>();
         headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
@@ -411,17 +413,15 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws BSPaymentRequestException, InterruptedException, JSONException {
-        String returningShopperId = "?shopperId=" + shopperId; //get the shopper id from last transaction
         isReturningShopper = true;
-        setUrlConnection(returningShopperId);
         purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
 
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         setSdk(sdkRequest, shopperCheckoutRequirements);
-        setupAndLaunch(sdkRequest, true, returningShopperId);
+        setupAndLaunch(sdkRequest, true, vaultedShopperId);
     }
 
-    private void createVaultedShopper() throws JSONException {
+    public void createVaultedShopper() throws JSONException {
         createVaultedShopperService(new CreateVaultedShopperInterface() {
             @Override
             public void onServiceSuccess() throws JSONException {
@@ -439,6 +439,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     private void createVaultedShopperService(final CreateVaultedShopperInterface createVaultedShopper) throws JSONException {
         JSONObject body = createDataObject();
+        String bodyString = body.toString();
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             createVaultedShopperResponse = response.getResponseString();
@@ -453,15 +454,21 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         JSONObject postData = new JSONObject();
 
         JSONObject jsonObjectCreditCard = new JSONObject();
-        putJSON(postData, "expirationYear", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear()));
-        putJSON(postData, "securityCode", TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv());
-        putJSON(postData, "expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
-        putJSON(postData, "cardNumber", TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber());
+        putJSON(jsonObjectCreditCard, "expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
+        putJSON(jsonObjectCreditCard, "securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
+        putJSON(jsonObjectCreditCard, "expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
+        putJSON(jsonObjectCreditCard, "cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
 
-        JSONArray creditCardInfoJsonArray = new JSONArray();
-        creditCardInfoJsonArray.put(jsonObjectCreditCard.toString());
+        JSONObject jsonObjectFirstElement = new JSONObject();
+        putJSON(jsonObjectFirstElement, "creditCard", jsonObjectCreditCard);
 
-        putJSON(postData, "paymentSources", creditCardInfoJsonArray.toString());
+        JSONArray jsonArrayCreditCardInfo = new JSONArray();
+        jsonArrayCreditCardInfo.put(jsonObjectFirstElement);
+
+        JSONObject jsonObjectPaymentSources = new JSONObject();
+        putJSON(jsonObjectPaymentSources, "creditCardInfo", jsonArrayCreditCardInfo);
+
+        putJSON(postData, "paymentSources", jsonObjectPaymentSources);
 
         putJSON(postData, "firstName", "Fanny");
         putJSON(postData, "lastName", "Brice");
@@ -474,6 +481,41 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         } catch (JSONException e) {
             Log.e(TAG, "Error on putJSON " + e.getMessage());
         }
+    }
+
+    public void putJSON(JSONObject jsonObject, String key, Long longValue) {
+        try {
+            jsonObject.put(key, longValue);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error on putJSON " + e.getMessage());
+        }
+    }
+
+    public void putJSON(JSONObject jsonObject, String key, Integer intValue) {
+        try {
+            jsonObject.put(key, intValue);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+        }
+
+    }
+
+    public void putJSON(JSONObject jsonObject, String key, JSONObject jsonObject1) {
+        try {
+            jsonObject.put(key, jsonObject1);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+        }
+
+    }
+
+    public void putJSON(JSONObject jsonObject, String key, JSONArray jsonArray) {
+        try {
+            jsonObject.put(key, jsonArray);
+        } catch (JSONException e) {
+            Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
+        }
+
     }
 
 
@@ -502,7 +544,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                shopperId = transactions.getShopperId();
+                vaultedShopperId = transactions.getShopperId();
                 get_shopper_from_server(shopperCheckoutRequirements);
             }
 
@@ -513,8 +555,18 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
+                                                      TestingShopperCreditCard creditCard, int cardIndex) throws InterruptedException {
+        while (!mActivity.isDestroyed()) {
+            Log.d(TAG, "Waiting for tokenized credit card service to finish");
+            sleep(1000);
+        }
+
+        get_shopper_from_server(shopperCheckoutRequirements, true, creditCard, cardIndex);
+    }
+
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, null, -1);
+        get_shopper_from_server(shopperCheckoutRequirements, false, null, 0);
     }
 
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, TestingShopperCreditCard creditCard, int cardIndex) {
@@ -534,7 +586,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     private void get_shopper_service(final GetShopperServiceInterface getShopperServiceInterface) {
-        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER + "/" + shopperId, "application/json", "application/json", sahdboxHttpHeaders);
+        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER + "/" + vaultedShopperId, "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             getShopperResponse = response.getResponseString();
             getShopperServiceInterface.onServiceSuccess();

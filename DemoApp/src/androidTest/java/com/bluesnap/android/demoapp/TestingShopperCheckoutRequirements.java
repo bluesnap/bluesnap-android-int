@@ -21,7 +21,7 @@ public class TestingShopperCheckoutRequirements {
      * @param emailRequired    - boolean, setEmailRequired
      */
     public TestingShopperCheckoutRequirements(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired) {
-        this(shippingRequired, fullBillingRequired, emailRequired, false);
+        this(fullBillingRequired, emailRequired, shippingRequired, false);
     }
 
     /**
@@ -89,6 +89,13 @@ public class TestingShopperCheckoutRequirements {
     }
 
     public void setShippingSameAsBilling(boolean shippingSameAsBilling) {
+        this.shippingSameAsBilling = shippingSameAsBilling;
+    }
+
+    public void setTestingShopperCheckoutRequirements(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling) {
+        this.shippingRequired = shippingRequired;
+        this.fullBillingRequired = fullBillingRequired;
+        this.emailRequired = emailRequired;
         this.shippingSameAsBilling = shippingSameAsBilling;
     }
 }
