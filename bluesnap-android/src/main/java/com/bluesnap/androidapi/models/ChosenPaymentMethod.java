@@ -14,6 +14,7 @@ import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 public class ChosenPaymentMethod extends BSModel {
     public static final String CC = "CC";
     public static final String PAYPAL = "PAYPAL";
+    public static final String GOOGLE_PAY = "GOOGLE_PAY";
     public static final String CHOSEN_PAYMENT_METHOD_TYPE = "chosenPaymentMethodType";
     public static final String CREDIT_CARD = "creditCard";
 

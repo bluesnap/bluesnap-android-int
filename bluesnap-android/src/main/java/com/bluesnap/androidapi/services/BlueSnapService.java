@@ -178,6 +178,23 @@ public class BlueSnapService {
     }
 
     /**
+     * Submit GPay result token to server
+     *
+     * @param paymentToken - payment token (for GPay, this is a base64-encoded payload data)
+     * @param paymentMethod - payment method (for example: SupportedPaymentMethods.GOOGLE_PAY)
+     * @throws JSONException                in case of invalid JSON object (should not happen)
+     * @throws UnsupportedEncodingException should not happen
+     */
+    public BlueSnapHTTPResponse submitTokenenizedPayment(final String paymentToken, final String paymentMethod) throws JSONException, UnsupportedEncodingException {
+        Log.d(TAG, "Tokenizing GPay on token " + bluesnapToken.toString());
+        JSONObject postData = new JSONObject();
+        postData.put(BSTokenizeDetailsJsonFactory.PAYMENT_TOKEN, paymentToken);
+        postData.put(BSTokenizeDetailsJsonFactory.PAYMENT_METHOD, paymentMethod);
+        putJSONifNotNull(postData, FRAUDSESSIONID, kountService.getKountSessionId());
+        return blueSnapAPI.tokenizeDetails(postData.toString());
+    }
+
+    /**
      * Update details on the BlueSnapValidator Server
      *
      * @param purchaseDetails {@link PurchaseDetails}

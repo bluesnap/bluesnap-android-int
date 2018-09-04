@@ -11,10 +11,17 @@ public class SDKConfiguration {
 
     //@SerializedName("kountMerchantId")
     private int kountMerchantId;
+
+    //@SerializedName("merchantId")
+    private Long merchantId;
+
     //@SerializedName("rates")
     private Rates rates;
+
     //@SerializedName("supportedPaymentMethods")
     private SupportedPaymentMethods supportedPaymentMethods;
+
+
 
     public int getKountMerchantId() {
         return kountMerchantId;
@@ -22,6 +29,14 @@ public class SDKConfiguration {
 
     public void setKountMerchantId(int kountMerchantId) {
         this.kountMerchantId = kountMerchantId;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
     @NonNull

@@ -51,6 +51,13 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
     }
 
     @Override
+    protected void startGooglePayActivityForResult() {
+        Shopper shopper = sdkConfiguration.getShopper();
+        shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.GOOGLE_PAY));
+        updateShopperOnServer(shopper);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             progressBar.setVisibility(View.VISIBLE);

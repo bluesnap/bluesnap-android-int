@@ -28,6 +28,9 @@ public class BSTokenizeDetailsJsonFactory {
     public static final String LAST4DIGITS = "lastFourDigits";
     public static final String CARDTYPE = "ccType";
 
+    public static final String PAYMENT_TOKEN = "paymentToken";
+    public static final String PAYMENT_METHOD = "paymentMethod";
+
     public static final String SHIPPINGFIRSTNAME = "shippingFirstName";
     public static final String SHIPPINGLASTNAME = "shippingLastName";
     public static final String SHIPPINGCOUNTRY = "shippingCountry";

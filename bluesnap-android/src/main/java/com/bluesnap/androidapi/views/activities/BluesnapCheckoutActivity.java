@@ -14,11 +14,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.bluesnap.androidapi.R;
+import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -26,10 +28,20 @@ import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.services.GooglePayService;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wallet.AutoResolveHelper;
+import com.google.android.gms.wallet.PaymentData;
+import com.google.android.gms.wallet.PaymentDataRequest;
+import com.google.android.gms.wallet.PaymentsClient;
 
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +57,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
     public static final int REQUEST_CODE_DEFAULT = 1;
     public static final int RESULT_SDK_FAILED = -2;
+    private static final int GOOGLE_PAY_PAYMENT_DATA_REQUEST_CODE = 991;
+
     /**
      * activity result: operation succeeded.
      */
@@ -57,6 +71,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     protected SDKConfiguration sdkConfiguration;
     protected OneLineCCViewAdapter oneLineCCViewAdapter;
     protected final BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    protected PaymentsClient googlePayClient;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,7 +105,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
         LinearLayout payPalButton = findViewById(R.id.payPalButton);
         progressBar = findViewById(R.id.progressBar);
-        if (!sdkConfiguration.getSupportedPaymentMethods().isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
+        SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
+        if (!supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
             payPalButton.setVisibility(View.GONE);
         } else {
             payPalButton.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +117,52 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             });
         }
 
+        if (supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD) ||
+                supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY)) {
+            checkIsGooglePayAvailable();
+        } else {
+            setGooglePayAvailable(false);
+        }
     }
 
+    private void checkIsGooglePayAvailable() {
+
+        GooglePayService googlePayService = GooglePayService.getInstance();
+
+        // It's recommended to create the PaymentsClient object inside of the onCreate method.
+        googlePayClient = googlePayService.createPaymentsClient(this);
+
+        // The call to isReadyToPay is asynchronous and returns a Task. We need to provide an
+        // OnCompleteListener to be triggered when the result of the call is known.
+        googlePayService.isReadyToPay(googlePayClient).addOnCompleteListener(
+                new OnCompleteListener<Boolean>() {
+                    public void onComplete(Task<Boolean> task) {
+                        try {
+                            boolean result = task.getResult(ApiException.class);
+                            setGooglePayAvailable(result);
+                        } catch (ApiException exception) {
+                            // Process error
+                            Log.w(TAG, "isReadyToPay failed", exception);
+                            setGooglePayAvailable(false);
+                        }
+                    }
+                });
+    }
+
+    protected void setGooglePayAvailable(boolean available) {
+        LinearLayout googlePayButton = findViewById(R.id.googlePayButton);
+        if (available) {
+            googlePayButton.setVisibility(View.VISIBLE);
+            googlePayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startGooglePayActivityForResult();
+                }
+            });
+        } else {
+            googlePayButton.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -134,6 +194,27 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             Log.d(TAG, "startWebViewActivity");
             startWebViewActivity(payPalToken);
         }
+    }
+
+    /**
+     * start GooglePay Activity For Result
+     */
+    protected void startGooglePayActivityForResult() {
+
+        Log.d(TAG, "start GooglePay flow");
+
+        // Disables the button to prevent multiple clicks.
+        LinearLayout googlePayButton = findViewById(R.id.googlePayButton);
+        if (googlePayButton != null) {
+            googlePayButton.setClickable(false);
+        }
+
+        Task<PaymentData> futurePaymentData = GooglePayService.getInstance().createPaymentDataRequest(googlePayClient);
+
+        // Since loadPaymentData may show the UI asking the user to select a payment method, we use
+        // AutoResolveHelper to wait for the user interacting with it. Once completed,
+        // onActivityResult will be called with the result.
+        AutoResolveHelper.resolveTask(futurePaymentData, this, GOOGLE_PAY_PAYMENT_DATA_REQUEST_CODE);
     }
 
     /**
@@ -286,7 +367,8 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                                 try {
                                     startPayPal(priceDetails);
                                 } catch (Exception e) {
-                                    catchOnExceptionEWithAlertDialog(e);
+                                    Log.e(TAG, "json parsing exception", e);
+                                    showDialogInUIThread("Paypal service error", "Error");
                                 }
                             }
                         });
@@ -299,17 +381,11 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                         title = getString(R.string.ERROR);
                     }
                     if (null != message) {
-                        String finalMessage = message;
-                        String finalTitle = title;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, finalMessage, finalTitle);
-                            }
-                        });
+                        showDialogInUIThread(message, title);
                     }
                 } catch (Exception e) {
-                    catchOnExceptionEWithAlertDialog(e);
+                    Log.e(TAG, "json parsing exception", e);
+                    showDialogInUIThread("Paypal service error", "Error");
                 } finally {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -320,7 +396,6 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     /**
@@ -343,23 +418,107 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "got result " + resultCode);
         Log.d(TAG, "got request " + requestCode);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE) {
-                setResult(BS_CHECKOUT_RESULT_OK, data);
-                finish();
-            } else if (requestCode == WebViewActivity.PAYPAL_REQUEST_CODE) {
-                setResult(BS_CHECKOUT_RESULT_OK, data);
-                finish();
+        switch (requestCode) {
+            case GOOGLE_PAY_PAYMENT_DATA_REQUEST_CODE: {
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        PaymentData paymentData = PaymentData.getFromIntent(data);
+                        handleGooglePaySuccess(paymentData);
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // Nothing to here normally - the user simply cancelled without selecting a
+                        // payment method.
+                        break;
+                    case AutoResolveHelper.RESULT_ERROR:
+                        Status status = AutoResolveHelper.getStatusFromIntent(data);
+                        handleGooglePayError(status.getStatusCode());
+                        break;
+                }
+
+                // Re-enables the Pay with Google button.
+                LinearLayout googlePayButton = findViewById(R.id.googlePayButton);
+                if (googlePayButton != null) {
+                    googlePayButton.setClickable(true);
+                }
+                break;
             }
+            case CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE: {
+                if (resultCode == Activity.RESULT_OK) {
+                    setResult(BS_CHECKOUT_RESULT_OK, data);
+                    finish();
+                }
+                break;
+            }
+            case WebViewActivity.PAYPAL_REQUEST_CODE: {
+                if (resultCode == Activity.RESULT_OK) {
+                    setResult(BS_CHECKOUT_RESULT_OK, data);
+                    finish();
+                }
+                break;
+            }
+            default: {
+            }
+
+        }
+
+    }
+
+    /**
+     * In case of success from the Google-Pay button, we create the token we will need
+     * to send to BlueSnap to actually create the payment transaction
+     *
+     * @param paymentData
+     */
+    private void handleGooglePaySuccess(PaymentData paymentData) {
+
+        SdkResult sdkResult = GooglePayService.getInstance().createSDKResult(paymentData);
+        String encodedToken = sdkResult == null ? null : sdkResult.getGooglePayToken();
+        if (encodedToken == null) {
+            showDialogInUIThread("Error handling GPay, please try again or use a different payment method", "Error");
+        } else {
+            blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    // post the token
+                    try {
+                        BlueSnapHTTPResponse response = BlueSnapService.getInstance().submitTokenenizedPayment(encodedToken, SupportedPaymentMethods.GOOGLE_PAY);
+                        if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                            Log.d(TAG, "GPay token submitted successfully");
+
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
+                            setResult(BS_CHECKOUT_RESULT_OK, resultIntent);
+
+                            finish();
+
+                        } else {
+                            String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+                            Log.e(TAG, errorMsg);
+                            showDialogInUIThread("Error handling GPay, please try again or use a different payment method", "Error");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error submitting GPay details", e);
+                        showDialogInUIThread("Error handling GPay, please try again or use a different payment method", "Error");
+                    }
+                }
+            });
         }
     }
 
-    private void catchOnExceptionEWithAlertDialog(Exception e) {
-        Log.e(TAG, "json parsing exception", e);
+    private void handleGooglePayError(int statusCode) {
+        // At this stage, the user has already seen a popup informing them an error occurred.
+        // Normally, only logging is required.
+        // statusCode will hold the value of any constant from CommonStatusCode or one of the
+        // WalletConstants.ERROR_CODE_* constants.
+        Log.w(TAG, "loadPaymentData failed; " + String.format("Error code: %d", statusCode));
+        showDialogInUIThread("GPay service error", "Error");
+    }
+
+    private void showDialogInUIThread(String message, String title) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, "Paypal service error", "Error"); //TODO: friendly error
+                BluesnapAlertDialog.setDialog(BluesnapCheckoutActivity.this, message, title);
             }
         });
     }
