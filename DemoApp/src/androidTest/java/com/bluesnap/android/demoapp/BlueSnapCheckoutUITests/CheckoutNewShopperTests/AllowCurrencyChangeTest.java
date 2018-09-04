@@ -10,9 +10,10 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,13 +38,14 @@ import static org.hamcrest.Matchers.not;
 public class AllowCurrencyChangeTest extends CheckoutEspressoBasedTester {
     protected boolean isAllowed = true;
 
+    public AllowCurrencyChangeTest() {
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
+    }
+
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(true);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        sdkRequest.setAllowCurrencyChange(isAllowed);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup(false, "", isAllowed);
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 

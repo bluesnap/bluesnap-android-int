@@ -19,7 +19,6 @@ import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onData;
@@ -70,16 +69,18 @@ public class CheckoutEspressoBasedTester {
         returningShopper = uIAutoTestingBlueSnapService.getReturningShopper();
     }
 
+
     protected void checkoutSetup() throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(false, "");
+        checkoutSetup(false, "", true);
     }
 
     protected void checkoutSetup(boolean forReturningShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(forReturningShopper, "");
+        checkoutSetup(forReturningShopper, "", true);
     }
 
-    protected void checkoutSetup(boolean forReturningShopper, String returningShopperId) throws BSPaymentRequestException, InterruptedException, JSONException {
+    protected void checkoutSetup(boolean forReturningShopper, String returningShopperId, boolean allowCurrencyChange) throws BSPaymentRequestException, InterruptedException, JSONException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
+        sdkRequest.setAllowCurrencyChange(allowCurrencyChange);
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, forReturningShopper, returningShopperId);
     }
@@ -153,16 +154,6 @@ public class CheckoutEspressoBasedTester {
         purchaseAmount = purchaseAmount * (1 + taxPercent); //TODO: add comment
     }
 
-    /**
-     * This test does an end-to-end new card flow for
-     * new shopper with this checkout requirements
-     */
-    @Test
-    public void new_shopper_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction();
-    }
-
-    @Test
     public void returning_shopper_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
         //make transaction to create a new shopper
         new_card_basic_flow_transaction();

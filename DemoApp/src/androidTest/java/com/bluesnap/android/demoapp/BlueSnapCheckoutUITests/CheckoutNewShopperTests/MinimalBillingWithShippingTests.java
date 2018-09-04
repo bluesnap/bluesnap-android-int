@@ -34,7 +34,6 @@ import static org.hamcrest.Matchers.allOf;
 @RunWith(AndroidJUnit4.class)
 
 public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester {
-
     public MinimalBillingWithShippingTests() {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, true);
     }
@@ -90,6 +89,20 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
         address_invalid_error_validation_in_shipping();
         state_invalid_error_in_shipping();
 
+    }
+
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with shipping new shopper
+     */
+    @Test
+    public void minimal_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        returning_shopper_basic_flow_transaction();
     }
 
     /**

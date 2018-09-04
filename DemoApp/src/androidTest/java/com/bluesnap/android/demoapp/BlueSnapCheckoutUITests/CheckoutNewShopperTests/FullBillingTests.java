@@ -26,7 +26,6 @@ import static android.support.test.espresso.action.ViewActions.click;
 
 @RunWith(AndroidJUnit4.class)
 public class FullBillingTests extends CheckoutEspressoBasedTester {
-
     public FullBillingTests() {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, false);
     }
@@ -34,7 +33,6 @@ public class FullBillingTests extends CheckoutEspressoBasedTester {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
         checkoutSetup();
-
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -54,6 +52,16 @@ public class FullBillingTests extends CheckoutEspressoBasedTester {
         changing_country_state_view_validation_in_billing();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
+    }
+
+    @Test
+    public void full_billing_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction();
+    }
+
+    @Test
+    public void returning_shopper_full_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        returning_shopper_basic_flow_transaction();
     }
 
     /**

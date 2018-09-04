@@ -9,10 +9,11 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
-import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,22 +34,18 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
     private String BILLING_COUNTRY;
     private String SHIPPING_COUNTRY;
 
-
     public ReturningShopperMinimalBillingWithShippingTests() {
-//        super("?shopperId=" + RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING);
-        super(true, "");
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, false, true);
     }
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
-        SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(true);
-        setupAndLaunch(sdkRequest);
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        checkoutSetup(true);
         BILLING_COUNTRY = returningShopper.getBillingContactInfo().getCountryKey();
         SHIPPING_COUNTRY = returningShopper.getShippingContactInfo().getCountryKey();
         if (!returningShopper.isWithShipping()) //reset shipping info for this shopper
             returningShopper.getShippingContactInfo().resetAllFields();
-
+        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
     public void returning_shopper_minimal_billing_with_shipping_common_tester() throws IOException {

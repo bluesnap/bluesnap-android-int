@@ -65,14 +65,14 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
         CreditCardLineTesterCommon.check_focus_from_cvv_text_view_in_cc_line("check_focus_from_cvv_text_view_in_cc_line");
     }
 
-//    /**
-//     * This test does an end-to-end new card flow for minimal
-//     * billing new shopper
-//     */
-//    @Test
-//    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
-//        new_card_basic_flow_transaction();
-//    }
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing new shopper
+     */
+    @Test
+    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction();
+    }
 
     /**
      * This test does an end-to-end existing card flow for minimal
@@ -88,10 +88,10 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
         uIAutoTestingBlueSnapService.finish_demo_purchase(shopperCheckoutRequirements);
     }
 
-//    @Test
-//    public void returning_shopper_minimal_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-//        returning_shopper_minimal_billing_test();
-//    }
+    @Test
+    public void returning_shopper_minimal_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        returning_shopper_basic_flow_transaction();
+    }
 
     /**
      * This test verifies that the all credit card fields are displayed as they should

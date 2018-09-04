@@ -75,6 +75,16 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         amount_tax_view_after_choosing_shipping_same_as_billing();
     }
 
+    @Test
+    public void full_billing_with_shipping_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction();
+    }
+
+    @Test
+    public void returning_shopper_full_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        returning_shopper_basic_flow_transaction();
+    }
+
     /**
      * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.

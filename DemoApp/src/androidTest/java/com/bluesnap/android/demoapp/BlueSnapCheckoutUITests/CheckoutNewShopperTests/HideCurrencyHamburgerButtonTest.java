@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -17,7 +18,7 @@ import org.junit.runner.RunWith;
 public class HideCurrencyHamburgerButtonTest extends AllowCurrencyChangeTest {
 
     @Before
-    public void setup() throws InterruptedException, BSPaymentRequestException {
+    public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
         this.isAllowed = false;
         super.setup();
     }

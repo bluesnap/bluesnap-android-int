@@ -27,7 +27,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 
 public class MinimalBillingWithEmailTests extends CheckoutEspressoBasedTester {
     public MinimalBillingWithEmailTests() {
-        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, true, true);
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(false, true, false);
     }
 
     @Before
@@ -46,6 +46,20 @@ public class MinimalBillingWithEmailTests extends CheckoutEspressoBasedTester {
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
         cc_empty_fields_invalid_error_validation();
+    }
+
+    /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email new shopper
+     */
+    @Test
+    public void minimal_billing_with_email_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        returning_shopper_basic_flow_transaction();
     }
 
     /**

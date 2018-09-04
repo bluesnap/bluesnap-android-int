@@ -54,6 +54,20 @@ public class MinimalBillingWithShippingWithEmailTests extends CheckoutEspressoBa
     }
 
     /**
+     * This test does an end-to-end new card flow for minimal
+     * billing with email and shipping new shopper
+     */
+    @Test
+    public void minimal_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction();
+    }
+
+    @Test
+    public void returning_shopper_minimal_billing_with_shipping_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        returning_shopper_basic_flow_transaction();
+    }
+
+    /**
      * This test verifies that the all credit card fields are displayed as they should
      * when choosing new credit card.
      */
