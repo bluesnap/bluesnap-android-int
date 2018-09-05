@@ -1,7 +1,6 @@
 package com.bluesnap.android.demoapp;
 
 import android.content.Context;
-import com.bluesnap.androidapi.services.AndroidUtil;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -59,7 +58,7 @@ public class RandomTestValuesGenerator {
 
     public String getAmountWithTaxString(Double amount, Double taxPrecentage) {
         double total = amount + amount * (taxPrecentage / 100);
-        return AndroidUtil.getDecimalFormat().format(total);
+        return TestUtils.getDecimalFormat().format(total);
     }
 
 }
