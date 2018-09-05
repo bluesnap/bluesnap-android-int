@@ -217,7 +217,13 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * @param priceDetails {@link PriceDetails}
      */
     protected void startPayPal(final PriceDetails priceDetails) {
-        progressBar.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        });
+
         BlueSnapService.getInstance().createPayPalToken(priceDetails.getAmount(), priceDetails.getCurrencyCode(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
