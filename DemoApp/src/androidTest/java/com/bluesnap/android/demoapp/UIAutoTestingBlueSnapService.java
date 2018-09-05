@@ -85,7 +85,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private boolean isSdkRequestNull = false;
 
     private String vaultedShopperId;
-    private String shopperId;
 
     private SdkResult sdkResult;
 
@@ -132,6 +131,10 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     public ReturningShoppersFactory.TestingShopper getReturningShopper() {
         return returningShopper;
+    }
+
+    public void setIsReturningShopper(boolean returningShopper) {
+        isReturningShopper = returningShopper;
     }
 
     public String getDefaultCountryKey() {
@@ -245,35 +248,29 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void setupAndLaunch(SdkRequestBase sdkRequest) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, "USD", false, "", true);
+        setupAndLaunch(sdkRequest, "USD", false, "");
     }
 
     public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, merchantStoreCurrency, false, "", true);
+        setupAndLaunch(sdkRequest, merchantStoreCurrency, false, "");
     }
 
     public void setupAndLaunch(SdkRequestBase sdkRequest, boolean forReturningShopper, String returningShopperId) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, "USD", forReturningShopper, returningShopperId, true);
-    }
-
-    public void setupAndLaunch(SdkRequestBase sdkRequest, String returningShopperId, boolean openURL) throws InterruptedException, BSPaymentRequestException {
-        setupAndLaunch(sdkRequest, "USD", true, returningShopperId, openURL);
+        setupAndLaunch(sdkRequest, "USD", forReturningShopper, returningShopperId);
     }
 
     /**
      * Setup app and sdk:
      * set URL connection, setup device, create token, setup sdk and lunch activity.
      */
-    public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency, boolean forReturningShopper, String returningShopperId, boolean openURL) throws InterruptedException, BSPaymentRequestException {
-        if (openURL) {
-            if (forReturningShopper) {
-                if (!returningShopperId.isEmpty())
-                    setUrlConnection(returningShopperId);
-                else
-                    setUrlConnection(true);
-            } else
-                setUrlConnection();
-        }
+    public void setupAndLaunch(SdkRequestBase sdkRequest, String merchantStoreCurrency, boolean forReturningShopper, String returningShopperId) throws InterruptedException, BSPaymentRequestException {
+        if (forReturningShopper) {
+            if (!returningShopperId.isEmpty())
+                setUrlConnection(returningShopperId);
+            else
+                setUrlConnection(true);
+        } else
+            setUrlConnection();
 
         doSetup();
         sdkRequest.setTaxCalculator(new TaxCalculator() {
@@ -458,70 +455,26 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         JSONObject postData = new JSONObject();
 
         JSONObject jsonObjectCreditCard = new JSONObject();
-        putJSON(jsonObjectCreditCard, "expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
-        putJSON(jsonObjectCreditCard, "securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
-        putJSON(jsonObjectCreditCard, "expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
-        putJSON(jsonObjectCreditCard, "cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
+        jsonObjectCreditCard.put("expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
+        jsonObjectCreditCard.put("securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
+        jsonObjectCreditCard.put("expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
+        jsonObjectCreditCard.put("cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
 
         JSONObject jsonObjectFirstElement = new JSONObject();
-        putJSON(jsonObjectFirstElement, "creditCard", jsonObjectCreditCard);
+        jsonObjectFirstElement.put("creditCard", jsonObjectCreditCard);
 
         JSONArray jsonArrayCreditCardInfo = new JSONArray();
         jsonArrayCreditCardInfo.put(jsonObjectFirstElement);
 
         JSONObject jsonObjectPaymentSources = new JSONObject();
-        putJSON(jsonObjectPaymentSources, "creditCardInfo", jsonArrayCreditCardInfo);
+        jsonObjectPaymentSources.put("creditCardInfo", jsonArrayCreditCardInfo);
 
-        putJSON(postData, "paymentSources", jsonObjectPaymentSources);
+        postData.put("paymentSources", jsonObjectPaymentSources);
 
-        putJSON(postData, "firstName", "Fanny");
-        putJSON(postData, "lastName", "Brice");
+        postData.put("firstName", "Fanny");
+        postData.put("lastName", "Brice");
         return postData;
     }
-
-    public void putJSON(JSONObject jsonObject, String key, String stringValue) {
-        try {
-            jsonObject.put(key, stringValue);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error on putJSON " + e.getMessage());
-        }
-    }
-
-    public void putJSON(JSONObject jsonObject, String key, Long longValue) {
-        try {
-            jsonObject.put(key, longValue);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error on putJSON " + e.getMessage());
-        }
-    }
-
-    public void putJSON(JSONObject jsonObject, String key, Integer intValue) {
-        try {
-            jsonObject.put(key, intValue);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
-        }
-
-    }
-
-    public void putJSON(JSONObject jsonObject, String key, JSONObject jsonObject1) {
-        try {
-            jsonObject.put(key, jsonObject1);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
-        }
-
-    }
-
-    public void putJSON(JSONObject jsonObject, String key, JSONArray jsonArray) {
-        try {
-            jsonObject.put(key, jsonArray);
-        } catch (JSONException e) {
-            Log.e(TAG, "Error on putJSONifNotNull " + e.getMessage());
-        }
-
-    }
-
 
     public void finish_demo_purchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
         sdkResult = blueSnapService.getSdkResult();
@@ -560,26 +513,26 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
-                                                      TestingShopperCreditCard creditCard, int cardIndex) throws InterruptedException {
+                                                      TestingShopperCreditCard creditCard) throws InterruptedException {
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
         }
 
-        get_shopper_from_server(shopperCheckoutRequirements, true, creditCard, cardIndex);
+        get_shopper_from_server(shopperCheckoutRequirements, true, creditCard);
     }
 
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, null, 0);
+        get_shopper_from_server(shopperCheckoutRequirements, false, null);
     }
 
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, TestingShopperCreditCard creditCard, int cardIndex) {
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, TestingShopperCreditCard creditCard) {
         get_shopper_service(new GetShopperServiceInterface() {
             @Override
             public void onServiceSuccess() {
                 if (forShopperConfig)
                     shopper_chosen_payment_method_validation(creditCard);
-                shopper_info_saved_validation(shopperCheckoutRequirements, cardIndex);
+                shopper_info_saved_validation(shopperCheckoutRequirements, creditCard.getCardLastFourDigits());
             }
 
             @Override
@@ -624,7 +577,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     //TODO: add validation that the new credit card info has been saved correctly
-    private void shopper_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, int cardIndex) {
+    private void shopper_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String cardLastFourDigits) {
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
             if (shopperCheckoutRequirements.isEmailRequired())
@@ -632,6 +585,12 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
             JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
             JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
+
+            String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
+            String secondCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(1).getJSONObject("creditCard"), "cardLastFourDigits");
+
+            int cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+
             JSONObject jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(cardIndex).getJSONObject("billingContactInfo");
 
             shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo);

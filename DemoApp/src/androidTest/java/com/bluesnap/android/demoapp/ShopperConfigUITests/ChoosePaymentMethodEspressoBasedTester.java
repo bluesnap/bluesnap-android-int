@@ -48,18 +48,18 @@ public class ChoosePaymentMethodEspressoBasedTester {
 //        taxAmount = uIAutoTestingBlueSnapService.getTaxAmount();
     }
 
-    protected void choosePaymentSetup(boolean openURL) throws BSPaymentRequestException, InterruptedException, JSONException {
-        if (openURL)
+    protected void choosePaymentSetup(boolean createShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
+        if (createShopper)
             uIAutoTestingBlueSnapService.createVaultedShopper();
 
         SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements();
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
 
-        uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, uIAutoTestingBlueSnapService.getVaultedShopperId(), openURL);
+        uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, true, uIAutoTestingBlueSnapService.getVaultedShopperId());
         defaultCountryKey = uIAutoTestingBlueSnapService.getDefaultCountryKey();
     }
 
-    void chooseNewCardPaymentMethod(TestingShopperCreditCard creditCard, int cardIndex) throws InterruptedException {
+    void chooseNewCardPaymentMethod(TestingShopperCreditCard creditCard) throws InterruptedException {
         //choose new card
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryValue());
@@ -77,30 +77,39 @@ public class ChoosePaymentMethodEspressoBasedTester {
         int buttonComponent = shopperCheckoutRequirements.isShippingRequired() ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, cardIndex);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard);
 
     }
 
     void chooseExistingCardPaymentMethod(TestingShopperCreditCard creditCard, int cardIndex) throws InterruptedException {
+//        String cardNum;
+//
+//        if (cardIndex == 1)
+//            cardNum = "5288";
+//        else
+//            cardNum = "1111";
+
         //choose existing credit card
+//        onData((hasItem(hasItem(hasToString(containsString(cardNum)))))).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).perform(click());
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(cardIndex).perform(click());
 
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryValue());
-        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryKey(), shopperCheckoutRequirements.isFullBillingRequired(),
-                shopperCheckoutRequirements.isEmailRequired());
+        ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryKey(),
+                shopperCheckoutRequirements.isFullBillingRequired(), shopperCheckoutRequirements.isEmailRequired(), ContactInfoTesterCommon.editBillingContactInfo);
         TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperBillingFragmentButtonComponentView);
 
         if (shopperCheckoutRequirements.isShippingRequired()) { //continue to shipping
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             ContactInfoTesterCommon.changeCountry(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryValue());
-            ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryKey(), true, false);
+            ContactInfoTesterCommon.fillInContactInfo(R.id.returningShoppershippingViewComponent, ContactInfoTesterCommon.editShippingContactInfo.getCountryKey(),
+                    true, false, ContactInfoTesterCommon.editShippingContactInfo);
             TestUtils.goBackToCreditCardInReturningShopper(true, R.id.returningShopperShippingFragmentButtonComponentView);
         }
 
         //submit the choice
         onView(withId(R.id.buyNowButton)).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, cardIndex);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard);
     }
 
 

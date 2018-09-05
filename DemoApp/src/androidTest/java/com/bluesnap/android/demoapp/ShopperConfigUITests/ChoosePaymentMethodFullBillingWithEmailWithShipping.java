@@ -22,10 +22,11 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
     @Test
     public void full_billing_with_email_with_shipping_choose_payment_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
         //choose new card
-        chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD, 1);
+        chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
 
         //setup for full billing
-        choosePaymentSetup(true);
+        choosePaymentSetup(false);
+        uIAutoTestingBlueSnapService.setIsReturningShopper(true);
 
         //TODO: restore this when AS-152 is fixed
         //choose first credit card
