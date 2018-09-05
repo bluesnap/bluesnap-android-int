@@ -150,6 +150,10 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return purchaseAmount;
     }
 
+    public void setPurchaseAmount(double purchaseAmount) {
+        this.purchaseAmount = purchaseAmount;
+    }
+
     public double getTaxPercent() {
         return taxPercent;
     }

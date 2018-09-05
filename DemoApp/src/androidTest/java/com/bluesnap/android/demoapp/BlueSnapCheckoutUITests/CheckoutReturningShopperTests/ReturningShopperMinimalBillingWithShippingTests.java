@@ -45,7 +45,6 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
         SHIPPING_COUNTRY = returningShopper.getShippingContactInfo().getCountryKey();
         if (!returningShopper.isWithShipping()) //reset shipping info for this shopper
             returningShopper.getShippingContactInfo().resetAllFields();
-        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
     public void returning_shopper_minimal_billing_with_shipping_common_tester() throws IOException {

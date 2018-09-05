@@ -144,7 +144,7 @@ public class CheckoutEspressoBasedTester {
     }
 
     private void updatePurchaseAmountForTax() {
-        purchaseAmount = purchaseAmount * (1 + taxPercent); //TODO: add comment
+        uIAutoTestingBlueSnapService.setPurchaseAmount(uIAutoTestingBlueSnapService.getPurchaseAmount() * (1 + taxPercent)); //TODO: add comment
     }
 
     public void returning_shopper_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {

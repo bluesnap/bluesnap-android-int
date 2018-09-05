@@ -146,11 +146,13 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
         checkoutCurrency = newCurrencyCode;
         if (!oldCurrencyCode.equals("USD")) {
             double conversionRateToUSD = blueSnapService.getsDKConfiguration().getRates().getCurrencyByCode(oldCurrencyCode).getConversionRate();
-            purchaseAmount = purchaseAmount / conversionRateToUSD;
+            uIAutoTestingBlueSnapService.setPurchaseAmount(uIAutoTestingBlueSnapService.getPurchaseAmount() / conversionRateToUSD);
+            //purchaseAmount = purchaseAmount / conversionRateToUSD;
         }
 
         double conversionRateFromUSD = blueSnapService.getsDKConfiguration().getRates().getCurrencyByCode(newCurrencyCode).getConversionRate();
-        purchaseAmount = purchaseAmount * conversionRateFromUSD;
+        uIAutoTestingBlueSnapService.setPurchaseAmount(uIAutoTestingBlueSnapService.getPurchaseAmount() / conversionRateFromUSD);
+        //purchaseAmount = purchaseAmount * conversionRateFromUSD;
     }
 
     void retrievePayPalTransaction() {
