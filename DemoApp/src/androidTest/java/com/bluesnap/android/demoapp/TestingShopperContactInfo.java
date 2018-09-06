@@ -13,17 +13,23 @@ public class TestingShopperContactInfo {
     private String state;
 
     private String zip;
-    private String country;
+    private String countryKey;
+
+
+    private String countryValue;
+
 
     public TestingShopperContactInfo(String name, String email, String city, String address,
-                                     String state, String zip, String country) {
+                                     String state, String zip, String countryKey, String countryValue) {
         this.name = name;
         this.email = email;
         this.city = city;
         this.address = address;
         this.state = state;
         this.zip = zip;
-        this.country = country;
+        this.countryKey = countryKey;
+        this.countryValue = countryValue;
+
     }
 
     public TestingShopperContactInfo(TestingShopperContactInfo contactInfo) {
@@ -33,7 +39,9 @@ public class TestingShopperContactInfo {
         address = contactInfo.address;
         state = contactInfo.state;
         zip = contactInfo.zip;
-        country = contactInfo.country;
+        countryKey = contactInfo.countryKey;
+        countryValue = contactInfo.countryValue;
+
     }
 
     public String getFirstName() {
@@ -96,12 +104,20 @@ public class TestingShopperContactInfo {
         this.zip = zip;
     }
 
-    public String getCountry() {
-        return country;
+    public String getCountryKey() {
+        return countryKey;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public void setCountryKey(String countryKey) {
+        this.countryKey = countryKey;
+    }
+
+    public String getCountryValue() {
+        return countryValue;
+    }
+
+    public void setCountryValue(String countryValue) {
+        this.countryValue = countryValue;
     }
 
     public void resetAllFields() {

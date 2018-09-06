@@ -18,12 +18,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Collection;
 
@@ -38,6 +42,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.allOf;
 
 public class TestUtils {
+    protected static DecimalFormat decimalFormat;
+
     public static Activity getCurrentActivity() {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             return getCurrentActivityOnMainThread();
@@ -254,8 +260,18 @@ public class TestUtils {
         return String.format("%s %s %s",
                 text,
                 AndroidUtil.getCurrencySymbol(currencyNameCode),
-                AndroidUtil.getDecimalFormat().format(amount)
+                getDecimalFormat().format(amount)
         );
+    }
+
+    public static DecimalFormat getDecimalFormat() {
+        if (decimalFormat == null) {
+            decimalFormat = new DecimalFormat("#############.##");
+            decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+            decimalFormat.setMinimumFractionDigits(2);
+            decimalFormat.setMinimumIntegerDigits(1);
+        }
+        return decimalFormat;
     }
 
     public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail) {
