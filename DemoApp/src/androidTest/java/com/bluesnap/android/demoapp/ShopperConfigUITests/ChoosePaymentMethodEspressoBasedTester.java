@@ -81,16 +81,14 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
     }
 
-    void chooseExistingCardPaymentMethod(TestingShopperCreditCard creditCard, int cardIndex) throws InterruptedException {
-//        String cardNum;
-//
-//        if (cardIndex == 1)
-//            cardNum = "5288";
-//        else
-//            cardNum = "1111";
-
+    void chooseExistingCardPaymentMethod(TestingShopperCreditCard creditCard) throws InterruptedException {
         //choose existing credit card
 //        onData((hasItem(hasItem(hasToString(containsString(cardNum)))))).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).perform(click());
+        String firstCard = uIAutoTestingBlueSnapService.blueSnapService.getsDKConfiguration()
+                .getShopper().getPreviousPaymentSources().getCreditCardInfos().get(0).getCreditCard().getCardLastFourDigits();
+
+        int cardIndex = firstCard.equals(creditCard.getCardLastFourDigits()) ? 0 : 1;
+
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(cardIndex).perform(click());
 
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());

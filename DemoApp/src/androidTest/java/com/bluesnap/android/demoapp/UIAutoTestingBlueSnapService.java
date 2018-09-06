@@ -75,7 +75,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private ActivityTestRule<StartUpActivity> mActivityRule;
     private StartUpActivity mActivity;
     public Context applicationContext;
-    private BlueSnapService blueSnapService = BlueSnapService.getInstance();
+    public BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SDKConfiguration sDKConfiguration = null;
     private DemoTransactions transactions;
 
@@ -473,6 +473,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
         postData.put("firstName", "Fanny");
         postData.put("lastName", "Brice");
+        postData.put("email", "some@mail.com");
+
         return postData;
     }
 
@@ -532,7 +534,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             public void onServiceSuccess() {
                 if (forShopperConfig)
                     shopper_chosen_payment_method_validation(creditCard);
-                shopper_info_saved_validation(shopperCheckoutRequirements, creditCard.getCardLastFourDigits());
+                String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
+                shopper_info_saved_validation(shopperCheckoutRequirements, cardLastFourDigits);
             }
 
             @Override
@@ -578,6 +581,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     //TODO: add validation that the new credit card info has been saved correctly
     private void shopper_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String cardLastFourDigits) {
+        int cardIndex = 0;
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
             if (shopperCheckoutRequirements.isEmailRequired())
@@ -586,10 +590,10 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
             JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
 
-            String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
-            String secondCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(1).getJSONObject("creditCard"), "cardLastFourDigits");
-
-            int cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+            if (!cardLastFourDigits.isEmpty()) {
+                String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
+                cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+            }
 
             JSONObject jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(cardIndex).getJSONObject("billingContactInfo");
 

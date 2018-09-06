@@ -15,6 +15,7 @@ import org.junit.Test;
 public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChoosePaymentMethodEspressoBasedTester {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
+        //TODO: restore email true when AS-155 is fixed
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
         choosePaymentSetup(true);
     }
@@ -28,30 +29,9 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
         choosePaymentSetup(false);
         uIAutoTestingBlueSnapService.setIsReturningShopper(true);
 
-        //TODO: restore this when AS-152 is fixed
         //choose first credit card
-        chooseExistingCardPaymentMethod(TestingShopperCreditCard.VISA_CREDIT_CARD, 0);
+        chooseExistingCardPaymentMethod(TestingShopperCreditCard.VISA_CREDIT_CARD);
     }
-
-//    public void full_billing_with_email_with_shipping_choose_payment_flow(final boolean withFullBilling, final boolean withEmail, final boolean withShipping) throws InterruptedException, JSONException, BSPaymentRequestException {
-//        //setup for shopper requirements
-//        preSetup(true, withFullBilling, withEmail, withShipping);
-//
-//        //choose new card
-//        chooseNewCardPaymentMethod(withFullBilling, withEmail, withShipping, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD, 0);
-//
-//        //setup for shopper requirements
-//        preSetup(true, withFullBilling, withEmail, withShipping);
-//
-//        //choose new card
-//        chooseNewCardPaymentMethod(withFullBilling, withEmail, withShipping, TestingShopperCreditCard.VISA_CREDIT_CARD, 1);
-//
-//        //setup for full billing
-//        preSetup(false, true, false, false);
-//
-//        //choose first credit card
-//        chooseExistingCardPaymentMethod(true, true, true, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD, 0);
-//    }
 
 //    /**
 //     * This test does a full billing end-to-end choose
