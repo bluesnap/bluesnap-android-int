@@ -20,6 +20,14 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
         choosePaymentSetup(true);
     }
 
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose payment flow, for both new card and existing card.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
     @Test
     public void full_billing_with_email_with_shipping_choose_payment_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
         //choose new card

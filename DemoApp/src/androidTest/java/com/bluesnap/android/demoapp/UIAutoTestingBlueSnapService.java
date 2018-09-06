@@ -169,6 +169,14 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return vaultedShopperId;
     }
 
+    public DemoTransactions getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(DemoTransactions transactions) {
+        this.transactions = transactions;
+    }
+
     public void setSdk(SdkRequestBase sdkRequest, TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws JSONException, BSPaymentRequestException, InterruptedException {
         sdkRequest.getShopperCheckoutRequirements().setBillingRequired(shopperCheckoutRequirements.isFullBillingRequired());
 
