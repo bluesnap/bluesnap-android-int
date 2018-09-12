@@ -522,6 +522,29 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    public void createPaymentTransaction() throws InterruptedException {
+        while (!mActivity.isDestroyed()) {
+            Log.d(TAG, "Waiting for tokenized credit card service to finish");
+            sleep(1000);
+        }
+
+        sdkResult = blueSnapService.getSdkResult();
+
+        transactions = DemoTransactions.getInstance();
+        transactions.setContext(applicationContext);
+        transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
+            @Override
+            public void onSuccess() {
+                Assert.assertEquals("SDKResult wrong credit card was charged", transactions.getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
+            }
+
+            @Override
+            public void onFailure() {
+                fail("Failed to make a transaction");
+            }
+        });
+    }
+
     public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
                                                       TestingShopperCreditCard creditCard) throws InterruptedException {
         while (!mActivity.isDestroyed()) {

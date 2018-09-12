@@ -2,23 +2,17 @@ package com.bluesnap.android.demoapp.ShopperConfigUITests;
 
 import android.support.test.rule.ActivityTestRule;
 
-import com.bluesnap.android.demoapp.DemoTransactions;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
-import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 import com.bluesnap.android.demoapp.UIAutoTestingBlueSnapService;
 import com.bluesnap.androidapi.models.SdkRequest;
-import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
-import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCreatePaymentActivity;
-
-import junit.framework.Assert;
 
 import org.json.JSONException;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static junit.framework.Assert.fail;
+import static java.lang.Thread.sleep;
 
 /**
  * Created by sivani on 06/09/2018.
@@ -64,25 +58,13 @@ public class CreatePaymentEspressoBasedTester {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
         createPaymentSetup();
 
-        //makeTransaction();
-        //Assert.assertEquals("SDKResult wrong currency", uIAutoTestingBlueSnapService.getTransactions().getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
+        sleep(10000);
+
+        uIAutoTestingBlueSnapService.createPaymentTransaction();
+        //Assert.assertEquals("SDKResult credit card was charged", uIAutoTestingBlueSnapService.getTransactions().getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
 
     }
 
-    private void makeTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        uIAutoTestingBlueSnapService.setTransactions(DemoTransactions.getInstance());
-        uIAutoTestingBlueSnapService.getTransactions().setContext(uIAutoTestingBlueSnapService.applicationContext);
-        uIAutoTestingBlueSnapService.getTransactions().createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
-            @Override
-            public void onSuccess() {
-                Assert.assertEquals("SDKResult wrong currency", uIAutoTestingBlueSnapService.getTransactions().getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
-            }
 
-            @Override
-            public void onFailure() {
-                fail("Failed to make a transaction");
-            }
-        });
-    }
 
 }
