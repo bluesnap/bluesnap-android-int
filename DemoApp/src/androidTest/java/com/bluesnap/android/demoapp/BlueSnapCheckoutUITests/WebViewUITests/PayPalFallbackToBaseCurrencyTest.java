@@ -28,4 +28,5 @@ public class PayPalFallbackToBaseCurrencyTest extends PayPalWebViewTests {
     public void pay_pal_transaction_fallback_to_base_currency_test() throws InterruptedException {
         payPalBasicTransaction();
     }
+
 }
