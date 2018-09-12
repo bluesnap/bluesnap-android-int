@@ -69,7 +69,7 @@ public class DemoTransactions {
             setTransactionId(responseString.substring(responseString.indexOf("<transaction-id>") +
                     "<transaction-id>".length(), responseString.indexOf("</transaction-id>")));
             setCardLastFourDigits(responseString.substring(responseString.indexOf("<cardLastFourDigits>") +
-                    "<cardLastFourDigits>".length(), responseString.indexOf("</cardLastFourDigits>")));
+                    "<card-last-four-digits>".length(), responseString.indexOf("</card-last-four-digits>")));
 
             String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
             setTokenSuffix(merchantToken.substring(merchantToken.length() - 6));
