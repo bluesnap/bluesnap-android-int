@@ -59,7 +59,7 @@ public class ReturningShopperFullBillingTests extends CheckoutEspressoBasedTeste
         billing_summarized_contact_info_visibility_validation();
         onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(not(isDisplayed()))); //check shipping is not displayed
 
-        if (ReturningShoppersFactory.COUNTER == 5) {
+        if (ReturningShoppersFactory.COUNTER == 5) { //full billing returning shopper
             pay_button_in_billing_validation();
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
@@ -73,7 +73,6 @@ public class ReturningShopperFullBillingTests extends CheckoutEspressoBasedTeste
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
         } else {
             component_opens_when_pressing_buyNow_with_missing_info();
-
         }
     }
 

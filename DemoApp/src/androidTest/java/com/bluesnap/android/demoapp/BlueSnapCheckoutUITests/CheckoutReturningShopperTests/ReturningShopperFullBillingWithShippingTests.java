@@ -61,7 +61,7 @@ public class ReturningShopperFullBillingWithShippingTests extends CheckoutEspres
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 7) {
+        if (ReturningShoppersFactory.COUNTER == 7) { //full billing with shipping returning shopper
             pay_button_in_billing_validation();
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
             billing_contact_info_content_validation();
@@ -70,7 +70,7 @@ public class ReturningShopperFullBillingWithShippingTests extends CheckoutEspres
 
         shipping_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 7) {
+        if (ReturningShoppersFactory.COUNTER == 7) { //full billing with shipping returning shopper
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -92,7 +92,7 @@ public class ReturningShopperFullBillingWithShippingTests extends CheckoutEspres
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling()) //TODO: change to else (without condition) after the bug is fixed (AS-119)
+        } else
             component_opens_when_pressing_buyNow_with_missing_info();
     }
 

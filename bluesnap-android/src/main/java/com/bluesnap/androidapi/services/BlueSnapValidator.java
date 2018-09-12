@@ -3,8 +3,13 @@ package com.bluesnap.androidapi.services;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Patterns;
+
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -235,7 +240,7 @@ public class BlueSnapValidator {
         boolean validInput = BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getFullName()), BlueSnapValidator.EditTextFields.NAME_FIELD);
 
         String country = AndroidUtil.stringify(contactInfo.getCountry());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country.toUpperCase()))
             validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getZip()), BlueSnapValidator.EditTextFields.ZIP_FIELD);
 
         if (isFullBillingRequiredOrIsShipping) {

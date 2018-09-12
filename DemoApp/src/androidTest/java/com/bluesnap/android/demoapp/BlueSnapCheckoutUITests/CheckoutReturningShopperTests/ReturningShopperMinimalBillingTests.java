@@ -59,7 +59,7 @@ public class ReturningShopperMinimalBillingTests extends CheckoutEspressoBasedTe
         billing_summarized_contact_info_visibility_validation();
         onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(not(isDisplayed()))); //check shipping is not displayed
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 1) { //minimal billing returning shopper
             pay_button_in_billing_validation();
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
