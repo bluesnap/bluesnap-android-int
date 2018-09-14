@@ -78,9 +78,8 @@ public class ReturningShopperMinimalBillingWithShippingWithEmailTests extends Ch
             Espresso.pressBack();
 
             //Pre-condition: current info is shippingInfo
-            //TODO: restore this when the bug is fixed (AS-148)
-//        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
-//        Espresso.pressBack();
+            returning_shopper_edit_shipping_contact_info_using_back_button_validation();
+            Espresso.pressBack();
             returning_shopper_edit_shipping_contact_info_using_done_button_validation();
         } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling())
             component_opens_when_pressing_buyNow_with_missing_info();

@@ -26,6 +26,7 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
     private ShippingViewComponent shippingViewComponent;
     private ScrollView scrollView;
     private Shopper shopper;
+    private ShippingContactInfo shippingContactInfo;
 
     public static ReturningShopperShippingFragment newInstance(Activity activity, Bundle bundle) {
         FragmentManager fragmentManager = activity.getFragmentManager();
@@ -55,9 +56,16 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
         // get Shopper
         shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
 
+        // get shipping contact info
+        if (savedInstanceState != null) { //restoring fragment
+            shippingContactInfo = savedInstanceState.getParcelable("shipping contact info");
+        } else { // new fragment
+            shippingContactInfo = shopper.getShippingContactInfo();
+        }
+
         // set Shipping Details
         shippingViewComponent = inflate.findViewById(R.id.returningShoppershippingViewComponent);
-        shippingViewComponent.updateViewResourceWithDetails(shopper.getShippingContactInfo());
+        shippingViewComponent.updateViewResourceWithDetails(shippingContactInfo);
         scrollView = inflate.findViewById(R.id.shippingViewComponentScrollView);
 
         ButtonComponent buttonComponentView = inflate.findViewById(R.id.returningShopperShippingFragmentButtonComponentView);
@@ -80,8 +88,10 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
      */
     @Override
     public void onActivitySavedInstanceState(Bundle outState) {
-        // get Credit Card Info
-        shopper.setShippingContactInfo(getViewResourceDetails());
+        // get Shipping Info
+        ShippingContactInfo savedShippingContactInfo = new ShippingContactInfo(shopper.getShippingContactInfo());
+
+        outState.putParcelable("shipping contact info", savedShippingContactInfo);
     }
 
     /**

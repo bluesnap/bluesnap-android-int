@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests;
 
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -66,10 +67,8 @@ public class ReturningShopperFullBillingTests extends CheckoutEspressoBasedTeste
             billing_contact_info_content_validation();
             TestUtils.goBackToCreditCardInReturningShopper(false, 0);
 
-            //Pre-condition: current info is billingInfo
-            //TODO: restore this when the bug is fixed (AS-148)
-            //returning_shopper_edit_billing_contact_info_using_back_button_validation();
-            //Espresso.pressBack();
+            returning_shopper_edit_billing_contact_info_using_back_button_validation();
+            Espresso.pressBack();
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
         } else {
             component_opens_when_pressing_buyNow_with_missing_info();

@@ -70,10 +70,8 @@ public class ReturningShopperFullBillingWithShippingWithEmailTests extends Check
             shipping_contact_info_content_validation();
             Espresso.pressBack();
 
-            //Pre-condition: current info is billingInfo
-            //TODO: restore this when the bug is fixed (AS-148)
-//        returning_shopper_edit_billing_contact_info_using_back_button_validation();
-//        Espresso.pressBack();
+            returning_shopper_edit_billing_contact_info_using_back_button_validation();
+            Espresso.pressBack();
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
             Espresso.pressBack();
 

@@ -70,10 +70,9 @@ public class ReturningShopperMinimalBillingTests extends CheckoutEspressoBasedTe
             change_currency_in_billing_validation();
             change_currency_in_billing_amount_validation();
 
-
-            //Pre-condition: current info is billingInfo
             returning_shopper_edit_billing_contact_info_using_back_button_validation();
             Espresso.pressBack();
+
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
             Espresso.pressBack();
         } else

@@ -26,6 +26,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     public static final String TAG = ReturningShopperBillingFragment.class.getSimpleName();
     private BillingViewComponent billingViewComponent;
     private CreditCardInfo newCreditCardInfo;
+    private BillingContactInfo newCreditCardBillingContactInfo;
     private ScrollView scrollView;
 
     public static ReturningShopperBillingFragment newInstance(Activity activity, Bundle bundle) {
@@ -49,7 +50,7 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) //why? change this
             return null;
         final View inflate = inflater.inflate(R.layout.returning_shopper_billing_fragment, container, false);
 
@@ -57,9 +58,17 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
         Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
+
+        // get billing contact info
+        if (savedInstanceState != null) { //restoring fragment
+            newCreditCardBillingContactInfo = savedInstanceState.getParcelable("billing contact info");
+        } else { // new fragment
+            newCreditCardBillingContactInfo = newCreditCardInfo.getBillingContactInfo();
+        }
+
         // set Billing Details
         billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
+        billingViewComponent.updateViewResourceWithDetails(newCreditCardBillingContactInfo);
         scrollView = inflate.findViewById(R.id.billingViewComponentScrollView);
 
         // set Credit Card View Component details
@@ -84,8 +93,10 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     @Override
     public void onActivitySavedInstanceState(Bundle outState) {
         // get Credit Card Info
-        Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
-        shopper.getNewCreditCardInfo().setBillingContactInfo(getViewResourceDetails());
+        //Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
+        BillingContactInfo savedBillingContactInfo = new BillingContactInfo(newCreditCardInfo.getBillingContactInfo());
+
+        outState.putParcelable("billing contact info", savedBillingContactInfo);
     }
 
     /**
