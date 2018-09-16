@@ -17,15 +17,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
-
-import java.util.Arrays;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -398,7 +395,7 @@ public class ContactInfoViewComponent extends LinearLayout {
      * @return boolean
      */
     boolean isCountryRequiresZip() {
-        return (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry()));
+        return (BlueSnapValidator.checkCountryHasZip(getUserCountry()));
     }
 
     /**

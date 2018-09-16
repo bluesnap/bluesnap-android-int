@@ -9,7 +9,22 @@ import android.util.Log;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.http.AppExecutors;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.BSTokenizeDetailsJsonFactory;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.ChosenPaymentMethod;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.Currency;
+import com.bluesnap.androidapi.models.PriceDetails;
+import com.bluesnap.androidapi.models.PurchaseDetails;
+import com.bluesnap.androidapi.models.Rates;
+import com.bluesnap.androidapi.models.SDKConfiguration;
+import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
+import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.models.ShopperConfiguration;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.utils.JsonParser;
 
 import org.json.JSONArray;
@@ -19,7 +34,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
@@ -574,7 +588,7 @@ public class BlueSnapService {
      * @return boolean
      */
     public boolean doesCountryhaveZip(Context context) {
-        return (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(getUserCountry(context)));
+        return (BlueSnapValidator.checkCountryHasZip(getUserCountry(context)));
     }
 
     /**

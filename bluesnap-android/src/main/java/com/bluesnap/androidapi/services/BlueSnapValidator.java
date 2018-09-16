@@ -183,6 +183,16 @@ public class BlueSnapValidator {
     }
 
     /**
+     * Check if Country has a Zip Field requirement (Required)
+     *
+     * @param countryText - ISO 3166-1 alpha-2 standard
+     * @return true if country has zip, false w.s.
+     */
+    public static boolean checkCountryHasZip(String countryText) {
+        return !Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryText.toUpperCase());
+    }
+
+    /**
      * validate EditText by it's validation type
      *
      * @param editTextString - editText String
@@ -240,7 +250,7 @@ public class BlueSnapValidator {
         boolean validInput = BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getFullName()), BlueSnapValidator.EditTextFields.NAME_FIELD);
 
         String country = AndroidUtil.stringify(contactInfo.getCountry());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country.toUpperCase()))
+        if (checkCountryHasZip(country))
             validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getZip()), BlueSnapValidator.EditTextFields.ZIP_FIELD);
 
         if (isFullBillingRequiredOrIsShipping) {
