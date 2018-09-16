@@ -26,7 +26,6 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
     private ShippingViewComponent shippingViewComponent;
     private ScrollView scrollView;
     private Shopper shopper;
-    private ShippingContactInfo shippingContactInfo;
 
     public static ReturningShopperShippingFragment newInstance(Activity activity, Bundle bundle) {
         FragmentManager fragmentManager = activity.getFragmentManager();
@@ -48,13 +47,12 @@ public class ReturningShopperShippingFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if (savedInstanceState != null)
-            return null;
-
         final View inflate = inflater.inflate(R.layout.returning_shopper_shipping_fragment, container, false);
 
         // get Shopper
         shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
+
+        ShippingContactInfo shippingContactInfo;
 
         // get shipping contact info
         if (savedInstanceState != null) { //restoring fragment
