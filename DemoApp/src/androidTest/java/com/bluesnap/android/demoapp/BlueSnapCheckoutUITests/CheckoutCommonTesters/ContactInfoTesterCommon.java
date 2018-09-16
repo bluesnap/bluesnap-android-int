@@ -9,12 +9,11 @@ import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperContactInfo;
-import com.bluesnap.androidapi.Constants;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 import org.hamcrest.Matchers;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -55,7 +54,7 @@ public class ContactInfoTesterCommon {
             onView(withId(R.id.input_email))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Input email editText is not focused, after pressing the ime button"))
                     .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+        if (BlueSnapValidator.checkCountryHasZip(country))
             onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Input zip editText is not focused, after pressing the ime button"))
                     .check(matches(TestUtils.isViewFocused())).perform(pressImeActionButton());
@@ -311,7 +310,7 @@ public class ContactInfoTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": Email wasn't saved"))
                     .check(matches(withText(contactInfo.getEmail())));
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+        if (BlueSnapValidator.checkCountryHasZip(country))
             //Verify zip has been saved in current component
             onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Zip wasn't saved"))
@@ -386,7 +385,7 @@ public class ContactInfoTesterCommon {
         if (withEmail)
             onView(withId(R.id.input_email)).perform(clearText(), typeText(contactInfo.getEmail()), pressImeActionButton());
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+        if (BlueSnapValidator.checkCountryHasZip(country))
             onView(allOf(withId(R.id.input_zip), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getZip()), pressImeActionButton());
 
         if (fullInfo) {

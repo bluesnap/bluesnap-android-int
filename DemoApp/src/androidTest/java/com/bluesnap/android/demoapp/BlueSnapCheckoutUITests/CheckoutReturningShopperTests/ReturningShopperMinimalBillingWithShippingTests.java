@@ -53,7 +53,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 3) {
+        if (ReturningShoppersFactory.COUNTER == 3) { //minimal billing with shipping returning shopper
 
             pay_button_in_billing_validation();
 
@@ -63,7 +63,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
         }
 
         shipping_summarized_contact_info_visibility_validation();
-        if (ReturningShoppersFactory.COUNTER == 3) {
+        if (ReturningShoppersFactory.COUNTER == 3) { //minimal billing with shipping returning shopper
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -83,7 +83,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling())
+        } else
             component_opens_when_pressing_buyNow_with_missing_info();
     }
 

@@ -48,7 +48,7 @@ public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspres
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 2) {
+        if (ReturningShoppersFactory.COUNTER == 2) { //minimal billing with email returning shopper
 
             pay_button_in_billing_validation();
 
