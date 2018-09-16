@@ -8,7 +8,6 @@ import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.androidapi.services.AndroidUtil;
-import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -89,7 +88,7 @@ public class CreditCardVisibilityTesterCommon {
         if (withEmail)
             check_contact_info_invalid_error_visibility(testName, R.id.input_layout_email, componentResourceId, "email", false);
 
-        if (BlueSnapValidator.checkCountryHasZip(country)) //Country with zip
+        if (TestUtils.checkCountryHasZip(country)) //Country with zip
             check_contact_info_invalid_error_visibility(testName, R.id.input_layout_zip, componentResourceId, "zip", false);
 
         if (fullInfo) {
@@ -138,7 +137,7 @@ public class CreditCardVisibilityTesterCommon {
      */
     public static void default_country_zip_view_validation(String testName, String defaultCountry, int componentResourceId) {
         //Test validation of zip appearance according to the country
-        if (BlueSnapValidator.checkCountryHasZip(defaultCountry)) //Country with zip
+        if (TestUtils.checkCountryHasZip(defaultCountry)) //Country with zip
             onView(allOf(withId(R.id.input_layout_zip), isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Input zip editText is not displayed"))
                     .check(matches(ViewMatchers.isDisplayed())); //Check that the zip view is displayed

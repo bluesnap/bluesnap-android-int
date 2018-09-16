@@ -32,7 +32,6 @@ import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
-import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
@@ -661,7 +660,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         if (isBillingInfo && shopperCheckoutRequirements.isEmailRequired())
             check_if_field_identify("email", contactInfo.getEmail(), jsonObject);
 
-        if (BlueSnapValidator.checkCountryHasZip(countryKey))
+        if (TestUtils.checkCountryHasZip(countryKey))
             check_if_field_identify("zip", contactInfo.getZip(), jsonObject);
 
         if (isBillingInfo && shopperCheckoutRequirements.isFullBillingRequired() || !isBillingInfo) { //full info or shipping

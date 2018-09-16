@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
+import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.services.AndroidUtil;
 
 import org.hamcrest.Description;
@@ -29,6 +30,7 @@ import org.hamcrest.TypeSafeMatcher;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Collection;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -302,6 +304,10 @@ public class TestUtils {
 
     public static String getAmountInString(NumberFormat df, double amount) {
         return df.format(amount);
+    }
+
+    public static boolean checkCountryHasZip(String countryText) {
+        return !Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryText.toUpperCase());
     }
 
 }
