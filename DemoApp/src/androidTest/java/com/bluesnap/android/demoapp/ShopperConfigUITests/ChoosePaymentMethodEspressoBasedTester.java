@@ -41,13 +41,6 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
     protected UIAutoTestingBlueSnapService<BluesnapChoosePaymentMethodActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
 
-    public ChoosePaymentMethodEspressoBasedTester() {
-//        checkoutCurrency = uIAutoTestingBlueSnapService.getCheckoutCurrency();
-//        purchaseAmount = uIAutoTestingBlueSnapService.getPurchaseAmount();
-//        taxPercent = uIAutoTestingBlueSnapService.getTaxPercent();
-//        taxAmount = uIAutoTestingBlueSnapService.getTaxAmount();
-    }
-
     protected void choosePaymentSetup(boolean createShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
         if (createShopper)
             uIAutoTestingBlueSnapService.createVaultedShopper();
