@@ -101,6 +101,8 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
 
         //verify that paypal url opened up
         onWebView().check(webMatches(getCurrentUrl(), containsString(Constants.getPaypalSandUrl())));
+//        onWebView().forceJavascriptEnabled();
+
     }
 
     void loginToPayPal() throws InterruptedException {
