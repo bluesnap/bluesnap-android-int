@@ -49,17 +49,26 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if (savedInstanceState != null)
-            return null;
         final View inflate = inflater.inflate(R.layout.returning_shopper_billing_fragment, container, false);
 
         // get Credit Card Info
         Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
         newCreditCardInfo = shopper.getNewCreditCardInfo();
 
+        BillingContactInfo newCreditCardBillingContactInfo;
+
+        // get billing contact info
+        if (savedInstanceState != null) { //restoring fragment
+            newCreditCardBillingContactInfo = savedInstanceState.getParcelable("billing contact info");
+        } else if (newCreditCardInfo != null) { // new fragment
+            newCreditCardBillingContactInfo = newCreditCardInfo.getBillingContactInfo();
+        } else {
+            return null;
+        }
+
         // set Billing Details
         billingViewComponent = inflate.findViewById(R.id.billingViewComponent);
-        billingViewComponent.updateViewResourceWithDetails(newCreditCardInfo.getBillingContactInfo());
+        billingViewComponent.updateViewResourceWithDetails(newCreditCardBillingContactInfo);
         scrollView = inflate.findViewById(R.id.billingViewComponentScrollView);
 
         // set Credit Card View Component details
@@ -84,8 +93,10 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     @Override
     public void onActivitySavedInstanceState(Bundle outState) {
         // get Credit Card Info
-        Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
-        shopper.getNewCreditCardInfo().setBillingContactInfo(getViewResourceDetails());
+        //Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
+        BillingContactInfo savedBillingContactInfo = new BillingContactInfo(newCreditCardInfo.getBillingContactInfo());
+
+        outState.putParcelable("billing contact info", savedBillingContactInfo);
     }
 
     /**

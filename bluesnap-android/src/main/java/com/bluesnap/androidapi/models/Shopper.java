@@ -45,7 +45,7 @@ public class Shopper extends ContactInfo {
     private LastPaymentInfo lastPaymentInfo;
     @NonNull
     private ChosenPaymentMethod chosenPaymentMethod = new ChosenPaymentMethod();
-
+    @Nullable
     private CreditCardInfo newCreditCardInfo;
 
     public Shopper(ContactInfo contactInfo) {
@@ -65,6 +65,7 @@ public class Shopper extends ContactInfo {
         newCreditCardInfo = new CreditCardInfo();
     }
 
+    @Nullable
     public CreditCardInfo getNewCreditCardInfo() {
         return newCreditCardInfo;
     }

@@ -32,9 +32,9 @@ public class BSAndroidTestsBase {
 
     private static final String TAG = BSAndroidTestsBase.class.getSimpleName();
     BlueSnapService blueSnapService;
-    private String merchantToken;
-    private TokenProvider tokenProvider;
-    private String baseCurrency;
+    protected String merchantToken;
+    protected TokenProvider tokenProvider;
+    protected String baseCurrency;
 
     BSAndroidTestsBase(String baseCurrency) {
         this.baseCurrency = baseCurrency;
@@ -44,7 +44,7 @@ public class BSAndroidTestsBase {
         this.baseCurrency = "USD";
     }
 
-    private void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
+    protected void merchantTokenService(final TokenServiceInterface tokenServiceInterface) {
 
         String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
         ArrayList<CustomHTTPParams> headerParams = new ArrayList<>();
@@ -123,7 +123,7 @@ public class BSAndroidTestsBase {
                     @Override
                     public void onFailure() {
                         semaphore2.release();
-                        fail("failed to get rates");
+                        fail("failed to setup sdk");
                     }
                 });
             }

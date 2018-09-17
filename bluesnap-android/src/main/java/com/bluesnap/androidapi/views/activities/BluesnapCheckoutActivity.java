@@ -298,7 +298,13 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * @param priceDetails {@link PriceDetails}
      */
     protected void startPayPal(final PriceDetails priceDetails) {
-        progressBar.setVisibility(View.VISIBLE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        });
+
         BlueSnapService.getInstance().createPayPalToken(priceDetails.getAmount(), priceDetails.getCurrencyCode(), new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
@@ -372,6 +378,11 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                                 }
                             }
                         });
+
+                    } else if (errorDescription.getString("code").equals("90015")) {
+                        /* { "message": [ { "errorName": "INVALID_CURRENCY", "code": "90015", "description": "Currency: GGG is not a valid currency code according to the ISO 4217 standard." } ] } */
+                        message = "INVALID CURRENCY";
+                        title = getString(R.string.ERROR);
 
                     } else {
                         message = getString(R.string.SUPPORT_PLEASE)

@@ -4,6 +4,7 @@ package com.bluesnap.androidapi.views.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.bluesnap.androidapi.models.PaymentSources;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 
@@ -63,9 +65,16 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
             progressBar.setVisibility(View.VISIBLE);
             Shopper shopper = sdkConfiguration.getShopper();
             CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
-            shopper.setNewPaymentSources(new PaymentSources(newCreditCardInfo));
-            shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, newCreditCardInfo.getCreditCard()));
-            updateShopperOnServer(shopper);
+            if (null != newCreditCardInfo) {
+                shopper.setNewPaymentSources(new PaymentSources(newCreditCardInfo));
+                shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, newCreditCardInfo.getCreditCard()));
+                updateShopperOnServer(shopper);
+            } else {
+                String errorMsg = "update Shopper newCreditCardInfo is null Error";
+                Log.e(TAG, errorMsg);
+                setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
+                finish();
+            }
         }
     }
 
@@ -74,10 +83,10 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
      *
      * @param shopper - {@link Shopper}
      */
-    private void finishAfterUpdateShopperSuccess(final Shopper shopper) {
+    private void finishAfterUpdateShopperSuccess(@NonNull final Shopper shopper) {
         SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
-        if (null != shopper.getNewCreditCardInfo().getBillingContactInfo())
+        if (null != shopper.getNewCreditCardInfo() && null != shopper.getNewCreditCardInfo().getBillingContactInfo())
             sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
 
         if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
@@ -112,37 +121,21 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
         blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
             @Override
             public void run() {
-                BlueSnapHTTPResponse response = blueSnapService.submitUpdatedShopperDetails(shopper);
-                if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    finishAfterUpdateShopperSuccess(shopper);
-                } else if (response.getResponseCode() == 400 && null != blueSnapService.getTokenProvider() && !"".equals(response.getResponseString())) {
-                    try {
-                        JSONObject errorResponse = new JSONObject(response.getResponseString());
-                        JSONArray rs2 = (JSONArray) errorResponse.get("message");
-                        JSONObject rs3 = (JSONObject) rs2.get(0);
-                        if ("EXPIRED_TOKEN".equals(rs3.get("errorName"))) {
-                            blueSnapService.getTokenProvider().getNewToken(new TokenServiceCallback() {
-                                @Override
-                                public void complete(String newToken) {
-                                    blueSnapService.setNewToken(newToken);
-                                    updateShopperOnServer(shopper);
-                                }
-                            });
-                        } else {
-                            String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
-                            Log.e(TAG, errorMsg);
-                            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
-                            finish();
-                        }
-                    } catch (JSONException e) {
-                        Log.e(TAG, "json parsing exception", e);
+                blueSnapService.submitUpdatedShopperDetails(shopper, new BluesnapServiceCallback() {
+                    @Override
+                    public void onSuccess() {
+                        finishAfterUpdateShopperSuccess(shopper);
                     }
-                } else {
-                    String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
-                    Log.e(TAG, errorMsg);
-                    setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
-                    finish();
-                }
+
+                    @Override
+                    public void onFailure() {
+                        String errorMsg = "update Shopper on Server Service Error";
+                        Log.e(TAG, errorMsg);
+                        setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
+                        finish();
+
+                    }
+                });
             }
         });
     }
