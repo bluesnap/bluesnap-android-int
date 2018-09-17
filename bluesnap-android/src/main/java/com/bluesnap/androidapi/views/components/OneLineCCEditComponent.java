@@ -12,12 +12,23 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
-import com.bluesnap.androidapi.services.*;
+import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
+import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
+import com.bluesnap.androidapi.services.BluesnapAlertDialog;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -257,7 +268,7 @@ public class OneLineCCEditComponent extends LinearLayout {
             changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(ccNum));
 
             if (s.length() == getResources().getInteger(R.integer.ccn_max_length)) {
-                creditCardNumberOnLoseFocus();
+                expEditText.requestFocus();
             }
         }
 
@@ -302,7 +313,7 @@ public class OneLineCCEditComponent extends LinearLayout {
         creditCardNumberEditText.setHint("");
         creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
         creditCardNumberEditText.setText(getCardLastFourDigitsForView(newCreditCard.getNumber()));
-        focusOnExpEditTextAndSetCvvVisible();
+        setExpAndCvvVisible();
     }
 
     /**
@@ -312,18 +323,39 @@ public class OneLineCCEditComponent extends LinearLayout {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (!hasFocus) {
-                return;
-            }
-            creditCardNumberEditText.setHint("1234 5678 9012 3456");
-            creditCardNumberEditText.setText(newCreditCard.getNumber());
-            creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
-            creditCardNumberEditText.addTextChangedListener(creditCardNumberWatcher);
-            cvvLinearLayout.setVisibility(View.GONE);
-            expLinearLayout.setVisibility(View.GONE);
-            creditCardNumberEditText.setSelection(creditCardNumberEditText.getText().length());
-            if (activateMoveToCcImageButton)
-                moveToCcImageButton.setVisibility(View.VISIBLE);
+                creditCardNumberOnLoseFocus();
+            } else {
+                creditCardNumberEditText.setHint("1234 5678 9012 3456");
 
+                String ccNumber = newCreditCard.getNumber();
+
+                if (ccNumber != null) {
+                    String ccNumberWithSpaces = "";
+                    int lastInsertedIndex = 0;
+                    // Insert space char where needed.
+                    for (int i = 4; i < ccNumber.length(); i++) {
+                        if ((i) % 4 == 0) {
+                            lastInsertedIndex = i;
+                            char c = ccNumber.charAt(i - 1);
+                            // Only if its a digit where there should be a space we insert a space
+                            if (Character.isDigit(c)) {
+                                ccNumberWithSpaces = ccNumberWithSpaces + ccNumber.substring(i - 4, i) + " ";
+                            }
+                        }
+                    }
+
+                    ccNumber = ccNumberWithSpaces + ccNumber.substring(lastInsertedIndex);
+                }
+
+                creditCardNumberEditText.setText(ccNumber);
+                creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
+                creditCardNumberEditText.addTextChangedListener(creditCardNumberWatcher);
+                cvvLinearLayout.setVisibility(View.GONE);
+                expLinearLayout.setVisibility(View.GONE);
+                creditCardNumberEditText.setSelection(creditCardNumberEditText.getText().length());
+                if (activateMoveToCcImageButton)
+                    moveToCcImageButton.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -342,10 +374,9 @@ public class OneLineCCEditComponent extends LinearLayout {
     /**
      * show exp layout and request focus
      */
-    private void focusOnExpEditTextAndSetCvvVisible() {
+    private void setExpAndCvvVisible() {
         expLinearLayout.setVisibility(View.VISIBLE);
         cvvLinearLayout.setVisibility(View.VISIBLE);
-        expEditText.requestFocus();
     }
 
     /**
