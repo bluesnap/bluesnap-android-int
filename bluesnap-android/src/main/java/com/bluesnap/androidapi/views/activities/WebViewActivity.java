@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
@@ -85,6 +86,7 @@ public class WebViewActivity extends Activity {
                         Log.e(TAG, "paypal state error", e);
                         finishWithAlertDialog("paypal service error", "paypal");
                     }
+                    sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.PAYPAL);
                     Log.d(TAG, "Payment result from paypal:" + sdkResult);
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);

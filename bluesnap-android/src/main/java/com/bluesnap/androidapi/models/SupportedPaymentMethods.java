@@ -17,6 +17,8 @@ public class SupportedPaymentMethods extends BSModel {
     private static final String TAG = SupportedPaymentMethods.class.getSimpleName();
 
     public static final String PAYPAL = "PAYPAL";
+    public static final String GOOGLE_PAY = "GOOGLE_PAY";
+    public static final String GOOGLE_PAY_TOKENIZED_CARD = "GOOGLE_PAY_TOKENIZED_CARD";
     public static final String CC = "CC";
     public static final String USD = "USD";
 

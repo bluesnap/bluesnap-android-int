@@ -38,6 +38,10 @@ public class SdkResult implements Parcelable {
 
     @Nullable
     private String paypalInvoiceId;
+
+    @Nullable
+    private String googlePayToken;
+
     @Nullable
     private String chosenPaymentMethodType;
     private int result;
@@ -60,6 +64,7 @@ public class SdkResult implements Parcelable {
         setChosenPaymentMethodType(in.readString());
         setResult(in.readInt());
         setKountSessionId(in.readString());
+        setGooglePayToken(in.readString());
         setToken(in.readString());
 
         if (BS_CHOOSE_PAYMENT_METHOD_RESULT_OK != getResult()) {
@@ -79,6 +84,7 @@ public class SdkResult implements Parcelable {
         dest.writeString(getChosenPaymentMethodType());
         dest.writeInt(getResult());
         dest.writeString(getKountSessionId());
+        dest.writeString(getGooglePayToken());
         dest.writeString(getToken());
 
         if (BS_CHOOSE_PAYMENT_METHOD_RESULT_OK != getResult()) {
@@ -143,7 +149,8 @@ public class SdkResult implements Parcelable {
         if (null != amount)
             s += ", amount=" + getAmount() + '\'' +
                     ", currencyNameCode='" + getCurrencyNameCode() + '\'' +
-                    ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'';
+                    ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' +
+                    ", googlePayToken=" + googlePayToken + '\'';
 
         s += '}';
         return s;
@@ -262,6 +269,15 @@ public class SdkResult implements Parcelable {
 
     public void setResult(int result) {
         this.result = result;
+    }
+
+    @Nullable
+    public String getGooglePayToken() {
+        return googlePayToken;
+    }
+
+    public void setGooglePayToken(@Nullable String googlePayToken) {
+        this.googlePayToken = googlePayToken;
     }
 
 }
