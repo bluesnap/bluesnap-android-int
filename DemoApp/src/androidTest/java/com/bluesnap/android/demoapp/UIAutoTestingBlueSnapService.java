@@ -689,6 +689,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             fail("missing field in server response:\n Expected fieldName: " + fieldName + " Expected Value:" + expectedResult + "\n" + getShopperResponse);
         }
 
-        Assert.assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
+        Assert.assertEquals(fieldName + " was not saved correctly in DataBase", expectedResult, fieldContent);
     }
 }
