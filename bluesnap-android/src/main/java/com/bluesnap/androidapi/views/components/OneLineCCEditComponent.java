@@ -195,6 +195,8 @@ public class OneLineCCEditComponent extends LinearLayout {
      * @return boolean
      */
     public boolean validateInfo() {
+        if (creditCardNumberEditText.hasFocus())
+            cvvEditText.requestFocus();
         return cardNumberValidation(newCreditCard.getNumber()) && cvvValidation() && expValidation();
     }
 

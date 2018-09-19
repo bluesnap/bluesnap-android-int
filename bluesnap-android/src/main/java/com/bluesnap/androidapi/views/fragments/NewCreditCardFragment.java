@@ -200,6 +200,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         buttonComponentView.setBuyNowButton(buttonComponentText, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                billingViewComponent.inputName.requestFocus();
                 if (validateAndSetCreditCardInfoAndBillingInfo()) {
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
                     if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
