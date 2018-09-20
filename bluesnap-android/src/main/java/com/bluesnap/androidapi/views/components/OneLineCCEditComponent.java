@@ -67,6 +67,14 @@ public class OneLineCCEditComponent extends LinearLayout {
         initControl(context);
     }
 
+    public EditText getCreditCardNumberEditText() {
+        return creditCardNumberEditText;
+    }
+
+    public EditText getCvvEditText() {
+        return cvvEditText;
+    }
+
     /**
      * get credit card details
      */
