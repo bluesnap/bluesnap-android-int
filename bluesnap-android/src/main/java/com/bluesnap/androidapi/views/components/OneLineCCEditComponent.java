@@ -124,14 +124,14 @@ public class OneLineCCEditComponent extends LinearLayout {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_NEXT)
-                    creditCardNumberOnLoseFocus();
+                    expEditText.requestFocus();
                 return false;
             }
         });
         moveToCcImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                creditCardNumberOnLoseFocus();
+                expEditText.requestFocus();
             }
         });
 
@@ -205,7 +205,12 @@ public class OneLineCCEditComponent extends LinearLayout {
     public boolean validateInfo() {
         if (creditCardNumberEditText.hasFocus())
             cvvEditText.requestFocus();
-        return cardNumberValidation(newCreditCard.getNumber()) && cvvValidation() && expValidation();
+
+        boolean isValid = cardNumberValidation(newCreditCard.getNumber());
+        isValid &= cvvValidation();
+        isValid &= expValidation();
+
+        return isValid;
     }
 
     /**
