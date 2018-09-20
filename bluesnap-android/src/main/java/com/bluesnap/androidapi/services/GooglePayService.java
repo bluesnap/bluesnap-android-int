@@ -14,6 +14,8 @@ import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.models.ShopperCheckoutRequirements;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.utils.JsonParser;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.identity.intents.model.UserAddress;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.CardInfo;
@@ -46,12 +48,10 @@ public class GooglePayService {
     // Changing this to ENVIRONMENT_PRODUCTION will make the API return real card information.
     // Please refer to the documentation to read about the required steps needed to enable
     // ENVIRONMENT_PRODUCTION.
-    private final int PAYMENTS_ENVIRONMENT = WalletConstants.ENVIRONMENT_TEST; //.ENVIRONMENT_PRODUCTION; //
+    private final int PAYMENTS_ENVIRONMENT = WalletConstants.ENVIRONMENT_PRODUCTION; //.ENVIRONMENT_TEST; //
 
     // The name of our payment processor / gateway.
     public final String GATEWAY_TOKENIZATION_NAME = "bluesnap";
-
-    private final BigDecimal MICROS = new BigDecimal(1000000d);
 
     // Currently we support CARD and TOKENIZED CARD (only) for any merchant who supports GOOGLE_PAY
     public final List<Integer> SUPPORTED_METHODS = Arrays.asList(
@@ -245,6 +245,17 @@ public class GooglePayService {
      * @param activity is the caller's activity.
      */
     public PaymentsClient createPaymentsClient(Activity activity) {
+
+        // check that Google Play is available
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        final int resultCode = googleApiAvailability.isGooglePlayServicesAvailable(activity.getBaseContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            boolean isUserResolvableError = googleApiAvailability.isUserResolvableError(resultCode);
+            Log.i(TAG,"Google Play not available; resultCode=" + resultCode + ", isUserResolvableError=" + isUserResolvableError);
+            return null;
+        }
+
+        // Create the client
         Wallet.WalletOptions walletOptions = new Wallet.WalletOptions.Builder()
                 .setEnvironment(PAYMENTS_ENVIRONMENT)
                 .build();
@@ -386,41 +397,15 @@ public class GooglePayService {
      * Builds {@link TransactionInfo} for use with {@link #createPaymentDataRequest}.
      * <p>
      * The price is not displayed to the user and must be in the following format: "12.34".
-     * {@link #microsToString} can be used to format the string.
      *
      * @param price total of the transaction.
      */
     public TransactionInfo createTransaction(String price, String currency) {
-        // TODO: not sure if the price here should be in MICROS or not
         return TransactionInfo.newBuilder()
                 .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
                 .setTotalPrice(price)
                 .setCurrencyCode(currency)
                 .build();
     }
-
-    private long priceToMicros(BigDecimal price) {
-
-        return price.multiply(MICROS).longValue();
-    }
-
-    /**
-     * Converts micros to a BigDecimal
-     *
-     * @param micros value of the price.
-     */
-    private BigDecimal microsToBigDecimal(long micros) {
-        return new BigDecimal(micros).divide(MICROS).setScale(2, RoundingMode.HALF_EVEN);
-    }
-
-    /**
-     * Converts micros to a string format accepted by {@link #createTransaction}.
-     *
-     * @param micros value of the price.
-     */
-    private String microsToString(long micros) {
-        return new BigDecimal(micros).divide(MICROS).setScale(2, RoundingMode.HALF_EVEN).toString();
-    }
-
 
 }

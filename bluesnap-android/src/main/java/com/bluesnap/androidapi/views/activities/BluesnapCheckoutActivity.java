@@ -131,22 +131,26 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
         // It's recommended to create the PaymentsClient object inside of the onCreate method.
         googlePayClient = googlePayService.createPaymentsClient(this);
+        if (googlePayClient == null) {
+            setGooglePayAvailable(false);
 
-        // The call to isReadyToPay is asynchronous and returns a Task. We need to provide an
-        // OnCompleteListener to be triggered when the result of the call is known.
-        googlePayService.isReadyToPay(googlePayClient).addOnCompleteListener(
-                new OnCompleteListener<Boolean>() {
-                    public void onComplete(Task<Boolean> task) {
-                        try {
-                            boolean result = task.getResult(ApiException.class);
-                            setGooglePayAvailable(result);
-                        } catch (ApiException exception) {
-                            // Process error
-                            Log.w(TAG, "isReadyToPay failed", exception);
-                            setGooglePayAvailable(false);
+        } else {
+            // The call to isReadyToPay is asynchronous and returns a Task. We need to provide an
+            // OnCompleteListener to be triggered when the result of the call is known.
+            googlePayService.isReadyToPay(googlePayClient).addOnCompleteListener(
+                    new OnCompleteListener<Boolean>() {
+                        public void onComplete(Task<Boolean> task) {
+                            try {
+                                boolean result = task.getResult(ApiException.class);
+                                setGooglePayAvailable(result);
+                            } catch (ApiException exception) {
+                                // Process error
+                                Log.w(TAG, "isReadyToPay failed", exception);
+                                setGooglePayAvailable(false);
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     protected void setGooglePayAvailable(boolean available) {
