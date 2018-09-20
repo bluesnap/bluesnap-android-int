@@ -112,16 +112,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
     protected double taxAmount = purchaseAmount * taxPercent;
 
-
-    //TODO: restore this after changing returning shopper tests
-//    public UIAutoTestingBlueSnapService() {
-//        setUrlConnection("");
-//    }
-//
-//    public ChoosePaymentMethodEspressoBasedTester(String returningShopperId) {
-//        setUrlConnection("?shopperId=" + returningShopperId);
-//    }
-
     /**
      * constructor without opening URL connection
      */
