@@ -68,7 +68,7 @@ public class DemoTransactions {
                     "<vaulted-shopper-id>".length(), responseString.indexOf("</vaulted-shopper-id>")));
             setTransactionId(responseString.substring(responseString.indexOf("<transaction-id>") +
                     "<transaction-id>".length(), responseString.indexOf("</transaction-id>")));
-            setCardLastFourDigits(responseString.substring(responseString.indexOf("<cardLastFourDigits>") +
+            setCardLastFourDigits(responseString.substring(responseString.indexOf("<card-last-four-digits>") +
                     "<card-last-four-digits>".length(), responseString.indexOf("</card-last-four-digits>")));
 
             String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();

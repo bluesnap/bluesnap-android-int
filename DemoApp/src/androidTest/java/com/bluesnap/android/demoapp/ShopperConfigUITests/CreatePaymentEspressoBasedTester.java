@@ -3,12 +3,14 @@ package com.bluesnap.android.demoapp.ShopperConfigUITests;
 import android.support.test.rule.ActivityTestRule;
 
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
+import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 import com.bluesnap.android.demoapp.UIAutoTestingBlueSnapService;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.views.activities.BluesnapCreatePaymentActivity;
 
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,10 +58,8 @@ public class CreatePaymentEspressoBasedTester {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
         createPaymentSetup();
 
-        //TODO: restore this after the fix is inserted to sandbox- 16/9
-//        uIAutoTestingBlueSnapService.createPaymentTransaction();
-        //Assert.assertEquals("SDKResult credit card was charged", uIAutoTestingBlueSnapService.getTransactions().getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
-
+        uIAutoTestingBlueSnapService.createPaymentTransaction();
+        Assert.assertEquals("wrong credit card was charged", uIAutoTestingBlueSnapService.getTransactions().getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
     }
 
 

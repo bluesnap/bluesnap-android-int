@@ -36,6 +36,8 @@ import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
+import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
 
 import junit.framework.Assert;
 
@@ -44,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -62,6 +65,8 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 import static java.lang.Thread.sleep;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.containsString;
 
@@ -488,16 +493,20 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     public void finish_demo_purchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
         sdkResult = blueSnapService.getSdkResult();
         CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
+
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
         }
 
+        //Verify activity ended with success
+        checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK);
+
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
 
         //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         double expectedAmount = sdkResult.getAmount();
-        Assert.assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
+        assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
 //        Assert.assertEquals("SDKResult amount not equals", TestUtils.round_amount(sdkResult.getAmount()), roundedPurchaseAmount);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
 
@@ -527,6 +536,9 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             sleep(1000);
         }
 
+        //Verify activity ended with success
+        checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK);
+
         sdkResult = blueSnapService.getSdkResult();
 
         transactions = DemoTransactions.getInstance();
@@ -550,6 +562,9 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
         }
+
+        //Verify activity ended with success
+        checkResultOk(BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK);
 
         get_shopper_from_server(shopperCheckoutRequirements, true, creditCard);
     }
@@ -690,5 +705,16 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         Assert.assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
+    }
+
+    public void checkResultOk(int expectedResultCode) {
+        try {
+            Field f = Activity.class.getDeclaredField("mResultCode"); //NoSuchFieldException
+            f.setAccessible(true);
+            int mResultCode = f.getInt(mActivityRule.getActivity());
+            assertEquals("The result code is not ok. ", mResultCode, expectedResultCode);
+        } catch (Exception e) {
+            fail();
+        }
     }
 }

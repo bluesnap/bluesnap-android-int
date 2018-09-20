@@ -111,8 +111,6 @@ public class ContactInfoTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": Input city errorText is not displayed"))
                     .perform(scrollTo()).check(matches(isDisplayed()));
 
-            //onView(withId(R.id.input_address)).perform(scrollTo());
-
             onView(allOf(withId(R.id.textinput_error), isDescendantOfA(withId(R.id.input_layout_address)),
                     isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Input address errorText is not displayed"))
