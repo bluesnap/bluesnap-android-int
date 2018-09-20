@@ -194,8 +194,7 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
      * displayed after entering all cc line info and then edit the
      * credit card number to an invalid one.
      */
-    //TODO: restore this when the bug is fixed (AS-147)
-    //@Test
+    @Test
     public void invalid_cc_number_with_valid_exp_and_cvv_validation() {
         CreditCardLineTesterCommon.invalid_cc_number_with_valid_exp_and_cvv_validation("invalid_cc_number_with_valid_exp_and_cvv_validation");
     }

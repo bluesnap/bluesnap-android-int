@@ -1,7 +1,5 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters;
 
-import android.support.test.espresso.matcher.ViewMatchers;
-
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
@@ -24,10 +22,21 @@ import static org.hamcrest.Matchers.containsString;
  */
 public class CreditCardLineTesterCommon {
     public static void check_ime_action_button_in_cc_info(String testName) {
+        //verify that "next" action moves focus to name input field (since exp date and cvv are hidden at the moment)
         onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
-        onView(withId(R.id.input_name))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Input name editText is not focused, after pressing the ime button"))
-                .check(matches(TestUtils.isViewFocused()));
+        check_field_focused(testName, R.id.input_name, "name");
+
+        //verify that "next" action moves focus to exp input field
+        onView(withId(R.id.creditCardNumberEditText)).perform(click(), pressImeActionButton());
+        check_field_focused(testName, R.id.expEditText, "exp date");
+
+        //verify that "next" action moves focus to cvv input field
+        onView(withId(R.id.expEditText)).perform(pressImeActionButton());
+        check_field_focused(testName, R.id.cvvEditText, "cvv");
+
+        //verify that "next" action moves focus to cvv input field
+        onView(withId(R.id.cvvEditText)).perform(pressImeActionButton());
+        check_field_focused(testName, R.id.input_name, "name");
     }
 
     public static void cc_empty_fields_invalid_error_validation(String testName) {
@@ -36,8 +45,8 @@ public class CreditCardLineTesterCommon {
 
         //verify error messages are displayed
         CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, true);
-//        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.expErrorTextView, true);
-//        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.cvvErrorTextView, true);
+        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.expErrorTextView, true);
+        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.cvvErrorTextView, true);
     }
 
     public static void check_filling_in_cc_info_flow(String testName) {
@@ -76,23 +85,26 @@ public class CreditCardLineTesterCommon {
                 .withFailureHandler(new CustomFailureHandler(testName + ": Credit card number editText is not focused, after clicking on it"))
                 .perform(click()).check(matches(TestUtils.isViewFocused()));
 
-//        //verify focused is changed to exp date editText when clicking on it after filling in cvv number
-//        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
-//        onView(withId(R.id.expEditText))
-//                .withFailureHandler(new CustomFailureHandler(testName + ": Exp date number editText is not focused, after clicking on it"))
-//                .perform(click()).check(matches(TestUtils.isViewFocused()));
-//
-//        //verify focused is changed to credit card number editText when clicking on it after filling in cvv number
-//        onView(withId(R.id.cvvEditText)).perform(click());
-//        onView(withId(R.id.creditCardNumberEditText))
-//                .withFailureHandler(new CustomFailureHandler(testName + ": credit card number editText is not focused, after clicking on it"))
-//                .perform(click()).check(matches(TestUtils.isViewFocused()));
-//
-//        //verify focused is changed to nampe editText when clicking on it after filling in cvv number
-//        onView(withId(R.id.cvvEditText)).perform(click());
-//        onView(withId(R.id.input_name))
-//                .withFailureHandler(new CustomFailureHandler(testName + ": Input name number editText is not focused, after clicking on it"))
-//                .perform(click()).check(matches(TestUtils.isViewFocused()));
+        //open cc line (it shrank since the focus is on credit card number)
+        onView(withId(R.id.moveToCcImageButton)).perform(click());
+
+        //verify focused is changed to exp date editText when clicking on it after filling in cvv number
+        onView(withId(R.id.cvvEditText)).perform(typeText("123"));
+        onView(withId(R.id.expEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Exp date number editText is not focused, after clicking on it"))
+                .perform(click()).check(matches(TestUtils.isViewFocused()));
+
+        //verify focused is changed to nampe editText when clicking on it after filling in cvv number
+        onView(withId(R.id.cvvEditText)).perform(click());
+        onView(withId(R.id.input_name))
+                .withFailureHandler(new CustomFailureHandler(testName + ": Input name number editText is not focused, after clicking on it"))
+                .perform(click()).check(matches(TestUtils.isViewFocused()));
+
+        //verify focused is changed to credit card number editText when clicking on it after filling in cvv number
+        onView(withId(R.id.cvvEditText)).perform(click());
+        onView(withId(R.id.creditCardNumberEditText))
+                .withFailureHandler(new CustomFailureHandler(testName + ": credit card number editText is not focused, after clicking on it"))
+                .perform(click()).check(matches(TestUtils.isViewFocused()));
     }
 
     /**
@@ -117,11 +129,6 @@ public class CreditCardLineTesterCommon {
                 .check(matches(withText(cvvNum)));
     }
 
-    /**
-     * This test verifies that the credit card number error message is
-     * displayed after entering all cc line info and then edit the
-     * credit card number to an invalid one.
-     */
     public static void invalid_cc_number_with_valid_exp_and_cvv_validation(String testName) {
         //fill in cc line info
         fillInCCLineWithValidCard();
@@ -131,9 +138,7 @@ public class CreditCardLineTesterCommon {
 
         onView(withId(R.id.buyNowButton)).perform(click());
 
-        onView(withId(R.id.creditCardNumberErrorTextView))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed"))
-                .check(matches(ViewMatchers.isDisplayed()));
+        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, true);
     }
 
     public static void fillInCCLineWithValidCard() {
@@ -156,12 +161,11 @@ public class CreditCardLineTesterCommon {
         //enter a valid cc number and verify error message is not displayed anymore
         check_cc_line_input_validation(testName, R.id.creditCardNumberEditText, R.id.creditCardNumberErrorTextView, false, withImeButton, nextFieldResourceId, cardNumberGeneratorTest(), false);
 
-        //TODO: restore this after the bug is fixed
-//        //Entering an invalid cc number- too few digits and verify error message is displayed
-//        check_cc_line_input_validation(testName, R.id.creditCardNumberErrorTextView,true, withImeButton, nextFieldResourceId, "557275888601", true);
-//
+        //Entering an invalid cc number- too few digits and verify error message is displayed
+        check_cc_line_input_validation(testName, R.id.creditCardNumberEditText, R.id.creditCardNumberErrorTextView, true, withImeButton, nextFieldResourceId, "557275888601", true);
+
 //        //enter a valid cc number and verify error message is not displayed anymore
-//        check_cc_line_input_validation(testName, R.id.creditCardNumberErrorTextView,false, withImeButton, nextFieldResourceId, cardNumberGeneratorTest(), false);
+        check_cc_line_input_validation(testName, R.id.creditCardNumberEditText, R.id.creditCardNumberErrorTextView, false, withImeButton, nextFieldResourceId, cardNumberGeneratorTest(), false);
     }
 
     //Pre-condition: exp date field is displayed
@@ -236,6 +240,12 @@ public class CreditCardLineTesterCommon {
             onView(withId(currFieldResourceId)).perform(pressImeActionButton());
         else
             onView(withId(nextFieldResourceId)).perform(click());
+    }
+
+    private static void check_field_focused(String testName, int fieldResourceId, String fieldName) {
+        onView(withId(fieldResourceId))
+                .withFailureHandler(new CustomFailureHandler(testName + ": " + fieldName + " editText is not focused, after pressing the ime button"))
+                .check(matches(TestUtils.isViewFocused()));
     }
 
 }

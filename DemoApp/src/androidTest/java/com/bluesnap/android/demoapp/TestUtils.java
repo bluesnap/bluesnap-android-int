@@ -220,7 +220,6 @@ public class TestUtils {
 
             @Override
             public boolean matchesSafely(View view) {
-//
                 return (view).isFocused();
             }
 
