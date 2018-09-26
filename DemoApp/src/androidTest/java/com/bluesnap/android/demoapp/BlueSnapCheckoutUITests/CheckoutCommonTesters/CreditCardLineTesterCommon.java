@@ -131,14 +131,38 @@ public class CreditCardLineTesterCommon {
 
     public static void invalid_cc_number_with_valid_exp_and_cvv_validation(String testName) {
         //fill in cc line info
-        fillInCCLineWithValidCard();
+        fillInCCLineWithValidCard(TestingShopperCreditCard.VISA_CREDIT_CARD);
+
         //change credit card number to an invalid one
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(click(), clearText(), typeText(invalidCardNumberGeneratorTest()));
 
         onView(withId(R.id.buyNowButton)).perform(click());
 
+        //verify exp and cvv error messages are displayed
         CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, true);
+    }
+
+    public static void hidden_invalid_exp_and_cvv(String testName) {
+        //fill in valid cc number
+        onView(withId(R.id.creditCardNumberEditText))
+                .perform(click(), clearText(), typeText(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD.getCardNumber()));
+
+        //fill in invalid exp date
+        onView(withId(R.id.expEditText)).perform(click(), clearText(), typeText("10 17"));
+
+        //fill in invalid cvv number
+        onView(withId(R.id.cvvEditText)).perform(click(), clearText(), typeText("1234"));
+
+        //press cc number editText so that exp and cvv will be hidden
+        onView(withId(R.id.creditCardNumberEditText))
+                .perform(click());
+
+        onView(withId(R.id.buyNowButton)).perform(click());
+
+        //verify exp and cvv error messages are displayed
+        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.expErrorTextView, true);
+        CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.cvvErrorTextView, true);
     }
 
     public static void fillInCCLineWithValidCard() {
@@ -147,11 +171,11 @@ public class CreditCardLineTesterCommon {
 
     public static void fillInCCLineWithValidCard(TestingShopperCreditCard creditCard) {
         onView(withId(R.id.creditCardNumberEditText))
-                .perform(typeText(creditCard.getCardNumber()));
+                .perform(click(), clearText(), typeText(creditCard.getCardNumber()));
 
-        onView(withId(R.id.expEditText)).perform(typeText(Integer.toString(creditCard.getExpirationMonth()) + " " + creditCard.getExpirationYearLastTwoDigit()));
+        onView(withId(R.id.expEditText)).perform(clearText(), typeText(Integer.toString(creditCard.getExpirationMonth()) + " " + creditCard.getExpirationYearLastTwoDigit()));
 
-        onView(withId(R.id.cvvEditText)).perform(typeText(creditCard.getCvv()));
+        onView(withId(R.id.cvvEditText)).perform(clearText(), typeText(creditCard.getCvv()));
     }
 
     public static void cc_number_invalid_error_validation(String testName, boolean withImeButton, int nextFieldResourceId) {
@@ -216,8 +240,6 @@ public class CreditCardLineTesterCommon {
         //enter a valid cvv number and verify error message is not displayed anymore
         check_cc_line_input_validation(testName, R.id.cvvEditText, R.id.cvvErrorTextView, true, withImeButton, nextFieldResourceId, "123", false);
     }
-
-    //here
 
     public static String cardNumberGeneratorTest() {
         return "5572758886015288";

@@ -55,6 +55,9 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
         initial_currency_view_validation_in_billing();
         change_currency_in_billing_validation();
         change_currency_in_billing_amount_validation();
+
+        invalid_cc_number_with_valid_exp_and_cvv_validation();
+        hidden_invalid_exp_and_cvv();
     }
 
     /**
@@ -194,9 +197,18 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
      * displayed after entering all cc line info and then edit the
      * credit card number to an invalid one.
      */
-    @Test
     public void invalid_cc_number_with_valid_exp_and_cvv_validation() {
         CreditCardLineTesterCommon.invalid_cc_number_with_valid_exp_and_cvv_validation("invalid_cc_number_with_valid_exp_and_cvv_validation");
+    }
+
+    /**
+     * This test verifies that the exp date and cvv number
+     * error messages are displayed after entering all cc line info with invalid
+     * exp and cvv, then expand the credit card number edit text
+     * (so that exp and cvv are hidden) and press "Pay"
+     */
+    public void hidden_invalid_exp_and_cvv() {
+        CreditCardLineTesterCommon.hidden_invalid_exp_and_cvv("invalid_cc_number_with_valid_exp_and_cvv_validation");
     }
 
 }
