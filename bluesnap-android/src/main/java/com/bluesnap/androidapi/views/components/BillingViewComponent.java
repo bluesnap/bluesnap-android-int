@@ -99,10 +99,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         if (isEmailRequired) {
             String email = inputEmail.getText().toString().trim();
             billingContactInfo.setEmail(email);
-            final Shopper shopper = BlueSnapService.getInstance().getsDKConfiguration().getShopper();
-            if (shopper != null) {
-                shopper.setEmail(email);
-            }
         }
         return billingContactInfo;
     }

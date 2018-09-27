@@ -67,6 +67,11 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
             CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
             if (null != newCreditCardInfo) {
                 shopper.setNewPaymentSources(new PaymentSources(newCreditCardInfo));
+                // AS-155: update shopper email
+                String email = newCreditCardInfo.getBillingContactInfo().getEmail();
+                if (email != null) {
+                    shopper.setEmail(email);
+                }
                 shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, newCreditCardInfo.getCreditCard()));
                 updateShopperOnServer(shopper);
             } else {
