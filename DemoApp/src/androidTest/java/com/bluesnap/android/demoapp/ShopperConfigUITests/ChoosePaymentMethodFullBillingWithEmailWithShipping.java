@@ -16,7 +16,7 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
         //TODO: restore email true when AS-155 is fixed
-        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
         choosePaymentSetup(true);
     }
 
