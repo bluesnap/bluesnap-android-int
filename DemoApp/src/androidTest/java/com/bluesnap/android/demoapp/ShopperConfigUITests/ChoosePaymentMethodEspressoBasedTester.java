@@ -41,9 +41,9 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
     protected UIAutoTestingBlueSnapService<BluesnapChoosePaymentMethodActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
 
-    protected void choosePaymentSetup(boolean createShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
+    protected void choosePaymentSetup(boolean createShopper, boolean withCreditCard) throws BSPaymentRequestException, InterruptedException, JSONException {
         if (createShopper)
-            uIAutoTestingBlueSnapService.createVaultedShopper();
+            uIAutoTestingBlueSnapService.createVaultedShopper(withCreditCard);
 
         SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements();
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
@@ -104,7 +104,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
     }
 
 
-//    public JSONObject createDataObject() throws JSONException {
+//    public JSONObject createVaultedShopperWithCreditCardDataObject() throws JSONException {
 //        JSONObject postData = new JSONObject();
 //        putJSON(postData, "firstName", "Fanny");
 //        putJSON(postData, "lastName", "Brice");

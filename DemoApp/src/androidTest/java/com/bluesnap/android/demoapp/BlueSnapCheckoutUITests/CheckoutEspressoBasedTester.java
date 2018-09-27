@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 
 import android.content.Context;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
@@ -148,15 +149,28 @@ public class CheckoutEspressoBasedTester {
         uIAutoTestingBlueSnapService.setPurchaseAmount(uIAutoTestingBlueSnapService.getPurchaseAmount() * (1 + taxPercent));
     }
 
-    public void returning_shopper_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+    public void returning_shopper_with_existing_credit_card_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
         //make transaction to create a new shopper
         new_card_basic_flow_transaction();
 
         //setup sdk for the returning shopper
-        uIAutoTestingBlueSnapService.returningShopperSetUp(shopperCheckoutRequirements);
+        uIAutoTestingBlueSnapService.returningShopperSetUp(shopperCheckoutRequirements, true);
 
         //make a transaction with the returning shopper
         returning_shopper_card_basic_flow_transaction();
+    }
+
+    public void returning_shopper_with_new_credit_card_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
+        //make transaction to create a new shopper
+        uIAutoTestingBlueSnapService.createVaultedShopper(false);
+
+        //setup sdk for the returning shopper
+        uIAutoTestingBlueSnapService.returningShopperSetUp(shopperCheckoutRequirements, false);
+
+        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+
+        //make a transaction with the returning shopper
+        new_card_basic_flow_transaction();
     }
 
 }

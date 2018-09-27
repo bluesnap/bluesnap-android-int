@@ -82,7 +82,7 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
 
     @Test
     public void returning_shopper_full_billing_with_shipping_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-        returning_shopper_basic_flow_transaction();
+        returning_shopper_with_existing_credit_card_basic_flow_transaction();
     }
 
     /**

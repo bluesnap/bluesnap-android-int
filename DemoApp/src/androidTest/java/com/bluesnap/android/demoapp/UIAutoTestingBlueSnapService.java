@@ -83,7 +83,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private SDKConfiguration sDKConfiguration = null;
     private DemoTransactions transactions;
 
-    private boolean isReturningShopper = false;
+    private boolean isExistingCard = false;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
 
     private boolean isSdkRequestNull = false;
@@ -99,7 +99,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     private static final String SANDBOX_VAULTED_SHOPPER = "vaulted-shoppers";
     private String getShopperResponse;
     private String createVaultedShopperResponse;
-    private boolean createShopperSucceed;
     private String emailFromServer;
 
 
@@ -127,8 +126,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return returningShopper;
     }
 
-    public void setIsReturningShopper(boolean returningShopper) {
-        isReturningShopper = returningShopper;
+    public void setExistingCard(boolean existingCard) {
+        isExistingCard = existingCard;
     }
 
     public String getDefaultCountryKey() {
@@ -415,8 +414,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
-    public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws BSPaymentRequestException, InterruptedException, JSONException {
-        isReturningShopper = true;
+    public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isExistingCard) throws BSPaymentRequestException, InterruptedException, JSONException {
+        setExistingCard(isExistingCard);
         purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
 
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
@@ -424,13 +423,12 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         setupAndLaunch(sdkRequest, true, vaultedShopperId);
     }
 
-    public void createVaultedShopper() throws JSONException {
-        createVaultedShopperService(new CreateVaultedShopperInterface() {
+    public void createVaultedShopper(boolean withCreditCard) throws JSONException {
+        createVaultedShopperService(withCreditCard, new CreateVaultedShopperInterface() {
             @Override
             public void onServiceSuccess() throws JSONException {
                 JSONObject jsonObject = new JSONObject(createVaultedShopperResponse);
                 vaultedShopperId = getOptionalString(jsonObject, "vaultedShopperId");
-                createShopperSucceed = true;
             }
 
             @Override
@@ -440,9 +438,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
-    private void createVaultedShopperService(final CreateVaultedShopperInterface createVaultedShopper) throws JSONException {
-        JSONObject body = createDataObject();
-        String bodyString = body.toString();
+    private void createVaultedShopperService(boolean withCreditCard, final CreateVaultedShopperInterface createVaultedShopper) throws JSONException {
+        JSONObject body = withCreditCard ? createVaultedShopperWithCreditCardDataObject() : createBasicVaultedShopperDataObject();
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             createVaultedShopperResponse = response.getResponseString();
@@ -453,7 +450,19 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
-    public JSONObject createDataObject() throws JSONException {
+    //creates vaulted shopper with only first and last name and email
+    private JSONObject createBasicVaultedShopperDataObject() throws JSONException {
+        JSONObject postData = new JSONObject();
+
+        postData.put("firstName", "Fanny");
+        postData.put("lastName", "Brice");
+        postData.put("email", "some@mail.com");
+
+        return postData;
+    }
+
+    //creates vaulted shopper with credit card info
+    private JSONObject createVaultedShopperWithCreditCardDataObject() throws JSONException {
         JSONObject postData = new JSONObject();
 
         JSONObject jsonObjectCreditCard = new JSONObject();
@@ -649,7 +658,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         String countryKey;
         TestingShopperContactInfo contactInfo;
 
-        if (!isReturningShopper) { //New shopper
+        if (!isExistingCard) { //New shopper
             contactInfo = (!isBillingInfo && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
             countryKey = contactInfo.getCountryKey();
         } else { //Returning shopper

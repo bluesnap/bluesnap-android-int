@@ -64,7 +64,7 @@ public class MinimalBillingWithShippingWithEmailTests extends CheckoutEspressoBa
 
     @Test
     public void returning_shopper_minimal_billing_with_shipping_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-        returning_shopper_basic_flow_transaction();
+        returning_shopper_with_existing_credit_card_basic_flow_transaction();
     }
 
     /**

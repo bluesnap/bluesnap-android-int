@@ -37,7 +37,7 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
-        choosePaymentSetup(true);
+        choosePaymentSetup(true, true);
     }
 
     @Test

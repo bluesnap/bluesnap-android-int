@@ -15,30 +15,58 @@ import org.junit.Test;
 public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChoosePaymentMethodEspressoBasedTester {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
-        //TODO: restore email true when AS-155 is fixed
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
-        choosePaymentSetup(true);
+
     }
 
     /**
      * This test does a full billing with email and shipping
-     * end-to-end choose payment flow, for both new card and existing card.
+     * end-to-end choose payment flow, for new card.
      *
      * @throws InterruptedException
      * @throws JSONException
      * @throws BSPaymentRequestException
      */
     @Test
-    public void full_billing_with_email_with_shipping_choose_payment_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+    public void choose_payment_new_cc_full_billing_with_email_with_shipping_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, true);
+
         //choose new card
         chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
+    }
 
-        //setup for full billing
-        choosePaymentSetup(false);
-        uIAutoTestingBlueSnapService.setIsReturningShopper(true);
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose payment flow, for existing card.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
+    @Test
+    public void choose_payment_exists_cc_full_billing_with_email_with_shipping_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, true);
+
+        uIAutoTestingBlueSnapService.setExistingCard(true);
 
         //choose first credit card
         chooseExistingCardPaymentMethod(TestingShopperCreditCard.VISA_CREDIT_CARD);
+    }
+
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose payment flow, for new card for shopper without cc.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
+    @Test
+    public void choose_payment_new_cc_for_shopper_without_cc_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, false);
+
+        //choose first credit card
+        chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
     }
 
 //    /**
