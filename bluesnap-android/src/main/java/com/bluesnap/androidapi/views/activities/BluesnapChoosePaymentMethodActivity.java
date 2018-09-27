@@ -9,8 +9,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.ChosenPaymentMethod;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PaymentSources;
@@ -19,13 +17,6 @@ import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.services.KountService;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.HttpURLConnection;
 
 /**
  * Created by roy.biber on 21/02/2018.
@@ -41,8 +32,6 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO: remove after server paypal issue is fixed
-        findViewById(R.id.payPalButton).setVisibility(View.GONE);
     }
 
     @Override
