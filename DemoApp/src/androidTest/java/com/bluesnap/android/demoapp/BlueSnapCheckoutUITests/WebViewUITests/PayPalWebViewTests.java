@@ -139,8 +139,15 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
     }
 
     void submitPayPalPayment() throws InterruptedException {
+//        onWebView()
+//                .withElement(findElement(Locator.ID, "confirmButtonTop"))
+//                .perform(webClick());
+
         onWebView()
-                .withElement(findElement(Locator.ID, "confirmButtonTop"))
+                .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
+                .perform(webClick());
+        onWebView()
+                .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
                 .perform(webClick());
     }
 
