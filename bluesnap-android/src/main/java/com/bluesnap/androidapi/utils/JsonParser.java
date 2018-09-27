@@ -36,6 +36,9 @@ public class JsonParser {
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
             sdkConfiguration.setKountMerchantId(jsonObject.getInt("kountMerchantId"));
+            if (jsonObject.has("merchantId")) {
+                sdkConfiguration.setMerchantId(jsonObject.getLong("merchantId"));
+            }
             JSONObject ratesJsonObject = jsonObject.getJSONObject("rates");
             if (ratesJsonObject != null) {
                 JSONArray exchangeRateJsonArray = ratesJsonObject.getJSONArray("exchangeRate");
@@ -63,12 +66,14 @@ public class JsonParser {
                 }
                 supportedPaymentMethods.setPaymentMethods(paymentMethodList);
 
-                JSONArray paypalCurrenciesJsonArray = supportedPaymentTypeObject.getJSONArray("paypalCurrencies");
-                ArrayList<String> paypalCurrenciesList = new ArrayList<>();
-                for (int i = 0; i < paypalCurrenciesJsonArray.length(); i++) {
-                    paypalCurrenciesList.add(paypalCurrenciesJsonArray.getString(i));
+                if (supportedPaymentTypeObject.has("paypalCurrencies")) {
+                    JSONArray paypalCurrenciesJsonArray = supportedPaymentTypeObject.getJSONArray("paypalCurrencies");
+                    ArrayList<String> paypalCurrenciesList = new ArrayList<>();
+                    for (int i = 0; i < paypalCurrenciesJsonArray.length(); i++) {
+                        paypalCurrenciesList.add(paypalCurrenciesJsonArray.getString(i));
+                    }
+                    supportedPaymentMethods.setPaypalCurrencies(paypalCurrenciesList);
                 }
-                supportedPaymentMethods.setPaypalCurrencies(paypalCurrenciesList);
 
                 JSONArray creditCardBrandsJsonArray = supportedPaymentTypeObject.getJSONArray("creditCardBrands");
                 ArrayList<String> creditCardBrandsList = new ArrayList<>();

@@ -109,6 +109,32 @@
                     android:src="@drawable/paypal_dark" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:id="@+id/googlePayButton"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/layout_bg"
+                android:elevation="@dimen/elevation_size"
+                android:orientation="horizontal"
+                android:paddingBottom="2.5dp"
+                android:paddingTop="2.5dp">
+
+                <ImageView
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPureWhite"
+                    android:clickable="false"
+                    android:contentDescription="GooglePay"
+                    android:src="@drawable/googlepay_button_content" />
+            </LinearLayout>
+
             <ListView
                 android:id="@+id/oneLineCCViewComponentsListView"
                 android:layout_width="match_parent"

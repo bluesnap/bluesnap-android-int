@@ -25,6 +25,7 @@ import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
@@ -408,6 +409,7 @@ public class CreditCardActivity extends AppCompatActivity {
                             sdkResult.setLast4Digits(Last4);
                             // update card type from server result
                             sdkResult.setCardType(ccType);
+                            sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
                             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
                             setResult(RESULT_OK, resultIntent);
                             //Only set the remember shopper here since failure can lead to missing tokenization on the server

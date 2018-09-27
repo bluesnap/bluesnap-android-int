@@ -53,6 +53,13 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
     }
 
     @Override
+    protected void startGooglePayActivityForResult() {
+        Shopper shopper = sdkConfiguration.getShopper();
+        shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.GOOGLE_PAY));
+        updateShopperOnServer(shopper);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             progressBar.setVisibility(View.VISIBLE);
@@ -60,6 +67,11 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
             CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
             if (null != newCreditCardInfo) {
                 shopper.setNewPaymentSources(new PaymentSources(newCreditCardInfo));
+                // AS-155: update shopper email
+                String email = newCreditCardInfo.getBillingContactInfo().getEmail();
+                if (email != null) {
+                    shopper.setEmail(email);
+                }
                 shopper.setChosenPaymentMethod(new ChosenPaymentMethod(ChosenPaymentMethod.CC, newCreditCardInfo.getCreditCard()));
                 updateShopperOnServer(shopper);
             } else {
