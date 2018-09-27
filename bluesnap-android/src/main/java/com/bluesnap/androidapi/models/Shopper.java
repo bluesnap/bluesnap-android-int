@@ -57,7 +57,7 @@ public class Shopper extends ContactInfo {
         setCity(contactInfo.getCity());
         setState(contactInfo.getState());
         setCountry(contactInfo.getCountry());
-
+        newCreditCardInfo = new CreditCardInfo();
     }
 
     public Shopper() {
