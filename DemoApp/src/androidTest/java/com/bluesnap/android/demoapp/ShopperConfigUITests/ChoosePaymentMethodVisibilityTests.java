@@ -3,9 +3,12 @@ package com.bluesnap.android.demoapp.ShopperConfigUITests;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
+import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
+import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.hamcrest.Matchers;
@@ -16,6 +19,7 @@ import org.junit.Test;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.anything;
@@ -24,20 +28,39 @@ import static org.hamcrest.CoreMatchers.anything;
  * Created by sivani on 27/08/2018.
  */
 
-public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedTester {
+public class ChoosePaymentMethodVisibilityTests extends ChoosePaymentMethodEspressoBasedTester {
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL = "22946805";
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING = "29632268";
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_EMAIL = "29632260";
     private static final String RETURNING_SHOPPER_ID_FULL_BILLING = "29632260";
 
 
-    public ChoosePaymentMethodTester() {
+    public ChoosePaymentMethodVisibilityTests() {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
     }
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
         choosePaymentSetup(true, true);
+    }
+
+    @Test
+    public void supported_payment_methods_visibility_test() {
+        //verify that new card button is displayed
+        onView(withId(R.id.newCardButton))
+                .withFailureHandler(new CustomFailureHandler("new Credit Card button is not displayed"))
+                .check(matches(ViewMatchers.isDisplayed()));
+
+        //verify that payPal button is displayed
+        onView(withId(R.id.payPalButton))
+                .withFailureHandler(new CustomFailureHandler("Pay Pal button is not displayed"))
+                .check(matches(ViewMatchers.isDisplayed()));
+
+        //verify that existing credit card component is displayed with the right content
+        ReturningShopperVisibilityTesterCommon.credit_card_in_list_visibility_validation("supported_payment_methods_visibility_test in ",
+                TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits(),
+                Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()) + "/" +
+                        TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYearLastTwoDigit());
     }
 
     @Test
@@ -88,7 +111,7 @@ public class ChoosePaymentMethodTester extends ChoosePaymentMethodEspressoBasedT
     /**
      * This test verifies that the hamburger button is not displayed in credit card
      */
-    public void currency_hamburger_button_visibility_in_credit_card() {
+    private void currency_hamburger_button_visibility_in_credit_card() {
         ShopperConfigVisibilityTesterCommon.currency_hamburger_button_visibility("currency_hamburger_button_visibility_in_credit_card");
     }
 

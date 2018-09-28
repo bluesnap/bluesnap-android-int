@@ -556,7 +556,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
-                                                      TestingShopperCreditCard creditCard) throws InterruptedException {
+                                                      boolean isCreditCard, TestingShopperCreditCard creditCard) throws InterruptedException {
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
@@ -565,21 +565,27 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         //Verify activity ended with success
         checkResultOk(BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK);
 
-        get_shopper_from_server(shopperCheckoutRequirements, true, creditCard);
+        if (isCreditCard) //chosen cc payment method
+            get_shopper_from_server(shopperCheckoutRequirements, true, true, creditCard);
+        else //chosen paypal payment method
+            get_shopper_from_server(null, true, false, null);
+
     }
 
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, null);
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, null);
     }
 
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, TestingShopperCreditCard creditCard) {
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, TestingShopperCreditCard creditCard) {
         get_shopper_service(new GetShopperServiceInterface() {
             @Override
             public void onServiceSuccess() {
-                if (forShopperConfig)
+                if (forShopperConfig) 
                     shopper_chosen_payment_method_validation(creditCard);
-                String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
-                shopper_info_saved_validation(shopperCheckoutRequirements, cardLastFourDigits);
+                if (forInfoSaved) {
+                    String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
+                    shopper_info_saved_validation(shopperCheckoutRequirements, cardLastFourDigits);
+                }
             }
 
             @Override
@@ -601,18 +607,22 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     private void shopper_chosen_payment_method_validation(TestingShopperCreditCard creditCard) {
+        String chosenPaymentMethodType = (creditCard != null) ? "CC" : "PAYPAL";
+
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
 
             JSONObject jsonObjectChosenPaymentMethod = jsonObject.getJSONObject("chosenPaymentMethod");
-            check_if_field_identify("chosenPaymentMethodType", "CC", jsonObjectChosenPaymentMethod);
+            check_if_field_identify("chosenPaymentMethodType", chosenPaymentMethodType, jsonObjectChosenPaymentMethod);
 
-            JSONObject jsonObjectCreditCard = jsonObjectChosenPaymentMethod.getJSONObject("creditCard");
-            check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
-            check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
+            if (creditCard != null) {
+                JSONObject jsonObjectCreditCard = jsonObjectChosenPaymentMethod.getJSONObject("creditCard");
+                check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
+                check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
 //            check_if_field_identify("cardSubType", creditCard.getCardSubType(), jsonObjectCreditCard);
-            check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
-            check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
+                check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
+                check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
