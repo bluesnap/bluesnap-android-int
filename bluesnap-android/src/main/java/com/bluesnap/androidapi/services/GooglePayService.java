@@ -297,7 +297,8 @@ public class GooglePayService {
     private PaymentDataRequest createPaymentDataRequest(PaymentMethodTokenizationParameters params, SdkRequestBase sdkRequest) {
 
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
-        String price = priceDetails.getAmount().toString();
+        // AS-149: Google Pay price does not allow more than 2 digits after the decimal point
+        String price = String.format("%.2f", priceDetails.getAmount());
         TransactionInfo transactionInfo = createTransaction(price, priceDetails.getCurrencyCode());
 
         final List merchantPaymentMethods = getMerchantPaymentMethods();
@@ -402,7 +403,7 @@ public class GooglePayService {
      */
     public TransactionInfo createTransaction(String price, String currency) {
         return TransactionInfo.newBuilder()
-                .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
+                .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_ESTIMATED)
                 .setTotalPrice(price)
                 .setCurrencyCode(currency)
                 .build();
