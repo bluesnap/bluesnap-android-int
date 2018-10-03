@@ -5,9 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +19,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static java.net.HttpURLConnection.*;
+import javax.net.ssl.HttpsURLConnection;
+
+import static java.net.HttpURLConnection.HTTP_CREATED;
+import static java.net.HttpURLConnection.HTTP_NO_CONTENT;
+import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
  * Created by oz
@@ -31,8 +39,8 @@ public class HTTPOperationController {
     private static final String POST = "POST";
     private static final String GET = "GET";
     private static final String DEL = "DELETE";
-    private static final int TIME_OUT = 2 * 60 * 1000;
-    private static final int _4KB = 4 * 1024;
+    private static final int TIME_OUT = 180 * 1000;
+    private static final int BUFFER_SIZE_KB = 2048;
 
 
     /**
@@ -139,7 +147,6 @@ public class HTTPOperationController {
         switch (statusCode) {
             case HTTP_OK:
                 String response = new String(readFullyBytes(connection.getInputStream()));
-                Log.d(TAG, "Response String is : " + response);
                 return new BlueSnapHTTPResponse(statusCode, response);
             default:
                 String errorResponse = new String(readFullyBytes(connection.getErrorStream()));
@@ -163,7 +170,6 @@ public class HTTPOperationController {
             switch (statusCode) {
                 case HTTP_NO_CONTENT:
                     String response = new String(readFullyBytes(connection.getInputStream()));
-                    Log.d(TAG, "Response String is : " + response);
                     return new BlueSnapHTTPResponse(statusCode, response);
                 default:
                     return new BlueSnapHTTPResponse(statusCode, "");
@@ -178,33 +184,23 @@ public class HTTPOperationController {
     }
 
 
-    /**
-     * This implementation check if url is HTTP or HTTPS
-     *
-     * @param url the URL to send the request to.
-     * @return
-     */
-    private static boolean isHTTPS(@NonNull final String url) {
+    private static boolean isHTTPSURL(@NonNull final String url) {
         return url.contains("https");
     }
 
-    /**
-     * Read bytes from InputStream efficiently. All data will be read from
-     * stream. This method return the bytes or null. This method will not close
-     * the stream.
-     */
+
     private static byte[] readFullyBytes(final InputStream is) {
         byte[] bytes = null;
         if (is != null) {
             try {
                 int readed = 0;
-                byte[] buffer = new byte[8192];
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[BUFFER_SIZE_KB];
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 while ((readed = is.read(buffer)) >= 0) {
-                    bos.write(buffer, 0, readed);
+                    outputStream.write(buffer, 0, readed);
                 }
-                bos.flush();
-                bytes = bos.toByteArray();
+                outputStream.flush();
+                bytes = outputStream.toByteArray();
             } catch (IOException e) {
                 Log.e(TAG, " : readFullyBytes: ", e);
             }
@@ -230,7 +226,7 @@ public class HTTPOperationController {
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(urlString);
-            if (isHTTPS(urlString)) {
+            if (isHTTPSURL(urlString)) {
                 httpURLConnection = (HttpsURLConnection) url.openConnection();
             } else {
                 Log.e(TAG, "Creating non https connection");
@@ -277,7 +273,7 @@ public class HTTPOperationController {
             byte[] outputInBytes = buffer.getBytes(StandardCharsets.UTF_8);
             OutputStream os = connection.getOutputStream();
             os.write(outputInBytes);
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), _4KB);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), BUFFER_SIZE_KB);
             writer.flush();
             writer.close();
             os.close();
