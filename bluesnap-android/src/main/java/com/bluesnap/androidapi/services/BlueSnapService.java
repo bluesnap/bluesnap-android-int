@@ -393,6 +393,7 @@ public class BlueSnapService {
                         getAppExecutors().mainThread().execute(new Runnable() {
                             @Override
                             public void run() {
+                                Log.e(TAG, "paypal call return bad response:" + response.getResponseCode());
                                 callback.onFailure();
                             }
                         });
@@ -419,6 +420,7 @@ public class BlueSnapService {
                     getAppExecutors().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
+                            Log.e(TAG, "paypal call return bad response:" + response.getResponseCode());
                             callback.onFailure();
                         }
                     });
@@ -652,7 +654,7 @@ public class BlueSnapService {
     }
 
 
-    public AppExecutors getAppExecutors() {
+    public synchronized AppExecutors getAppExecutors() {
         if (appExecutors == null) {
             appExecutors = new AppExecutors();
         }
