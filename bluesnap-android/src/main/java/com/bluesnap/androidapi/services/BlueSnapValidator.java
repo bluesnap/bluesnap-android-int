@@ -3,8 +3,13 @@ package com.bluesnap.androidapi.services;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Patterns;
+
 import com.bluesnap.androidapi.Constants;
-import com.bluesnap.androidapi.models.*;
+import com.bluesnap.androidapi.models.BillingContactInfo;
+import com.bluesnap.androidapi.models.ContactInfo;
+import com.bluesnap.androidapi.models.CreditCard;
+import com.bluesnap.androidapi.models.CreditCardTypeResolver;
+import com.bluesnap.androidapi.models.ShippingContactInfo;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -178,6 +183,16 @@ public class BlueSnapValidator {
     }
 
     /**
+     * Check if Country has a Zip Field requirement (Required)
+     *
+     * @param countryText - ISO 3166-1 alpha-2 standard
+     * @return true if country has zip, false w.s.
+     */
+    public static boolean checkCountryHasZip(String countryText) {
+        return !Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryText.toUpperCase());
+    }
+
+    /**
      * validate EditText by it's validation type
      *
      * @param editTextString - editText String
@@ -235,7 +250,7 @@ public class BlueSnapValidator {
         boolean validInput = BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getFullName()), BlueSnapValidator.EditTextFields.NAME_FIELD);
 
         String country = AndroidUtil.stringify(contactInfo.getCountry());
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country))
+        if (checkCountryHasZip(country))
             validInput &= BlueSnapValidator.validateEditTextString(AndroidUtil.stringify(contactInfo.getZip()), BlueSnapValidator.EditTextFields.ZIP_FIELD);
 
         if (isFullBillingRequiredOrIsShipping) {

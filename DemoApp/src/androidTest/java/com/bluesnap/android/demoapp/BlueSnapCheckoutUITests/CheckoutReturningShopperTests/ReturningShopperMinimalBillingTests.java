@@ -59,7 +59,7 @@ public class ReturningShopperMinimalBillingTests extends CheckoutEspressoBasedTe
         billing_summarized_contact_info_visibility_validation();
         onView(withId(R.id.shippingViewSummarizedComponent)).check(matches(not(isDisplayed()))); //check shipping is not displayed
 
-        if (ReturningShoppersFactory.COUNTER == 1) {
+        if (ReturningShoppersFactory.COUNTER == 1) { //minimal billing returning shopper
             pay_button_in_billing_validation();
 
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
@@ -70,10 +70,9 @@ public class ReturningShopperMinimalBillingTests extends CheckoutEspressoBasedTe
             change_currency_in_billing_validation();
             change_currency_in_billing_amount_validation();
 
-
-            //Pre-condition: current info is billingInfo
             returning_shopper_edit_billing_contact_info_using_back_button_validation();
             Espresso.pressBack();
+
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
             Espresso.pressBack();
         } else

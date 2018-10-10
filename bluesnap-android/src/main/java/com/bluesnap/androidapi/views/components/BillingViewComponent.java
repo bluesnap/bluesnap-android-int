@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
@@ -95,8 +96,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
      */
     public BillingContactInfo getViewResourceDetails() {
         BillingContactInfo billingContactInfo = new BillingContactInfo(super.getViewResourceDetails());
-        if (isEmailRequired)
-            billingContactInfo.setEmail(inputEmail.getText().toString().trim());
+        if (isEmailRequired) {
+            String email = inputEmail.getText().toString().trim();
+            billingContactInfo.setEmail(email);
+        }
         return billingContactInfo;
     }
 

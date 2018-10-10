@@ -15,119 +15,91 @@ import org.junit.Test;
 public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChoosePaymentMethodEspressoBasedTester {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
-        //TODO: restore email true when AS-155 is fixed
-        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
-        choosePaymentSetup(true);
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
+
     }
 
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose cc payment flow, for new card.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
     @Test
-    public void full_billing_with_email_with_shipping_choose_payment_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+    public void choose_new_cc_payment_with_full_billing_with_email_with_shipping_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, true);
+
         //choose new card
         chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
+    }
 
-        //setup for full billing
-        choosePaymentSetup(false);
-        uIAutoTestingBlueSnapService.setIsReturningShopper(true);
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose cc payment flow, for existing card.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
+    @Test
+    public void choose_exists_cc_payment_with_full_billing_with_email_with_shipping_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, true);
+
+        uIAutoTestingBlueSnapService.setExistingCard(true);
 
         //choose first credit card
         chooseExistingCardPaymentMethod(TestingShopperCreditCard.VISA_CREDIT_CARD);
     }
 
-//    /**
-//     * This test does a full billing end-to-end choose
-//     * payment flow, for both new card and existing card,
-//     * for a minimal billing shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_minimal_billing_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(false, false, false);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a minimal billing with mail shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_minimal_billing_with_email_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(false, true, false);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a minimal billing with shipping shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_minimal_billing_with_shipping_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(false, false, true);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a minimal billing with email with shipping shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_minimal_billing_with_shipping_with_email_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(false, true, true);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a full billing with shipping shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_full_billing_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(true, false, false);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a full billing with email shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_full_billing_with_email_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(true, true, false);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a full billing with shipping shopper.
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_full_billing_with_shipping_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(true, false, true);
-//    }
-//
-//    /**
-//     * This test does a full billing with email and shipping
-//     * end-to-end choose payment flow, for both new card and existing card,
-//     * for a full billing with email with shipping shopper
-//     *
-//     * @throws InterruptedException
-//     */
-//    @Test
-//    public void choose_payment_flow_with_full_billing_with_email_with_shipping_shopper() throws InterruptedException, JSONException, BSPaymentRequestException {
-//        full_billing_with_email_with_shipping_choose_payment_flow(true, true, true);
-//    }
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose cc payment flow, for new card for shopper without cc.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
+    @Test
+    public void choose_new_cc_payment_for_shopper_without_cc_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, false);
+
+        //choose first credit card
+        chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
+    }
+
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose paypal payment flow, for shopper with cc.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
+    @Test
+    public void choose_paypal_payment_for_shopper_with_cc() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, true);
+
+        //choose first credit card
+        choosePayPalPaymentMethod();
+    }
+
+    /**
+     * This test does a full billing with email and shipping
+     * end-to-end choose paypal payment flow, for shopper without cc.
+     *
+     * @throws InterruptedException
+     * @throws JSONException
+     * @throws BSPaymentRequestException
+     */
+    @Test
+    public void choose_paypal_payment_for_shopper_without_cc() throws InterruptedException, JSONException, BSPaymentRequestException {
+        choosePaymentSetup(true, false);
+
+        //choose first credit card
+        choosePayPalPaymentMethod();
+    }
 
 
 }

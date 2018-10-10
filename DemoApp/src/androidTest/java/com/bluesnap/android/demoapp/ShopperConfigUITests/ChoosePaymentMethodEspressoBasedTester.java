@@ -41,16 +41,9 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
     protected UIAutoTestingBlueSnapService<BluesnapChoosePaymentMethodActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
 
-    public ChoosePaymentMethodEspressoBasedTester() {
-//        checkoutCurrency = uIAutoTestingBlueSnapService.getCheckoutCurrency();
-//        purchaseAmount = uIAutoTestingBlueSnapService.getPurchaseAmount();
-//        taxPercent = uIAutoTestingBlueSnapService.getTaxPercent();
-//        taxAmount = uIAutoTestingBlueSnapService.getTaxAmount();
-    }
-
-    protected void choosePaymentSetup(boolean createShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
+    protected void choosePaymentSetup(boolean createShopper, boolean withCreditCard) throws BSPaymentRequestException, InterruptedException, JSONException {
         if (createShopper)
-            uIAutoTestingBlueSnapService.createVaultedShopper();
+            uIAutoTestingBlueSnapService.createVaultedShopper(withCreditCard);
 
         SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements();
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
@@ -77,7 +70,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
         int buttonComponent = shopperCheckoutRequirements.isShippingRequired() ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, true, creditCard);
 
     }
 
@@ -107,16 +100,15 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
         //submit the choice
         onView(withId(R.id.buyNowButton)).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, true, creditCard);
     }
 
+    void choosePayPalPaymentMethod() throws InterruptedException {
+        //choose paypal
+        onView(withId(R.id.payPalButton)).perform(click());
 
-//    public JSONObject createDataObject() throws JSONException {
-//        JSONObject postData = new JSONObject();
-//        putJSON(postData, "firstName", "Fanny");
-//        putJSON(postData, "lastName", "Brice");
-//
-//        return postData;
-//    }
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, false, null);
+
+    }
 
 }

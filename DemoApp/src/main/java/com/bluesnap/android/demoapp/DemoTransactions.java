@@ -34,6 +34,7 @@ public class DemoTransactions {
     private String title;
     private Context context;
     private String transactionId;
+    private String cardLastFourDigits;
     private String tokenSuffix = "";
 
 
@@ -67,6 +68,8 @@ public class DemoTransactions {
                     "<vaulted-shopper-id>".length(), responseString.indexOf("</vaulted-shopper-id>")));
             setTransactionId(responseString.substring(responseString.indexOf("<transaction-id>") +
                     "<transaction-id>".length(), responseString.indexOf("</transaction-id>")));
+            setCardLastFourDigits(responseString.substring(responseString.indexOf("<card-last-four-digits>") +
+                    "<card-last-four-digits>".length(), responseString.indexOf("</card-last-four-digits>")));
 
             String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
             setTokenSuffix(merchantToken.substring(merchantToken.length() - 6));
@@ -108,6 +111,14 @@ public class DemoTransactions {
 
     private void setTransactionId(String id) {
         this.transactionId = id;
+    }
+
+    public String getCardLastFourDigits() {
+        return cardLastFourDigits;
+    }
+
+    public void setCardLastFourDigits(String cardLastFourDigits) {
+        this.cardLastFourDigits = cardLastFourDigits;
     }
 
     public String getTokenSuffix() {

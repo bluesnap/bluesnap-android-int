@@ -7,11 +7,8 @@ import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperContactInfo;
-import com.bluesnap.androidapi.Constants;
 
 import org.hamcrest.Matchers;
-
-import java.util.Arrays;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -87,7 +84,7 @@ public class ReturningShopperVisibilityTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": email TextView is displayed"))
                     .check(matches(not(isDisplayed())));
 
-        if (!Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(contactInfo.getCountryKey())) {
+        if (TestUtils.checkCountryHasZip(contactInfo.getCountryKey())) {
             onView(allOf(withId(R.id.zipTextView), isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Zip TextView doesn't display the correct content"))
                     .check(matches(allOf(isDisplayed(), withText(contactInfo.getZip()))));

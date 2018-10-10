@@ -53,7 +53,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 3) {
+        if (ReturningShoppersFactory.COUNTER == 3) { //minimal billing with shipping returning shopper
 
             pay_button_in_billing_validation();
 
@@ -63,7 +63,7 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
         }
 
         shipping_summarized_contact_info_visibility_validation();
-        if (ReturningShoppersFactory.COUNTER == 3) {
+        if (ReturningShoppersFactory.COUNTER == 3) { //minimal billing with shipping returning shopper
             onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
             shipping_contact_info_content_validation();
             Espresso.pressBack();
@@ -75,15 +75,15 @@ public class ReturningShopperMinimalBillingWithShippingTests extends CheckoutEsp
             Espresso.pressBack();
 
             //Pre-condition: current info is shippingInfo
-            //TODO: restore this when the bug is fixed (AS-148)
-//        returning_shopper_edit_shipping_contact_info_using_back_button_validation();
-//        Espresso.pressBack();
+            returning_shopper_edit_shipping_contact_info_using_back_button_validation();
+            Espresso.pressBack();
+
             returning_shopper_edit_shipping_contact_info_using_done_button_validation();
             TestUtils.goBackToCreditCardInReturningShopper(false, 0);
             amount_tax_view_in_shipping_validation();
             country_changes_per_billing_validation();
             country_changes_per_shipping_validation();
-        } else if (returningShopper.isWithShipping() || !returningShopper.isFullBilling())
+        } else
             component_opens_when_pressing_buyNow_with_missing_info();
     }
 

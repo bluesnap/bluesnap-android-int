@@ -55,7 +55,7 @@ public class ReturningShopperFullBillingWithEmailTests extends CheckoutEspressoB
         credit_card_view_visibility_validation();
         billing_summarized_contact_info_visibility_validation();
 
-        if (ReturningShoppersFactory.COUNTER == 6) {
+        if (ReturningShoppersFactory.COUNTER == 6) { //full billing with email returning shopper
 
             pay_button_in_billing_validation();
 
@@ -64,9 +64,8 @@ public class ReturningShopperFullBillingWithEmailTests extends CheckoutEspressoB
             Espresso.pressBack();
 
             //Pre-condition: current info is billingInfo
-            //TODO: restore this when the bug is fixed (AS-148)
-            //returning_shopper_edit_billing_contact_info_using_back_button_validation();
-            //Espresso.pressBack();
+            returning_shopper_edit_billing_contact_info_using_back_button_validation();
+            Espresso.pressBack();
             returning_shopper_edit_billing_contact_info_using_done_button_validation();
         } else
             component_opens_when_pressing_buyNow_with_missing_info();

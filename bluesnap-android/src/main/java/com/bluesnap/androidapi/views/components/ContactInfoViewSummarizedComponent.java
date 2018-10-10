@@ -9,11 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.Constants;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ContactInfo;
-
-import java.util.Arrays;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -158,7 +158,7 @@ public class ContactInfoViewSummarizedComponent extends LinearLayout {
      * @param country - country upper case string ISO Alpha-2
      */
     void changeZipVisibilityAccordingToCountry(String country) {
-        if (Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(country)) {
+        if (!BlueSnapValidator.checkCountryHasZip(country)) {
             zipTextView.setVisibility(View.GONE);
         } else {
             zipTextView.setVisibility(View.VISIBLE);

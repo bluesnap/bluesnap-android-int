@@ -79,7 +79,11 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
     }
 
     void payPalBasicTransaction() throws InterruptedException {
-        loadPayPalWebView();
+        payPalBasicTransaction(true, checkoutCurrency, purchaseAmount);
+    }
+
+    public void payPalBasicTransaction(boolean pressPayPalButton, String checkoutCurrency, double purchaseAmount) throws InterruptedException {
+        loadPayPalWebView(pressPayPalButton);
         loginToPayPal();
         submitPayPalPayment();
 
@@ -90,20 +94,27 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
             sleep(5000);
 
         //verify transaction status
-        retrievePayPalTransaction();
+        retrievePayPalTransaction(checkoutCurrency, purchaseAmount);
     }
 
     void loadPayPalWebView() throws InterruptedException {
-        onView(withId(R.id.payPalButton)).perform(click());
+        loadPayPalWebView(true);
+    }
+
+    void loadPayPalWebView(boolean pressPayPalButton) throws InterruptedException {
+        if (pressPayPalButton)
+            onView(withId(R.id.payPalButton)).perform(click());
 
         //wait for web to load
         sleep(20000);
 
         //verify that paypal url opened up
         onWebView().check(webMatches(getCurrentUrl(), containsString(Constants.getPaypalSandUrl())));
+//        onWebView().forceJavascriptEnabled();
+
     }
 
-    void loginToPayPal() throws InterruptedException {
+    public void loginToPayPal() throws InterruptedException {
         try {
 //            onWebView()
 //                    .check(webContent(hasElementWithId("email")));
@@ -136,9 +147,16 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
         sleep(30000);
     }
 
-    void submitPayPalPayment() throws InterruptedException {
+    public void submitPayPalPayment() throws InterruptedException {
+//        onWebView()
+//                .withElement(findElement(Locator.ID, "confirmButtonTop"))
+//                .perform(webClick());
+
         onWebView()
-                .withElement(findElement(Locator.ID, "confirmButtonTop"))
+                .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
+                .perform(webClick());
+        onWebView()
+                .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
                 .perform(webClick());
     }
 
@@ -154,11 +172,11 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
         purchaseAmount = purchaseAmount * conversionRateFromUSD;
     }
 
-    void retrievePayPalTransaction() {
+    public void retrievePayPalTransaction(String checkoutCurrency, double purchaseAmount) {
         retrievePayPalTransactionService(new RetrievePayPalTransactionInterface() {
             @Override
             public void onServiceSuccess() {
-                getTransactionStatus();
+                getTransactionStatus(checkoutCurrency, purchaseAmount);
             }
 
             @Override
@@ -179,7 +197,7 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
         }
     }
 
-    private void getTransactionStatus() {
+    private void getTransactionStatus(String checkoutCurrency, double purchaseAmount) {
         try {
             JSONObject jsonObject = new JSONObject(retrieveTransactionResponse);
             JSONObject jsonObjectProcessingInfo = jsonObject.getJSONObject("processingInfo");

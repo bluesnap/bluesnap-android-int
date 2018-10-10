@@ -77,6 +77,8 @@ public class BluesnapCreatePaymentActivity extends BluesnapCheckoutActivity {
 
         } else if (chosenPaymentMethod.getChosenPaymentMethodType().equals(SupportedPaymentMethods.PAYPAL)) {
             startPayPalActivityForResult();
+        } else if (chosenPaymentMethod.getChosenPaymentMethodType().equals(SupportedPaymentMethods.GOOGLE_PAY)) {
+            Log.d(TAG, "Waiting for Google-Pay to check availavblility");
         } else {
             Log.e(TAG, "savedInstanceState missing");
             setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The checkout process was interrupted."));
@@ -84,4 +86,18 @@ public class BluesnapCreatePaymentActivity extends BluesnapCheckoutActivity {
         }
     }
 
+    @Override
+    protected void setGooglePayAvailable(boolean available) {
+        if (available) {
+            final ShopperConfiguration shopperConfiguration = blueSnapService.getShopperConfiguration();
+            final ChosenPaymentMethod chosenPaymentMethod = shopperConfiguration.getChosenPaymentMethod();
+            if (chosenPaymentMethod.getChosenPaymentMethodType().equals(SupportedPaymentMethods.GOOGLE_PAY)) {
+                startGooglePayActivityForResult();
+            }
+        } else {
+            Log.e(TAG, "ChosenPaymentMethod=GOOGLE_PAY but is not available");
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The chosen payment method is not availbale."));
+            finish();
+        }
+    }
 }
