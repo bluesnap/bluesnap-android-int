@@ -106,3 +106,7 @@ dependencies {
 
 }
 
+task testSuite(type: Test) {
+    include 'PaypalSuite.class'
+}
+
