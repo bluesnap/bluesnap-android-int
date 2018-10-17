@@ -48,7 +48,7 @@ public class GooglePayService {
     // Changing this to ENVIRONMENT_PRODUCTION will make the API return real card information.
     // Please refer to the documentation to read about the required steps needed to enable
     // ENVIRONMENT_PRODUCTION.
-    private final int PAYMENTS_ENVIRONMENT = WalletConstants.ENVIRONMENT_PRODUCTION; //.ENVIRONMENT_TEST; //
+    //private final int PAYMENTS_ENVIRONMENT = WalletConstants.ENVIRONMENT_PRODUCTION; //.ENVIRONMENT_TEST; //
 
     // The name of our payment processor / gateway.
     public final String GATEWAY_TOKENIZATION_NAME = "bluesnap";
@@ -255,9 +255,15 @@ public class GooglePayService {
             return null;
         }
 
+        BlueSnapService blueSnapService = BlueSnapService.getInstance();
+        SdkRequestBase sdkRequest = blueSnapService.getSdkRequest();
+        int googlePayMode = WalletConstants.ENVIRONMENT_PRODUCTION;
+        if (sdkRequest.isGooglePayTestMode()) {
+            googlePayMode = WalletConstants.ENVIRONMENT_TEST;
+        }
         // Create the client
         Wallet.WalletOptions walletOptions = new Wallet.WalletOptions.Builder()
-                .setEnvironment(PAYMENTS_ENVIRONMENT)
+                .setEnvironment(googlePayMode)
                 .build();
         return Wallet.getPaymentsClient(activity, walletOptions);
     }

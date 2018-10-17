@@ -15,6 +15,7 @@ public abstract class SdkRequestBase {
     private TaxCalculator taxCalculator;
 
     boolean allowCurrencyChange = true;
+    boolean googlePayTestMode = true;
 
     public PriceDetails getPriceDetails() {
         return priceDetails;
@@ -37,6 +38,14 @@ public abstract class SdkRequestBase {
     }
 
     public abstract boolean isAllowCurrencyChange();
+
+    public boolean isGooglePayTestMode() {
+        return googlePayTestMode;
+    }
+
+    public void setGooglePayTestMode(boolean googlePayTestMode) {
+        this.googlePayTestMode = googlePayTestMode;
+    }
 
     /**
      * verify SdkRequestBase

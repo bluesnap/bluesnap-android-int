@@ -314,6 +314,9 @@ public class DemoMainActivity extends AppCompatActivity {
 //            sdkRequest.setAmountNoTax(productPrice);
 //        }
 
+            Switch googlePayTestModeSwitch = findViewById(R.id.googlePayTestModeSwitch);
+            sdkRequest.setGooglePayTestMode(googlePayTestModeSwitch.isChecked());
+
             sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
             try {
                 sdkRequest.verify();
