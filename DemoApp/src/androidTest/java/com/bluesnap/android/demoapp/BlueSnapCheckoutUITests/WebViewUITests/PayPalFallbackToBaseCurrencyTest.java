@@ -1,5 +1,6 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.WebViewUITests;
 
+import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -14,7 +15,7 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(AndroidJUnit4.class)
-
+@LargeTest
 public class PayPalFallbackToBaseCurrencyTest extends PayPalWebViewTests {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
