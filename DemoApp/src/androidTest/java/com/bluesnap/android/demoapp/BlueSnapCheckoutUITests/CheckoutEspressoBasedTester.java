@@ -151,7 +151,7 @@ public class CheckoutEspressoBasedTester {
 
     public void returning_shopper_with_existing_credit_card_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
         //make transaction to create a new shopper
-        new_card_basic_flow_transaction();
+        uIAutoTestingBlueSnapService.createVaultedShopper(true);
 
         //setup sdk for the returning shopper
         uIAutoTestingBlueSnapService.returningShopperSetUp(shopperCheckoutRequirements, true);
@@ -161,7 +161,7 @@ public class CheckoutEspressoBasedTester {
     }
 
     public void returning_shopper_with_new_credit_card_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-        //make transaction to create a new shopper
+        //create a new shopper without cc
         uIAutoTestingBlueSnapService.createVaultedShopper(false);
 
         //setup sdk for the returning shopper

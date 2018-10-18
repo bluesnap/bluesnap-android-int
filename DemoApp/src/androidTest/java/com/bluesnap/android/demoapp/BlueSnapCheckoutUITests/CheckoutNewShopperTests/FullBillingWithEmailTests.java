@@ -80,16 +80,6 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
         state_invalid_error_in_billing();
     }
 
-    @Test
-    public void full_billing_with_email_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction();
-    }
-
-    @Test
-    public void returning_shopper_full_billing_with_email_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-        returning_shopper_with_existing_credit_card_basic_flow_transaction();
-    }
-
     /**
      * This test verifies that all the credit card fields are displayed as they should
      * when choosing new credit card.
