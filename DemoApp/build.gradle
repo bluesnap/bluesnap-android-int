@@ -106,9 +106,14 @@ dependencies {
 
 }
 
-
+/**
+ * BuildConfig credentials
+ */
 def sdkUserEnv=System.getenv('BS_API_USER')
 def sdkPasswordEnv=System.getenv('BS_API_PASSWORD')
+def sdkPaypalEmail=System.getenv('BS_PAYPAL_EMAIL')
+def sdkPaypalPassword=System.getenv('BS_PAYPAL_PASSWORD')
+
 if (file("../local.gradle").exists()) {
     apply from: "../local.gradle"
 }
@@ -118,7 +123,9 @@ else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && 
         buildTypes {
             debug {
                 buildConfigField "String", "BS_API_USER", "\"" + sdkUserEnv + "\""
-                buildConfigField "String", "BS_API_PASS", "\"" + sdkPasswordEnv + "\""
+                buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
+                buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
+                buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"" + sdkPaypalPassword + "\""
             }}}
 }
 else {
