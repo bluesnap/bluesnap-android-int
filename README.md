@@ -7,7 +7,7 @@
 BlueSnap's Android SDK enables you to easily accept credit card, Google Pay and PayPal payments directly from your Android app, and then process payments from your server using the Payment API. When you use this library, BlueSnap handles most of the PCI compliance burden for you, as the shopper's payment data is tokenized and sent directly to BlueSnap's servers.
 
 # Versions
-This SDK supports Android SDK 25 and above for development. The minimum Android API version for applications is 18, which covers more than 98% of the [Android devices](https://developer.android.com/about/dashboards/index.html).
+This SDK supports Android SDK 27 and above for development. The minimum Android API version for applications is 19,See  [Android devices](https://developer.android.com/about/dashboards/index.html) for device coverage.
 
 # Installation
 
@@ -34,8 +34,8 @@ Steps required for this flow (more information on each below):
 * Complete the transaction
 
 ## Choose Payment method flow: Collect the shopper's Chosen Payment Method
-This flow will be used in apps where you wish to save the shopper's payment details upon registration, and use it later in a quick and easy fashion. This flow can be run only for an existing shopper (you can easily create the shopper using BlueSnap API).
-If the shopper chooses a Credit card, we collect the billing details and store them on BlueSnap servers, so that the (later) charge will not require the shopper to type any information. If the shopper chooses Google Pay or PayPal, we simply keep this preference, so that in the next step (Create Payment flow), the shopper will automatically get the GooglePay pop-up or the PayPal page.
+This flow will be used in apps like GetTaxi, where you wish to save the shopper's payment details upon registration, and use it later in a quick and easy fashion. This flow can be run only for an existing shopper (you can easily create the shopper using BlueSnap API).
+If the shopper chooses a Credit card, we collect the full billing details and store them on BlueSnap servers, so that the (later) charge will not require the shopper to type any information. If the shopper chooses Google Pay or PayPal, we simply keep this preference, so that in the next step (Create Payment flow), the shopper will automatically get the GooglePay pop-up or the PayPal page.
 Steps required for this flow (more information on each below):
 * Generate a token for the transaction (for the existing shopper)
 * Initialize the SDK with the token
@@ -275,7 +275,7 @@ More information on any of these functions can be found in `BlueSnapService.java
 If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passed as part of the `SdkResult`.
 All the other fields that are relevant to a credit card transaction will be empty.
 
-## Google Pay
+## Google Pay(Beta)
 We've added Google Pay support to our SDK, which involves some dependencies and settings in the SDK's build.gradle.
 Enable the Android Pay API by adding the following to the <application> tag of your AndroidManifest.xml:
 
@@ -287,7 +287,7 @@ Enable the Android Pay API by adding the following to the <application> tag of y
     </application>
 The Google Pay button will become available in the checkout flow if you have allowed this payment method in the BlueSnap console, and if it is supported by the mobile. The demo app will run Google Pay in test mode, meaning any card you choose will result in a dummy card - this way you can test it without having to be approved by Google. 
 To set Google Pay mode to TEST, change the constant PAYMENT_ENVIRONMENT inside GooglePayService class. In the next release we will support this as a configuration.
-To get approved by Google, see [Google Pay Developer Documentation](https://developers.google.com/pay/api/processors/guides/test-and-validation/developer-documentation-checklist).
+To get approved by Google, see Developer documentation checklist: https://developers.google.com/pay/api/processors/guides/test-and-validation/developer-documentation-checklist.
 
 ## Kount
 The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [https://developers.bluesnap.com/docs/fraud-prevention] 

@@ -4,7 +4,6 @@ plugins {
 
 }
 apply plugin: 'com.android.application'
-
 android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -39,7 +38,6 @@ android {
         ignoreWarnings true
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
-
 
 }
 String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
@@ -107,4 +105,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
 
 }
+
+//task testSuite(type: Test) {
+//    //include 'PaypalSuite.class'
+//    if (System.properties['test.profile'] != 'paypalUI') {
+//        exclude '**/BlueSnapCheckoutUITests/*'
+//    }
+//}
 

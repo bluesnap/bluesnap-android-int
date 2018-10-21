@@ -54,16 +54,6 @@ public class FullBillingTests extends CheckoutEspressoBasedTester {
         check_ime_action_button_in_billing_contact_info();
     }
 
-    @Test
-    public void full_billing_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction();
-    }
-
-    @Test
-    public void returning_shopper_full_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-        returning_shopper_with_existing_credit_card_basic_flow_transaction();
-    }
-
     /**
      * This test verifies that all the credit card line fields
      * are displayed as they should when choosing new credit card.

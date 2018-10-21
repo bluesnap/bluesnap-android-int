@@ -69,15 +69,6 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
     }
 
     /**
-     * This test does an end-to-end new card flow for minimal
-     * billing new shopper
-     */
-    @Test
-    public void minimal_billing_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction();
-    }
-
-    /**
      * This test does an end-to-end existing card flow for minimal
      * billing returning shopper
      */
@@ -89,11 +80,6 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
         CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
         onView(withId(R.id.buyNowButton)).perform(click());
         uIAutoTestingBlueSnapService.finish_demo_purchase(shopperCheckoutRequirements);
-    }
-
-    @Test
-    public void returning_shopper_minimal_billing_basic_flow_transaction() throws BSPaymentRequestException, InterruptedException, JSONException {
-        returning_shopper_with_existing_credit_card_basic_flow_transaction();
     }
 
     /**

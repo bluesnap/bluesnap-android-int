@@ -92,6 +92,10 @@ public class TestingShopperCheckoutRequirements {
         this.shippingSameAsBilling = shippingSameAsBilling;
     }
 
+    public void setTestingShopperCheckoutRequirements(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired) {
+        setTestingShopperCheckoutRequirements(fullBillingRequired, emailRequired, shippingRequired, false);
+    }
+
     public void setTestingShopperCheckoutRequirements(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling) {
         this.shippingRequired = shippingRequired;
         this.fullBillingRequired = fullBillingRequired;
