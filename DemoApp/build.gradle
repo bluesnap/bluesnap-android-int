@@ -106,3 +106,21 @@ dependencies {
 
 }
 
+
+def sdkUserEnv=System.getenv('BS_API_USER')
+def sdkPasswordEnv=System.getenv('BS_API_PASSWORD')
+if (file("../local.gradle").exists()) {
+    apply from: "../local.gradle"
+}
+
+else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && !sdkPasswordEnv.isEmpty()) {
+    android {
+        buildTypes {
+            debug {
+                buildConfigField "String", "BS_API_USER", "\"" + sdkUserEnv + "\""
+                buildConfigField "String", "BS_API_PASS", "\"" + sdkPasswordEnv + "\""
+            }}}
+}
+else {
+    throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+}

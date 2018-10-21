@@ -12,8 +12,6 @@ buildscript {
     }
 }
 
-
-
 allprojects {
     repositories {
         mavenCentral()
@@ -29,7 +27,6 @@ allprojects {
         }
         jcenter()
     }
-
 
     ext {
         compileSdkVersion = 27
