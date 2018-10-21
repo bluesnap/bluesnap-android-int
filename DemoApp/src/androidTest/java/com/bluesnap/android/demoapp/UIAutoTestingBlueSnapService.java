@@ -82,6 +82,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     public BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SDKConfiguration sDKConfiguration = null;
     private DemoTransactions transactions;
+    private static final String SANDBOX_TRANSACTION = "transactions/";
 
     private boolean isExistingCard = false;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
@@ -160,6 +161,10 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     public String getVaultedShopperId() {
         return vaultedShopperId;
+    }
+
+    public void setVaultedShopperId(String vaultedShopperId) {
+        this.vaultedShopperId = vaultedShopperId;
     }
 
     public DemoTransactions getTransactions() {
@@ -555,6 +560,32 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    public void retrieveTransaction(String transactionId) throws JSONException {
+        BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_TRANSACTION + transactionId, "application/json", "application/json", sahdboxHttpHeaders);
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+            transactionDetailsValidation(response.getResponseString());
+        } else {
+            Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
+            fail("Cannot retrieve transaction from merchant server");
+        }
+    }
+
+    private void transactionDetailsValidation(String retrieveTransactionResponse) {
+        try {
+            JSONObject jsonObject = new JSONObject(retrieveTransactionResponse);
+
+            check_if_field_identify("amount", TestUtils.getDecimalFormat().format(purchaseAmount), jsonObject);
+            check_if_field_identify("currency", checkoutCurrency, jsonObject);
+
+            JSONObject jsonObjectProcessingInfo = jsonObject.getJSONObject("processingInfo");
+            check_if_field_identify("processingStatus", "SUCCESS", jsonObjectProcessingInfo);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail("Error on parse transaction info");
+        }
+    }
+
     public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
                                                       boolean isCreditCard, TestingShopperCreditCard creditCard) throws InterruptedException {
         while (!mActivity.isDestroyed()) {
@@ -576,15 +607,23 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         get_shopper_from_server(shopperCheckoutRequirements, false, true, null);
     }
 
+    public void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo) {
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, null, contactInfo);
+    }
+
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, TestingShopperCreditCard creditCard) {
+        get_shopper_from_server(shopperCheckoutRequirements, forShopperConfig, forInfoSaved, creditCard, null);
+    }
+
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, TestingShopperCreditCard creditCard, TestingShopperContactInfo contactInfo) {
         get_shopper_service(new GetShopperServiceInterface() {
             @Override
             public void onServiceSuccess() {
-                if (forShopperConfig) 
+                if (forShopperConfig)
                     shopper_chosen_payment_method_validation(creditCard);
                 if (forInfoSaved) {
                     String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
-                    shopper_info_saved_validation(shopperCheckoutRequirements, cardLastFourDigits);
+                    shopper_info_saved_validation(shopperCheckoutRequirements, cardLastFourDigits, contactInfo);
                 }
             }
 
@@ -634,26 +673,34 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     //TODO: add validation that the new credit card info has been saved correctly
-    private void shopper_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String cardLastFourDigits) {
+    private void shopper_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String cardLastFourDigits, TestingShopperContactInfo contactInfo) {
         int cardIndex = 0;
+        JSONObject jsonObjectBillingContactInfo;
+
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
             if (shopperCheckoutRequirements.isEmailRequired())
                 emailFromServer = getOptionalString(jsonObject, "email");
 
-            JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
-            JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
+            if (contactInfo != null)
+                jsonObjectBillingContactInfo = jsonObject;
 
-            if (!cardLastFourDigits.isEmpty()) {
-                String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
-                cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+            else {
+                JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
+                JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
+
+                if (!cardLastFourDigits.isEmpty()) {
+                    String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
+                    cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+                }
+
+                jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(cardIndex).getJSONObject("billingContactInfo");
+
             }
 
-            JSONObject jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(cardIndex).getJSONObject("billingContactInfo");
-
-            shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo);
+            shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, contactInfo);
             if (shopperCheckoutRequirements.isShippingRequired())
-                shopper_component_info_saved_validation(shopperCheckoutRequirements, false, jsonObject.getJSONObject("shippingContactInfo"));
+                shopper_component_info_saved_validation(shopperCheckoutRequirements, false, jsonObject.getJSONObject("shippingContactInfo"), contactInfo);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -664,17 +711,27 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
-    private void shopper_component_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isBillingInfo, JSONObject jsonObject) {
+    private void shopper_component_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isBillingInfo, JSONObject jsonObject,
+                                                         TestingShopperContactInfo _contactInfo) {
         String countryKey;
+        String address = "address1";
         TestingShopperContactInfo contactInfo;
 
-        if (!isExistingCard) { //New shopper
-            contactInfo = (!isBillingInfo && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
-            countryKey = contactInfo.getCountryKey();
-        } else { //Returning shopper
-            countryKey = (isBillingInfo) ? "ca" : "us";
-            contactInfo = (isBillingInfo) ? ContactInfoTesterCommon.editBillingContactInfo : ContactInfoTesterCommon.editShippingContactInfo;
+        if (_contactInfo != null) {
+            contactInfo = _contactInfo;
+            if (isBillingInfo)
+                address = "address";
+        } else {
+            if (!isExistingCard) { //New shopper
+                contactInfo = (!isBillingInfo && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
+                //countryKey = contactInfo.getCountryKey();
+            } else { //Returning shopper
+                //countryKey = (isBillingInfo) ? "ca" : "us";
+                contactInfo = (isBillingInfo) ? ContactInfoTesterCommon.editBillingContactInfo : ContactInfoTesterCommon.editShippingContactInfo;
+            }
         }
+
+        countryKey = contactInfo.getCountryKey();
 
         check_if_field_identify("country", countryKey.toLowerCase(), jsonObject);
 
@@ -688,16 +745,21 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             check_if_field_identify("zip", contactInfo.getZip(), jsonObject);
 
         if (isBillingInfo && shopperCheckoutRequirements.isFullBillingRequired() || !isBillingInfo) { //full info or shipping
-            if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
-                if (countryKey.equals("US"))
-                    check_if_field_identify("state", "NY", jsonObject);
-                else if (countryKey.equals("CA"))
-                    check_if_field_identify("state", "QC", jsonObject);
-                else
-                    check_if_field_identify("state", "RJ", jsonObject);
+            if (_contactInfo != null)
+                check_if_field_identify("state", "MA", jsonObject);
+
+            else if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
+//                if (countryKey.equals("US"))
+//                    check_if_field_identify("state", "NY", jsonObject);
+//                else if (countryKey.equals("CA"))
+//                    check_if_field_identify("state", "QC", jsonObject);
+//                else
+//                    check_if_field_identify("state", "RJ", jsonObject);
+                check_if_field_identify("state", contactInfo.getState(), jsonObject);
+
             }
             check_if_field_identify("city", contactInfo.getCity(), jsonObject);
-            check_if_field_identify("address1", contactInfo.getAddress(), jsonObject);
+            check_if_field_identify(address, contactInfo.getAddress(), jsonObject);
         }
     }
 

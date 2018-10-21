@@ -45,7 +45,7 @@ public class ContactInfoTesterCommon {
             "Barcelona", "77 Rambla street", "QC", "4815", "CA", "Canada");
 
     public static final TestingShopperContactInfo editShippingContactInfo = new TestingShopperContactInfo("Janet Weiss", "null",
-            "Denton", "75 some street", "TX", "162342", "US", "United States");
+            "Denton", "75 some street", "NY", "162342", "US", "United States");
 
     public static void check_ime_action_button_in_contact_info(String testName, String country, int componentResourceId, boolean fullInfo, boolean withEmail) {
         onView(Matchers.allOf(ViewMatchers.withId(R.id.input_name), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click(), pressImeActionButton());
