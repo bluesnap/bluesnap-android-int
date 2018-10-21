@@ -1,7 +1,5 @@
 package com.bluesnap.android.demoapp;
 
-import android.support.test.filters.SmallTest;
-
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutNewShopperTests.FullBillingWithShippingWithEmailTests;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutNewShopperTests.MinimalBillingWithShippingWithEmailTests;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShopperFullBillingWithShippingWithEmailTests;
@@ -15,6 +13,5 @@ import org.junit.runners.Suite;
         MinimalBillingWithShippingWithEmailTests.class,
         ReturningShopperFullBillingWithShippingWithEmailTests.class
 })
-@SmallTest
 public class SanitySuite {
 }
