@@ -12,11 +12,12 @@ public class SandboxToken extends BluesnapToken {
     public static final String SANDBOX_TOKEN_CREATION = "payment-fields-tokens";
     public static final String SANDBOX_CREATE_TRANSACTION = "transactions";
 
-    public static final String SANDBOX_USER = "sdkuser";
-    public static final String SANDBOX_PASS = "SDKuser123";
+    public static final String SANDBOX_USER = BuildConfig.BS_API_USER;
+    public static final String SANDBOX_PASS = BuildConfig.BS_API_PASSWORD;
 
     public SandboxToken(String merchantToken, TokenProvider tokenProvider) {
         super(merchantToken, tokenProvider);
     }
+
 }
 
