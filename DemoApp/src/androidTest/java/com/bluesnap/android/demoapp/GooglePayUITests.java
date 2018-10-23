@@ -45,8 +45,9 @@ public class GooglePayUITests {
     public ActivityTestRule<DemoMainActivity> mActivityRule = new ActivityTestRule<>(
             DemoMainActivity.class, false, false);
 
-    protected UIAutoTestingBlueSnapService<DemoMainActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
+    private UIAutoTestingBlueSnapService<DemoMainActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
 
+    //TODO: change this test so that it won't use the DemoApp
     @Before
     public void startMainActivityFromHomeScreen() {
         // Initialize UiDevice instance
@@ -74,13 +75,34 @@ public class GooglePayUITests {
                 LAUNCH_TIMEOUT);
     }
 
-    //TODO: change this test so that it won't use the DemoApp
-    @Test
-    public void basicGooglePayTest() throws UiObjectNotFoundException, InterruptedException, JSONException {
+    public void fillInReturningShopper() throws UiObjectNotFoundException, InterruptedException, JSONException {
+        UiObject returningShopperSwitch = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/returningShopperSwitch"));
+
+        UiObject returningShopperEditText = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/returningShopperEditText"));
+
+        uIAutoTestingBlueSnapService.createVaultedShopper(false);
+
+        returningShopperSwitch.swipeRight(1);
+        returningShopperEditText.setText(uIAutoTestingBlueSnapService.getVaultedShopperId());
+        returningShopperEditText.click();
+
+        // click price edit text change focus
+        mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/productPriceEditText")).click();
+
+        UiObject shopperDetailsTextView = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/shopperDetailsTextView"));
+
+        // wait for shopper token
+        while (!shopperDetailsTextView.getText().contains("Fanny"))
+            sleep(2000);
+    }
+
+    public void fillInPurchaseRequirements(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws UiObjectNotFoundException, InterruptedException, JSONException {
         UiObject paymentAmountEditText = mDevice.findObject(new UiSelector()
                 .resourceIdMatches(".*:id/productPriceEditText"));
-        UiObject checkoutButton = mDevice.findObject(new UiSelector()
-                .resourceIdMatches(".*:id/merchantAppSubmitButton"));
 
         // wait for field to appear
         while (!paymentAmountEditText.exists())
@@ -88,25 +110,84 @@ public class GooglePayUITests {
 
         // set amount text and choose full billing, shipping and email
         paymentAmountEditText.setText(Double.toString(uIAutoTestingBlueSnapService.getPurchaseAmount()));
-        mDevice.findObject(new UiSelector()
-                .resourceIdMatches(".*:id/shippingSwitch"))
-                .swipeRight(1);
-        mDevice.findObject(new UiSelector()
-                .resourceIdMatches(".*:id/billingSwitch"))
-                .swipeRight(1);
-        mDevice.findObject(new UiSelector()
-                .resourceIdMatches(".*:id/emailSwitch"))
-                .swipeRight(1);
+        if (shopperCheckoutRequirements.isShippingRequired())
+            mDevice.findObject(new UiSelector()
+                    .resourceIdMatches(".*:id/shippingSwitch"))
+                    .swipeRight(1);
+        if (shopperCheckoutRequirements.isFullBillingRequired())
+            mDevice.findObject(new UiSelector()
+                    .resourceIdMatches(".*:id/billingSwitch"))
+                    .swipeRight(1);
+        if (shopperCheckoutRequirements.isEmailRequired())
+            mDevice.findObject(new UiSelector()
+                    .resourceIdMatches(".*:id/emailSwitch"))
+                    .swipeRight(1);
+    }
 
+    public void startRegularCheckout() throws UiObjectNotFoundException {
+        UiObject checkoutButton = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/merchantAppSubmitButton"));
         // start checkout
         checkoutButton.click();
 
+        // choose googlePay method
+        mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/googlePayButton"))
+                .click();
+    }
+
+    public void googlePayChoosePaymentMethodFlow() throws UiObjectNotFoundException, JSONException, InterruptedException {
+        mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/shopperConfigSwitch"))
+                .swipeRight(1);
+
+        mDevice.pressBack();
+
+        UiObject choosePaymentButton = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/merchantAppSubmitButton"));
+        // start choose payment flow
+        choosePaymentButton.click();
 
         // choose googlePay method
         mDevice.findObject(new UiSelector()
                 .resourceIdMatches(".*:id/googlePayButton"))
                 .click();
 
+        // wait for choose payment flow to complete
+        while (!choosePaymentButton.exists())
+            sleep(1000);
+
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(true);
+    }
+
+    //Pre-condition: returning shopper and activate shopper config switches are on
+    //Pre-condition: returningShopperId is filled in
+    public void startCreatePayment() throws UiObjectNotFoundException, InterruptedException {
+        mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/returningShopperEditText"))
+                .click();
+
+        // click price edit text change focus
+        mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/productPriceEditText"))
+                .click();
+
+        UiObject shopperDetailsTextView = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/shopperDetailsTextView"));
+
+        // wait for shopper token
+        while (!shopperDetailsTextView.getText().contains("Fanny"))
+            sleep(2000);
+
+        mDevice.pressBack();
+
+        UiObject createPaymentButton = mDevice.findObject(new UiSelector()
+                .resourceIdMatches(".*:id/merchantAppSecondStepForShopperConfigurationButton"));
+        // start checkout
+        createPaymentButton.click();
+    }
+
+    public void basicGooglePayFlow(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws UiObjectNotFoundException, InterruptedException, JSONException {
         UiObject googlePayContinueButton = mDevice.findObject(new UiSelector()
                 .text("Continue"));
 
@@ -133,8 +214,45 @@ public class GooglePayUITests {
         uIAutoTestingBlueSnapService.setVaultedShopperId(vaultedShopperId);
         uIAutoTestingBlueSnapService.retrieveTransaction(transactionId);
 
-        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
         uIAutoTestingBlueSnapService.get_shopper_from_server(shopperCheckoutRequirements, googlePayContactInfo);
 
     }
+
+    /**
+     * This test does an end-to-end GooglePay checkout flow
+     * with full billing, shipping and email.
+     * <p>
+     * It runs in test mode.
+     */
+    @Test
+    public void googlePay_checkout_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException {
+        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
+
+        fillInPurchaseRequirements(shopperCheckoutRequirements);
+        startRegularCheckout();
+        basicGooglePayFlow(shopperCheckoutRequirements);
+    }
+
+    /**
+     * This test does an end-to-end GooglePay choose payment
+     * method and create payment flow
+     * with full billing, shipping and email.
+     * <p>
+     * It runs in test mode.
+     */
+    @Test
+    public void googlePay_choose_and_create_payment() throws UiObjectNotFoundException, InterruptedException, JSONException {
+        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
+
+        // choose googlePay payment method
+        fillInReturningShopper();
+        fillInPurchaseRequirements(shopperCheckoutRequirements);
+        googlePayChoosePaymentMethodFlow();
+
+        // create googlePayMethod
+        startCreatePayment();
+        basicGooglePayFlow(shopperCheckoutRequirements);
+    }
+
+
 }

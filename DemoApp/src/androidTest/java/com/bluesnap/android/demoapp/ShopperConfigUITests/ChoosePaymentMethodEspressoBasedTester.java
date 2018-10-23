@@ -70,7 +70,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
         int buttonComponent = shopperCheckoutRequirements.isShippingRequired() ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, true, creditCard);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, false);
 
     }
 
@@ -100,14 +100,14 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
         //submit the choice
         onView(withId(R.id.buyNowButton)).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, true, creditCard);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, false);
     }
 
     void choosePayPalPaymentMethod() throws InterruptedException {
         //choose paypal
         onView(withId(R.id.payPalButton)).perform(click());
 
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, false, null);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(false);
 
     }
 
