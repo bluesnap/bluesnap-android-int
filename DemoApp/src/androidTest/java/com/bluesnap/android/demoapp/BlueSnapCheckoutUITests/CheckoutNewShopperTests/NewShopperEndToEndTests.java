@@ -1,6 +1,7 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutNewShopperTests;
 
 import android.support.test.espresso.matcher.ViewMatchers;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
@@ -10,6 +11,7 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.json.JSONException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -18,7 +20,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 /**
  * Created by sivani on 18/10/2018.
  */
-
+@RunWith(AndroidJUnit4.class)
 public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
 
     public NewShopperEndToEndTests() {
@@ -116,16 +118,6 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
         setupBeforeTransaction(true, false, true, false);
         new_card_basic_flow_transaction();
     }
-
-    /**
-     * This test does an end-to-end new card flow for full
-     * billing with email and shipping new shopper
-     */
-//    @Test
-//    public void full_billing_with_shipping_with_email_basic_flow_transaction() throws InterruptedException, BSPaymentRequestException, JSONException {
-//        setupBeforeTransaction(true,true,true,false);
-//        new_card_basic_flow_transaction();
-//    }
 
     /**
      * This test does an end-to-end new card flow for full

@@ -12,7 +12,7 @@ import org.junit.Test;
  * Created by sivani on 01/09/2018.
  */
 
-public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChoosePaymentMethodEspressoBasedTester {
+public class ChooseCreditCardPaymentMethod extends ChoosePaymentMethodEspressoBasedTester {
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
@@ -68,38 +68,4 @@ public class ChoosePaymentMethodFullBillingWithEmailWithShipping extends ChooseP
         //choose first credit card
         chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
     }
-
-    /**
-     * This test does a full billing with email and shipping
-     * end-to-end choose paypal payment flow, for shopper with cc.
-     *
-     * @throws InterruptedException
-     * @throws JSONException
-     * @throws BSPaymentRequestException
-     */
-    @Test
-    public void choose_paypal_payment_for_shopper_with_cc() throws InterruptedException, JSONException, BSPaymentRequestException {
-        choosePaymentSetup(true, true);
-
-        //choose first credit card
-        choosePayPalPaymentMethod();
-    }
-
-    /**
-     * This test does a full billing with email and shipping
-     * end-to-end choose paypal payment flow, for shopper without cc.
-     *
-     * @throws InterruptedException
-     * @throws JSONException
-     * @throws BSPaymentRequestException
-     */
-    @Test
-    public void choose_paypal_payment_for_shopper_without_cc() throws InterruptedException, JSONException, BSPaymentRequestException {
-        choosePaymentSetup(true, false);
-
-        //choose first credit card
-        choosePayPalPaymentMethod();
-    }
-
-
 }
