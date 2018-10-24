@@ -129,11 +129,6 @@ public class GooglePayUITests {
                 .resourceIdMatches(".*:id/merchantAppSubmitButton"));
         // start checkout
         checkoutButton.click();
-
-        // choose googlePay method
-        mDevice.findObject(new UiSelector()
-                .resourceIdMatches(".*:id/googlePayButton"))
-                .click();
     }
 
     public void googlePayChoosePaymentMethodFlow() throws UiObjectNotFoundException, JSONException, InterruptedException {
@@ -187,7 +182,13 @@ public class GooglePayUITests {
         createPaymentButton.click();
     }
 
-    public void basicGooglePayFlow(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws UiObjectNotFoundException, InterruptedException, JSONException {
+    public void basicGooglePayFlow(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean pressGooglePayButton) throws UiObjectNotFoundException, InterruptedException, JSONException {
+        if (pressGooglePayButton) {// choose googlePay method
+            mDevice.findObject(new UiSelector()
+                    .resourceIdMatches(".*:id/googlePayButton"))
+                    .click();
+        }
+
         UiObject googlePayContinueButton = mDevice.findObject(new UiSelector()
                 .text("Continue"));
 
@@ -212,8 +213,11 @@ public class GooglePayUITests {
         String vaultedShopperId = vaultedShopperResult.substring(vaultedShopperResult.indexOf("ID:") + "ID:".length() + 2);
 
         uIAutoTestingBlueSnapService.setVaultedShopperId(vaultedShopperId);
+
+        // validate amount, currency and success status of the transaction in server
         uIAutoTestingBlueSnapService.retrieveTransaction(transactionId);
 
+        // validate amount, currency and success status of the transaction in server
         uIAutoTestingBlueSnapService.get_shopper_from_server(shopperCheckoutRequirements, googlePayContactInfo);
 
     }
@@ -230,7 +234,7 @@ public class GooglePayUITests {
 
         fillInPurchaseRequirements(shopperCheckoutRequirements);
         startRegularCheckout();
-        basicGooglePayFlow(shopperCheckoutRequirements);
+        basicGooglePayFlow(shopperCheckoutRequirements, true);
     }
 
     /**
@@ -251,7 +255,7 @@ public class GooglePayUITests {
 
         // create googlePayMethod
         startCreatePayment();
-        basicGooglePayFlow(shopperCheckoutRequirements);
+        basicGooglePayFlow(shopperCheckoutRequirements, false);
     }
 
 

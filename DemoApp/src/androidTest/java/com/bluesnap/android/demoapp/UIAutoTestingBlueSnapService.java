@@ -591,7 +591,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
     public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
                                                       TestingShopperCreditCard creditCard, boolean isGooglePay) throws InterruptedException {
-        if (!isGooglePay) {
+        if (!isGooglePay) { // Espresso test, wait for activity to finish
             while (!mActivity.isDestroyed()) {
                 Log.d(TAG, "Waiting for tokenized credit card service to finish");
                 sleep(1000);
@@ -602,23 +602,26 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         if (creditCard != null) //chosen cc payment method
-            get_shopper_from_server(shopperCheckoutRequirements, true, true, false, creditCard);
-        else //chosen paypal payment method
-            get_shopper_from_server(null, true, false, isGooglePay, null);
+            get_shopper_from_server(shopperCheckoutRequirements, true, false, creditCard);
+        else //chosen payPal or googlePay payment method
+            get_shopper_from_server(null, false, isGooglePay, null);
 
     }
 
+    // for regular transactions validation
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, true, false, null);
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, false, null, null);
     }
 
+    // for googlePay transactions validation
     public void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo) {
         get_shopper_from_server(shopperCheckoutRequirements, false, true, true, null, contactInfo);
     }
 
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, boolean isGooglePay,
+    // for chosen payment method validation
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forInfoSaved, boolean isGooglePay,
                                          TestingShopperCreditCard creditCard) {
-        get_shopper_from_server(shopperCheckoutRequirements, forShopperConfig, forInfoSaved, isGooglePay, creditCard, null);
+        get_shopper_from_server(shopperCheckoutRequirements, true, forInfoSaved, isGooglePay, creditCard, null);
     }
 
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, boolean isGooglePay,
@@ -659,8 +662,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     private void shopper_chosen_payment_method_validation(TestingShopperCreditCard creditCard, String chosenPaymentMethodType) {
-        //String chosenPaymentMethodType = (creditCard != null) ? "CC" : ;
-
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
 
@@ -671,7 +672,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
                 JSONObject jsonObjectCreditCard = jsonObjectChosenPaymentMethod.getJSONObject("creditCard");
                 check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
                 check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
-//            check_if_field_identify("cardSubType", creditCard.getCardSubType(), jsonObjectCreditCard);
                 check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
                 check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
             }
@@ -695,7 +695,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             if (shopperCheckoutRequirements.isEmailRequired())
                 emailFromServer = getOptionalString(jsonObject, "email");
 
-            if (!googlePay) {
+            if (!googlePay) { // cc payment- parse billing info
                 JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
                 JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
 
@@ -706,10 +706,12 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
                 jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(cardIndex).getJSONObject("billingContactInfo");
 
+                // billing info validation
                 shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, contactInfo);
 
             }
 
+            // shipping info validation
             if (shopperCheckoutRequirements.isShippingRequired())
                 shopper_component_info_saved_validation(shopperCheckoutRequirements, false, jsonObject.getJSONObject("shippingContactInfo"), contactInfo);
 
@@ -728,16 +730,12 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         String address = "address1";
         TestingShopperContactInfo contactInfo;
 
-        if (_contactInfo != null) {
+        if (_contactInfo != null) { // GooglePay contact info
             contactInfo = _contactInfo;
-            if (isBillingInfo)
-                address = "address";
-        } else {
+        } else { // Credit card contact info
             if (!isExistingCard) { //New shopper
                 contactInfo = (!isBillingInfo && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
-                //countryKey = contactInfo.getCountryKey();
             } else { //Returning shopper
-                //countryKey = (isBillingInfo) ? "ca" : "us";
                 contactInfo = (isBillingInfo) ? ContactInfoTesterCommon.editBillingContactInfo : ContactInfoTesterCommon.editShippingContactInfo;
             }
         }
@@ -755,7 +753,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         if (TestUtils.checkCountryHasZip(countryKey))
             check_if_field_identify("zip", contactInfo.getZip(), jsonObject);
 
-        if (isBillingInfo && shopperCheckoutRequirements.isFullBillingRequired() || !isBillingInfo) { //full info or shipping
+        if (!isBillingInfo || shopperCheckoutRequirements.isFullBillingRequired()) { //full info or shipping
             if (_contactInfo != null)
                 check_if_field_identify("state", "MA", jsonObject);
 
