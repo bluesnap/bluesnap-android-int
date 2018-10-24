@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutNewShopperT
 
 import android.support.test.espresso.matcher.ViewMatchers;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
  * Created by sivani on 18/10/2018.
@@ -28,6 +30,21 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
 
         checkoutSetup();
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+    }
+
+    /**
+     * This test does an end-to-end existing card flow for minimal
+     * billing returning shopper
+     */
+    @Test
+    public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException, BSPaymentRequestException, JSONException {
+        setupBeforeTransaction(false, false, false, false);
+        new_card_basic_fill_info();
+        CurrencyChangeTesterCommon.changeCurrency("CAD");
+        CurrencyChangeTesterCommon.changeCurrency("ILS");
+        CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
+        onView(withId(R.id.buyNowButton)).perform(click());
+        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements);
     }
 
     /**

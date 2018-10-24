@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
  * Created by sivani on 17/07/2018.
@@ -68,19 +67,6 @@ public class MinimalBillingTests extends CheckoutEspressoBasedTester {
         CreditCardLineTesterCommon.check_focus_from_cvv_text_view_in_cc_line("check_focus_from_cvv_text_view_in_cc_line");
     }
 
-    /**
-     * This test does an end-to-end existing card flow for minimal
-     * billing returning shopper
-     */
-    @Test
-    public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException {
-        new_card_basic_fill_info();
-        CurrencyChangeTesterCommon.changeCurrency("CAD");
-        CurrencyChangeTesterCommon.changeCurrency("ILS");
-        CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
-        onView(withId(R.id.buyNowButton)).perform(click());
-        uIAutoTestingBlueSnapService.finish_demo_purchase(shopperCheckoutRequirements);
-    }
 
     /**
      * This test verifies that the all credit card fields are displayed as they should

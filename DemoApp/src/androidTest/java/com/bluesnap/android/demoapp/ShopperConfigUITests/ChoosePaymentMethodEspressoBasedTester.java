@@ -77,12 +77,12 @@ public class ChoosePaymentMethodEspressoBasedTester {
     void chooseExistingCardPaymentMethod(TestingShopperCreditCard creditCard) throws InterruptedException {
         //choose existing credit card
 //        onData((hasItem(hasItem(hasToString(containsString(cardNum)))))).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).perform(click());
-        String firstCard = uIAutoTestingBlueSnapService.blueSnapService.getsDKConfiguration()
-                .getShopper().getPreviousPaymentSources().getCreditCardInfos().get(0).getCreditCard().getCardLastFourDigits();
+//        String firstCard = uIAutoTestingBlueSnapService.blueSnapService.getsDKConfiguration()
+//                .getShopper().getPreviousPaymentSources().getCreditCardInfos().get(0).getCreditCard().getCardLastFourDigits();
+//
+//        int cardIndex = firstCard.equals(creditCard.getCardLastFourDigits()) ? 0 : 1;
 
-        int cardIndex = firstCard.equals(creditCard.getCardLastFourDigits()) ? 0 : 1;
-
-        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(cardIndex).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryValue());

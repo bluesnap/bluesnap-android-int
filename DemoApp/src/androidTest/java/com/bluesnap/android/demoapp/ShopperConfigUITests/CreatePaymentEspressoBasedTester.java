@@ -65,7 +65,7 @@ public class CreatePaymentEspressoBasedTester {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, false, true);
         createPaymentSetup(RETURNING_SHOPPER_FULL_BILLING_WITH_SHIPPING_CREDIT_CARD);
 
-        uIAutoTestingBlueSnapService.createPaymentTransaction();
+        uIAutoTestingBlueSnapService.makeCreatePaymentTransaction();
         Assert.assertEquals("wrong credit card was charged", uIAutoTestingBlueSnapService.getTransactions().getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
     }
 
