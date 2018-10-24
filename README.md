@@ -7,7 +7,7 @@
 BlueSnap's Android SDK enables you to easily accept credit card, Google Pay and PayPal payments directly from your Android app, and then process payments from your server using the Payment API. When you use this library, BlueSnap handles most of the PCI compliance burden for you, as the shopper's payment data is tokenized and sent directly to BlueSnap's servers.
 
 # Versions
-This SDK supports Android SDK 25 and above for development. The minimum Android API version for applications is 18, which covers more than 98% of the [Android devices](https://developer.android.com/about/dashboards/index.html).
+This SDK supports Android SDK 27 and above for development. The minimum Android API version for applications is 19,See  [Android devices](https://developer.android.com/about/dashboards/index.html) for device coverage.
 
 # Installation
 
@@ -275,7 +275,7 @@ More information on any of these functions can be found in `BlueSnapService.java
 If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passed as part of the `SdkResult`.
 All the other fields that are relevant to a credit card transaction will be empty.
 
-## Google Pay
+## Google Pay(Beta)
 We've added Google Pay support to our SDK, which involves some dependencies and settings in the SDK's build.gradle.
 Enable the Android Pay API by adding the following to the <application> tag of your AndroidManifest.xml:
 

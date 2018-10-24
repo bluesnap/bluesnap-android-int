@@ -27,5 +27,6 @@
     <string name="version">version</string>
     <string name="todo">TODO</string>
     <string name="second_step_for_shopper_configuration">second step for shopper configuration</string>
+    <string name="google_pay_test_mode">Run Google Pay in TEST mode</string>
 
 </resources>
