@@ -1,0 +1,13 @@
+// Modify this file and save your server API credentials for the demo appllication on the sandbox server.
+// Make sure to use only your API user. not your dashboard user.
+
+android {
+    buildTypes {
+        debug {
+            buildConfigField "String", "BS_API_USER", "\"API_USER\""
+            buildConfigField "String", "BS_API_PASSWORD", "\"API_PASSWORD\""
+            buildConfigField "String", "BS_PAYPAL_EMAIL", "\"PAYPAL_EMAIL\""
+            buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"PAYPAL_PASSWORD\""
+        }
+    }
+}

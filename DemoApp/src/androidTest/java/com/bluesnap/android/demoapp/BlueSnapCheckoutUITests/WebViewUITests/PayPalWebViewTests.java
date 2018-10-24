@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
+import com.bluesnap.android.demoapp.BuildConfig;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
@@ -51,8 +52,8 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
     private List<CustomHTTPParams> sahdboxHttpHeaders = uIAutoTestingBlueSnapService.getHttpParamsForSandboxTests();
 
     private final String SANDBOX_RETRIEVE_PAYPAL_TRANSACTION = "alt-transactions/";
-    private final String SANDBOX_PAYPAL_EMAIL = "apiShopper@bluesnap.com";
-    private final String SANDBOX_PAYPAL_PASSWORD = "Plimus123";
+    private final String SANDBOX_PAYPAL_EMAIL = BuildConfig.BS_PAYPAL_EMAIL;
+    private final String SANDBOX_PAYPAL_PASSWORD = BuildConfig.BS_PAYPAL_PASSWORD;
     private String payPalInvoiceId;
     private String retrieveTransactionResponse;
 

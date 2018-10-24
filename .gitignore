@@ -3,6 +3,8 @@
 *.user
 *.sln.docstates
 
+local.gradle
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

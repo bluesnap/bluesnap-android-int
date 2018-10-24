@@ -4,6 +4,7 @@ plugins {
 
 }
 apply plugin: 'com.android.application'
+
 android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -38,6 +39,7 @@ android {
         ignoreWarnings true
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
+
 
 }
 String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
@@ -104,10 +106,29 @@ dependencies {
 
 }
 
-//task testSuite(type: Test) {
-//    //include 'PaypalSuite.class'
-//    if (System.properties['test.profile'] != 'paypalUI') {
-//        exclude '**/BlueSnapCheckoutUITests/*'
-//    }
-//}
+/**
+ * BuildConfig credentials
+ */
+def sdkUserEnv=System.getenv('BS_API_USER')
+def sdkPasswordEnv=System.getenv('BS_API_PASSWORD')
+def sdkPaypalEmail=System.getenv('BS_PAYPAL_EMAIL')
+def sdkPaypalPassword=System.getenv('BS_PAYPAL_PASSWORD')
 
+if (file("../local.gradle").exists()) {
+    apply from: "../local.gradle"
+}
+
+else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && !sdkPasswordEnv.isEmpty()) {
+    android {
+        buildTypes.all {
+
+                buildConfigField "String", "BS_API_USER", "\"" + sdkUserEnv + "\""
+                buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
+                buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
+                buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"" + sdkPaypalPassword + "\""
+            }}
+
+}
+else {
+    throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+}
