@@ -626,9 +626,9 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     // Validation for chosen payment method (cc, payPal, googlePay)
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forInfoSaved, boolean isGooglePay,
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isPayment, boolean isGooglePay,
                                          TestingShopperCreditCard creditCard) {
-        get_shopper_from_server(shopperCheckoutRequirements, true, forInfoSaved, isGooglePay, creditCard, null);
+        get_shopper_from_server(shopperCheckoutRequirements, true, isPayment, isGooglePay, creditCard, null);
     }
 
     // Validate vaulted shopper info in server
