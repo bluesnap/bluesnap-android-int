@@ -125,7 +125,7 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
 
                     .withElement(findElement(Locator.ID, "btnNext"))
                     .perform(webClick());
-            sleep(2000);
+            sleep(6000);
 
         } catch (Exception e) {
             Log.d(TAG, "Email is already filled in");
