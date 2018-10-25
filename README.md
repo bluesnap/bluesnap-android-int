@@ -299,13 +299,20 @@ The SDK allows you to customize the checkout experience, change colors, icons an
 The SDK includes translated resources for many languages. The Android framework will automatically pick up the translation according to the Android framework locale.
 
 # Demo application
-To get started with the demo application, do the following:
-1. Clone the git repository.
-2. Import the project by choosing "Import Project" and selecting the build.gradle file in the checkout directory.
-3. Build and run the DemoApp on your device.
+The Demo application is working with our sandbox servers. It shows a very basic example of the steps required to integrate the SDK with your app.
+It also covers most of the SDK features. 
 
 ### Demo app token
-The Demo app will obtain a merchant token from BlueSnap sandbox servers using HTTP calls and demo credentials. This procedure should be replaced by your server-side calls.
+The Demo app will obtain a merchant token from BlueSnap sandbox servers using HTTP calls and demo credentials. This procedure should be replaced by your server-side calls. In production applications, you do not need to put your BlueSnap API credetials in your app code.
+
+To get started with the demo application, you will need Sandbox API credetials.
+
+1. Clone the git repository.
+2. Import the project by choosing "Import Project" and selecting the build.gradle file in the checkout directory.
+4. Copy the file local.gradle.example to local.gradle and Put your Sandbox API credentials in it. 
+3. Build and run the DemoApp on your device.
+
+
 
 ### ProGuard exclude
 If you're running ProGuard as part of your build process make sure to exclude the Gson. to do this please add [this](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg) to your proguard.cfg file.
