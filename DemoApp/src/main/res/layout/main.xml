@@ -48,8 +48,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:inputType="numberDecimal"
-                android:hint="@string/_22061813" />
+                android:hint="@string/_22061813"
+                android:inputType="numberDecimal" />
         </LinearLayout>
 
         <TextView
@@ -303,20 +303,37 @@
                     android:gravity="center"
                     android:padding="8dp" />
             </LinearLayout>
-        </LinearLayout>
 
-        <Switch
-            android:id="@+id/allowCurrencyChangeSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:checked="false"
-            android:clickable="true"
-            android:enabled="true"
-            android:focusable="true"
-            android:text="@string/allow_currency_change"
-            android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/allowCurrencyChangeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:text="Currency"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <Switch
+                    android:id="@+id/allowCurrencyChangeSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:padding="8dp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <Switch
             android:id="@+id/googlePayTestModeSwitch"
@@ -349,8 +366,8 @@
             android:layout_width="250dp"
             android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:layout_weight="0.11"
             android:adjustViewBounds="true"
             android:baselineAlignBottom="false"
@@ -401,4 +418,3 @@
         android:layout_centerInParent="true"
         android:layout_gravity="center" />
 </RelativeLayout>
-

@@ -70,19 +70,19 @@ public class ChoosePaymentMethodEspressoBasedTester {
         int buttonComponent = shopperCheckoutRequirements.isShippingRequired() ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, true, creditCard);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, false);
 
     }
 
     void chooseExistingCardPaymentMethod(TestingShopperCreditCard creditCard) throws InterruptedException {
         //choose existing credit card
 //        onData((hasItem(hasItem(hasToString(containsString(cardNum)))))).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).perform(click());
-        String firstCard = uIAutoTestingBlueSnapService.blueSnapService.getsDKConfiguration()
-                .getShopper().getPreviousPaymentSources().getCreditCardInfos().get(0).getCreditCard().getCardLastFourDigits();
+//        String firstCard = uIAutoTestingBlueSnapService.blueSnapService.getsDKConfiguration()
+//                .getShopper().getPreviousPaymentSources().getCreditCardInfos().get(0).getCreditCard().getCardLastFourDigits();
+//
+//        int cardIndex = firstCard.equals(creditCard.getCardLastFourDigits()) ? 0 : 1;
 
-        int cardIndex = firstCard.equals(creditCard.getCardLastFourDigits()) ? 0 : 1;
-
-        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(cardIndex).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.editBillingContactInfo.getCountryValue());
@@ -100,14 +100,14 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
         //submit the choice
         onView(withId(R.id.buyNowButton)).perform(click());
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, true, creditCard);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, false);
     }
 
     void choosePayPalPaymentMethod() throws InterruptedException {
         //choose paypal
         onView(withId(R.id.payPalButton)).perform(click());
 
-        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, false, null);
+        uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(false);
 
     }
 

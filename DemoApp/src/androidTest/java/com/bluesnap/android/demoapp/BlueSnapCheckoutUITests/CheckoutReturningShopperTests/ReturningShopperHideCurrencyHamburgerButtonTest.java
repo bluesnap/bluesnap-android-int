@@ -1,13 +1,17 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests;
 
+import android.support.test.runner.AndroidJUnit4;
+
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 
 /**
  * Created by sivani on 05/08/2018.
  */
+@RunWith(AndroidJUnit4.class)
 
 public class ReturningShopperHideCurrencyHamburgerButtonTest extends ReturningShopperAllowCurrencyChangeTest {
     @Before

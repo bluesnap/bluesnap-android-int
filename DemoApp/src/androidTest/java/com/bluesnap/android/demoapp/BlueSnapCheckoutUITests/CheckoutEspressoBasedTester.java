@@ -88,7 +88,7 @@ public class CheckoutEspressoBasedTester {
         ViewInteraction viewInteraction = onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))));
         viewInteraction.perform(click());
 //        sdkResult = BlueSnapService.getInstance().getSdkResult();
-        uIAutoTestingBlueSnapService.finish_demo_purchase(shopperCheckoutRequirements);
+        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements);
     }
 
     public void new_card_basic_fill_info() {
@@ -123,7 +123,7 @@ public class CheckoutEspressoBasedTester {
         existing_card_edit_info();
         onView(withId(R.id.buyNowButton)).perform(click());
 //        sdkResult = blueSnapService.getSdkResult();
-        uIAutoTestingBlueSnapService.finish_demo_purchase(shopperCheckoutRequirements);
+        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements);
     }
 
     public void existing_card_edit_info() {

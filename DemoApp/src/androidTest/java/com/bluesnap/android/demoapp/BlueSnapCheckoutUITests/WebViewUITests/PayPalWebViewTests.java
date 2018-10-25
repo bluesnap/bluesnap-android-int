@@ -2,7 +2,6 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.WebViewUITests;
 
 import android.support.test.espresso.web.webdriver.DriverAtoms;
 import android.support.test.espresso.web.webdriver.Locator;
-import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
@@ -23,7 +22,6 @@ import junit.framework.Assert;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -45,7 +43,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 /**
  * Created by sivani on 23/08/2018.
  */
-@RunWith(AndroidJUnit4.class)
 public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
     private static final String TAG = PayPalWebViewTests.class.getSimpleName();
     private BlueSnapService blueSnapService = BlueSnapService.getInstance();
@@ -128,6 +125,7 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
 
                     .withElement(findElement(Locator.ID, "btnNext"))
                     .perform(webClick());
+            sleep(2000);
 
         } catch (Exception e) {
             Log.d(TAG, "Email is already filled in");

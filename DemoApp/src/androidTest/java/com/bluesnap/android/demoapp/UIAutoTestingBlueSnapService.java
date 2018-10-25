@@ -24,7 +24,6 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningSho
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.http.CustomHTTPParams;
 import com.bluesnap.androidapi.http.HTTPOperationController;
-import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -419,6 +418,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    // Set up and lunch activity for returning shopper checkout flow
     public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isExistingCard) throws BSPaymentRequestException, InterruptedException, JSONException {
         setExistingCard(isExistingCard);
         purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
@@ -428,6 +428,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         setupAndLaunch(sdkRequest, true, vaultedShopperId);
     }
 
+    // Create new vaulted shopper
     public void createVaultedShopper(boolean withCreditCard) throws JSONException {
         createVaultedShopperService(withCreditCard, new CreateVaultedShopperInterface() {
             @Override
@@ -443,6 +444,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    // Make a vaulted shopper API call
     private void createVaultedShopperService(boolean withCreditCard, final CreateVaultedShopperInterface createVaultedShopper) throws JSONException {
         JSONObject body = withCreditCard ? createVaultedShopperWithCreditCardDataObject() : createBasicVaultedShopperDataObject();
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
@@ -455,7 +457,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
-    //creates vaulted shopper with only first and last name and email
+    // Create JSONObject for a vaulted shopper with only first and last name and email
     private JSONObject createBasicVaultedShopperDataObject() throws JSONException {
         JSONObject postData = new JSONObject();
 
@@ -466,7 +468,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return postData;
     }
 
-    //creates vaulted shopper with credit card info
+    // Create JSONObject for a vaulted shopper with credit card info
     private JSONObject createVaultedShopperWithCreditCardDataObject() throws JSONException {
         JSONObject postData = new JSONObject();
 
@@ -494,30 +496,30 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return postData;
     }
 
-    public void finish_demo_purchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
+    // Verify that the checkout activity ends with the correct result code
+    // Verify that the amount and currency in sdkResult are right
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
         sdkResult = blueSnapService.getSdkResult();
-        CreditCard shopperCreditCard = blueSnapService.getsDKConfiguration().getShopper().getNewCreditCardInfo().getCreditCard();
 
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
         }
 
-        //Verify activity ended with success
+        // Verify activity ended with success
         checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK);
 
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
 
-        //verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        double expectedAmount = sdkResult.getAmount();
+        // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
-//        Assert.assertEquals("SDKResult amount not equals", TestUtils.round_amount(sdkResult.getAmount()), roundedPurchaseAmount);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
 
-        makeTransaction(sdkResult, shopperCheckoutRequirements);
+        makeCheckoutTransaction(sdkResult, shopperCheckoutRequirements);
     }
 
-    private void makeTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
+    // Make a credit card transaction for checkout flow and validate the shopper details in server
+    private void makeCheckoutTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
         transactions = DemoTransactions.getInstance();
         transactions.setContext(applicationContext);
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
@@ -534,7 +536,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
-    public void createPaymentTransaction() throws InterruptedException {
+    // Make a credit card transaction for create payment flow and validate the charged card
+    public void makeCreatePaymentTransaction() throws InterruptedException {
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
             sleep(1000);
@@ -560,6 +563,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    // Make a retrieve transaction API call
     public void retrieveTransaction(String transactionId) throws JSONException {
         BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_TRANSACTION + transactionId, "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
@@ -586,44 +590,64 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
+    // googlePay and payPal validation
+    public void chosenPaymentMethodValidationInServer(boolean isGooglePay) throws InterruptedException {
+        chosenPaymentMethodValidationInServer(null, null, isGooglePay);
+    }
+
+    // credit card, googlePay and payPal validation
     public void chosenPaymentMethodValidationInServer(TestingShopperCheckoutRequirements shopperCheckoutRequirements,
-                                                      boolean isCreditCard, TestingShopperCreditCard creditCard) throws InterruptedException {
-        while (!mActivity.isDestroyed()) {
-            Log.d(TAG, "Waiting for tokenized credit card service to finish");
-            sleep(1000);
+                                                      TestingShopperCreditCard creditCard, boolean isGooglePay) throws InterruptedException {
+        if (!isGooglePay) { // Espresso test, wait for activity to finish
+            while (!mActivity.isDestroyed()) {
+                Log.d(TAG, "Waiting for tokenized credit card service to finish");
+                sleep(1000);
+            }
+
+            //Verify activity ended with success
+            checkResultOk(BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK);
         }
 
-        //Verify activity ended with success
-        checkResultOk(BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK);
-
-        if (isCreditCard) //chosen cc payment method
-            get_shopper_from_server(shopperCheckoutRequirements, true, true, creditCard);
-        else //chosen paypal payment method
-            get_shopper_from_server(null, true, false, null);
+        if (creditCard != null) //chosen cc payment method
+            get_shopper_from_server(shopperCheckoutRequirements, true, false, creditCard);
+        else //chosen payPal or googlePay payment method
+            get_shopper_from_server(null, false, isGooglePay, null);
 
     }
 
+    // Validation for credit card transactions (in regular checkout)
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, true, null);
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, false, null, null);
     }
 
+    // Validation for googlePay transactions
     public void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, true, null, contactInfo);
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, true, null, contactInfo);
     }
 
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, TestingShopperCreditCard creditCard) {
-        get_shopper_from_server(shopperCheckoutRequirements, forShopperConfig, forInfoSaved, creditCard, null);
+    // Validation for chosen payment method (cc, payPal, googlePay)
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isPayment, boolean isGooglePay,
+                                         TestingShopperCreditCard creditCard) {
+        get_shopper_from_server(shopperCheckoutRequirements, true, isPayment, isGooglePay, creditCard, null);
     }
 
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean forShopperConfig, boolean forInfoSaved, TestingShopperCreditCard creditCard, TestingShopperContactInfo contactInfo) {
+    // Validate vaulted shopper info in server
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isShopperConfig, boolean isPayment, boolean isGooglePay,
+                                         TestingShopperCreditCard creditCard, TestingShopperContactInfo contactInfo) {
         get_shopper_service(new GetShopperServiceInterface() {
             @Override
             public void onServiceSuccess() {
-                if (forShopperConfig)
-                    shopper_chosen_payment_method_validation(creditCard);
-                if (forInfoSaved) {
-                    String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
-                    shopper_info_saved_validation(shopperCheckoutRequirements, cardLastFourDigits, contactInfo);
+                if (isShopperConfig) { // shopperConfig validation
+                    String chosenPaymentMethodType;
+                    if (creditCard != null) // Credit card payment method
+                        chosenPaymentMethodType = "CC";
+                    else // PayPal and GooglePay payment methods
+                        chosenPaymentMethodType = isGooglePay ? "GOOGLE_PAY" : "PAYPAL";
+                    shopper_chosen_payment_method_validation(creditCard, chosenPaymentMethodType);
+                }
+                if (isPayment) { // payment validation
+//                    String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
+                    shopper_payment_info_saved_in_server_validation(shopperCheckoutRequirements, contactInfo, isGooglePay);
                 }
             }
 
@@ -634,6 +658,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         });
     }
 
+    // Make a retrieve vaulted shopper API call
     private void get_shopper_service(final GetShopperServiceInterface getShopperServiceInterface) {
         BlueSnapHTTPResponse response = HTTPOperationController.get(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER + "/" + vaultedShopperId, "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
@@ -645,9 +670,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
-    private void shopper_chosen_payment_method_validation(TestingShopperCreditCard creditCard) {
-        String chosenPaymentMethodType = (creditCard != null) ? "CC" : "PAYPAL";
-
+    // Validate chosen payment method in server
+    private void shopper_chosen_payment_method_validation(TestingShopperCreditCard creditCard, String chosenPaymentMethodType) {
         try {
             JSONObject jsonObject = new JSONObject(getShopperResponse);
 
@@ -658,7 +682,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
                 JSONObject jsonObjectCreditCard = jsonObjectChosenPaymentMethod.getJSONObject("creditCard");
                 check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
                 check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
-//            check_if_field_identify("cardSubType", creditCard.getCardSubType(), jsonObjectCreditCard);
                 check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
                 check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
             }
@@ -673,8 +696,9 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     //TODO: add validation that the new credit card info has been saved correctly
-    private void shopper_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String cardLastFourDigits, TestingShopperContactInfo contactInfo) {
-        int cardIndex = 0;
+    // Validate payment info, Billing and shipping, in server
+    private void shopper_payment_info_saved_in_server_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo, boolean googlePay) {
+//        int cardIndex = 0;
         JSONObject jsonObjectBillingContactInfo;
 
         try {
@@ -682,23 +706,23 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             if (shopperCheckoutRequirements.isEmailRequired())
                 emailFromServer = getOptionalString(jsonObject, "email");
 
-            if (contactInfo != null)
-                jsonObjectBillingContactInfo = jsonObject;
-
-            else {
+            if (!googlePay) { // cc payment- parse billing info
                 JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
                 JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
 
-                if (!cardLastFourDigits.isEmpty()) {
-                    String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
-                    cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
-                }
+//                if (!cardLastFourDigits.isEmpty()) {
+//                    String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
+//                    cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+//                }
 
-                jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(cardIndex).getJSONObject("billingContactInfo");
+                jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(0).getJSONObject("billingContactInfo");
+
+                // billing info validation
+                shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, contactInfo);
 
             }
 
-            shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, contactInfo);
+            // shipping info validation
             if (shopperCheckoutRequirements.isShippingRequired())
                 shopper_component_info_saved_validation(shopperCheckoutRequirements, false, jsonObject.getJSONObject("shippingContactInfo"), contactInfo);
 
@@ -711,22 +735,20 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
+    // Validate shopper info in server. if isBillingInfo is true then validate billing info,
+    // o.w. validate shipping info.
     private void shopper_component_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isBillingInfo, JSONObject jsonObject,
                                                          TestingShopperContactInfo _contactInfo) {
         String countryKey;
         String address = "address1";
         TestingShopperContactInfo contactInfo;
 
-        if (_contactInfo != null) {
+        if (_contactInfo != null) { // GooglePay contact info
             contactInfo = _contactInfo;
-            if (isBillingInfo)
-                address = "address";
-        } else {
-            if (!isExistingCard) { //New shopper
+        } else { // Credit card contact info
+            if (!isExistingCard) { // New shopper
                 contactInfo = (!isBillingInfo && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? ContactInfoTesterCommon.shippingContactInfo : ContactInfoTesterCommon.billingContactInfo;
-                //countryKey = contactInfo.getCountryKey();
-            } else { //Returning shopper
-                //countryKey = (isBillingInfo) ? "ca" : "us";
+            } else { // Returning shopper
                 contactInfo = (isBillingInfo) ? ContactInfoTesterCommon.editBillingContactInfo : ContactInfoTesterCommon.editShippingContactInfo;
             }
         }
@@ -744,25 +766,19 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         if (TestUtils.checkCountryHasZip(countryKey))
             check_if_field_identify("zip", contactInfo.getZip(), jsonObject);
 
-        if (isBillingInfo && shopperCheckoutRequirements.isFullBillingRequired() || !isBillingInfo) { //full info or shipping
+        if (!isBillingInfo || shopperCheckoutRequirements.isFullBillingRequired()) { //full info or shipping
             if (_contactInfo != null)
                 check_if_field_identify("state", "MA", jsonObject);
 
             else if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
-//                if (countryKey.equals("US"))
-//                    check_if_field_identify("state", "NY", jsonObject);
-//                else if (countryKey.equals("CA"))
-//                    check_if_field_identify("state", "QC", jsonObject);
-//                else
-//                    check_if_field_identify("state", "RJ", jsonObject);
                 check_if_field_identify("state", contactInfo.getState(), jsonObject);
-
             }
             check_if_field_identify("city", contactInfo.getCity(), jsonObject);
             check_if_field_identify(address, contactInfo.getAddress(), jsonObject);
         }
     }
 
+    // Parse json fields and compare to the parameter "expectedResult"
     private void check_if_field_identify(String fieldName, String expectedResult, JSONObject shopperInfoJsonObject) {
         String fieldContent = null;
         try {
@@ -775,15 +791,20 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             fail("missing field in server response:\n Expected fieldName: " + fieldName + " Expected Value:" + expectedResult + "\n" + getShopperResponse);
         }
 
-        Assert.assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
+        if (fieldName.equals("amount")) // ignoring format differences (such as number of zeros after decimal point), comparing numeric values only
+            Assert.assertTrue(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, Double.parseDouble(expectedResult) - Double.parseDouble(fieldContent) == 0);
+
+        else
+            Assert.assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
     }
 
-    public void checkResultOk(int expectedResultCode) {
+    // Verify that the activity returned with the correct result code
+    private void checkResultOk(int expectedResultCode) {
         try {
             Field f = Activity.class.getDeclaredField("mResultCode"); //NoSuchFieldException
             f.setAccessible(true);
             int mResultCode = f.getInt(mActivityRule.getActivity());
-            assertEquals("The result code is not ok. ", mResultCode, expectedResultCode);
+            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", mResultCode, expectedResultCode);
         } catch (Exception e) {
             fail();
         }

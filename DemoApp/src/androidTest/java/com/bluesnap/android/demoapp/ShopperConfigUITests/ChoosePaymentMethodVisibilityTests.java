@@ -29,11 +29,6 @@ import static org.hamcrest.CoreMatchers.anything;
  */
 
 public class ChoosePaymentMethodVisibilityTests extends ChoosePaymentMethodEspressoBasedTester {
-    private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING_WITH_EMAIL = "22946805";
-    private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_SHIPPING = "29632268";
-    private static final String RETURNING_SHOPPER_ID_FULL_BILLING_WITH_EMAIL = "29632260";
-    private static final String RETURNING_SHOPPER_ID_FULL_BILLING = "29632260";
-
 
     public ChoosePaymentMethodVisibilityTests() {
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
