@@ -21,7 +21,7 @@ public class ChooseCreditCardPaymentMethod extends ChoosePaymentMethodEspressoBa
 
     /**
      * This test does a full billing with email and shipping
-     * end-to-end choose cc payment flow, for new card.
+     * end-to-end choose cc payment flow, for new card for shopper without cc.
      *
      * @throws InterruptedException
      * @throws JSONException
@@ -29,7 +29,7 @@ public class ChooseCreditCardPaymentMethod extends ChoosePaymentMethodEspressoBa
      */
     @Test
     public void choose_new_cc_payment_with_full_billing_with_email_with_shipping_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
-        choosePaymentSetup(true, true);
+        choosePaymentSetup(true, false);
 
         //choose new card
         chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
@@ -51,21 +51,5 @@ public class ChooseCreditCardPaymentMethod extends ChoosePaymentMethodEspressoBa
 
         //choose first credit card
         chooseExistingCardPaymentMethod(TestingShopperCreditCard.VISA_CREDIT_CARD);
-    }
-
-    /**
-     * This test does a full billing with email and shipping
-     * end-to-end choose cc payment flow, for new card for shopper without cc.
-     *
-     * @throws InterruptedException
-     * @throws JSONException
-     * @throws BSPaymentRequestException
-     */
-    @Test
-    public void choose_new_cc_payment_for_shopper_without_cc_flow() throws InterruptedException, JSONException, BSPaymentRequestException {
-        choosePaymentSetup(true, false);
-
-        //choose first credit card
-        chooseNewCardPaymentMethod(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
     }
 }
