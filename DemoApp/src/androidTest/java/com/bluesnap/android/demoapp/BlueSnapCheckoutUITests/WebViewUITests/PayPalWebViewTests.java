@@ -156,9 +156,15 @@ public class PayPalWebViewTests extends CheckoutEspressoBasedTester {
         onWebView()
                 .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
                 .perform(webClick());
-        onWebView()
-                .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
-                .perform(webClick());
+
+        try {
+            onWebView()
+                    .withElement(findElement(Locator.CLASS_NAME, "continueButton"))
+                    .perform(webClick());
+
+        } catch (Exception e) {
+            Log.d(TAG, "There is no second continueButton");
+        }
     }
 
     public void updateCurrencyAndAmountAfterConversion(String oldCurrencyCode, String newCurrencyCode) {
