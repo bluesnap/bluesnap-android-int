@@ -75,6 +75,42 @@ public class GooglePayUITests {
                 LAUNCH_TIMEOUT);
     }
 
+    /**
+     * This test does an end-to-end GooglePay checkout flow
+     * with full billing, shipping and email.
+     * <p>
+     * It runs in test mode.
+     */
+    @Test
+    public void googlePay_checkout_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException {
+        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
+
+        fillInPurchaseRequirements(shopperCheckoutRequirements);
+        startRegularCheckout();
+        basicGooglePayFlow(shopperCheckoutRequirements, true);
+    }
+
+    /**
+     * This test does an end-to-end GooglePay choose payment
+     * method and create payment flow
+     * with full billing, shipping and email.
+     * <p>
+     * It runs in test mode.
+     */
+    @Test
+    public void googlePay_choose_and_create_payment() throws UiObjectNotFoundException, InterruptedException, JSONException {
+        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
+
+        // choose googlePay payment method
+        fillInReturningShopper();
+        fillInPurchaseRequirements(shopperCheckoutRequirements);
+        googlePayChoosePaymentMethodFlow();
+
+        // create googlePayMethod
+        startCreatePayment();
+        basicGooglePayFlow(shopperCheckoutRequirements, false);
+    }
+
     public void fillInReturningShopper() throws UiObjectNotFoundException, InterruptedException, JSONException {
         UiObject returningShopperSwitch = mDevice.findObject(new UiSelector()
                 .resourceIdMatches(".*:id/returningShopperSwitch"));
@@ -222,41 +258,7 @@ public class GooglePayUITests {
 
     }
 
-    /**
-     * This test does an end-to-end GooglePay checkout flow
-     * with full billing, shipping and email.
-     * <p>
-     * It runs in test mode.
-     */
-    @Test
-    public void googlePay_checkout_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException {
-        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
 
-        fillInPurchaseRequirements(shopperCheckoutRequirements);
-        startRegularCheckout();
-        basicGooglePayFlow(shopperCheckoutRequirements, true);
-    }
-
-    /**
-     * This test does an end-to-end GooglePay choose payment
-     * method and create payment flow
-     * with full billing, shipping and email.
-     * <p>
-     * It runs in test mode.
-     */
-    @Test
-    public void googlePay_choose_and_create_payment() throws UiObjectNotFoundException, InterruptedException, JSONException {
-        TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
-
-        // choose googlePay payment method
-        fillInReturningShopper();
-        fillInPurchaseRequirements(shopperCheckoutRequirements);
-        googlePayChoosePaymentMethodFlow();
-
-        // create googlePayMethod
-        startCreatePayment();
-        basicGooglePayFlow(shopperCheckoutRequirements, false);
-    }
 
 
 }

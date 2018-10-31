@@ -7,8 +7,12 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.bluesnap.androidapi.R;
-import com.bluesnap.androidapi.models.*;
-import com.bluesnap.androidapi.services.*;
+import com.bluesnap.androidapi.models.ChosenPaymentMethod;
+import com.bluesnap.androidapi.models.SdkResult;
+import com.bluesnap.androidapi.models.ShopperConfiguration;
+import com.bluesnap.androidapi.models.SupportedPaymentMethods;
+import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.KountService;
 
 /**
  * Created by roy.biber on 21/02/2018.
@@ -88,16 +92,16 @@ public class BluesnapCreatePaymentActivity extends BluesnapCheckoutActivity {
 
     @Override
     protected void setGooglePayAvailable(boolean available) {
-        if (available) {
-            final ShopperConfiguration shopperConfiguration = blueSnapService.getShopperConfiguration();
-            final ChosenPaymentMethod chosenPaymentMethod = shopperConfiguration.getChosenPaymentMethod();
-            if (chosenPaymentMethod.getChosenPaymentMethodType().equals(SupportedPaymentMethods.GOOGLE_PAY)) {
+        final ShopperConfiguration shopperConfiguration = blueSnapService.getShopperConfiguration();
+        final ChosenPaymentMethod chosenPaymentMethod = shopperConfiguration.getChosenPaymentMethod();
+        if (chosenPaymentMethod.getChosenPaymentMethodType().equals(SupportedPaymentMethods.GOOGLE_PAY)) {
+            if (available) {
                 startGooglePayActivityForResult();
+            } else {
+                Log.e(TAG, "ChosenPaymentMethod=GOOGLE_PAY but is not available");
+                setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The chosen payment method is not availbale."));
+                finish();
             }
-        } else {
-            Log.e(TAG, "ChosenPaymentMethod=GOOGLE_PAY but is not available");
-            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, "The chosen payment method is not availbale."));
-            finish();
         }
     }
 }
