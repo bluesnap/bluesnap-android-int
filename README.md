@@ -123,7 +123,13 @@ An `SdkRequest` instance contain also an `allowCurrencyChange` property: if true
 ```
 sdkRequest.setAllowCurrencyChange(false);
 ```
-
+An `SdkRequest` instance contain also a `googlePayTestMode` property: if true (default), Google Pay flow will work in TEST mode, which means any card you enter will result in dummy card details.
+if you set it to false, the SDK will instatiate Google Pay in PRODUCTION mode, which requires Google's approval of the app. If your app is not approved and you set to PRODUCTION mode, when clicking on the Google Pay button, you will get a pop-up saying "This merchant is not enabled for Google Pay"). 
+Google Pay TEST mode is only supported in BlueSnap's Sandbox environment; if you try it in production, the app flow will work, but your transaction will fail.
+You can specifically change this value like this:
+```
+sdkRequest.setGooglePayTestMode(false);
+```
 
 #### Handling tax updates in checkout flow (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 
@@ -286,7 +292,7 @@ Enable the Android Pay API by adding the following to the <application> tag of y
         android:value="true" />
     </application>
 The Google Pay button will become available in the checkout flow if you have allowed this payment method in the BlueSnap console, and if it is supported by the mobile. The demo app will run Google Pay in test mode, meaning any card you choose will result in a dummy card - this way you can test it without having to be approved by Google. 
-To set Google Pay mode to TEST, change the constant PAYMENT_ENVIRONMENT inside GooglePayService class. In the next release we will support this as a configuration.
+To set Google Pay mode to PRODUCTION, change the googlePayTestMode value in your SDKRequest to false.
 To get approved by Google, see [Google Pay Developer Documentation](https://developers.google.com/pay/api/processors/guides/test-and-validation/developer-documentation-checklist).
 
 ## Kount
