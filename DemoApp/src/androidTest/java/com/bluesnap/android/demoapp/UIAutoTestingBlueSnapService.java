@@ -783,7 +783,8 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         String fieldContent = null;
         try {
             if (fieldName.equals("email"))
-                fieldContent = emailFromServer.substring(0, emailFromServer.indexOf("&")) + "@" + emailFromServer.substring(emailFromServer.indexOf(";") + 1);
+                fieldContent = emailFromServer;
+
             else
                 fieldContent = getOptionalString(shopperInfoJsonObject, fieldName);
         } catch (Exception e) {
