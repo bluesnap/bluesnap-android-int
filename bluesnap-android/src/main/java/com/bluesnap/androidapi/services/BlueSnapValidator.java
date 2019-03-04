@@ -207,7 +207,7 @@ public class BlueSnapValidator {
         if (TextUtils.isEmpty(editTextStringNoSpaces) || editTextStringNoSpaces.length() < 2 || TextUtils.isEmpty(validationType.toString()))
             return false;
 
-        if ((EditTextFields.NAME_FIELD.equals(validationType)) && (splittedNames.length < 2 || splittedNames[0].length() < 2)) {
+        if ((EditTextFields.NAME_FIELD.equals(validationType)) && (splittedNames.length < 2)) {
             return false;
         } else if ((EditTextFields.ZIP_FIELD.equals(validationType)) && (!editTextString.matches(regex))) {
             return false;
