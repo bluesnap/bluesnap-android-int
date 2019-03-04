@@ -50,4 +50,14 @@ public class BlueSnapHTTPResponse {
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
+
+    @Override
+    public String toString() {
+        return "BlueSnapHTTPResponse{" +
+                "headers=" + headers +
+                ", responseCode=" + responseCode +
+                ", responseString='" + responseString + '\'' +
+                ", errorResponseString='" + errorResponseString + '\'' +
+                '}';
+    }
 }

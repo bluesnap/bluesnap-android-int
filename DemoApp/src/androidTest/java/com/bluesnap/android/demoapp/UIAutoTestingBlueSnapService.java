@@ -452,7 +452,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             createVaultedShopperResponse = response.getResponseString();
             createVaultedShopper.onServiceSuccess();
         } else {
-            Log.e(TAG, response.getResponseCode() + " " + response.getErrorResponseString());
+            Log.e(TAG, "createVaultedShopperService API error: " + response);
             createVaultedShopper.onServiceFailure();
         }
     }
