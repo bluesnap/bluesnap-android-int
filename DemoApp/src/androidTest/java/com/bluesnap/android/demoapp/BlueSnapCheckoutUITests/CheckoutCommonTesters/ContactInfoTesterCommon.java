@@ -133,19 +133,10 @@ public class ContactInfoTesterCommon {
         check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Fanny Brice", false);
 
         //Entering an invalid name- less than 2 characters and verify error message is displayed
-        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "L Fleur", true);
+        check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "L", true);
 
         //enter a valid name and verify error message is not displayed anymore
         check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Fanny Brice", false);
-
-        //Entering an invalid name- less than 2 characters. BUG! waiting for it to be fixed
-//        onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).perform(clearText(), typeText("La F"));
-//        moveToNextField(componentResourceId, false, nextFieldResourceId, 0);
-
-        //Verify error message is displayed
-//        onView(allOf(withId(R.id.textinput_error),
-//                isDescendantOfA(withId(R.id.input_layout_name)),
-//                isDescendantOfA(withId(R.id.newShoppershippingViewComponent)))).check(matches(isDisplayed()));
 
         //Entering an invalid name- spaces and verify error message is displayed
         check_input_validation(testName, R.id.input_name, R.id.input_layout_name, componentResourceId, withImeButton, nextFieldResourceId, "Sawyer     ", true);
