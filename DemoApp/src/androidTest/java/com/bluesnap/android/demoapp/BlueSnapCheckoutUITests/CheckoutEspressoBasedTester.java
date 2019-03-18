@@ -41,7 +41,7 @@ public class CheckoutEspressoBasedTester {
     protected String defaultCountryValue;
     protected String checkoutCurrency;
     protected double purchaseAmount;
-    private double taxPercent;
+    protected double taxPercent;
     protected double taxAmount;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
     protected TestingShopperCheckoutRequirements shopperCheckoutRequirements;

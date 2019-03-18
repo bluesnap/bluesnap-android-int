@@ -97,6 +97,9 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     private List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
     private static final String SANDBOX_VAULTED_SHOPPER = "vaulted-shoppers";
+    private static final String SANDBOX_PLAN = "recurring/plans";
+    private static final String SANDBOX_SUBSCRIPTION = "recurring/subscriptions";
+
     private String getShopperResponse;
     private String createVaultedShopperResponse;
     private String emailFromServer;
@@ -588,6 +591,62 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             e.printStackTrace();
             fail("Error on parse transaction info");
         }
+    }
+
+    // Make a Create Subscription Plan API call
+    public String createSubscriptionPlan() throws JSONException {
+        String planId = "";
+        JSONObject body = createBasicSubscriptionPlanDataObject();
+        BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_PLAN, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+            JSONObject jsonObject = new JSONObject(response.getResponseString());
+            planId = getOptionalString(jsonObject, "planId");
+        } else {
+            Log.e(TAG, "createVaultedShopperService API error: " + response);
+            fail("Cannot create subscription plan from merchant server");
+        }
+
+        return planId;
+
+    }
+
+    // Create JSONObject for a Subscription Plan
+    private JSONObject createBasicSubscriptionPlanDataObject() throws JSONException {
+        JSONObject postData = new JSONObject();
+
+        postData.put("chargeFrequency", "MONTHLY");
+        postData.put("name", "Gold Plan");
+        postData.put("currency", checkoutCurrency);
+        postData.put("recurringChargeAmount", purchaseAmount);
+
+        return postData;
+    }
+
+    // Make a Create Subscription Charge API call
+    public void createSubscriptionCharge(String planId) throws JSONException {
+        JSONObject body = createBasicSubscriptionChargeDataObject(planId);
+        BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_SUBSCRIPTION, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
+        if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
+            JSONObject jsonObject = new JSONObject(response.getResponseString());
+            check_if_field_identify("status", "ACTIVE", jsonObject);
+        } else {
+            Log.e(TAG, "createVaultedShopperService API error: " + response);
+            fail("Cannot create subscription charge from merchant server");
+        }
+    }
+
+    // Create JSONObject for a Subscription Charge
+    private JSONObject createBasicSubscriptionChargeDataObject(String planId) throws JSONException {
+        JSONObject postData = new JSONObject();
+
+        postData.put("planId", planId);
+
+        JSONObject jsonObjectPaymentSources = new JSONObject();
+        jsonObjectPaymentSources.put("pfToken", merchantToken);
+        postData.put("paymentSource", jsonObjectPaymentSources);
+
+
+        return postData;
     }
 
     // googlePay and payPal validation
