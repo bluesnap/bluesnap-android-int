@@ -1,18 +1,13 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.SubscriptionChargeUITests;
 
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
 
 /**
  * Created by sivani on 18/03/2019.
@@ -25,9 +20,8 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
         shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
     }
 
-    public void setupBeforeSubscription(boolean withPriceDetails) throws InterruptedException, BSPaymentRequestException, JSONException {
-        subscriptionChargeSetup(withPriceDetails);
-        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+    public void setupBeforeSubscription(boolean withPriceDetails, boolean forReturningShopper) throws InterruptedException, BSPaymentRequestException, JSONException {
+        subscriptionChargeSetup(withPriceDetails, forReturningShopper);
     }
 
     /**
@@ -37,7 +31,7 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
      */
     @Test
     public void full_billing_with_shipping_with_email_with_price_details_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
-        setupBeforeSubscription(true);
+        setupBeforeSubscription(true, false);
         new_card_basic_subscription_flow();
     }
 
@@ -48,7 +42,29 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
      */
     @Test
     public void full_billing_with_shipping_with_email_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
-        setupBeforeSubscription(false);
+        setupBeforeSubscription(false, false);
         new_card_basic_subscription_flow();
+    }
+
+    /**
+     * This test does an end-to-end existing card subscription flow for full
+     * billing with shipping with email returning shopper
+     * with price details presented
+     */
+    @Test
+    public void returning_shopper_full_billing_with_shipping_with_email_with_price_details_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
+        setupBeforeSubscription(true, true);
+        returning_shopper_card_basic_subscription_flow();
+    }
+
+    /**
+     * This test does an end-to-end existing card subscription flow for full
+     * billing with shipping with email returning shopper
+     * without price details presented
+     */
+    @Test
+    public void returning_shopper_full_billing_with_shipping_with_email_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
+        setupBeforeSubscription(false, true);
+        returning_shopper_card_basic_subscription_flow();
     }
 }

@@ -84,16 +84,18 @@ public class SdkRequestSubscriptionCharge extends SdkRequestBase {
 
     @Override
     public String getBuyNowButtonText(View view) {
-        String buttonText = "Subscribe";
+        String buttonText;
 
         if (hasPriceDetails()) {
-            buttonText += (" " +
+            buttonText = (
                     getStringFormatAmount(
-                            view.getResources().getString(R.string.pay),
+                            view.getResources().getString(R.string.subscribe),
                             priceDetails.getCurrencyCode(),
                             priceDetails.getAmount()
                     )
             );
+        } else {
+            buttonText = view.getResources().getString(R.string.subscribe);
         }
 
 

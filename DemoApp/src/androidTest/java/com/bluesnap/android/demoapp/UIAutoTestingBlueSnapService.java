@@ -623,12 +623,12 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     // Make a Create Subscription Charge API call
-    public void createSubscriptionCharge(String planId) throws JSONException {
+    public void createSubscriptionCharge(String planId, TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperCreditCard creditCard) throws JSONException {
         JSONObject body = createBasicSubscriptionChargeDataObject(planId);
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_SUBSCRIPTION, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             JSONObject jsonObject = new JSONObject(response.getResponseString());
-            check_if_field_identify("status", "ACTIVE", jsonObject);
+            subscription_shopper_payment_info_saved_in_server_validation(shopperCheckoutRequirements, creditCard, response.getResponseString());
         } else {
             Log.e(TAG, "createVaultedShopperService API error: " + response);
             fail("Cannot create subscription charge from merchant server");
@@ -738,11 +738,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             check_if_field_identify("chosenPaymentMethodType", chosenPaymentMethodType, jsonObjectChosenPaymentMethod);
 
             if (creditCard != null) {
-                JSONObject jsonObjectCreditCard = jsonObjectChosenPaymentMethod.getJSONObject("creditCard");
-                check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
-                check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
-                check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
-                check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
+                credit_card_validation(jsonObjectChosenPaymentMethod, creditCard);
             }
 
         } catch (JSONException e) {
@@ -752,6 +748,53 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             e.printStackTrace();
             fail("missing field in server response:\n Expected fieldName: email" + "\n" + getShopperResponse);
         }
+    }
+
+    // Validate credit card in server
+    private void credit_card_validation(JSONObject jsonObject, TestingShopperCreditCard creditCard) {
+        try {
+            JSONObject jsonObjectCreditCard = jsonObject.getJSONObject("creditCard");
+            check_if_field_identify("cardLastFourDigits", creditCard.getCardLastFourDigits(), jsonObjectCreditCard);
+            check_if_field_identify("cardType", creditCard.getCardType(), jsonObjectCreditCard);
+            check_if_field_identify("expirationMonth", Integer.toString(creditCard.getExpirationMonth()), jsonObjectCreditCard);
+            check_if_field_identify("expirationYear", Integer.toString(creditCard.getExpirationYear()), jsonObjectCreditCard);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail("Error on parse shopper info");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("missing field in server response:\n Expected fieldName: email" + "\n" + getShopperResponse);
+        }
+    }
+
+    private void subscription_shopper_payment_info_saved_in_server_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperCreditCard creditCard, String serverResponse) {
+
+        try {
+            JSONObject jsonObject = new JSONObject(serverResponse);
+
+            // validate subscription is active
+            check_if_field_identify("status", "ACTIVE", jsonObject);
+
+            JSONObject jsonObjectPaymentSource = jsonObject.getJSONObject("paymentSource");
+            JSONObject jsonObjectCreditCardInfo = jsonObjectPaymentSource.getJSONObject("creditCardInfo");
+
+            JSONObject jsonObjectBillingContactInfo = jsonObjectCreditCardInfo.getJSONObject("billingContactInfo");
+
+            // billing info validation
+            shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, null, true);
+
+            // credit card validation
+            credit_card_validation(jsonObjectCreditCardInfo, creditCard);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            fail("Error on parse shopper info from server response:\n" + serverResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("missing fields in server response:\n" + serverResponse);
+        }
+
     }
 
     //TODO: add validation that the new credit card info has been saved correctly
@@ -794,10 +837,16 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
+    private void shopper_component_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isBillingInfo, JSONObject jsonObject,
+                                                         TestingShopperContactInfo _contactInfo) {
+        shopper_component_info_saved_validation(shopperCheckoutRequirements, isBillingInfo, jsonObject, _contactInfo, false);
+
+    }
+
     // Validate shopper info in server. if isBillingInfo is true then validate billing info,
     // o.w. validate shipping info.
     private void shopper_component_info_saved_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isBillingInfo, JSONObject jsonObject,
-                                                         TestingShopperContactInfo _contactInfo) {
+                                                         TestingShopperContactInfo _contactInfo, Boolean isSubscription) {
         String countryKey;
         String address = "address1";
         TestingShopperContactInfo contactInfo;
@@ -819,7 +868,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         check_if_field_identify("firstName", contactInfo.getFirstName(), jsonObject);
         check_if_field_identify("lastName", contactInfo.getLastName(), jsonObject);
 
-        if (isBillingInfo && shopperCheckoutRequirements.isEmailRequired())
+        if (isBillingInfo && shopperCheckoutRequirements.isEmailRequired() && !isSubscription)
             check_if_field_identify("email", contactInfo.getEmail(), jsonObject);
 
         if (TestUtils.checkCountryHasZip(countryKey))

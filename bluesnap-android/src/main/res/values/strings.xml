@@ -120,5 +120,6 @@
     <string name="invalid_date">Invalid date</string>
     <string name="invalid_cvv">Invalid CVV</string>
     <string name="shipping_same_as_billing">Shipping Same As Billing</string>
+    <string name="subscribe">Subscribe</string>
 
 </resources>
