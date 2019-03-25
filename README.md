@@ -25,19 +25,19 @@ There are 3 supported flow types:
 "Choose Payment method" and "Create Payment" flows work together.
 
 ## Checkout flow: Collect shopper and payment details for a transaction
-This flow is the most commonly used: the shopper chooses to buy something from you app, and you call bluesnap SDK BluesnapCheckoutActivity to handle the UI and data-transmission to BlueSnap; the shopper is asked to choose the payment method (CC/Google Pay/PayPal) and then fills the relevant payment details. The shopper's payment data is tokenized and sent directly to BlueSnap's servers. The activity result returns some of the (non secure) information, but mainly all you need to do now is to complete the transaction: let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.
+This flow is the most commonly used: the shopper chooses to buy something from you app, and you call bluesnap SDK BluesnapCheckoutActivity to handle the UI and data-transmission to BlueSnap; the shopper is asked to choose the payment method (CC/Google Pay/PayPal) and then fills the relevant payment details. The shopper's payment data is tokenized and sent directly to BlueSnap's servers. In this flow we support subscriptoin chrage as well. The activity result returns some of the (non secure) information, but mainly all you need to do now is to complete the transaction: let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed, or the subscription will become active in case of subscription charge. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.
 Steps required for this flow (more information on each below):
 * Generate a token for the transaction
 * Initialize the SDK with the token
 * Launch BluesnapCheckoutActivity and collect shopper payment info
 * Get the SdkResult
-* Complete the transaction
+* Complete the transaction or activate the subscription
 
 ## Choose Payment method flow: Collect the shopper's Chosen Payment Method
 This flow will be used in apps where you wish to save the shopper's payment details upon registration, and use it later in a quick and easy fashion. This flow can be run only for an existing shopper (you can easily create the shopper using BlueSnap API).
 If the shopper chooses a Credit card, we collect the billing details and store them on BlueSnap servers, so that the (later) charge will not require the shopper to type any information. If the shopper chooses Google Pay or PayPal, we simply keep this preference, so that in the next step (Create Payment flow), the shopper will automatically get the GooglePay pop-up or the PayPal page.
 Steps required for this flow (more information on each below):
-* Generate a token for the transaction (for the existing shopper)
+* Generate a token for the choose payment (for the existing shopper)
 * Initialize the SDK with the token
 * Launch the BluesnapChoosePaymentMethodActivity to collect shopper chosen payment info
 * Once you get the activity result, there is nothing else for you to do beside check that it was successful; if successful, then the shopper details are already updated on BlueSnap servers.
@@ -93,12 +93,14 @@ BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "<
 ## Launch the BluesnapCheckoutActivity and collect shopper payment info (Checkout flow)
 The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
 
-To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
+To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method.
+ 
+In case of subscription charge, you'll create an `SdkRequestSubscriptionCharge` instance instead, while the purchase amount and currency are optional.
 
 ## Launch the BluesnapChoosePaymentMethodActivity to collect shopper chosen payment info (Choose Payment method flow)
 The SDK includes a pre-built form, enabling you to easily collect the shopper's chosen payment information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
 
-To launch this flow, you'll create an `SdkRequest` instance (without the purchase amount and currency), and then start the `BluesnapChoosePaymentMethodActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
+To launch this flow, you'll create an `SdkRequestShopperRequirements` instance (without the purchase amount and currency), and then start the `BluesnapChoosePaymentMethodActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
 
 ## Launch the BluesnapCreatePaymentActivity to collect shopper payment info based on previously chosen payment method (Create Payment flow)
 The SDK enables you to easily collect the shopper's information that was saved before (in case the chosen payment method is a credit card; if the chosen payment type was PayPal or Google Pay, the flow will collect the required details similar to the checkout flow). You won't have to handle validations or the storage of sensitive information. 
@@ -107,8 +109,8 @@ To launch this flow, you'll create an `SdkRequest` instance (with the purchase a
 
 ### Create an SdkRequest instance 
 An `SdkRequest` instance is required to pass information about the purchase to the SDK.
-The instance must include:
- - Price Details (for 1st and 3rd flow):
+The instance include:
+ - Price Details (mandatory for 1st and 3rd flow, though optional for subscription in 1st flow):
    -- the current purchase amount 
    -- purchase currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code)
  - Shopper Checkout Requirements
