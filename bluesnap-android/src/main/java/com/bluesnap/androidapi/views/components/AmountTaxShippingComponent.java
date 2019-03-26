@@ -5,12 +5,17 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.*;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
+import com.bluesnap.androidapi.models.SdkRequestSubscriptionCharge;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -87,7 +92,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
             shippingSameAsBillingRelativeLayout.setVisibility(GONE);
 
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
-        if (sdkRequest instanceof SdkRequestShopperRequirements || !priceDetails.isSubtotalTaxSet()) {
+        if (sdkRequest instanceof SdkRequestShopperRequirements || (sdkRequest instanceof SdkRequestSubscriptionCharge && priceDetails == null) || !priceDetails.isSubtotalTaxSet()) {
             amountTaxLinearLayout.setVisibility(GONE);
         } else {
             amountTaxLinearLayout.setVisibility(VISIBLE);
@@ -124,7 +129,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     }
 
     public void setAmountTaxVisibility(int visibility) {
-        if (sdkRequest instanceof SdkRequestShopperRequirements)
+        if (sdkRequest instanceof SdkRequestShopperRequirements || (sdkRequest instanceof SdkRequestSubscriptionCharge && sdkRequest.getPriceDetails() == null))
             amountTaxLinearLayout.setVisibility(GONE);
         else if (GONE == visibility || INVISIBLE == visibility || sdkRequest.getPriceDetails().isSubtotalTaxSet())
             this.amountTaxLinearLayout.setVisibility(visibility);

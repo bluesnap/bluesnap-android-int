@@ -20,6 +20,7 @@ import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PriceDetails;
 import com.bluesnap.androidapi.models.SDKConfiguration;
 import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.SdkRequestSubscriptionCharge;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
@@ -27,8 +28,8 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
-import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.services.GooglePayService;
+import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.adapters.OneLineCCViewAdapter;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -36,7 +37,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.AutoResolveHelper;
 import com.google.android.gms.wallet.PaymentData;
-import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
 
 import org.json.JSONObject;
@@ -106,7 +106,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         LinearLayout payPalButton = findViewById(R.id.payPalButton);
         progressBar = findViewById(R.id.progressBar);
         SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
-        if (!supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL)) {
+        if (!supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) || sdkRequest instanceof SdkRequestSubscriptionCharge) {
             payPalButton.setVisibility(View.GONE);
         } else {
             payPalButton.setOnClickListener(new View.OnClickListener() {

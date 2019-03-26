@@ -41,7 +41,7 @@ public class CheckoutEspressoBasedTester {
     protected String defaultCountryValue;
     protected String checkoutCurrency;
     protected double purchaseAmount;
-    private double taxPercent;
+    protected double taxPercent;
     protected double taxAmount;
     protected ReturningShoppersFactory.TestingShopper returningShopper;
     protected TestingShopperCheckoutRequirements shopperCheckoutRequirements;
@@ -119,7 +119,6 @@ public class CheckoutEspressoBasedTester {
     public void returning_shopper_card_basic_flow_transaction() throws InterruptedException {
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
-        //onView(withId(R.id.newCardButton)).perform(click());
         existing_card_edit_info();
         onView(withId(R.id.buyNowButton)).perform(click());
 //        sdkResult = blueSnapService.getSdkResult();
