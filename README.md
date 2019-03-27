@@ -25,7 +25,7 @@ There are 3 supported flow types:
 "Choose Payment method" and "Create Payment" flows work together.
 
 ## Checkout flow: Collect shopper and payment details for a transaction
-This flow is the most commonly used: the shopper chooses to buy something from you app, and you call bluesnap SDK BluesnapCheckoutActivity to handle the UI and data-transmission to BlueSnap; the shopper is asked to choose the payment method (CC/Google Pay/PayPal) and then fills the relevant payment details. The shopper's payment data is tokenized and sent directly to BlueSnap's servers. In this flow we support subscriptoin chrage as well. The activity result returns some of the (non secure) information, but mainly all you need to do now is to complete the transaction: let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed, or the subscription will become active in case of subscription charge. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.
+This flow is the most commonly used: the shopper chooses to buy something from you app, and you call bluesnap SDK BluesnapCheckoutActivity to handle the UI and data-transmission to BlueSnap; the shopper is asked to choose the payment method (CC/Google Pay/PayPal) and then fills the relevant payment details. The shopper's payment data is tokenized and sent directly to BlueSnap's servers. In this flow we support subscription chrage as well. The activity result returns some of the (non secure) information, but mainly all you need to do now is to complete the transaction: let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed, or the subscription will become active in case of subscription charge. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.
 Steps required for this flow (more information on each below):
 * Generate a token for the transaction
 * Initialize the SDK with the token
@@ -94,7 +94,7 @@ BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "<
 The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
 
 To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method.
- 
+
 In case of subscription charge, you'll create an `SdkRequestSubscriptionCharge` instance instead, while the purchase amount and currency are optional.
 
 ## Launch the BluesnapChoosePaymentMethodActivity to collect shopper chosen payment info (Choose Payment method flow)
