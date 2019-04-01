@@ -48,7 +48,7 @@ public class ChoosePaymentMethodVisibilityTests extends ChoosePaymentMethodEspre
 
         //verify that payPal button is displayed
         onView(withId(R.id.payPalButton))
-                .withFailureHandler(new CustomFailureHandler("Pay Pal button is not displayed"))
+                .withFailureHandler(new CustomFailureHandler("Paypal button is not displayed"))
                 .check(matches(ViewMatchers.isDisplayed()));
 
         //verify that existing credit card component is displayed with the right content

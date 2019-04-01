@@ -177,6 +177,7 @@ public class DemoTransactions {
         return postData;
     }
 
+    //TODO: Redundant
     private String extractValueFromJson(String fieldName, JSONObject shopperInfoJsonObject) {
         String fieldContent = null;
 
