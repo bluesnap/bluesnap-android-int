@@ -244,28 +244,7 @@ sdkResult.getChosenPaymentMethodType(); // for 2nd flow
 ## Complete the transaction (for Checkout and Create Payment flows)
 If the shopper purchased via PayPal, then the transaction has successfully been submitted and no further action is required.
 
-If the shopper purchased via credit card, you will need to make a server-to-server call to BlueSnap's Payment API with the Hosted Payment Field token you initialized in the SDK. You should do this after the shopper has completed checkout and has left the SDK checkout screen. Visit the [API documentation](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) to see how to send an Auth Capture, Auth Only, or Create Vaulted Shopper request (to name a few of the options).
-
-### Auth Capture example - Credit card payments
-For credit card payments, send an HTTP POST request to `/services/2/transactions` of the BlueSnap sandbox or production environment.
-
-For example:
-```cURL
-curl -v -X POST https://sandbox.bluesnap.com/services/2/transactions \
--H 'Content-Type: application/json' \
--H 'Accept: application/json' \
--H 'Authorization: Basic Auth' \
--d '
-{
-	"cardTransactionType": "AUTH_CAPTURE",
-	"recurringTransaction": "ECOMMERCE",
-	"softDescriptor": "Mobile SDK test",
-	"amount": 25.00,
-	"currency": "USD",
-	"pfToken": "TOKEN_STRING"
-}'
-```
-If successful, the response HTTP status code is 200 OK. Visit our [API Reference](https://developers.bluesnap.com/v8976-JSON/docs/auth-capture) for more details.
+If the shopper purchased via credit card, you will need to make a server-to-server call to BlueSnap's Payment API with the Hosted Payment Field token you initialized in the SDK. You should do this after the shopper has completed checkout and has left the SDK checkout screen. Visit the [API documentation](https://developers.bluesnap.com/v8976-Basics/docs/completing-tokenized-payments) to see how.
 
 # Additional functionality
 
