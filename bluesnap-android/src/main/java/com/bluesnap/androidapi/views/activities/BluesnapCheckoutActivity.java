@@ -55,7 +55,9 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     public static final String EXTRA_PAYMENT_RESULT = "com.bluesnap.intent.BSNAP_PAYMENT_RESULT";
     public static final String EXTRA_SHIPPING_DETAILS = "com.bluesnap.intent.BSNAP_SHIPPING_DETAILS";
     public static final String EXTRA_BILLING_DETAILS = "com.bluesnap.intent.BSNAP_BILLING_DETAILS";
+    public static final String EXTRA_SUBSCRIPTION_RESULT = "com.bluesnap.intent.BSNAP_SUBSCRIPTION_RESULT";
     public static final int REQUEST_CODE_DEFAULT = 1;
+    public static final int REQUEST_CODE_SUBSCRIPTION = 2;
     public static final int RESULT_SDK_FAILED = -2;
     private static final int GOOGLE_PAY_PAYMENT_DATA_REQUEST_CODE = 991;
 

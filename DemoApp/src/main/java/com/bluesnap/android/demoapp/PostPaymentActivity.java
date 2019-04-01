@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
@@ -36,6 +37,8 @@ public class PostPaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_payment);
         final SdkResult sdkResult = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT);
+        boolean isSubscription = getIntent().getBooleanExtra(BluesnapCheckoutActivity.EXTRA_SUBSCRIPTION_RESULT, false);
+        Bundle extras = getIntent().getExtras();
         ShippingContactInfo shippingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         BillingContactInfo billingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
         TextView paymentResultTextView2
@@ -49,8 +52,9 @@ public class PostPaymentActivity extends AppCompatActivity {
         tokenSuffixTextView = (TextView) findViewById(R.id.tokenSuffix);
         tokenSuffixTextView.setVisibility(View.INVISIBLE);
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
-        paymentResultTextView2.setText("Your payment of  " + sdkResult.getCurrencyNameCode() + " " + decimalFormat.format(sdkResult.getAmount()) + " has been sent.");
-        Bundle extras = getIntent().getExtras();
+        paymentResultTextView2.setText("Your payment of  " + (sdkResult.getCurrencyNameCode() == null ? " " : sdkResult.getCurrencyNameCode())
+                + " " + (sdkResult.getAmount() == null ? " " : decimalFormat.format(sdkResult.getAmount())) + " has been sent.");
+//        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             // String merchantToken = extras.getString("MERCHANT_TOKEN");
             Log.d(TAG, "Payment Result:\n " + sdkResult.toString());
@@ -61,6 +65,9 @@ public class PostPaymentActivity extends AppCompatActivity {
             if (!TextUtils.isEmpty(sdkResult.getPaypalInvoiceId())) {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
                 //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
+            } else if (isSubscription) {
+                setContinueButton("Please complete the subscription", "");
+
             } else {
                 //setDialog(sdkResult.toString() + "\n" + shippingContactInfo + "\n" + billingContactInfo, "Payment Result");
                 MainApplication.mainHandler.post(new Runnable() {

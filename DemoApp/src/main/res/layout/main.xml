@@ -375,6 +375,20 @@
             android:src="@drawable/bsn"
             android:text="@string/second_step_for_shopper_configuration" />
 
+        <ZoomButton
+            android:id="@+id/merchantAppSubmitSubscriptionButton"
+            android:layout_width="250dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.11"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="false"
+            android:onClick="onSubscriptionSubmit"
+            android:src="@drawable/bsn"
+            android:text="@string/submit_subscription" />
+
     </LinearLayout>
 
 
