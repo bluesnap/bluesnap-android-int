@@ -19,6 +19,8 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
+import org.json.JSONException;
+
 import java.text.DecimalFormat;
 
 
@@ -66,7 +68,16 @@ public class PostPaymentActivity extends AppCompatActivity {
                 setContinueButton(transactions.getMessage(), transactions.getTitle());
                 //setDialog("Transaction success with id:" + sdkResult.getPaypalInvoiceId(), "Paypal transaction");
             } else if (isSubscription) {
-                setContinueButton("Please complete the subscription", "");
+                MainApplication.mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            checkMerchantSubscription(sdkResult);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
             } else {
                 //setDialog(sdkResult.toString() + "\n" + shippingContactInfo + "\n" + billingContactInfo, "Payment Result");
@@ -84,6 +95,31 @@ public class PostPaymentActivity extends AppCompatActivity {
 
     private void checkMerchantTX(SdkResult sdkResult) {
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setContinueButton(transactions.getMessage(), transactions.getTitle());
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setContinueButton(transactions.getMessage(), transactions.getTitle());
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void checkMerchantSubscription(SdkResult sdkResult) throws JSONException {
+        transactions.createSubscriptionCharge(sdkResult, new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 runOnUiThread(new Runnable() {

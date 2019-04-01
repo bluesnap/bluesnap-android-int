@@ -11,14 +11,20 @@ import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_CREATE_TRANSACTION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PLAN;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_SUBSCRIPTION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
@@ -92,6 +98,96 @@ public class DemoTransactions {
             setTitle("Merchant Server");
             callback.onFailure();
         }
+
+    }
+
+    public void createSubscriptionCharge(final SdkResult sdkResult, final BluesnapServiceCallback callback) throws JSONException {
+
+        String basicAuth = "Basic " + Base64.encodeToString((SANDBOX_USER + ":" + SANDBOX_PASS).getBytes(StandardCharsets.UTF_8), 0);
+        List<CustomHTTPParams> headerParams = new ArrayList<>();
+        headerParams.add(new CustomHTTPParams("Authorization", basicAuth));
+
+        String planId = "";
+        JSONObject planBody = createBasicSubscriptionPlanDataObject(sdkResult);
+        BlueSnapHTTPResponse planResponse = HTTPOperationController.post(SANDBOX_URL + SANDBOX_PLAN, planBody.toString(), "application/json", "application/json", headerParams);
+        if (planResponse.getResponseCode() >= 200 && planResponse.getResponseCode() < 300) {
+            JSONObject jsonObject = new JSONObject(planResponse.getResponseString());
+            planId = getOptionalString(jsonObject, "planId");
+        } else {
+            Log.e(TAG, planResponse.getResponseString());
+        }
+
+        JSONObject chargeBody = createBasicSubscriptionChargeDataObject(sdkResult, planId);
+        BlueSnapHTTPResponse chargeResponse = HTTPOperationController.post(SANDBOX_URL + SANDBOX_SUBSCRIPTION, chargeBody.toString(), "application/json", "application/json", headerParams);
+
+        String responseString = chargeResponse.getResponseString();
+        JSONObject jsonObject = new JSONObject(responseString);
+
+        if (chargeResponse.getResponseCode() >= 200 && chargeResponse.getResponseCode() < 300 && chargeResponse.getHeaders() != null) {
+            setShopperId(extractValueFromJson("vaultedShopperId", jsonObject));
+            setTransactionId(extractValueFromJson("subscriptionId", jsonObject));
+
+            String merchantToken = BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken();
+            setTokenSuffix(merchantToken.substring(merchantToken.length() - 6));
+            Log.d(TAG, responseString);
+            setMessage("Subscription Activation Success " + getTransactionId());
+            setTitle("Merchant Server");
+            callback.onSuccess();
+        } else {
+            Log.e(TAG, responseString);
+            //Disabled until server will return a reasonable error
+            String errorName = "Subscription Activation Failed";
+            try {
+                if (responseString != null)
+                    errorName = extractValueFromJson("message", jsonObject);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to get error message from response string");
+                Log.e(TAG, "Failed Subscription Response:  " + responseString);
+            }
+            setMessage(errorName);
+            setTitle("Merchant Server");
+            callback.onFailure();
+        }
+
+    }
+
+    // Create JSONObject for a Subscription Plan
+    private JSONObject createBasicSubscriptionPlanDataObject(final SdkResult sdkResult) throws JSONException {
+        JSONObject postData = new JSONObject();
+
+        postData.put("chargeFrequency", "MONTHLY");
+        postData.put("name", "Gold Plan");
+        postData.put("currency", sdkResult.getCurrencyNameCode());
+        postData.put("recurringChargeAmount", sdkResult.getAmount());
+
+        return postData;
+    }
+
+    // Create JSONObject for a Subscription Charge
+    private JSONObject createBasicSubscriptionChargeDataObject(final SdkResult sdkResult, String planId) throws JSONException {
+        JSONObject postData = new JSONObject();
+
+        postData.put("planId", planId);
+
+        JSONObject jsonObjectPaymentSources = new JSONObject();
+        jsonObjectPaymentSources.put("pfToken", sdkResult.getToken());
+        postData.put("paymentSource", jsonObjectPaymentSources);
+
+
+        return postData;
+    }
+
+    private String extractValueFromJson(String fieldName, JSONObject shopperInfoJsonObject) {
+        String fieldContent = null;
+
+        try {
+            fieldContent = getOptionalString(shopperInfoJsonObject, fieldName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "missing field in server response:\n Expected fieldName: " + fieldName);
+        }
+
+        return fieldContent;
 
     }
 

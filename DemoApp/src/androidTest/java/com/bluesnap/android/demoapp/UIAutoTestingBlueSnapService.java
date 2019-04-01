@@ -59,6 +59,8 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PLAN;
+import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_SUBSCRIPTION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
@@ -97,8 +99,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     private List<CustomHTTPParams> sahdboxHttpHeaders = getHttpParamsForSandboxTests();
     private static final String SANDBOX_VAULTED_SHOPPER = "vaulted-shoppers";
-    private static final String SANDBOX_PLAN = "recurring/plans";
-    private static final String SANDBOX_SUBSCRIPTION = "recurring/subscriptions";
+
 
     private String getShopperResponse;
     private String createVaultedShopperResponse;

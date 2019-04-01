@@ -14,6 +14,8 @@ public class DemoToken extends BluesnapToken{
     public static final String SANDBOX_URL = "https://sandbox.bluesnap.com/services/2/";
     public static final String SANDBOX_TOKEN_CREATION = "payment-fields-tokens";
     public static final String SANDBOX_CREATE_TRANSACTION = "transactions";
+    public static final String SANDBOX_PLAN = "recurring/plans";
+    public static final String SANDBOX_SUBSCRIPTION = "recurring/subscriptions";
 
     public static final String SANDBOX_USER = BS_API_USER;
     public static final String SANDBOX_PASS = BS_API_PASSWORD;
