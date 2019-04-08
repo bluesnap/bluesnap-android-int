@@ -119,8 +119,9 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             });
         }
 
-        if ((supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD) ||
-                supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY)) && !(sdkRequest instanceof SdkRequestSubscriptionCharge)) {
+        if ((supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD)
+                || supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY))
+                && !(sdkRequest instanceof SdkRequestSubscriptionCharge)) {
             checkIsGooglePayAvailable();
         } else {
             setGooglePayAvailable(false);
