@@ -108,6 +108,26 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         LinearLayout payPalButton = findViewById(R.id.payPalButton);
         progressBar = findViewById(R.id.progressBar);
         SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
+
+        boolean shopperHasExistingCC = false;
+        final Shopper shopper = sdkConfiguration.getShopper();
+
+        if (shopper.getPreviousPaymentSources() != null && shopper.getPreviousPaymentSources().getCreditCardInfos() != null) {
+            List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getCreditCardInfos();
+            shopperHasExistingCC = !returningShopperCreditCardInfoArray.isEmpty();
+        }
+
+
+        if (!shopperHasExistingCC && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD)
+                && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY)) {
+            startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+        }
+
+//        if (!shopperHasExistingCC){
+//            startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+//        }
+
+
         if (!supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) || sdkRequest instanceof SdkRequestSubscriptionCharge) {
             payPalButton.setVisibility(View.GONE);
         } else {
