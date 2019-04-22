@@ -30,7 +30,12 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.views.fragments.*;
+import com.bluesnap.androidapi.views.fragments.BlueSnapFragment;
+import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
+import com.bluesnap.androidapi.views.fragments.NewCreditCardShippingFragment;
+import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
+import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragment;
+import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +51,7 @@ import java.net.HttpURLConnection;
 public class CreditCardActivity extends AppCompatActivity {
     private static final String TAG = CreditCardActivity.class.getSimpleName();
     public static final int CREDIT_CARD_ACTIVITY_REQUEST_CODE = 3;
+    public static final int CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE = 4;
     public static final int RESULT_COUNTRY = 11;
     public static final int RESULT_STATE = 12;
     private String fragmentType;
