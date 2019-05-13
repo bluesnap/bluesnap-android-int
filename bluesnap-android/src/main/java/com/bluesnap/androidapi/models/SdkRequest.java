@@ -39,6 +39,11 @@ public class SdkRequest extends SdkRequestBase {
     }
 
     @Override
+    public boolean isHideStoreCardSwitch() {
+        return hideStoreCardSwitch;
+    }
+
+    @Override
     public boolean verify() throws BSPaymentRequestException {
         priceDetails.verify();
         return true;

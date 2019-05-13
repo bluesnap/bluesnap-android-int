@@ -30,7 +30,12 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
-import com.bluesnap.androidapi.views.fragments.*;
+import com.bluesnap.androidapi.views.fragments.BlueSnapFragment;
+import com.bluesnap.androidapi.views.fragments.NewCreditCardFragment;
+import com.bluesnap.androidapi.views.fragments.NewCreditCardShippingFragment;
+import com.bluesnap.androidapi.views.fragments.ReturningShopperBillingFragment;
+import com.bluesnap.androidapi.views.fragments.ReturningShopperCreditCardFragment;
+import com.bluesnap.androidapi.views.fragments.ReturningShopperShippingFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -374,7 +379,8 @@ public class CreditCardActivity extends AppCompatActivity {
         final PurchaseDetails purchaseDetails = new PurchaseDetails(
                 shopper.getNewCreditCardInfo().getCreditCard(),
                 shopper.getNewCreditCardInfo().getBillingContactInfo(),
-                shopper.getShippingContactInfo());
+                shopper.getShippingContactInfo(),
+                shopper.isStoreCard());
 
         blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
             @Override

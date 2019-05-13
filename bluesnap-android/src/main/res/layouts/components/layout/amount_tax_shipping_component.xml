@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPureWhite"
@@ -34,6 +33,33 @@
             android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/shippingSameAsBillingSwitch"
             android:text="@string/shipping_same_as_billing"
+            android:textSize="@dimen/contact_info_text_size" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/storeCardRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2.5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="2.5dp"
+        android:gravity="center_vertical">
+
+        <Switch
+            android:id="@+id/storeCardSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/storeCardTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/storeCardSwitch"
+            android:text="@string/store_card"
             android:textSize="@dimen/contact_info_text_size" />
     </RelativeLayout>
 

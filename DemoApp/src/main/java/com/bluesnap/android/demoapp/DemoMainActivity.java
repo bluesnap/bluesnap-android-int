@@ -83,6 +83,7 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch billingSwitch;
     private Switch emailSwitch;
     private Switch allowCurrencyChangeSwitch;
+    private Switch hideStoreCardSwitch;
     Switch shopperConfigSwitch;
     Switch returningShopperSwitch;
     EditText returningShopperEditText;
@@ -108,6 +109,8 @@ public class DemoMainActivity extends AppCompatActivity {
         emailSwitch.setChecked(false);
         allowCurrencyChangeSwitch = findViewById(R.id.allowCurrencyChangeSwitch);
         allowCurrencyChangeSwitch.setChecked(true);
+        hideStoreCardSwitch = findViewById(R.id.hideStoreCardSwitchSwitch);
+        hideStoreCardSwitch.setChecked(false);
         shopperConfigSwitch = findViewById(R.id.shopperConfigSwitch);
         shopperConfigSwitch.setVisibility(View.INVISIBLE);
         shopperConfigSwitch.setChecked(false);
@@ -319,6 +322,7 @@ public class DemoMainActivity extends AppCompatActivity {
             sdkRequest.setGooglePayTestMode(googlePayTestModeSwitch.isChecked());
 
             sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
+            sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch.isChecked());
             try {
                 sdkRequest.verify();
             } catch (BSPaymentRequestException e) {
@@ -383,6 +387,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
 
         sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
+        sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch.isChecked());
         try {
             sdkRequest.verify();
         } catch (BSPaymentRequestException e) {
@@ -446,6 +451,7 @@ public class DemoMainActivity extends AppCompatActivity {
         sdkRequest.setGooglePayTestMode(googlePayTestModeSwitch.isChecked());
 
         sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
+        sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch.isChecked());
         try {
             sdkRequest.verify();
         } catch (BSPaymentRequestException e) {

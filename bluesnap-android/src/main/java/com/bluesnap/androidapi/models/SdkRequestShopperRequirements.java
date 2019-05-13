@@ -25,6 +25,11 @@ public class SdkRequestShopperRequirements extends SdkRequestBase {
     }
 
     @Override
+    public boolean isHideStoreCardSwitch() {
+        return false;
+    }
+
+    @Override
     public boolean verify() {
         return true;
     }

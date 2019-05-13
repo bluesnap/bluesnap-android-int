@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequestBase;
@@ -20,7 +21,11 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.views.activities.CreditCardActivity;
-import com.bluesnap.androidapi.views.components.*;
+import com.bluesnap.androidapi.views.components.AmountTaxShippingComponent;
+import com.bluesnap.androidapi.views.components.BillingViewSummarizedComponent;
+import com.bluesnap.androidapi.views.components.ButtonComponent;
+import com.bluesnap.androidapi.views.components.OneLineCCViewComponent;
+import com.bluesnap.androidapi.views.components.ShippingViewSummarizedComponent;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -102,6 +107,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
 
         amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
         amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
+        amountTaxShippingComponentView.setStoreCardVisibility(View.GONE);
 
         buttonComponentView = inflate.findViewById(R.id.returningShppoerCCNFragmentButtonComponentView);
         buttonComponentView.setBuyNowButton(buttonComponentText, new View.OnClickListener() {
@@ -164,6 +170,7 @@ public class ReturningShopperCreditCardFragment extends BlueSnapFragment {
             else if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.INVISIBLE);
+                amountTaxShippingComponentView.setStoreCardVisibility(View.INVISIBLE);
                 buttonComponentView.setBuyNowButton(buttonComponentText);
             } /*else {
                 boolean isShippingSameAsBilling = intent.getBooleanExtra(BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, false);

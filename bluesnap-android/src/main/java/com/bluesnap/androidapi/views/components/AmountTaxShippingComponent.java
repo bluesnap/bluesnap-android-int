@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.bluesnap.androidapi.models.SdkRequestSubscriptionCharge;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BlueSnapValidator;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -33,6 +35,10 @@ public class AmountTaxShippingComponent extends LinearLayout {
     private SdkRequestBase sdkRequest;
     private Switch shippingSameAsBillingSwitch;
     private boolean isShippingSameAsBilling = false;
+    private RelativeLayout storeCardRelativeLayout;
+    private Switch storeCardSwitch;
+    private boolean isStoreCard = false;
+    private TextView storeCardTextView;
 
     public AmountTaxShippingComponent(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -68,6 +74,10 @@ public class AmountTaxShippingComponent extends LinearLayout {
         amountTextView = findViewById(R.id.amountTextView);
         taxTextView = findViewById(R.id.taxTextView);
 
+        storeCardRelativeLayout = findViewById(R.id.storeCardRelativeLayout);
+        storeCardSwitch = findViewById(R.id.storeCardSwitch);
+        storeCardTextView = findViewById(R.id.storeCardTextView);
+
         setAmountTaxShipping();
 
         shippingSameAsBillingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -77,11 +87,19 @@ public class AmountTaxShippingComponent extends LinearLayout {
                 BlueSnapLocalBroadcastManager.sendMessage(getContext(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, isChecked, TAG);
             }
         });
+
+        storeCardSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isStoreCard = isChecked;
+                storeCardTextView.setTextColor(Color.BLACK);
+            }
+        });
     }
 
     /**
      * set Sub Total and Tax Amount or hide it
-     * also, show/hide Shipping same as billing switch
+     * also, show/hide Shipping same as billing switch, show/hide Store card switch
      */
     public void setAmountTaxShipping() {
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
@@ -90,6 +108,11 @@ public class AmountTaxShippingComponent extends LinearLayout {
             shippingSameAsBillingRelativeLayout.setVisibility(VISIBLE);
         else
             shippingSameAsBillingRelativeLayout.setVisibility(GONE);
+
+        if (sdkRequest.isHideStoreCardSwitch())
+            storeCardRelativeLayout.setVisibility(GONE);
+        else
+            storeCardRelativeLayout.setVisibility(VISIBLE);
 
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         if (sdkRequest instanceof SdkRequestShopperRequirements || (sdkRequest instanceof SdkRequestSubscriptionCharge && priceDetails == null) || !priceDetails.isSubtotalTaxSet()) {
@@ -135,7 +158,31 @@ public class AmountTaxShippingComponent extends LinearLayout {
             this.amountTaxLinearLayout.setVisibility(visibility);
     }
 
+    /**
+     * check if storeCard Switch is checked or no
+     *
+     * @return boolean
+     */
+    public boolean isStoreCard() {
+        return isStoreCard;
+    }
+
+    public void setStoreCardVisibility(int visibility) {
+        if (GONE == visibility || INVISIBLE == visibility || !sdkRequest.isHideStoreCardSwitch())
+            this.storeCardRelativeLayout.setVisibility(visibility);
+    }
+
     public void sendShippingSameAsBillingBroadcast(boolean isShippingSameAsBilling) {
         shippingSameAsBillingSwitch.setChecked(isShippingSameAsBilling);
+    }
+
+    public boolean validateStoreCard(boolean isShopperRequirements, boolean isSubscriptionCharge) {
+        if (!BlueSnapValidator.validateStoreCard(isShopperRequirements, isSubscriptionCharge, isStoreCard)) {
+//            storeCardSwitch.setBackgroundColor(Color.RED);
+            storeCardTextView.setTextColor(Color.RED);
+            return false;
+        } else {
+            return true;
+        }
     }
 }

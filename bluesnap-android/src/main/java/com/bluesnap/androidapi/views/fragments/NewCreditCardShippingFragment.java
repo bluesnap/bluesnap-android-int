@@ -166,6 +166,8 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
         ((CreditCardActivity) getActivity()).setHeaderTextView(TAG);
         amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.VISIBLE);
+        amountTaxShippingComponentView.setStoreCardVisibility(View.GONE);
+
         buttonComponentView.setBuyNowButton(buttonComponentText, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,6 +193,7 @@ public class NewCreditCardShippingFragment extends BlueSnapFragment {
             if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
                 amountTaxShippingComponentView.setAmountTaxShipping();
                 amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
+                amountTaxShippingComponentView.setStoreCardVisibility(View.GONE);
                 buttonComponentView.setBuyNowButton(buttonComponentText);
             }
         }

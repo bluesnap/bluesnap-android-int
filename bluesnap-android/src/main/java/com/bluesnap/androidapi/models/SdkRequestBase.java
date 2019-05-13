@@ -2,7 +2,9 @@ package com.bluesnap.androidapi.models;
 
 import android.view.View;
 
-import com.bluesnap.androidapi.services.*;
+import com.bluesnap.androidapi.services.AndroidUtil;
+import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.TaxCalculator;
 
 /**
  * An abstract Request for all payment options in the SDK.
@@ -16,6 +18,7 @@ public abstract class SdkRequestBase {
 
     boolean allowCurrencyChange = true;
     boolean googlePayTestMode = true;
+    boolean hideStoreCardSwitch = false;
 
     public PriceDetails getPriceDetails() {
         return priceDetails;
@@ -45,6 +48,12 @@ public abstract class SdkRequestBase {
 
     public void setGooglePayTestMode(boolean googlePayTestMode) {
         this.googlePayTestMode = googlePayTestMode;
+    }
+
+    public abstract boolean isHideStoreCardSwitch();
+
+    public void setHideStoreCardSwitch(boolean hideStoreCardSwitch) {
+        this.hideStoreCardSwitch = hideStoreCardSwitch;
     }
 
     /**

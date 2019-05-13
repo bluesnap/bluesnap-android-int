@@ -47,6 +47,7 @@ public class Shopper extends ContactInfo {
     private ChosenPaymentMethod chosenPaymentMethod = new ChosenPaymentMethod();
     @Nullable
     private CreditCardInfo newCreditCardInfo;
+    private boolean storeCard = false;
 
     public Shopper(ContactInfo contactInfo) {
         setFirstName(contactInfo.getFirstName());
@@ -158,6 +159,14 @@ public class Shopper extends ContactInfo {
 
     public void setNewPaymentSources(@Nullable PaymentSources newPaymentSources) {
         this.newPaymentSources = newPaymentSources;
+    }
+
+    public boolean isStoreCard() {
+        return storeCard;
+    }
+
+    public void setStoreCard(boolean storeCard) {
+        this.storeCard = storeCard;
     }
 
     @Nullable

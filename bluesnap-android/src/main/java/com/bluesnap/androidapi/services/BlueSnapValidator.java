@@ -264,4 +264,17 @@ public class BlueSnapValidator {
         return validInput;
     }
 
+    /**
+     * validate Store Card switch - the shopper consent to store the credit card details, in case it is mandatory.
+     * The shopper consent is mandatory only in the following cases: choose new card as payment method flow (shopper configuration), subscription mode.
+     *
+     * @param isShopperRequirements - is shopper configuration flow
+     * @param isSubscriptionCharge  - is subscription mode
+     * @param isStoreCard           - the switch value
+     * @see EditTextFields
+     */
+    public static boolean validateStoreCard(boolean isShopperRequirements, boolean isSubscriptionCharge, boolean isStoreCard) {
+        return (isShopperRequirements || isSubscriptionCharge) ? isStoreCard : true;
+    }
+
 }
