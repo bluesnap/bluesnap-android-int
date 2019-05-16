@@ -8,7 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 
+import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.ChosenPaymentMethod;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.PaymentSources;
@@ -51,6 +53,11 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE) { // Only new credit card as supported payment method- hide New Card button
+                LinearLayout newCardButton = findViewById(R.id.newCardButton);
+                newCardButton.setVisibility(View.INVISIBLE);
+            }
+
             progressBar.setVisibility(View.VISIBLE);
             Shopper shopper = sdkConfiguration.getShopper();
             CreditCardInfo newCreditCardInfo = shopper.getNewCreditCardInfo();
@@ -69,6 +76,12 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
                 setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
                 finish();
             }
+        }
+
+        // Only new credit card as supported payment method, and flow wasn't completed- finish activity
+        else if (requestCode == CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE) {
+            setResult(resultCode, data);
+            finish();
         }
     }
 
