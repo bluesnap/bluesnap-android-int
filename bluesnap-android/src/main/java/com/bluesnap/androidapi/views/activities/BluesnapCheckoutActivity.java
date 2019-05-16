@@ -101,13 +101,29 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         newCardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC);
+                startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC, CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE);
             }
         });
 
         LinearLayout payPalButton = findViewById(R.id.payPalButton);
         progressBar = findViewById(R.id.progressBar);
         SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
+
+        boolean shopperHasExistingCC = false;
+        final Shopper shopper = sdkConfiguration.getShopper();
+
+        if (shopper.getPreviousPaymentSources() != null && shopper.getPreviousPaymentSources().getCreditCardInfos() != null) {
+            List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getCreditCardInfos();
+            shopperHasExistingCC = !returningShopperCreditCardInfoArray.isEmpty();
+        }
+
+
+        if (!shopperHasExistingCC && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD)
+                && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY)) {
+            startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC, CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE);
+        }
+
+
         if (!supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) || sdkRequest instanceof SdkRequestSubscriptionCharge) {
             payPalButton.setVisibility(View.GONE);
         } else {
@@ -183,10 +199,10 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
      * @param intentExtraName  - The name of the extra data, with package prefix.
      * @param intentExtravalue -  The String data value.
      */
-    protected void startCreditCardActivityForResult(String intentExtraName, String intentExtravalue) {
+    protected void startCreditCardActivityForResult(String intentExtraName, String intentExtravalue, int requestCode) {
         Intent intent = new Intent(getApplicationContext(), CreditCardActivity.class);
         intent.putExtra(intentExtraName, intentExtravalue);
-        startActivityForResult(intent, CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE);
+        startActivityForResult(intent, requestCode);
     }
 
     /**
@@ -260,7 +276,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                     billingContactInfo.setCity(null);
                     billingContactInfo.setState(null);
                 }
-                startCreditCardActivityForResult(FRAGMENT_TYPE, RETURNING_CC);
+                startCreditCardActivityForResult(FRAGMENT_TYPE, RETURNING_CC, CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE);
             }
         });
         oneLineCCViewComponentsListView.setVisibility(View.VISIBLE);
@@ -465,6 +481,15 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                     setResult(BS_CHECKOUT_RESULT_OK, data);
                     finish();
                 }
+                break;
+            }
+            case CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE: {
+                if (resultCode == Activity.RESULT_OK) {
+                    setResult(BS_CHECKOUT_RESULT_OK, data);
+                } else {
+                    setResult(Activity.RESULT_CANCELED, data);
+                }
+                finish();
                 break;
             }
             case WebViewActivity.PAYPAL_REQUEST_CODE: {
