@@ -486,7 +486,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     setResult(BS_CHECKOUT_RESULT_OK, data);
                 } else {
-                    setResult(Activity.RESULT_CANCELED, data);
+                    setResult(resultCode, data);
                 }
                 finish();
                 break;
