@@ -46,6 +46,9 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
         new_credit_billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
+        check_store_card_visibility();
+        check_store_card_visibility_after_changing_activities(true);
+        check_store_card_visibility_after_changing_activities(false);
         pay_button_in_billing_validation();
         empty_fields_invalid_error_validation_in_billing();
         check_ime_action_button_in_billing_contact_info();
@@ -128,6 +131,22 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
      */
     public void default_country_state_view_validation_in_billing() {
         CreditCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountryKey);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility() {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility_after_changing_activities(boolean setTo) {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility_after_changing_activities(true, setTo, shopperCheckoutRequirements, defaultCountryValue, ContactInfoTesterCommon.getDefaultStateByCountry(defaultCountryKey), checkoutCurrency);
     }
 
     /**

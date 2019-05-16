@@ -32,7 +32,7 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
     @Test
     public void full_billing_with_shipping_with_email_with_price_details_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeSubscription(true, false);
-        new_card_basic_subscription_flow();
+        new_card_basic_subscription_flow(true);
     }
 
     /**
@@ -43,7 +43,7 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
     @Test
     public void full_billing_with_shipping_with_email_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeSubscription(false, false);
-        new_card_basic_subscription_flow();
+        new_card_basic_subscription_flow(false);
     }
 
     /**
@@ -54,7 +54,7 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
     @Test
     public void returning_shopper_full_billing_with_shipping_with_email_with_price_details_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeSubscription(true, true);
-        returning_shopper_card_basic_subscription_flow();
+        returning_shopper_card_basic_subscription_flow(true);
     }
 
     /**
@@ -65,6 +65,6 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
     @Test
     public void returning_shopper_full_billing_with_shipping_with_email_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeSubscription(false, true);
-        returning_shopper_card_basic_subscription_flow();
+        returning_shopper_card_basic_subscription_flow(false);
     }
 }

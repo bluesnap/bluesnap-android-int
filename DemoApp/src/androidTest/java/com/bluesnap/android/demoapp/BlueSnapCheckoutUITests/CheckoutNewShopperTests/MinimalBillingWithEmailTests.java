@@ -43,6 +43,7 @@ public class MinimalBillingWithEmailTests extends CheckoutEspressoBasedTester {
         new_credit_billing_contact_info_visibility_validation();
         billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
+        check_store_card_visibility();
         pay_button_in_billing_validation();
         check_ime_action_button_in_billing_contact_info();
         cc_empty_fields_invalid_error_validation();
@@ -86,6 +87,14 @@ public class MinimalBillingWithEmailTests extends CheckoutEspressoBasedTester {
      */
     public void default_country_zip_view_validation_in_billing() {
         CreditCardVisibilityTesterCommon.default_country_zip_view_validation("default_country_zip_view_validation_in_billing", defaultCountryKey, R.id.billingViewComponent);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility() {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
     }
 
     /**

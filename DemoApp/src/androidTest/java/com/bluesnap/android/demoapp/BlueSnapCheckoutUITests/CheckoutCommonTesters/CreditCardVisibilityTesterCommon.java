@@ -7,7 +7,10 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.AndroidUtil;
+
+import javax.annotation.Nullable;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
@@ -15,6 +18,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -258,11 +262,22 @@ public class CreditCardVisibilityTesterCommon {
                 .check(matches(TestUtils.withDrawable(R.drawable.es)));
     }
 
+    // for regular checkout
+    public static void pay_button_visibility_and_content_validation(String testName, int buttonComponent, String checkoutCurrency, double purchaseAmount, double taxAmount) {
+        pay_button_visibility_and_content_validation(testName, buttonComponent, checkoutCurrency, purchaseAmount, taxAmount, false, false);
+    }
+
+    // for subscription without price details
+    public static void pay_button_visibility_and_content_validation(String testName, int buttonComponent) {
+        pay_button_visibility_and_content_validation(testName, buttonComponent, "", 0.0, 0.0, true, false);
+    }
+
     /**
      * This test verifies that the "Pay" button is visible and contains
      * the correct currency symbol and amount
      */
-    public static void pay_button_visibility_and_content_validation(String testName, int buttonComponent, String checkoutCurrency, double purchaseAmount, double taxAmount) {
+    public static void pay_button_visibility_and_content_validation(String testName, int buttonComponent, String checkoutCurrency, double purchaseAmount, double taxAmount,
+                                                                    boolean subscriptionMode, boolean subscriptionHasPriceDetails) {
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Buy now button is not visible"))
                 .check(matches(ViewMatchers.isDisplayed()));
@@ -270,21 +285,29 @@ public class CreditCardVisibilityTesterCommon {
         String buttonContent = TestUtils.getText(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))));
         double totalAmount = purchaseAmount + taxAmount;
 
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
-                .withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't display the correct content!" +
-                        " expected amount: " + TestUtils.getDecimalFormat().format(totalAmount) + ", expected currency: " + checkoutCurrency + ", actual content: " + buttonContent))
-                .check(matches(withText(TestUtils.getStringFormatAmount("Pay",
-                        AndroidUtil.getCurrencySymbol(checkoutCurrency), totalAmount))));
+        if (subscriptionMode && !subscriptionHasPriceDetails) {
+            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Shipping button does not display the correct content"))
+                    .check(matches(withText("Subscribe")));
+        } else {
+            String payText = subscriptionMode ? "Subscribe" : "Pay";
+
+            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Buy now button doesn't display the correct content!" +
+                            " expected amount: " + TestUtils.getDecimalFormat().format(totalAmount) + ", expected currency: " + checkoutCurrency + ", actual content: " + buttonContent))
+                    .check(matches(withText(TestUtils.getStringFormatAmount(payText,
+                            AndroidUtil.getCurrencySymbol(checkoutCurrency), totalAmount))));
+        }
     }
 
     /**
      * This test verifies that the "Shipping" button is visible
      */
-    public static void shipping_button_visibility_and_content_validation(String testName, int buttonComponent) {
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+    public static void shipping_button_visibility_and_content_validation(String testName) {
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView))))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Shipping button is not displayed"))
                 .check(matches(ViewMatchers.isDisplayed()));
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))))
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView))))
                 .withFailureHandler(new CustomFailureHandler(testName + ": Shipping button does not display the correct content"))
                 .check(matches(withText("Shipping")));
     }
@@ -346,5 +369,128 @@ public class CreditCardVisibilityTesterCommon {
                     .check(matches(not(ViewMatchers.isDisplayed())));
 
     }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility, switch state (on/off) and validation (if mandatory)
+     * Pre-Conditions:
+     */
+    public static void check_store_card_visibility(String testName, boolean shouldBeVisible) {
+
+        check_store_card_visibility(testName, shouldBeVisible, false, true);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility, switch state (on/off) and validation (if mandatory)
+     */
+    public static void check_store_card_visibility(String testName, boolean shouldBeVisible, boolean shouldBeOn, boolean isValid) {
+
+        // check visibility
+        check_store_card_layout_visibility(testName, shouldBeVisible);
+
+        // check switch state
+        check_store_card_switch_state(testName, shouldBeOn);
+
+        if (!isValid) {
+            // maybe one day we'll check check_store_card_mandatory here (that the color is red and field is considered invalid)
+        }
+    }
+
+    private static void check_store_card_layout_visibility(String testName, boolean shouldBeVisible) {
+
+        if (shouldBeVisible) {
+            //verify store card layout is visible
+            onView(withId(R.id.storeCardRelativeLayout))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card layout is not visible"))
+                    .check(matches(isDisplayed()));
+            //verify store card textView is visible
+            onView(withId(R.id.storeCardTextView))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is not visible"))
+                    .check(matches(isDisplayed()));
+            //verify store card switch is visible
+            onView(withId(R.id.storeCardSwitch))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is not visible"))
+                    .check(matches(isDisplayed()));
+        } else {
+            //verify store card layout is not visible
+            onView(withId(R.id.storeCardRelativeLayout))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card layout is visible"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
+            //verify store card textView is not visible
+            onView(withId(R.id.storeCardTextView))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is visible"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
+            //verify store card switch is not visible
+            onView(withId(R.id.storeCardSwitch))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is visible"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
+        }
+
+    }
+
+    private static void check_store_card_switch_state(String testName, boolean shouldBeOn) {
+
+        if (shouldBeOn) {
+            //verify store card layout is checked
+            onView(withId(R.id.storeCardSwitch))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is not checked"))
+                    .check(matches(isChecked()));
+        } else {
+            //verify store card layout is not checked
+            onView(withId(R.id.storeCardSwitch))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is checked"))
+                    .check(matches(not(isChecked())));
+        }
+
+    }
+
+    /**
+     * This test verifies the validation of store card switch (if mandatory)
+     * when trying to pay with the swith off, and store card is mandatory
+     * this is the only way to check validation for now, due to UI XCTest limitations
+     */
+    public static void check_store_card_mandatory(String testName) { //TODO: see if we can check text color for this validation
+        onView(withId(R.id.buyNowButton)).perform(click());
+        check_store_card_visibility(testName, true);
+    }
+
+    public static void check_store_card_visibility_after_changing_activities(boolean shouldBeVisible, boolean setTo, TestingShopperCheckoutRequirements shopperCheckoutRequirements,
+                                                                             String country, @Nullable String state, String currencyCode) {
+        check_store_card_visibility_after_changing_activities(shouldBeVisible, setTo, shopperCheckoutRequirements, country, state, currencyCode, true);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch after changing to other screens and returning to payment screen.
+     * It covers visibility and swith state (on/off)
+     */
+    public static void check_store_card_visibility_after_changing_activities(boolean shouldBeVisible, boolean setTo, TestingShopperCheckoutRequirements shopperCheckoutRequirements,
+                                                                             String country, @Nullable String state, String currencyCode, boolean allowCurrencyChange) {
+
+        // set store card switch to the desired mode
+        if (setTo)
+            TestUtils.setStoreCardSwitch(setTo);
+
+        // check store card after changing country
+        ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, country);
+        check_store_card_visibility("check_store_card_visibility_after_changing_activities", shouldBeVisible, setTo, true);
+
+        if (shopperCheckoutRequirements.isFullBillingRequired() && state != null) {
+            // check store card after changing state
+            ContactInfoTesterCommon.changeState(R.id.billingViewComponent, state);
+            check_store_card_visibility("check_store_card_visibility_after_changing_activities", shouldBeVisible, setTo, true);
+        }
+
+        if (allowCurrencyChange) {
+            // check store card after changing currency
+            CurrencyChangeTesterCommon.changeCurrency(currencyCode);
+            check_store_card_visibility("check_store_card_visibility_after_changing_activities", shouldBeVisible, setTo, true);
+        }
+
+        // set store card switch back to the initial mode
+        if (setTo)
+            TestUtils.setStoreCardSwitch(!setTo);
+    }
+
 
 }

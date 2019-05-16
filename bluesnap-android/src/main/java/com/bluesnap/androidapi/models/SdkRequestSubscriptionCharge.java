@@ -48,6 +48,11 @@ public class SdkRequestSubscriptionCharge extends SdkRequestBase {
     }
 
     @Override
+    public boolean isHideStoreCardSwitch() {
+        return false;
+    }
+
+    @Override
     public boolean verify() throws BSPaymentRequestException {
         if (hasPriceDetails())
             priceDetails.verify();

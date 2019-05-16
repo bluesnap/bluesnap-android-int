@@ -2,6 +2,7 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.SubscriptionChargeU
 
 import android.support.test.espresso.matcher.ViewMatchers;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestingShopperCreditCard;
@@ -49,6 +50,9 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
         else
             sdkRequest = new SdkRequestSubscriptionCharge();
 
+        if (forReturningShopper)
+            uIAutoTestingBlueSnapService.setExistingCard(true);
+
         sdkRequest.setAllowCurrencyChange(allowCurrencyChange);
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, forReturningShopper, returningShopperId);
@@ -58,25 +62,46 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
         defaultCountryValue = uIAutoTestingBlueSnapService.getDefaultCountryValue();
     }
 
-    public void new_card_basic_subscription_flow() throws InterruptedException, JSONException {
+
+    public void new_card_basic_subscription_flow(boolean withPriceDetails) throws InterruptedException, JSONException {
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
 
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
 
-        new_card_basic_fill_info();
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
+
+        // check subscribe button
+        if (!shopperCheckoutRequirements.isShippingRequired()) {
+            double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
+            CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
+        } else {
+            CreditCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation");
+        }
+
+        new_card_basic_fill_info(true, true);
+
+        if (shopperCheckoutRequirements.isShippingRequired()) {
+            double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
+            CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
+        }
+
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
         String planId = uIAutoTestingBlueSnapService.createSubscriptionPlan();
         uIAutoTestingBlueSnapService.createSubscriptionCharge(planId, shopperCheckoutRequirements, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
     }
 
 
-    public void returning_shopper_card_basic_subscription_flow() throws InterruptedException, JSONException {
+    public void returning_shopper_card_basic_subscription_flow(boolean withPriceDetails) throws InterruptedException, JSONException {
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
         existing_card_edit_info();
+
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation",
+                R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, purchaseAmount, taxAmount, true, withPriceDetails);
+
         onView(withId(R.id.buyNowButton)).perform(click());
         String planId = uIAutoTestingBlueSnapService.createSubscriptionPlan();
-        uIAutoTestingBlueSnapService.createSubscriptionCharge(planId, shopperCheckoutRequirements, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
+        uIAutoTestingBlueSnapService.createSubscriptionCharge(planId, shopperCheckoutRequirements, TestingShopperCreditCard.VISA_CREDIT_CARD);
     }
 
 

@@ -102,4 +102,11 @@ public class TestingShopperCheckoutRequirements {
         this.emailRequired = emailRequired;
         this.shippingSameAsBilling = shippingSameAsBilling;
     }
+
+    @Override
+    public String toString() {
+        return "with full Billing: " + fullBillingRequired +
+                ", with shipping: " + shippingRequired +
+                ", with email: " + emailRequired;
+    }
 }

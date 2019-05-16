@@ -14,6 +14,8 @@ import org.hamcrest.Matchers;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -379,13 +381,11 @@ public class ContactInfoTesterCommon {
         if (fullInfo) {
             onView(allOf(withId(R.id.input_city), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getCity()), pressImeActionButton());
             onView(allOf(withId(R.id.input_address), isDescendantOfA(withId(componentResourceId)))).perform(clearText(), typeText(contactInfo.getAddress()));
-            if (country.equals("US") || country.equals("CA") || country.equals("BR")) {
-                if (country.equals("US"))
-                    changeState(componentResourceId, "New York");
-                else if (country.equals("CA"))
-                    changeState(componentResourceId, "Quebec");
-                else
-                    changeState(componentResourceId, "Rio de Janeiro");
+
+            String state = getDefaultStateByCountry(country);
+
+            if (state != null) {
+                changeState(componentResourceId, state);
             }
         }
     }
@@ -413,5 +413,20 @@ public class ContactInfoTesterCommon {
         CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, layoutResourceId, componentResourceId, isInvalid);
     }
 
+    @Nullable
+    public static String getDefaultStateByCountry(String countryKey) {
+        String state = null;
+
+        if (countryKey.equals("US") || countryKey.equals("CA") || countryKey.equals("BR")) {
+            if (countryKey.equals("US"))
+                state = "New York";
+            else if (countryKey.equals("CA"))
+                state = "Quebec";
+            else
+                state = "Rio de Janeiro";
+        }
+
+        return state;
+    }
 
 }

@@ -15,6 +15,8 @@ import android.widget.ScrollView;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CreditCardInfo;
 import com.bluesnap.androidapi.models.SdkRequestBase;
+import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
+import com.bluesnap.androidapi.models.SdkRequestSubscriptionCharge;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
@@ -151,6 +153,25 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     }
 
     /**
+     * validate store card
+     *
+     * @return boolean - validation success or failure
+     */
+    public boolean validateStoreCard() {
+        if (!sdkRequest.isHideStoreCardSwitch()) { //storeCard switch is visible
+            boolean isValid = amountTaxShippingComponentView.validateStoreCard(sdkRequest instanceof SdkRequestShopperRequirements, sdkRequest instanceof SdkRequestSubscriptionCharge);
+
+            if (isValid) {
+                shopper.setStoreCard(amountTaxShippingComponentView.isStoreCard());
+            }
+
+            return isValid;
+        } else { //storeCard switch is hidden
+            return true;
+        }
+    }
+
+    /**
      * get Credit Card Info from
      * {@link OneLineCCEditComponent}
      * {@link BillingViewComponent}
@@ -202,7 +223,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             public void onClick(View v) {
                 if (oneLineCCEditComponent.getCreditCardNumberEditText().hasFocus())
                     oneLineCCEditComponent.getCvvEditText().requestFocus();
-                if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                if (validateAndSetCreditCardInfoAndBillingInfo() && validateStoreCard()) {
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
                     if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
                         shopper.setShippingContactInfo(billingViewComponent.getViewResourceDetails());
@@ -213,7 +234,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     }
 
     /**
-     * finish From Fragment assumes no shipping
+     * finish From Fragment assumes with shipping
      * validates Credit Card And Billing Info and moves to shipping
      */
     public void finishFromFragmentWithShipping() {
@@ -229,7 +250,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             public void onClick(View v) {
                 if (oneLineCCEditComponent.getCreditCardNumberEditText().hasFocus())
                     oneLineCCEditComponent.getCvvEditText().requestFocus();
-                if (validateAndSetCreditCardInfoAndBillingInfo()) {
+                if (validateAndSetCreditCardInfoAndBillingInfo() && validateStoreCard()) {
                     unregisterBlueSnapLocalBroadcastReceiver();
                     shopper.setNewCreditCardInfo(newCreditCardInfo);
                     BlueSnapLocalBroadcastManager.sendMessage(getActivity(), BlueSnapLocalBroadcastManager.NEW_CARD_SHIPPING_CHANGE, TAG);

@@ -36,6 +36,8 @@ import java.util.Collection;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -276,8 +278,15 @@ public class TestUtils {
     }
 
     public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail) {
+        continueToShippingOrPayInNewCard(country, fullInfo, withEmail, false);
+    }
+
+    public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail, boolean storeCard) {
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
+
+        if (storeCard)
+            onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
         onView(withId(R.id.buyNowButton)).perform(click());
     }
@@ -307,6 +316,14 @@ public class TestUtils {
 
     public static boolean checkCountryHasZip(String countryText) {
         return !Arrays.asList(Constants.COUNTRIES_WITHOUT_ZIP).contains(countryText.toUpperCase());
+    }
+
+    public static void setStoreCardSwitch(boolean storeCard) {
+        if (storeCard) {
+            onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
+        } else {
+            onView(withId(R.id.storeCardSwitch)).perform(swipeLeft());
+        }
     }
 
 }

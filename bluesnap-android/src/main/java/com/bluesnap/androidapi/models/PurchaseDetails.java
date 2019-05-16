@@ -12,16 +12,17 @@ public class PurchaseDetails {
     private ShippingContactInfo shippingContactInfo;
     private BillingContactInfo billingContactInfo;
     private CreditCard creditCard;
+    private boolean storeCard = false;
 
     public PurchaseDetails() {
     }
 
-    public PurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo) {
-        setPurchaseDetails(creditCard, billingContactInfo, null);
+    public PurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, boolean storeCard) {
+        setPurchaseDetails(creditCard, billingContactInfo, null, storeCard);
     }
 
-    public PurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, ShippingContactInfo shippingContactInfo) {
-        setPurchaseDetails(creditCard, billingContactInfo, shippingContactInfo);
+    public PurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, ShippingContactInfo shippingContactInfo, boolean storeCard) {
+        setPurchaseDetails(creditCard, billingContactInfo, shippingContactInfo, storeCard);
     }
 
     /**
@@ -31,10 +32,11 @@ public class PurchaseDetails {
      * @param billingContactInfo  - {@link BillingContactInfo}
      * @param shippingContactInfo - {@link ShippingContactInfo}
      */
-    public void setPurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo) {
+    public void setPurchaseDetails(CreditCard creditCard, BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo, boolean storeCard) {
         setCreditCard(creditCard);
         setBillingContactInfo(billingContactInfo);
         setShippingContactInfo(shippingContactInfo);
+        setStoreCard(storeCard);
     }
 
     @Nullable
@@ -77,4 +79,16 @@ public class PurchaseDetails {
         this.creditCard = creditCard;
     }
 
+    public boolean getStoreCard() {
+        return storeCard;
+    }
+
+    /**
+     * set Credit Card
+     *
+     * @param storeCard - store card value
+     */
+    public void setStoreCard(boolean storeCard) {
+        this.storeCard = storeCard;
+    }
 }

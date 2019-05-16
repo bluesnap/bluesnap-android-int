@@ -500,9 +500,13 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         return postData;
     }
 
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
+        finishDemoPurchase(shopperCheckoutRequirements, false);
+    }
+
     // Verify that the checkout activity ends with the correct result code
     // Verify that the amount and currency in sdkResult are right
-    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
         sdkResult = blueSnapService.getSdkResult();
 
         while (!mActivity.isDestroyed()) {
@@ -519,18 +523,18 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
         Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
 
-        makeCheckoutTransaction(sdkResult, shopperCheckoutRequirements);
+        makeCheckoutTransaction(sdkResult, shopperCheckoutRequirements, cardStored);
     }
 
     // Make a credit card transaction for checkout flow and validate the shopper details in server
-    private void makeCheckoutTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
+    private void makeCheckoutTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) {
         transactions = DemoTransactions.getInstance();
         transactions.setContext(applicationContext);
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
                 vaultedShopperId = transactions.getShopperId();
-                get_shopper_from_server(shopperCheckoutRequirements);
+                get_shopper_from_server(shopperCheckoutRequirements, cardStored);
             }
 
             @Override
@@ -676,24 +680,24 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     // Validation for credit card transactions (in regular checkout)
-    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, true, false, null, null);
+    private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) {
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, false, null, null, cardStored);
     }
 
     // Validation for googlePay transactions
     public void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo) {
-        get_shopper_from_server(shopperCheckoutRequirements, false, true, true, null, contactInfo);
+        get_shopper_from_server(shopperCheckoutRequirements, false, true, true, null, contactInfo, false);
     }
 
     // Validation for chosen payment method (cc, payPal, googlePay)
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isPayment, boolean isGooglePay,
                                          TestingShopperCreditCard creditCard) {
-        get_shopper_from_server(shopperCheckoutRequirements, true, isPayment, isGooglePay, creditCard, null);
+        get_shopper_from_server(shopperCheckoutRequirements, true, isPayment, isGooglePay, creditCard, null, true);
     }
 
     // Validate vaulted shopper info in server
     private void get_shopper_from_server(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isShopperConfig, boolean isPayment, boolean isGooglePay,
-                                         TestingShopperCreditCard creditCard, TestingShopperContactInfo contactInfo) {
+                                         TestingShopperCreditCard creditCard, TestingShopperContactInfo contactInfo, boolean cardStored) {
         get_shopper_service(new GetShopperServiceInterface() {
             @Override
             public void onServiceSuccess() {
@@ -707,7 +711,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
                 }
                 if (isPayment) { // payment validation
 //                    String cardLastFourDigits = (creditCard == null) ? "" : creditCard.getCardLastFourDigits();
-                    shopper_payment_info_saved_in_server_validation(shopperCheckoutRequirements, contactInfo, isGooglePay);
+                    shopper_payment_info_saved_in_server_validation(shopperCheckoutRequirements, contactInfo, isGooglePay, cardStored);
                 }
             }
 
@@ -800,7 +804,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     //TODO: add validation that the new credit card info has been saved correctly
     // Validate payment info, Billing and shipping, in server
-    private void shopper_payment_info_saved_in_server_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo, boolean googlePay) {
+    private void shopper_payment_info_saved_in_server_validation(TestingShopperCheckoutRequirements shopperCheckoutRequirements, TestingShopperContactInfo contactInfo, boolean googlePay, boolean cardStored) {
 //        int cardIndex = 0;
         JSONObject jsonObjectBillingContactInfo;
 
@@ -809,19 +813,33 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             if (shopperCheckoutRequirements.isEmailRequired())
                 emailFromServer = getOptionalString(jsonObject, "email");
 
-            if (!googlePay) { // cc payment- parse billing info
+            if (!googlePay) { // cc payment- parse creditCardInfo
+
                 JSONObject jsonObjectPaymentSources = jsonObject.getJSONObject("paymentSources");
-                JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
 
-//                if (!cardLastFourDigits.isEmpty()) {
-//                    String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
-//                    cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
-//                }
+                try {
+                    JSONArray creditCardInfoJsonArray = jsonObjectPaymentSources.getJSONArray("creditCardInfo");
 
-                jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(0).getJSONObject("billingContactInfo");
+                    if (!cardStored) {
+                        fail("Error on Retrieve vaulted shopper- 'creditCardInfo' exists when shopper selected DO NOT store");
+                    }
 
-                // billing info validation
-                shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, contactInfo);
+//                    if (!cardLastFourDigits.isEmpty()) {
+//                        String firstCard = getOptionalString(creditCardInfoJsonArray.getJSONObject(0).getJSONObject("creditCard"), "cardLastFourDigits");
+//                        cardIndex = firstCard.equals(cardLastFourDigits) ? 0 : 1;
+//                    }
+
+                    jsonObjectBillingContactInfo = creditCardInfoJsonArray.getJSONObject(0).getJSONObject("billingContactInfo");
+
+                    // billing info validation
+                    shopper_component_info_saved_validation(shopperCheckoutRequirements, true, jsonObjectBillingContactInfo, contactInfo);
+
+                } catch (JSONException e) {
+                    if (cardStored) {
+                        e.printStackTrace();
+                        fail("Error parsing BS result on Retrieve vaulted shopper- Missing 'creditCardInfo'");
+                    }
+                }
 
             }
 

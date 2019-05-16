@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.bluesnap.androidapi.services.BlueSnapValidator;
 import com.bluesnap.androidapi.services.KountService;
-import com.bluesnap.androidapi.utils.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +40,8 @@ public class BSTokenizeDetailsJsonFactory {
     public static final String PHONE = "phone";
 
     public static final String FRAUDSESSIONID = "fraudSessionId";
+    public static final String STORECARD = "storeCard";
+
 
     /**
      * @param creditCard          {@link CreditCard}
@@ -49,7 +50,7 @@ public class BSTokenizeDetailsJsonFactory {
      * @return {@link JSONObject} representation for api put call for the server
      * @throws JSONException in case of invalid JSON object (should not happen)
      */
-    public static JSONObject createDataObject(@NonNull ShopperCheckoutRequirements shopperCheckoutRequirements, @NonNull CreditCard creditCard, @NonNull BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo) throws JSONException {
+    public static JSONObject createDataObject(@NonNull ShopperCheckoutRequirements shopperCheckoutRequirements, @NonNull CreditCard creditCard, @NonNull BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo, boolean storeCard) throws JSONException {
         JSONObject postData = new JSONObject();
 
         if (creditCard.getIsNewCreditCard()) {
@@ -93,6 +94,7 @@ public class BSTokenizeDetailsJsonFactory {
         }
 
         putJSONifNotNull(postData, FRAUDSESSIONID, KountService.getInstance().getKountSessionId());
+        putJSONifNotNull(postData, STORECARD, Boolean.toString(storeCard));
 
         return postData;
     }
@@ -110,6 +112,8 @@ public class BSTokenizeDetailsJsonFactory {
         if (shopperCheckoutRequirements.isShippingRequired())
             shippingContactInfo = purchaseDetails.getShippingContactInfo();
 
-        return createDataObject(shopperCheckoutRequirements, creditCard, billingContactInfo, shippingContactInfo);
+        boolean storeCard = purchaseDetails.getStoreCard();
+
+        return createDataObject(shopperCheckoutRequirements, creditCard, billingContactInfo, shippingContactInfo, storeCard);
     }
 }

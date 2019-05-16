@@ -44,7 +44,7 @@ public class AllowCurrencyChangeTest extends CheckoutEspressoBasedTester {
 
     @Before
     public void setup() throws InterruptedException, BSPaymentRequestException, JSONException {
-        checkoutSetup(false, "", isAllowed);
+        checkoutSetup(false, "", isAllowed, false);
 
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }

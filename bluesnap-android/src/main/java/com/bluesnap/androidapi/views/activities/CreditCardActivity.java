@@ -380,7 +380,8 @@ public class CreditCardActivity extends AppCompatActivity {
         final PurchaseDetails purchaseDetails = new PurchaseDetails(
                 shopper.getNewCreditCardInfo().getCreditCard(),
                 shopper.getNewCreditCardInfo().getBillingContactInfo(),
-                shopper.getShippingContactInfo());
+                shopper.getShippingContactInfo(),
+                shopper.isStoreCard());
 
         blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
             @Override

@@ -51,6 +51,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
         new_credit_billing_contact_info_visibility_validation();
         new_credit_billing_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_billing();
+        check_store_card_visibility();
         shipping_button_validation();
 
         TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
@@ -148,6 +149,14 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
     }
 
     /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility() {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
+    }
+
+    /**
      * This test verifies that the country image matches the shopper's country
      * when first entering shipping info.
      * (according to its location, or us by default)
@@ -204,7 +213,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
      * This test verifies that the "Shipping" button is visible
      */
     public void shipping_button_validation() {
-        CreditCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation", R.id.billingButtonComponentView);
+        CreditCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation");
     }
 
     /**

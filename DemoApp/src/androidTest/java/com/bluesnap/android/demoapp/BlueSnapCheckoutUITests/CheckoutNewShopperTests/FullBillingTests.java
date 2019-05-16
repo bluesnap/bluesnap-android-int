@@ -45,6 +45,7 @@ public class FullBillingTests extends CheckoutEspressoBasedTester {
         default_country_view_validation_in_billing();
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
+        check_store_card_visibility();
 
         //Pre-condition: Current billing country is the default one
         changing_country_view_validation_in_billing();
@@ -127,6 +128,14 @@ public class FullBillingTests extends CheckoutEspressoBasedTester {
      */
     public void default_country_state_view_validation_in_billing() {
         CreditCardVisibilityTesterCommon.default_country_state_view_validation("default_country_state_view_validation_in_billing", R.id.billingViewComponent, defaultCountryKey);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility() {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
     }
 
     /**
