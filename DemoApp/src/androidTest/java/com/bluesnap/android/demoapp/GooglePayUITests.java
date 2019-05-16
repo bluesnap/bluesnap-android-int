@@ -16,6 +16,7 @@ import android.support.test.uiautomator.Until;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
@@ -80,7 +81,7 @@ public class GooglePayUITests {
      * <p>
      * It runs in test mode.
      */
-//    @Test
+    @Test
     public void googlePay_checkout_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException {
         TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
 
@@ -96,7 +97,7 @@ public class GooglePayUITests {
      * <p>
      * It runs in test mode.
      */
-//    @Test
+    @Test
     public void googlePay_choose_and_create_payment() throws UiObjectNotFoundException, InterruptedException, JSONException {
         TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
 
