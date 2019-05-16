@@ -42,7 +42,7 @@ public class ReturningShopperAllowCurrencyChangeTest extends CheckoutEspressoBas
 
     @Before
     public void setup() throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(true, RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING, isAllowed);
+        checkoutSetup(true, RETURNING_SHOPPER_ID_MIN_BILLING_WITH_SHIPPING, isAllowed, false);
 
         onData(anything()).inAdapterView(ViewMatchers.withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
     }

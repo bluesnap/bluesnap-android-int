@@ -5,6 +5,7 @@ import android.support.test.rule.ActivityTestRule;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
@@ -21,6 +22,7 @@ import org.junit.Rule;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -32,6 +34,8 @@ import static org.hamcrest.CoreMatchers.anything;
 
 public class ChoosePaymentMethodEspressoBasedTester {
     protected String defaultCountryKey;
+    protected String defaultCountryValue;
+    protected String checkoutCurrency;
 
     protected TestingShopperCheckoutRequirements shopperCheckoutRequirements;
 
@@ -50,6 +54,8 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, true, uIAutoTestingBlueSnapService.getVaultedShopperId());
         defaultCountryKey = uIAutoTestingBlueSnapService.getDefaultCountryKey();
+        defaultCountryValue = uIAutoTestingBlueSnapService.getDefaultCountryValue();
+        checkoutCurrency = uIAutoTestingBlueSnapService.getCheckoutCurrency();
     }
 
     void chooseNewCardPaymentMethod(TestingShopperCreditCard creditCard) throws InterruptedException {
@@ -59,6 +65,10 @@ public class ChoosePaymentMethodEspressoBasedTester {
         CreditCardLineTesterCommon.fillInCCLineWithValidCard(TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryKey(), shopperCheckoutRequirements.isFullBillingRequired(),
                 shopperCheckoutRequirements.isEmailRequired());
+
+        CreditCardVisibilityTesterCommon.check_store_card_mandatory("check_store_card_mandatory");
+
+        onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
         if (shopperCheckoutRequirements.isShippingRequired()) { //continue to shipping
             onView(withId(R.id.buyNowButton)).perform(click());

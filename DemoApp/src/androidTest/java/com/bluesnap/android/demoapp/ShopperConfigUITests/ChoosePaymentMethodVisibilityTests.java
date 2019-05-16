@@ -3,6 +3,8 @@ package com.bluesnap.android.demoapp.ShopperConfigUITests;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.matcher.ViewMatchers;
 
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ReturningShopperVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
@@ -77,11 +79,18 @@ public class ChoosePaymentMethodVisibilityTests extends ChoosePaymentMethodEspre
 
     @Test
     public void choose_new_card_visibility_test() {
-        //choose new credit card
+        // choose new credit card
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
         currency_hamburger_button_visibility_in_billing();
 
-        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, true);
+        // verify store card is visible
+        check_store_card_visibility();
+
+        // check store card after changing activities
+        check_store_card_visibility_after_changing_activities(true);
+        check_store_card_visibility_after_changing_activities(false);
+
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, true, true);
         currency_hamburger_button_visibility_in_shipping();
 
         submit_button_visibility_and_content_in_new_card();
@@ -115,6 +124,22 @@ public class ChoosePaymentMethodVisibilityTests extends ChoosePaymentMethodEspre
      */
     public void currency_hamburger_button_visibility_in_billing() {
         ShopperConfigVisibilityTesterCommon.currency_hamburger_button_visibility("currency_hamburger_button_visibility_in_billing");
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility() {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
+    }
+
+    /**
+     * This test verifies the visibility of store card switch.
+     * It covers visibility and switch state
+     */
+    public void check_store_card_visibility_after_changing_activities(boolean setTo) {
+        CreditCardVisibilityTesterCommon.check_store_card_visibility_after_changing_activities(true, setTo, shopperCheckoutRequirements, defaultCountryValue, ContactInfoTesterCommon.getDefaultStateByCountry(defaultCountryKey), checkoutCurrency, false);
     }
 
     /**

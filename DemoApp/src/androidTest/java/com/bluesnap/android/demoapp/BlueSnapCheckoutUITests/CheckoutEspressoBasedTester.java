@@ -1,12 +1,12 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 
 import android.content.Context;
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
+import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningShopperTests.ReturningShoppersFactory;
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
@@ -61,16 +61,17 @@ public class CheckoutEspressoBasedTester {
 
 
     protected void checkoutSetup() throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(false, "", true);
+        checkoutSetup(false, "", true, false);
     }
 
     protected void checkoutSetup(boolean forReturningShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(forReturningShopper, "", true);
+        checkoutSetup(forReturningShopper, "", true, false);
     }
 
-    protected void checkoutSetup(boolean forReturningShopper, String returningShopperId, boolean allowCurrencyChange) throws BSPaymentRequestException, InterruptedException, JSONException {
+    protected void checkoutSetup(boolean forReturningShopper, String returningShopperId, boolean allowCurrencyChange, boolean hideStoreCard) throws BSPaymentRequestException, InterruptedException, JSONException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setAllowCurrencyChange(allowCurrencyChange);
+        sdkRequest.setHideStoreCardSwitch(hideStoreCard);
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, forReturningShopper, returningShopperId);
         returningShopper = uIAutoTestingBlueSnapService.getReturningShopper();
@@ -80,18 +81,29 @@ public class CheckoutEspressoBasedTester {
     }
 
     public void new_card_basic_flow_transaction() throws InterruptedException {
+        new_card_basic_flow_transaction(false, false);
+    }
+
+    public void new_card_basic_flow_transaction(boolean hideStoreCardSwitch, boolean storeCard) throws InterruptedException {
         //ƒintending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
 
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
-        new_card_basic_fill_info();
-        ViewInteraction viewInteraction = onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent))));
-        viewInteraction.perform(click());
+
+        CreditCardVisibilityTesterCommon.check_store_card_visibility("New shopper end-to-end " + shopperCheckoutRequirements, !hideStoreCardSwitch);
+
+        new_card_basic_fill_info(storeCard);
+
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
 //        sdkResult = BlueSnapService.getInstance().getSdkResult();
-        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements);
+        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements, storeCard);
     }
 
-    public void new_card_basic_fill_info() {
+    public void new_card_basic_fill_info(boolean storeCard) {
+        new_card_basic_fill_info(storeCard, false);
+    }
+
+    public void new_card_basic_fill_info(boolean storeCard, boolean storeCardIsMandatory) {
         if (shopperCheckoutRequirements.isShippingSameAsBilling())
             onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
 
@@ -100,6 +112,13 @@ public class CheckoutEspressoBasedTester {
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryValue());
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryKey(), shopperCheckoutRequirements.isFullBillingRequired(), shopperCheckoutRequirements.isEmailRequired());
 
+        if (storeCardIsMandatory) {
+            CreditCardVisibilityTesterCommon.check_store_card_mandatory("check_store_card_mandatory");
+        }
+
+        if (storeCard) {
+            onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
+        }
 
         if (shopperCheckoutRequirements.isShippingRequired()) {
             if (shopperCheckoutRequirements.isShippingSameAsBilling()) { //updating roundedPurchaseAmount to include tax since billing country is US
@@ -122,7 +141,7 @@ public class CheckoutEspressoBasedTester {
         existing_card_edit_info();
         onView(withId(R.id.buyNowButton)).perform(click());
 //        sdkResult = blueSnapService.getSdkResult();
-        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements);
+        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements, true);
     }
 
     public void existing_card_edit_info() {

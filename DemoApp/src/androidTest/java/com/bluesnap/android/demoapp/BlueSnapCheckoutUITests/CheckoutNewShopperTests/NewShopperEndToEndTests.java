@@ -28,9 +28,13 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     }
 
     public void setupBeforeTransaction(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling) throws InterruptedException, BSPaymentRequestException, JSONException {
+        setupBeforeTransaction(fullBillingRequired, emailRequired, shippingRequired, shippingSameAsBilling, false);
+    }
+
+    public void setupBeforeTransaction(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling, boolean hideStoreCard) throws InterruptedException, BSPaymentRequestException, JSONException {
         shopperCheckoutRequirements.setTestingShopperCheckoutRequirements(fullBillingRequired, emailRequired, shippingRequired, shippingSameAsBilling);
 
-        checkoutSetup();
+        checkoutSetup(false, "", true, hideStoreCard);
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -41,7 +45,7 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     @Test
     public void change_currency_twice_back_to_usd_espresso_test() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeTransaction(false, false, false, false);
-        new_card_basic_fill_info();
+        new_card_basic_fill_info(false);
         CurrencyChangeTesterCommon.changeCurrency("CAD");
         CurrencyChangeTesterCommon.changeCurrency("ILS");
         CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
@@ -127,5 +131,25 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     public void shipping_same_as_billing_basic_flow_transaction() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeTransaction(true, true, true, true);
         new_card_basic_flow_transaction();
+    }
+
+    /**
+     * This test does an end-to-end new card flow for full
+     * billing with email and shipping new shopper, with store card consent
+     */
+    @Test
+    public void store_card_flow_transaction() throws InterruptedException, BSPaymentRequestException, JSONException {
+        setupBeforeTransaction(true, true, true, false);
+        new_card_basic_flow_transaction(false, true);
+    }
+
+    /**
+     * This test does an end-to-end new card flow for full
+     * billing with email and shipping new shopper, with hide store card switch
+     */
+    @Test
+    public void hide_store_card_flow_transaction() throws InterruptedException, BSPaymentRequestException, JSONException {
+        setupBeforeTransaction(true, true, true, false, true);
+        new_card_basic_flow_transaction(true, false);
     }
 }
