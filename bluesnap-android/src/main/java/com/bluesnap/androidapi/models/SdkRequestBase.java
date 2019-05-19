@@ -4,6 +4,7 @@ import android.view.View;
 
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
+import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.TaxCalculator;
 
 /**
@@ -101,4 +102,14 @@ public abstract class SdkRequestBase {
         );
     }
 
+    /**
+     * enable/disable GooglePay as payment method
+     *
+     */
+    public void setGooglePayActive(boolean googlePayActive){
+        BlueSnapService blueSnapService = BlueSnapService.getInstance();
+        SupportedPaymentMethods supportedPaymentMethods = blueSnapService.getsDKConfiguration().getSupportedPaymentMethods();
+        supportedPaymentMethods.setPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY, googlePayActive);
+        supportedPaymentMethods.setPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD, googlePayActive);
+    }
 }

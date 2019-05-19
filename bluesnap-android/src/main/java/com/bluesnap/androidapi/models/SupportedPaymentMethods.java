@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -22,18 +23,18 @@ public class SupportedPaymentMethods extends BSModel {
     public static final String CC = "CC";
     public static final String USD = "USD";
 
-    private ArrayList<String> paymentMethods;
+    private HashMap<String, Boolean> paymentMethods;
     @Nullable
     private ArrayList<String> paypalCurrencies;
     private ArrayList<String> creditCardBrands;
     private ArrayList<String> creditCardTypes;
     private LinkedHashMap<String, String> creditCardRegex;
 
-    public ArrayList<String> getPaymentMethods() {
+    public HashMap<String, Boolean> getPaymentMethods() {
         return paymentMethods;
     }
 
-    public void setPaymentMethods(ArrayList<String> paymentMethods) {
+    public void setPaymentMethods(HashMap<String, Boolean> paymentMethods) {
         this.paymentMethods = paymentMethods;
     }
 
@@ -71,17 +72,17 @@ public class SupportedPaymentMethods extends BSModel {
     }
 
     public boolean isPaymentMethodActive(String paymentMethod) {
-        ArrayList<String> arr = paymentMethods;
-        Boolean res = false;
-        for (int i = 0; i < arr.size(); i++) {
-                if (arr.get(i).equals(paymentMethod)) {
-                    res = true;
-                    break;
-                }
-        }
-        return res;
+
+        Boolean res = paymentMethods.get(paymentMethod);
+
+        return ((res == null) ? false : res);
     }
 
+    public void setPaymentMethodActive(String paymentMethod, boolean activate) {
+
+        if(paymentMethods.containsKey(paymentMethod))
+            paymentMethods.put(paymentMethod, activate);
+    }
 
     @NonNull
     @Override

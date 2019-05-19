@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -60,11 +61,11 @@ public class JsonParser {
             JSONObject supportedPaymentTypeObject = jsonObject.getJSONObject("supportedPaymentMethods");
             if (supportedPaymentTypeObject != null) {
                 JSONArray paymentMethodJsonArray = supportedPaymentTypeObject.getJSONArray("paymentMethods");
-                ArrayList<String> paymentMethodList = new ArrayList<>();
+                HashMap<String, Boolean> paymentMethodMap = new HashMap<>();
                 for (int i = 0; i < paymentMethodJsonArray.length(); i++) {
-                    paymentMethodList.add(paymentMethodJsonArray.getString(i));
+                    paymentMethodMap.put(paymentMethodJsonArray.getString(i), true);
                 }
-                supportedPaymentMethods.setPaymentMethods(paymentMethodList);
+                supportedPaymentMethods.setPaymentMethods(paymentMethodMap);
 
                 if (supportedPaymentTypeObject.has("paypalCurrencies")) {
                     JSONArray paypalCurrenciesJsonArray = supportedPaymentTypeObject.getJSONArray("paypalCurrencies");
