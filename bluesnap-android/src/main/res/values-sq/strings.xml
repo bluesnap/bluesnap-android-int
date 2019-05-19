@@ -55,4 +55,6 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">Kodi postal i faturimit</string>
     <string name="billing">faturimit</string>
+    <string name="subscribe">pajtohem</string>
+    <string name="store_card">Ruajë të sigurt kartën time për blerje në të ardhmen</string>
 </resources>

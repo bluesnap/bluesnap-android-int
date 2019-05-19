@@ -55,4 +55,6 @@
     <string name="webview">Žiniatinklio rodinys</string>
     <string name="billing_zip">Sąskaitų siuntimo adresas</string>
     <string name="billing">atsiskaitymas</string>
+    <string name="subscribe">Prenumeruoti</string>
+    <string name="store_card">Mano kortelę saugiai laikyti pirkimams ateityje</string>
 </resources>

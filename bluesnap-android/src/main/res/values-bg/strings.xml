@@ -55,4 +55,6 @@
     <string name="webview">Уеб изглед</string>
     <string name="billing_zip">Zip код на фактурата</string>
     <string name="billing">фактуриране</string>
+    <string name="subscribe">Абонирай се</string>
+    <string name="store_card">Разбира се, запазете картата ми за бъдещи покупки</string>
 </resources>

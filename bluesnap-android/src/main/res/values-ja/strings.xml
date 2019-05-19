@@ -55,4 +55,6 @@
     <string name="webview">ウェブ表示</string>
     <string name="billing_zip">請求先郵便番号</string>
     <string name="billing">課金</string>
+    <string name="subscribe">申し込む</string>
+    <string name="store_card">カード情報を今後使用できるよう安全に保管する</string>
 </resources>

@@ -55,4 +55,6 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">帳單郵政編碼</string>
     <string name="billing">计费</string>
+    <string name="subscribe">订阅</string>
+    <string name="store_card">安全储存我的卡片，以备将来购买之用</string>
 </resources>

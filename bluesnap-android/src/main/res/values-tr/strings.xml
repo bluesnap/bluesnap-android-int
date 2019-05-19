@@ -55,4 +55,6 @@
     <string name="webview">WebGörünümü</string>
     <string name="billing_zip">Fatura Zip Kodu</string>
     <string name="billing">fatura</string>
+    <string name="subscribe">Abone ol</string>
+    <string name="store_card">Kartımı gelecek alışverişler için güvenli şekilde kaydet</string>
 </resources>

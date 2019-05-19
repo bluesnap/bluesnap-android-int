@@ -55,4 +55,6 @@
     <string name="webview">NettVisning</string>
     <string name="billing_zip">Frakt-zip</string>
     <string name="billing">fakturering</string>
+    <string name="subscribe">Abonnere</string>
+    <string name="store_card">Jeg vil at kortet mitt skal lagres, sånn at det kan brukes for framtidige kjøp</string>
 </resources>

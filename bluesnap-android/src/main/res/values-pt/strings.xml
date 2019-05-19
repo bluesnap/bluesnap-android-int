@@ -55,4 +55,6 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">CEP de cobrança</string>
     <string name="billing">faturamento</string>
+    <string name="subscribe">Se inscrever</string>
+    <string name="store_card">Guarde o meu cartão com segurança para compras futuras</string>
 </resources>

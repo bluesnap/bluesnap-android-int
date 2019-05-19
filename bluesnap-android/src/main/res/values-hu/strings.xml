@@ -55,4 +55,6 @@
     <string name="webview">Webes nézet</string>
     <string name="billing_zip">Számlázási irányítószám</string>
     <string name="billing">számlázás</string>
+    <string name="subscribe">Iratkozz fel</string>
+    <string name="store_card">Kártyám biztonságos megjegyzése későbbi vásárlások esetére</string>
 </resources>

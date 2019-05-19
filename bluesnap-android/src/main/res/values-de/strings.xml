@@ -55,4 +55,6 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">Rechnungs-Zip</string>
     <string name="billing">Abrechnung</string>
+    <string name="subscribe">Abonnieren</string>
+    <string name="store_card">Kartendaten für zukünftige Käufe sicher speichern</string>
 </resources>

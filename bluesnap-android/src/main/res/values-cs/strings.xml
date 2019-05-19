@@ -55,4 +55,6 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">PSČ pro fakturaci</string>
     <string name="billing">fakturace</string>
+    <string name="subscribe">předplatit</string>
+    <string name="store_card">Bezpečně uložit mou kartu pro budoucí nákupy</string>
 </resources>

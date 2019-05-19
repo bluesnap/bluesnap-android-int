@@ -55,4 +55,6 @@
     <string name="webview">Sidöversikt</string>
     <string name="billing_zip">Faktureringspostnummer</string>
     <string name="billing">fakturering</string>
+    <string name="subscribe">Prenumerera</string>
+    <string name="store_card">Lagra mitt kort säkert för framtida köp</string>
 </resources>
