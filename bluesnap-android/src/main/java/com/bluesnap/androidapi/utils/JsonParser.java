@@ -61,11 +61,9 @@ public class JsonParser {
             JSONObject supportedPaymentTypeObject = jsonObject.getJSONObject("supportedPaymentMethods");
             if (supportedPaymentTypeObject != null) {
                 JSONArray paymentMethodJsonArray = supportedPaymentTypeObject.getJSONArray("paymentMethods");
-                HashMap<String, Boolean> paymentMethodMap = new HashMap<>();
                 for (int i = 0; i < paymentMethodJsonArray.length(); i++) {
-                    paymentMethodMap.put(paymentMethodJsonArray.getString(i), true);
+                    supportedPaymentMethods.setPaymentMethod(paymentMethodJsonArray.getString(i));
                 }
-                supportedPaymentMethods.setPaymentMethods(paymentMethodMap);
 
                 if (supportedPaymentTypeObject.has("paypalCurrencies")) {
                     JSONArray paypalCurrenciesJsonArray = supportedPaymentTypeObject.getJSONArray("paypalCurrencies");

@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by roy.biber on 07/11/2017.
@@ -23,7 +24,7 @@ public class SupportedPaymentMethods extends BSModel {
     public static final String CC = "CC";
     public static final String USD = "USD";
 
-    private HashMap<String, Boolean> paymentMethods;
+    private HashMap<String, Boolean> paymentMethods = new HashMap<>();
     @Nullable
     private ArrayList<String> paypalCurrencies;
     private ArrayList<String> creditCardBrands;
@@ -34,8 +35,8 @@ public class SupportedPaymentMethods extends BSModel {
         return paymentMethods;
     }
 
-    public void setPaymentMethods(HashMap<String, Boolean> paymentMethods) {
-        this.paymentMethods = paymentMethods;
+    public void setPaymentMethod(String paymentMethod) {
+        paymentMethods.put(paymentMethod, true);
     }
 
     @Nullable
@@ -78,7 +79,7 @@ public class SupportedPaymentMethods extends BSModel {
         return ((res == null) ? false : res);
     }
 
-    public void setPaymentMethodActive(String paymentMethod, boolean activate) {
+    public void setPaymentMethodActive(String paymentMethod, Boolean activate) {
 
         if(paymentMethods.containsKey(paymentMethod))
             paymentMethods.put(paymentMethod, activate);
@@ -91,5 +92,19 @@ public class SupportedPaymentMethods extends BSModel {
     }
 
 
+    /**
+     * Set Payment Methods according to merchant configurations
+     *
+     * @param paymentMethods  - The name of the extra data, with package prefix.
+     */
+    public void setPaymentMethods(HashMap<String, Boolean> paymentMethods) {
+
+        for (Map.Entry<String, Boolean> entry : paymentMethods.entrySet()) {
+            setPaymentMethodActive(entry.getKey(), entry.getValue());
+        }
+
+
+
+    }
 
 }

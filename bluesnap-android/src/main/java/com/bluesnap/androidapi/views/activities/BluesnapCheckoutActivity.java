@@ -109,6 +109,9 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
 
+        // update payment methods according to merchant configurations
+        supportedPaymentMethods.setPaymentMethods(sdkRequest.getPaymentMethodsConfiguration());
+
         boolean shopperHasExistingCC = false;
         final Shopper shopper = sdkConfiguration.getShopper();
 
@@ -141,6 +144,12 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         } else {
             setGooglePayAvailable(false);
         }
+    }
+
+    private void updatePaymentMethods(SupportedPaymentMethods supportedPaymentMethods){
+        // update payment methods according to merchant configurations
+        supportedPaymentMethods.setPaymentMethods(sdkRequest.getPaymentMethodsConfiguration());
+
     }
 
     private void checkIsGooglePayAvailable() {
