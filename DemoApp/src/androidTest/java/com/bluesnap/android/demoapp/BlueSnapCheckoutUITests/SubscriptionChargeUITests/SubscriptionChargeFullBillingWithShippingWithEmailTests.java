@@ -49,7 +49,7 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
     /**
      * This test does an end-to-end existing card subscription flow for full
      * billing with shipping with email returning shopper
-     * with price details presented 
+     * with price details presented
      */
     @Test
     public void returning_shopper_full_billing_with_shipping_with_email_with_price_details_basic_subscription_flow() throws InterruptedException, BSPaymentRequestException, JSONException {
