@@ -159,7 +159,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     }
 
     /**
-     * check if storeCard Switch is checked or no
+     * check if storeCard Switch is checked or not
      *
      * @return boolean
      */
