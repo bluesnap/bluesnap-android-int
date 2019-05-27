@@ -55,4 +55,5 @@
     <string name="webview">תצוגת אתר</string>
     <string name="billing_zip">מיקוד</string>
     <string name="billing">חיוב</string>
+    <string name="subscribe">הירשם</string>
 </resources>

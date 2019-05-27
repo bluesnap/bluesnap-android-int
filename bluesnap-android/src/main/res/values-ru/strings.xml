@@ -55,4 +55,6 @@
     <string name="webview">Веб-просмотр</string>
     <string name="billing_zip">Индекс по адресу выставления счета</string>
     <string name="billing">биллинг</string>
+    <string name="subscribe">Подписывайся</string>
+    <string name="store_card">Безопасно сохранить мою карту для будущих покупок</string>
 </resources>

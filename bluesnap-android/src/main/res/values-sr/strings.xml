@@ -55,4 +55,6 @@
     <string name="webview">Веб приказ</string>
     <string name="billing_zip">Поштански број за фактуре</string>
     <string name="billing">наплате</string>
+    <string name="subscribe">претплатити се</string>
+    <string name="store_card">Безбедно запамти моју картицу за касније куповине</string>
 </resources>

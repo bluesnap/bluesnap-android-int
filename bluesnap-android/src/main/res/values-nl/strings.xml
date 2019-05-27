@@ -55,4 +55,6 @@
     <string name="webview">WebWeergave</string>
     <string name="billing_zip">Postcode voor facturering</string>
     <string name="billing">facturering</string>
+    <string name="subscribe">abonneren</string>
+    <string name="store_card">Sla mijn kaart veilig op voor toekomstige aankopen</string>
 </resources>

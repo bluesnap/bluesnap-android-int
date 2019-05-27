@@ -55,4 +55,6 @@
     <string name="webview">Webvisning</string>
     <string name="billing_zip">Fakturerings-postnummer</string>
     <string name="billing">fakturering</string>
+    <string name="subscribe">Tilmeld</string>
+    <string name="store_card">Gem mit kort sikkert for fremtidige køb</string>
 </resources>

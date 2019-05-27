@@ -55,4 +55,6 @@
     <string name="webview">Visuale Web</string>
     <string name="billing_zip">CAP di fatturazione</string>
     <string name="billing">fatturazione</string>
+    <string name="subscribe">sottoscrivi</string>
+    <string name="store_card">Metti da parte senza rischi la mia carta per futuri acquisti</string>
 </resources>

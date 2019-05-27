@@ -55,4 +55,6 @@
     <string name="webview">VueWeb</string>
     <string name="billing_zip">ZIP de facturation</string>
     <string name="billing">facturation</string>
+    <string name="subscribe">Souscrire</string>
+    <string name="store_card">Conserver les données de ma carte de façon sécurisée pour de futurs achats</string>
 </resources>

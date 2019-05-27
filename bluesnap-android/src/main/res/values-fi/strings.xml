@@ -55,4 +55,6 @@
     <string name="webview">WebNäkymä</string>
     <string name="billing_zip">Laskutusosoitteen postinumero</string>
     <string name="billing">laskutus</string>
+    <string name="subscribe">merkitä</string>
+    <string name="store_card">Tallenna korttini turvallisesti tulevia ostoksia varten</string>
 </resources>

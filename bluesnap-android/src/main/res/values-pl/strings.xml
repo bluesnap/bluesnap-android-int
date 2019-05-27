@@ -55,4 +55,6 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">Kod pocztowy faktury</string>
     <string name="billing">dane do faktury</string>
+    <string name="subscribe">Subskrybować</string>
+    <string name="store_card">Zapisz bezpiecznie informacje o mojej karcie na potrzeby przyszłych transakcji</string>
 </resources>
