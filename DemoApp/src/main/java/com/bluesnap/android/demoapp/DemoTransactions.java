@@ -114,7 +114,22 @@ public class DemoTransactions {
             JSONObject jsonObject = new JSONObject(planResponse.getResponseString());
             planId = getOptionalString(jsonObject, "planId");
         } else {
-            Log.e(TAG, planResponse.getResponseString());
+            String responseString = planResponse.getResponseString();
+            JSONObject jsonObject = new JSONObject(responseString);
+
+            Log.e(TAG, responseString);
+            //Disabled until server will return a reasonable error
+            String errorName = "Subscription Activation Failed";
+            try {
+                if (planResponse.getResponseString() != null)
+                    errorName = extractValueFromJson("message", jsonObject);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to get error message from response string");
+                Log.e(TAG, "Failed Subscription Response:  " + responseString);
+            }
+            setMessage(errorName);
+            setTitle("Merchant Server");
+            callback.onFailure();
         }
 
         JSONObject chargeBody = createBasicSubscriptionChargeDataObject(sdkResult, planId);
