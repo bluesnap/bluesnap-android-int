@@ -170,15 +170,15 @@ public class DemoTransactions {
     private JSONObject createBasicSubscriptionPlanDataObject(final SdkResult sdkResult) throws JSONException {
         JSONObject postData = new JSONObject();
 
-        double amount = sdkResult.getAmount() != null ? sdkResult.getAmount() : 55.0;
-        String currency = sdkResult.getCurrencyNameCode() != null ? sdkResult.getCurrencyNameCode() : "USD";
+        double amount = !sdkResult.getAmount().isNaN() ? sdkResult.getAmount() : 55.0;
+        String currency = !sdkResult.getAmount().isNaN() ? sdkResult.getCurrencyNameCode() : "USD";
 
         postData.put("chargeFrequency", "MONTHLY");
         postData.put("name", "Gold Plan");
         postData.put("currency", currency);
         postData.put("recurringChargeAmount", amount);
 
-        if (sdkResult.getAmount() == null)
+        if (sdkResult.getAmount().isNaN())
             postData.put("trialPeriodDays", 30);
 
         return postData;
