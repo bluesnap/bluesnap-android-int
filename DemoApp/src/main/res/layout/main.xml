@@ -378,6 +378,19 @@
             android:text="@string/google_pay_test_mode"
             android:textSize="14sp" />
 
+        <Switch
+            android:id="@+id/disableGooglePaySwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:checked="true"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:text="@string/disable_google_pay"
+            android:textSize="14sp" />
+
         <ZoomButton
             android:id="@+id/merchantAppSubmitButton"
             android:layout_width="250dp"

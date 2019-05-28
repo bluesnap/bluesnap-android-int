@@ -84,6 +84,7 @@ public class DemoMainActivity extends AppCompatActivity {
     private Switch emailSwitch;
     private Switch allowCurrencyChangeSwitch;
     private Switch hideStoreCardSwitch;
+    private Switch disableGooglePay;
     Switch shopperConfigSwitch;
     Switch returningShopperSwitch;
     EditText returningShopperEditText;
@@ -111,6 +112,8 @@ public class DemoMainActivity extends AppCompatActivity {
         allowCurrencyChangeSwitch.setChecked(true);
         hideStoreCardSwitch = findViewById(R.id.hideStoreCardSwitchSwitch);
         hideStoreCardSwitch.setChecked(false);
+        disableGooglePay = findViewById(R.id.disableGooglePaySwitch);
+        disableGooglePay.setChecked(false);
         shopperConfigSwitch = findViewById(R.id.shopperConfigSwitch);
         shopperConfigSwitch.setVisibility(View.INVISIBLE);
         shopperConfigSwitch.setChecked(false);
@@ -284,6 +287,7 @@ public class DemoMainActivity extends AppCompatActivity {
     public void onPaySubmit(View view) {
         if (shopperConfigSwitch.isChecked()) {
             SdkRequestShopperRequirements sdkRequest = new SdkRequestShopperRequirements(billingSwitch.isChecked(), emailSwitch.isChecked(), shippingSwitch.isChecked());
+            sdkRequest.setGooglePayActive(!disableGooglePay.isChecked());
             try {
                 bluesnapService.setSdkRequest(sdkRequest);
                 Intent intent = new Intent(getApplicationContext(), BluesnapChoosePaymentMethodActivity.class);
@@ -323,6 +327,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
             sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
             sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch.isChecked());
+            sdkRequest.setGooglePayActive(!disableGooglePay.isChecked());
             try {
                 sdkRequest.verify();
             } catch (BSPaymentRequestException e) {
@@ -452,6 +457,7 @@ public class DemoMainActivity extends AppCompatActivity {
 
         sdkRequest.setAllowCurrencyChange(allowCurrencyChangeSwitch.isChecked());
         sdkRequest.setHideStoreCardSwitch(hideStoreCardSwitch.isChecked());
+        sdkRequest.setGooglePayActive(!disableGooglePay.isChecked());
         try {
             sdkRequest.verify();
         } catch (BSPaymentRequestException e) {

@@ -6,6 +6,8 @@ import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.TaxCalculator;
 
+import java.util.HashMap;
+
 /**
  * An abstract Request for all payment options in the SDK.
  * A new SdkRequest type derivative should be used for each purchase.
@@ -19,6 +21,7 @@ public abstract class SdkRequestBase {
     boolean allowCurrencyChange = true;
     boolean googlePayTestMode = true;
     boolean hideStoreCardSwitch = false;
+    HashMap<String, Boolean> paymentMethodsConfiguration = new HashMap<>();
 
     public PriceDetails getPriceDetails() {
         return priceDetails;
@@ -54,6 +57,10 @@ public abstract class SdkRequestBase {
 
     public void setHideStoreCardSwitch(boolean hideStoreCardSwitch) {
         this.hideStoreCardSwitch = hideStoreCardSwitch;
+    }
+
+    public HashMap<String, Boolean> getPaymentMethodsConfiguration() {
+        return paymentMethodsConfiguration;
     }
 
     /**
@@ -101,4 +108,12 @@ public abstract class SdkRequestBase {
         );
     }
 
+    /**
+     * enable/disable GooglePay as payment method
+     *
+     */
+    public void setGooglePayActive(boolean googlePayActive){
+        paymentMethodsConfiguration.put(SupportedPaymentMethods.GOOGLE_PAY, googlePayActive);
+        paymentMethodsConfiguration.put(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD, googlePayActive);
+    }
 }

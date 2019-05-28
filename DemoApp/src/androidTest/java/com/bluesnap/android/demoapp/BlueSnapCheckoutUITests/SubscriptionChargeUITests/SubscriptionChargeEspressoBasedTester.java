@@ -66,7 +66,8 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
     public void new_card_basic_subscription_flow(boolean withPriceDetails) throws InterruptedException, JSONException {
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
 
-        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+        //TODO: make this choice general based on supported payment methods (check if only new cc is available and click otherwise)
+//        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
 
         CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
 

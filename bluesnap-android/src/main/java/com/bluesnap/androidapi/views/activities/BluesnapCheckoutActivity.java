@@ -75,6 +75,9 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     protected final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     protected PaymentsClient googlePayClient;
 
+    private boolean showPayPal;
+    private boolean showGooglePay;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,22 +112,14 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         SupportedPaymentMethods supportedPaymentMethods = sdkConfiguration.getSupportedPaymentMethods();
 
-        boolean shopperHasExistingCC = false;
-        final Shopper shopper = sdkConfiguration.getShopper();
+        // update payment methods according to merchant configurations
+        supportedPaymentMethods.setPaymentMethods(sdkRequest.getPaymentMethodsConfiguration());
 
-        if (shopper.getPreviousPaymentSources() != null && shopper.getPreviousPaymentSources().getCreditCardInfos() != null) {
-            List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getCreditCardInfos();
-            shopperHasExistingCC = !returningShopperCreditCardInfoArray.isEmpty();
-        }
+        showPayPal = supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) && !(sdkRequest instanceof SdkRequestSubscriptionCharge);
+        showGooglePay = supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD)
+                || supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY);
 
-
-        if (!shopperHasExistingCC && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD)
-                && !supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY)) {
-            startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC, CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE);
-        }
-
-
-        if (!supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.PAYPAL) || sdkRequest instanceof SdkRequestSubscriptionCharge) {
+        if (!showPayPal) {
             payPalButton.setVisibility(View.GONE);
         } else {
             payPalButton.setOnClickListener(new View.OnClickListener() {
@@ -135,12 +130,23 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
             });
         }
 
-        if ((supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY_TOKENIZED_CARD)
-                || supportedPaymentMethods.isPaymentMethodActive(SupportedPaymentMethods.GOOGLE_PAY))
-                && !(sdkRequest instanceof SdkRequestSubscriptionCharge)) {
+        if (showGooglePay) {
             checkIsGooglePayAvailable();
         } else {
             setGooglePayAvailable(false);
+        }
+
+        boolean shopperHasExistingCC = false;
+        final Shopper shopper = sdkConfiguration.getShopper();
+
+        if (shopper.getPreviousPaymentSources() != null && shopper.getPreviousPaymentSources().getCreditCardInfos() != null) {
+            List<CreditCardInfo> returningShopperCreditCardInfoArray = shopper.getPreviousPaymentSources().getCreditCardInfos();
+            shopperHasExistingCC = !returningShopperCreditCardInfoArray.isEmpty();
+        }
+
+
+        if (!shopperHasExistingCC && !showPayPal && !showGooglePay) {
+            startCreditCardActivityForResult(FRAGMENT_TYPE, NEW_CC, CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE);
         }
     }
 
@@ -175,6 +181,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     protected void setGooglePayAvailable(boolean available) {
         LinearLayout googlePayButton = findViewById(R.id.googlePayButton);
         if (available) {
+            showGooglePay = true;
             googlePayButton.setVisibility(View.VISIBLE);
             googlePayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -183,6 +190,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 }
             });
         } else {
+            showGooglePay = false;
             googlePayButton.setVisibility(View.GONE);
         }
     }

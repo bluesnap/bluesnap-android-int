@@ -114,7 +114,22 @@ public class DemoTransactions {
             JSONObject jsonObject = new JSONObject(planResponse.getResponseString());
             planId = getOptionalString(jsonObject, "planId");
         } else {
-            Log.e(TAG, planResponse.getResponseString());
+            String responseString = planResponse.getResponseString();
+            JSONObject jsonObject = new JSONObject(responseString);
+
+            Log.e(TAG, responseString);
+            //Disabled until server will return a reasonable error
+            String errorName = "Subscription Activation Failed";
+            try {
+                if (planResponse.getResponseString() != null)
+                    errorName = extractValueFromJson("message", jsonObject);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to get error message from response string");
+                Log.e(TAG, "Failed Subscription Response:  " + responseString);
+            }
+            setMessage(errorName);
+            setTitle("Merchant Server");
+            callback.onFailure();
         }
 
         JSONObject chargeBody = createBasicSubscriptionChargeDataObject(sdkResult, planId);
@@ -155,10 +170,16 @@ public class DemoTransactions {
     private JSONObject createBasicSubscriptionPlanDataObject(final SdkResult sdkResult) throws JSONException {
         JSONObject postData = new JSONObject();
 
+        double amount = !sdkResult.getAmount().isNaN() ? sdkResult.getAmount() : 55.0;
+        String currency = !sdkResult.getAmount().isNaN() ? sdkResult.getCurrencyNameCode() : "USD";
+
         postData.put("chargeFrequency", "MONTHLY");
         postData.put("name", "Gold Plan");
-        postData.put("currency", sdkResult.getCurrencyNameCode());
-        postData.put("recurringChargeAmount", sdkResult.getAmount());
+        postData.put("currency", currency);
+        postData.put("recurringChargeAmount", amount);
+
+        if (sdkResult.getAmount().isNaN())
+            postData.put("trialPeriodDays", 30);
 
         return postData;
     }

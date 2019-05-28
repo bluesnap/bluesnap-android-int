@@ -55,7 +55,7 @@ public class PostPaymentActivity extends AppCompatActivity {
         tokenSuffixTextView.setVisibility(View.INVISIBLE);
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
         paymentResultTextView2.setText("Your payment of  " + (sdkResult.getCurrencyNameCode() == null ? " " : sdkResult.getCurrencyNameCode())
-                + " " + (sdkResult.getAmount() == null ? " " : decimalFormat.format(sdkResult.getAmount())) + " has been sent.");
+                + " " + (sdkResult.getAmount().isNaN() ? " " : decimalFormat.format(sdkResult.getAmount())) + " has been sent.");
 //        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             // String merchantToken = extras.getString("MERCHANT_TOKEN");

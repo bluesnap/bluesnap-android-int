@@ -304,8 +304,8 @@ public class GooglePayService {
 
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         // AS-149: Google Pay price does not allow more than 2 digits after the decimal point
-        String price = String.format("%.2f", priceDetails.getAmount());
-        TransactionInfo transactionInfo = createTransaction(price, priceDetails.getCurrencyCode());
+        String price = String.format("%.2f", (priceDetails != null)? priceDetails.getAmount() : 0.0);
+        TransactionInfo transactionInfo = createTransaction(price, (priceDetails != null)? priceDetails.getCurrencyCode() : "USD");
 
         final List merchantPaymentMethods = getMerchantPaymentMethods();
 

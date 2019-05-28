@@ -29,5 +29,6 @@
     <string name="second_step_for_shopper_configuration">second step for shopper configuration</string>
     <string name="submit_subscription">submit subscription</string>
     <string name="google_pay_test_mode">Run Google Pay in TEST mode</string>
+    <string name="disable_google_pay">Disable Google Pay</string>
 
 </resources>

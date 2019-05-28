@@ -5,7 +5,9 @@ import android.support.annotation.Nullable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by roy.biber on 07/11/2017.
@@ -22,19 +24,19 @@ public class SupportedPaymentMethods extends BSModel {
     public static final String CC = "CC";
     public static final String USD = "USD";
 
-    private ArrayList<String> paymentMethods;
+    private HashMap<String, Boolean> paymentMethods = new HashMap<>();
     @Nullable
     private ArrayList<String> paypalCurrencies;
     private ArrayList<String> creditCardBrands;
     private ArrayList<String> creditCardTypes;
     private LinkedHashMap<String, String> creditCardRegex;
 
-    public ArrayList<String> getPaymentMethods() {
+    public HashMap<String, Boolean> getPaymentMethods() {
         return paymentMethods;
     }
 
-    public void setPaymentMethods(ArrayList<String> paymentMethods) {
-        this.paymentMethods = paymentMethods;
+    public void setPaymentMethod(String paymentMethod) {
+        paymentMethods.put(paymentMethod, true);
     }
 
     @Nullable
@@ -71,17 +73,17 @@ public class SupportedPaymentMethods extends BSModel {
     }
 
     public boolean isPaymentMethodActive(String paymentMethod) {
-        ArrayList<String> arr = paymentMethods;
-        Boolean res = false;
-        for (int i = 0; i < arr.size(); i++) {
-                if (arr.get(i).equals(paymentMethod)) {
-                    res = true;
-                    break;
-                }
-        }
-        return res;
+
+        Boolean res = paymentMethods.get(paymentMethod);
+
+        return ((res == null) ? false : res);
     }
 
+    public void setPaymentMethodActive(String paymentMethod, Boolean activate) {
+
+        if(paymentMethods.containsKey(paymentMethod))
+            paymentMethods.put(paymentMethod, activate);
+    }
 
     @NonNull
     @Override
@@ -90,5 +92,19 @@ public class SupportedPaymentMethods extends BSModel {
     }
 
 
+    /**
+     * Set Payment Methods according to merchant configurations
+     *
+     * @param paymentMethods  - The name of the extra data, with package prefix.
+     */
+    public void setPaymentMethods(HashMap<String, Boolean> paymentMethods) {
+
+        for (Map.Entry<String, Boolean> entry : paymentMethods.entrySet()) {
+            setPaymentMethodActive(entry.getKey(), entry.getValue());
+        }
+
+
+
+    }
 
 }
