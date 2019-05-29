@@ -121,7 +121,7 @@ The instance include:
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode,  boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
-An `SdkRequest` instance contain also an `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By defult it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
+An `SdkRequest` instance contain also an `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By default it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
 ```
 sdkRequest.setAllowCurrencyChange(false);
 ```
@@ -131,6 +131,11 @@ Google Pay TEST mode is only supported in BlueSnap's Sandbox environment; if you
 You can specifically change this value like this:
 ```
 sdkRequest.setGooglePayTestMode(false);
+```
+An `SdkRequest` instance contains also a `setGooglePayActive` method: if you support Google Pay as a payment method it will be enabled for the shopper inside the SDK (in case the device supports it).
+You may want to disable it like this:
+```
+sdkRequest.setGooglePayActive(false);
 ```
 
 #### Handling tax updates in checkout flow (optional)
