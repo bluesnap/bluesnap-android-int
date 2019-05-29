@@ -21,7 +21,7 @@ public abstract class SdkRequestBase {
     boolean allowCurrencyChange = true;
     boolean googlePayTestMode = true;
     boolean hideStoreCardSwitch = false;
-    HashMap<String, Boolean> paymentMethodsConfiguration = new HashMap<>();
+    private HashMap<String, Boolean> paymentMethodsConfiguration = new HashMap<>();
 
     public PriceDetails getPriceDetails() {
         return priceDetails;
