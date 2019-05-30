@@ -137,6 +137,11 @@ You may want to disable it like this:
 ```
 sdkRequest.setGooglePayActive(false);
 ```
+An `SdkRequest` instance contains also an `hideStoreCardSwitch` property: allows to hide the Securely store my card for future purchases Switch.
+By default it is false; if you wish to hide the store card switch, you can specifically change this value like this:
+```
+sdkRequest.setHideStoreCardSwitch(true);
+```
 
 #### Handling tax updates in checkout flow (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 
