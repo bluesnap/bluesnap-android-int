@@ -32,6 +32,27 @@ import static org.hamcrest.Matchers.not;
  * Created by sivani on 04/06/2018.
  */
 public class CreditCardVisibilityTesterCommon {
+
+    public static void check_payment_methods_visibility(String testName, boolean isPayPal, boolean isGooglePay) {
+        onView(withId(R.id.newCardButton))
+                .withFailureHandler(new CustomFailureHandler(testName + ": New credit card button is not displayed")).check(matches(isDisplayed()));
+
+        if (isPayPal)
+            onView(withId(R.id.payPalButton))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": PayPal button is not displayed")).check(matches(isDisplayed()));
+        else
+            onView(withId(R.id.payPalButton))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": PayPal button is displayed")).check(matches(not(isDisplayed())));
+
+        if (isGooglePay)
+            onView(withId(R.id.googlePayButton))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Google Pay button is not displayed")).check(matches(isDisplayed()));
+        else
+            onView(withId(R.id.googlePayButton))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Google Pay button is displayed")).check(matches(not(isDisplayed())));
+
+    }
+
     public static void cc_line_fields_visibility_validation(String testName) {
         onView(ViewMatchers.withId(R.id.oneLineCCEditComponent))
                 .withFailureHandler(new CustomFailureHandler(testName + ": One line credit card is not displayed")).check(matches(isDisplayed()));

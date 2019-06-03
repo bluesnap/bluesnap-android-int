@@ -61,17 +61,19 @@ public class CheckoutEspressoBasedTester {
 
 
     protected void checkoutSetup() throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(false, "", true, false);
+        checkoutSetup(false, "", true, false, false);
     }
 
     protected void checkoutSetup(boolean forReturningShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(forReturningShopper, "", true, false);
+        checkoutSetup(forReturningShopper, "", true, false, false);
     }
 
-    protected void checkoutSetup(boolean forReturningShopper, String returningShopperId, boolean allowCurrencyChange, boolean hideStoreCard) throws BSPaymentRequestException, InterruptedException, JSONException {
+    protected void checkoutSetup(boolean forReturningShopper, String returningShopperId, boolean allowCurrencyChange,
+                                 boolean hideStoreCard, boolean disableGooglePay) throws BSPaymentRequestException, InterruptedException, JSONException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setAllowCurrencyChange(allowCurrencyChange);
         sdkRequest.setHideStoreCardSwitch(hideStoreCard);
+        sdkRequest.setGooglePayActive(!disableGooglePay);
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, forReturningShopper, returningShopperId);
         returningShopper = uIAutoTestingBlueSnapService.getReturningShopper();
@@ -81,16 +83,14 @@ public class CheckoutEspressoBasedTester {
     }
 
     public void new_card_basic_flow_transaction() throws InterruptedException {
-        new_card_basic_flow_transaction(false, false);
+        new_card_basic_flow_transaction(false);
     }
 
-    public void new_card_basic_flow_transaction(boolean hideStoreCardSwitch, boolean storeCard) throws InterruptedException {
+    public void new_card_basic_flow_transaction(boolean storeCard) throws InterruptedException {
         //ƒintending(hasExtraWithKey(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT));
 
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
-
-        CreditCardVisibilityTesterCommon.check_store_card_visibility("New shopper end-to-end " + shopperCheckoutRequirements, !hideStoreCardSwitch);
 
         new_card_basic_fill_info(storeCard);
 
