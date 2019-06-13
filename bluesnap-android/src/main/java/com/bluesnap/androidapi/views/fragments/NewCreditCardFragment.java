@@ -91,7 +91,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         amountTaxShippingComponentView = inflate.findViewById(R.id.amountTaxShippingComponentView);
         buttonComponentView = inflate.findViewById(R.id.billingButtonComponentView);
 
-        if (!sdkRequest.getShopperCheckoutRequirements().isShippingRequired()) {
+        if (!sdkRequest.getShopperCheckoutRequirements().isShippingRequired() || amountTaxShippingComponentView.isShippingSameAsBilling()) {
             finishFromFragmentNoShipping();
         } else {
             finishFromFragmentWithShipping();

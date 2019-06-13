@@ -104,8 +104,11 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public void setAmountTaxShipping() {
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
 
-        if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
+        if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired() && sdkRequest.getShopperCheckoutRequirements().isBillingRequired()) {
             shippingSameAsBillingRelativeLayout.setVisibility(VISIBLE);
+            shippingSameAsBillingSwitch.setChecked(true);
+            isShippingSameAsBilling = true;
+        }
         else
             shippingSameAsBillingRelativeLayout.setVisibility(GONE);
 

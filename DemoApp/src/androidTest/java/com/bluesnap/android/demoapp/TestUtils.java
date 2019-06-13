@@ -277,16 +277,19 @@ public class TestUtils {
         return decimalFormat;
     }
 
-    public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail) {
-        continueToShippingOrPayInNewCard(country, fullInfo, withEmail, false);
+    public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail, boolean withShipping) {
+        continueToShippingOrPayInNewCard(country, fullInfo, withEmail, withShipping, false);
     }
 
-    public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail, boolean storeCard) {
+    public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail, boolean withShipping, boolean storeCard) {
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
 
         if (storeCard)
             onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
+
+        if (withShipping && fullInfo) //shipping same as billing is on, un-checking it
+            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
 
         onView(withId(R.id.buyNowButton)).perform(click());
     }

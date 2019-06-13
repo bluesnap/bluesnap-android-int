@@ -23,6 +23,7 @@ import org.junit.Rule;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -104,8 +105,8 @@ public class CheckoutEspressoBasedTester {
     }
 
     public void new_card_basic_fill_info(boolean storeCard, boolean storeCardIsMandatory) {
-        if (shopperCheckoutRequirements.isShippingSameAsBilling())
-            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
+        if (shopperCheckoutRequirements.isShippingRequired() && shopperCheckoutRequirements.isFullBillingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling())
+            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
 
         //fill in info in billing and continue to shipping or paying
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();

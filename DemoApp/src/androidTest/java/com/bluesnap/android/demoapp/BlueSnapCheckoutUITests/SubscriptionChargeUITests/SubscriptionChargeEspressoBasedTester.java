@@ -67,22 +67,17 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
 
         //TODO: make this choice general based on supported payment methods (check if only new cc is available and click otherwise)
-//        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
 
         CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
 
         // check subscribe button
-        if (!shopperCheckoutRequirements.isShippingRequired()) {
-            double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
-            CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
-        } else {
-            CreditCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation");
-        }
+        double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
 
         new_card_basic_fill_info(true, true);
 
         if (shopperCheckoutRequirements.isShippingRequired()) {
-            double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
             CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
         }
 
