@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -319,6 +320,7 @@ public class TestUtils {
     }
 
     public static void setStoreCardSwitch(boolean storeCard) {
+        closeSoftKeyboard();
         if (storeCard) {
             onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
         } else {

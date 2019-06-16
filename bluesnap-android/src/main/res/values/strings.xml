@@ -119,7 +119,7 @@
     <string name="move_from_cc_to_exp_button">move from cc to exp button</string>
     <string name="invalid_date">Invalid date</string>
     <string name="invalid_cvv">Invalid CVV</string>
-    <string name="shipping_same_as_billing">Shipping Same As Billing</string>
+    <string name="shipping_same_as_billing">Shipping same as billing</string>
     <string name="subscribe">Subscribe</string>
     <string name="store_card">Securely store my card for future purchases</string>
 

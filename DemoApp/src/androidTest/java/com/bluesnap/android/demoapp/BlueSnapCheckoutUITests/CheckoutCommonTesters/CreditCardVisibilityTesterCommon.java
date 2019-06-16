@@ -426,9 +426,9 @@ public class CreditCardVisibilityTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card layout is not visible"))
                     .check(matches(isDisplayed()));
             //verify store card textView is visible
-            onView(withId(R.id.storeCardTextView))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is not visible"))
-                    .check(matches(isDisplayed()));
+//            onView(withId(R.id.storeCardTextView))
+//                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is not visible"))
+//                    .check(matches(isDisplayed()));
             //verify store card switch is visible
             onView(withId(R.id.storeCardSwitch))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is not visible"))
@@ -439,9 +439,9 @@ public class CreditCardVisibilityTesterCommon {
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card layout is visible"))
                     .check(matches(not(ViewMatchers.isDisplayed())));
             //verify store card textView is not visible
-            onView(withId(R.id.storeCardTextView))
-                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is visible"))
-                    .check(matches(not(ViewMatchers.isDisplayed())));
+//            onView(withId(R.id.storeCardTextView))
+//                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is visible"))
+//                    .check(matches(not(ViewMatchers.isDisplayed())));
             //verify store card switch is not visible
             onView(withId(R.id.storeCardSwitch))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is visible"))
