@@ -76,10 +76,11 @@ public class AmountTaxShippingComponent extends LinearLayout {
 
         storeCardRelativeLayout = findViewById(R.id.storeCardRelativeLayout);
         storeCardSwitch = findViewById(R.id.storeCardSwitch);
-        storeCardTextView = findViewById(R.id.storeCardTextView);
+//        storeCardTextView = findViewById(R.id.storeCardTextView);
 
         setAmountTaxShipping();
 
+        shippingSameAsBillingSwitch.setTextColor(Color.GRAY);
         shippingSameAsBillingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -88,11 +89,12 @@ public class AmountTaxShippingComponent extends LinearLayout {
             }
         });
 
+        storeCardSwitch.setTextColor(Color.GRAY);
         storeCardSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isStoreCard = isChecked;
-                storeCardTextView.setTextColor(Color.BLACK);
+                storeCardSwitch.setTextColor(Color.GRAY);
             }
         });
     }
@@ -179,7 +181,7 @@ public class AmountTaxShippingComponent extends LinearLayout {
     public boolean validateStoreCard(boolean isShopperRequirements, boolean isSubscriptionCharge) {
         if (!BlueSnapValidator.validateStoreCard(isShopperRequirements, isSubscriptionCharge, isStoreCard)) {
 //            storeCardSwitch.setBackgroundColor(Color.RED);
-            storeCardTextView.setTextColor(Color.RED);
+            storeCardSwitch.setTextColor(Color.RED);
             return false;
         } else {
             return true;
