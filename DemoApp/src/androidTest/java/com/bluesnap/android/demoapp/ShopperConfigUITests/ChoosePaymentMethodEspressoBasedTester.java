@@ -71,7 +71,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
         onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
         if (shopperCheckoutRequirements.isShippingRequired()) { //continue to shipping
-            onView(withId(R.id.buyNowButton)).perform(click());
+            TestUtils.pressBuyNowButton();
             ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryValue());
             ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryKey(), true, false);
         }
@@ -79,7 +79,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
         //submit the choice
         int buttonComponent = shopperCheckoutRequirements.isShippingRequired() ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
+        TestUtils.pressBuyNowButton(buttonComponent);
         uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, false);
 
     }
@@ -109,7 +109,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
         }
 
         //submit the choice
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton(R.id.returningShppoerCCNFragmentButtonComponentView);
         uIAutoTestingBlueSnapService.chosenPaymentMethodValidationInServer(shopperCheckoutRequirements, creditCard, false);
     }
 

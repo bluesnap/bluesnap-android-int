@@ -6,6 +6,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
+import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
@@ -73,7 +74,7 @@ public class ReturningShopperAllowCurrencyChangeTest extends CheckoutEspressoBas
 
         //check hamburger button visibility back in returning shopper existing card while using "Done" button
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.billingViewSummarizedComponent)))).perform(click());
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.returningShopperBillingFragmentButtonComponentView)))).perform(click());
+        TestUtils.pressBuyNowButton(R.id.returningShopperBillingFragmentButtonComponentView);
         checkCurrencyHamburgerButtonVisibility(isAllowed);
 
         //check hamburger button visibility in shipping
@@ -92,7 +93,7 @@ public class ReturningShopperAllowCurrencyChangeTest extends CheckoutEspressoBas
 
         //check hamburger button visibility back in returning shopper existing card while using "Done" button
         onView(Matchers.allOf(withId(R.id.editButton), isDescendantOfA(withId(R.id.shippingViewSummarizedComponent)))).perform(click());
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.returningShopperShippingFragmentButtonComponentView)))).perform(click());
+        TestUtils.pressBuyNowButton(R.id.returningShopperShippingFragmentButtonComponentView);
         checkCurrencyHamburgerButtonVisibility(isAllowed);
     }
 

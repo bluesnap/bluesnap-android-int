@@ -67,7 +67,7 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
 
-        TestUtils.goBackToBillingInNewCard();
+        TestUtils.goBack();
 
         //Pre-condition: Current country is the default one
         country_changes_per_fragment_validation();

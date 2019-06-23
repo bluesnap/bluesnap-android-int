@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import javax.annotation.Nullable;
 
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -78,7 +79,7 @@ public class ContactInfoTesterCommon {
 
         //fix this- generalize to match shipping as well
         //Continue- leaving all fields empty
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
+        TestUtils.pressBuyNowButton(buttonComponent);
 
         //verify input name editText is focused
         onView(allOf(withId(R.id.input_name), isDescendantOfA(withId(componentResourceId))))
@@ -259,7 +260,7 @@ public class ContactInfoTesterCommon {
         ContactInfoTesterCommon.changeCountry(componentResourceId, "Brazil");
 
         //Try to pay without filling in state
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
+        TestUtils.pressBuyNowButton(buttonComponent);
 
         //verify error message is displayed
         CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", true);
@@ -393,8 +394,10 @@ public class ContactInfoTesterCommon {
     private static void moveToNextField(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {
         if (withImeButton)
             onView(allOf(withId(currFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(pressImeActionButton());
-        else
+        else {
+            closeSoftKeyboard();
             onView(allOf(withId(nextFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
+        }
     }
 
     public static void changeCountry(int componentResourceId, String country) {

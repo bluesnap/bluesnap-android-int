@@ -94,7 +94,7 @@ public class CheckoutEspressoBasedTester {
 
         new_card_basic_fill_info(storeCard);
 
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
+        TestUtils.pressBuyNowButton(buttonComponent);
 //        sdkResult = BlueSnapService.getInstance().getSdkResult();
         uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements, storeCard);
     }
@@ -124,7 +124,7 @@ public class CheckoutEspressoBasedTester {
             if (shopperCheckoutRequirements.isShippingSameAsBilling()) { //updating roundedPurchaseAmount to include tax since billing country is US
                 updatePurchaseAmountForTax();
             } else { //continue to fill in shipping
-                onView(withId(R.id.buyNowButton)).perform(click());
+                TestUtils.pressBuyNowButton();
                 ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryValue());
                 ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryKey(), true, false);
             }
@@ -139,7 +139,7 @@ public class CheckoutEspressoBasedTester {
         onData(anything()).inAdapterView(withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
 
         existing_card_edit_info();
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton(R.id.returningShppoerCCNFragmentButtonComponentView);
 //        sdkResult = blueSnapService.getSdkResult();
         uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements, true);
     }

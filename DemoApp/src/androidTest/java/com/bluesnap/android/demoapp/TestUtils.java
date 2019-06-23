@@ -289,22 +289,30 @@ public class TestUtils {
         if (storeCard)
             onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
-        onView(withId(R.id.buyNowButton)).perform(click());
-    }
-
-    public static void goBackToBillingInNewCard() {
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
+        pressBuyNowButton(R.id.billingButtonComponentView);
     }
 
     public static void goBackToCreditCardInReturningShopper(boolean useDoneButton, int buttonComponentResourceId) {
         if (useDoneButton)
-            onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponentResourceId)))).perform(click());
+            pressBuyNowButton(buttonComponentResourceId);
 
         else {
-            Espresso.closeSoftKeyboard();
-            Espresso.pressBack();
+            goBack();
         }
+    }
+
+    public static void goBack() {
+        Espresso.closeSoftKeyboard();
+        Espresso.pressBack();
+    }
+
+    public static void pressBuyNowButton() {
+        pressBuyNowButton(R.id.billingButtonComponentView);
+    }
+
+    public static void pressBuyNowButton(int buttonComponentResourceId) {
+        Espresso.closeSoftKeyboard();
+        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponentResourceId)))).perform(click());
     }
 
     public static double round_amount(double amount) {

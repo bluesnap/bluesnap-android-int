@@ -264,7 +264,7 @@ public class CreditCardVisibilityTesterCommon {
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "Spain");
 
         //continue to shipping
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        TestUtils.pressBuyNowButton();
 
         //Verify country hasn't change in shipping fragment
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.newShoppershippingViewComponent))))
@@ -275,7 +275,7 @@ public class CreditCardVisibilityTesterCommon {
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "Italy");
 
         //go back to billing
-        TestUtils.goBackToBillingInNewCard();
+        TestUtils.goBack();
 
         //Verify country hasn't change in billing fragment
         onView(allOf(withId(R.id.countryImageButton), isDescendantOfA(withId(R.id.billingViewComponent))))
@@ -472,7 +472,7 @@ public class CreditCardVisibilityTesterCommon {
      * this is the only way to check validation for now, due to UI XCTest limitations
      */
     public static void check_store_card_mandatory(String testName) { //TODO: see if we can check text color for this validation
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton();
         check_store_card_visibility(testName, true);
     }
 

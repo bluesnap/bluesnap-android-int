@@ -5,6 +5,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
+import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 import com.bluesnap.androidapi.models.SdkRequestSubscriptionCharge;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -67,7 +68,7 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
 
         //TODO: make this choice general based on supported payment methods (check if only new cc is available and click otherwise)
-//        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
+        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
 
         CreditCardVisibilityTesterCommon.check_store_card_visibility("check_store_card_visibility" + shopperCheckoutRequirements, true);
 
@@ -86,7 +87,7 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
             CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
         }
 
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponent)))).perform(click());
+        TestUtils.pressBuyNowButton(buttonComponent);
         String planId = uIAutoTestingBlueSnapService.createSubscriptionPlan();
         uIAutoTestingBlueSnapService.createSubscriptionCharge(planId, shopperCheckoutRequirements, TestingShopperCreditCard.MASTERCARD_CREDIT_CARD);
     }
@@ -100,7 +101,7 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
         CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation",
                 R.id.returningShppoerCCNFragmentButtonComponentView, checkoutCurrency, purchaseAmount, taxAmount, true, withPriceDetails);
 
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton(R.id.returningShppoerCCNFragmentButtonComponentView);
         String planId = uIAutoTestingBlueSnapService.createSubscriptionPlan();
         uIAutoTestingBlueSnapService.createSubscriptionCharge(planId, shopperCheckoutRequirements, TestingShopperCreditCard.VISA_CREDIT_CARD);
     }

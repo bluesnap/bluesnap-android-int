@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_above="@id/billingButtonComponentView"
+        android:layout_above="@id/amountTaxShippingComponentView"
         android:orientation="vertical">
 
         <com.bluesnap.androidapi.views.components.OneLineCCEditComponent
@@ -47,18 +47,19 @@
             </ScrollView>
         </LinearLayout>
 
-        <com.bluesnap.androidapi.views.components.AmountTaxShippingComponent
-            android:id="@+id/amountTaxShippingComponentView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp">
-
-        </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
-
     </LinearLayout>
+
+    <com.bluesnap.androidapi.views.components.AmountTaxShippingComponent
+        android:id="@+id/amountTaxShippingComponentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/billingButtonComponentView"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp">
+
+    </com.bluesnap.androidapi.views.components.AmountTaxShippingComponent>
 
     <com.bluesnap.androidapi.views.components.ButtonComponent
         android:id="@+id/billingButtonComponentView"

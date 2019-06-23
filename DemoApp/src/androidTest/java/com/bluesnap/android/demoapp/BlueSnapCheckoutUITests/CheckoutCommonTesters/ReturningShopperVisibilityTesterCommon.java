@@ -170,7 +170,7 @@ public class ReturningShopperVisibilityTesterCommon {
             componentResourceId = -1;
 
         if (componentResourceId != -1) {
-            onView(withId(R.id.buyNowButton)).perform(click());
+            TestUtils.pressBuyNowButton(R.id.returningShppoerCCNFragmentButtonComponentView);
             //verifies that the right component(billing/shipping) with the missing info is displayed
             onView(withId(componentResourceId))
                     .withFailureHandler(new CustomFailureHandler(testName + ": " + componentName + " component didn't open"))

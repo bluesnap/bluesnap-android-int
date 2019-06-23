@@ -41,7 +41,7 @@ public class CreditCardLineTesterCommon {
 
     public static void cc_empty_fields_invalid_error_validation(String testName) {
         //Continue- leaving all fields empty
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton();
 
         //verify error messages are displayed
         CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, true);
@@ -137,7 +137,7 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(click(), clearText(), typeText(invalidCardNumberGeneratorTest()));
 
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton();
 
         //verify exp and cvv error messages are displayed
         CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.creditCardNumberErrorTextView, true);
@@ -158,7 +158,7 @@ public class CreditCardLineTesterCommon {
         onView(withId(R.id.creditCardNumberEditText))
                 .perform(click());
 
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton();
 
         //verify exp and cvv error messages are displayed
         CreditCardVisibilityTesterCommon.check_cc_info_invalid_error_visibility(testName, R.id.expErrorTextView, true);

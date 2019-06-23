@@ -71,7 +71,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
         default_country_state_view_validation_in_shipping();
         pay_button_in_shipping_validation();
 
-        TestUtils.goBackToBillingInNewCard();
+        TestUtils.goBack();
         contact_info_saved_validation_in_billing();
         shipping_same_as_billing_view_validation();
         shipping_same_as_billing_info_saved_in_billing_validation();
@@ -254,7 +254,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
      */
     public void shipping_same_as_billing_info_saved_in_shipping_validation() throws IOException {
         //continue to shipping
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        TestUtils.pressBuyNowButton();
 
         ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, "Brazil");
 
@@ -262,13 +262,13 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "BR", true, false);
 
         //return to billing
-        TestUtils.goBackToBillingInNewCard();
+        TestUtils.goBack();
 
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
         onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
 
         //continue to shipping
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        TestUtils.pressBuyNowButton();
         //verify that the shipping contact card info remained the same
         ContactInfoTesterCommon.contact_info_content_validation("shipping_same_as_billing_info_saved_in_shipping_validation", applicationContext, R.id.newShoppershippingViewComponent, "BR", true, false);
     }

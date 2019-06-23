@@ -15,7 +15,8 @@
         <activity
             android:name=".views.activities.CreditCardActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".views.activities.BluesnapCheckoutActivity"
             android:screenOrientation="portrait"

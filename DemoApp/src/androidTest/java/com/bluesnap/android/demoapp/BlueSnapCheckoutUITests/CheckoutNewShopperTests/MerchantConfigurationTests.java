@@ -11,6 +11,7 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTester
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.CustomFailureHandler;
 import com.bluesnap.android.demoapp.R;
+import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
@@ -117,7 +118,7 @@ public class MerchantConfigurationTests extends CheckoutEspressoBasedTester {
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "SP", true, true);
 
         //check hamburger button visibility in shipping
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton();
         checkCurrencyHamburgerButtonVisibility(isChangeCurrencyAllowed);
 
         //check hamburger button visibility after opening country activity
@@ -126,8 +127,7 @@ public class MerchantConfigurationTests extends CheckoutEspressoBasedTester {
         checkCurrencyHamburgerButtonVisibility(isChangeCurrencyAllowed);
 
         //check hamburger button visibility back in billing
-        Espresso.closeSoftKeyboard();
-        Espresso.pressBack();
+        TestUtils.goBack();
         checkCurrencyHamburgerButtonVisibility(isChangeCurrencyAllowed);
     }
 

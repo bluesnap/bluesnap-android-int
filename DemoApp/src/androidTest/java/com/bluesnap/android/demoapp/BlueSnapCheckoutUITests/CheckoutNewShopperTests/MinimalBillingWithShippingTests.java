@@ -362,8 +362,8 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
         ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, "BR", true, false);
 
         //go back and forward
-        TestUtils.goBackToBillingInNewCard();
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        TestUtils.goBack();
+        TestUtils.pressBuyNowButton();
 
         //verify info has been saved
         ContactInfoTesterCommon.contact_info_content_validation("contact_info_saved_validation_in_shipping", applicationContext, R.id.newShoppershippingViewComponent, "BR", true, false);
@@ -401,7 +401,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
      */
     public void change_currency_in_billing_with_shipping_validation() {
         CurrencyChangeTesterCommon.changeCurrency("GBP");
-        onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(R.id.billingButtonComponentView)))).perform(click());
+        TestUtils.pressBuyNowButton();
         CurrencyChangeTesterCommon.currency_view_validation("change_currency_in_billing_with_shipping_validation", R.id.shippingButtonComponentView, "GBP");
     }
 

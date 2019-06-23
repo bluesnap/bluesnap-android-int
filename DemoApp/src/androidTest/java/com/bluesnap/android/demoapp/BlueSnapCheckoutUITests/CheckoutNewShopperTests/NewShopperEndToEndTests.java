@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CurrencyChangeTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.android.demoapp.R;
+import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 
@@ -49,7 +50,7 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
         CurrencyChangeTesterCommon.changeCurrency("CAD");
         CurrencyChangeTesterCommon.changeCurrency("ILS");
         CurrencyChangeTesterCommon.changeCurrency(checkoutCurrency);
-        onView(withId(R.id.buyNowButton)).perform(click());
+        TestUtils.pressBuyNowButton();
         uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements);
     }
 
