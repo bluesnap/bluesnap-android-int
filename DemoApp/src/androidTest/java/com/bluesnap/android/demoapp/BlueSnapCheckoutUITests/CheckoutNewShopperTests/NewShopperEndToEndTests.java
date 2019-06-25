@@ -34,7 +34,7 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     public void setupBeforeTransaction(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling, boolean hideStoreCard) throws InterruptedException, BSPaymentRequestException, JSONException {
         shopperCheckoutRequirements.setTestingShopperCheckoutRequirements(fullBillingRequired, emailRequired, shippingRequired, shippingSameAsBilling);
 
-        checkoutSetup(false, "", true, hideStoreCard);
+        checkoutSetup(false,"",true, hideStoreCard,false);
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
@@ -140,7 +140,7 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     @Test
     public void store_card_flow_transaction() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeTransaction(true, true, true, false);
-        new_card_basic_flow_transaction(false, true);
+        new_card_basic_flow_transaction(true);
     }
 
     /**
@@ -150,6 +150,6 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     @Test
     public void hide_store_card_flow_transaction() throws InterruptedException, BSPaymentRequestException, JSONException {
         setupBeforeTransaction(true, true, true, false, true);
-        new_card_basic_flow_transaction(true, false);
+        new_card_basic_flow_transaction(false);
     }
 }
