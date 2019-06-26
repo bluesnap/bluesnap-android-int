@@ -72,8 +72,8 @@ public class ChoosePaymentMethodEspressoBasedTester {
         onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
         if (shopperCheckoutRequirements.isShippingRequired()) { //continue to shipping
+            TestUtils.setShippingSameAsBillingSwitch(false);
             TestUtils.pressBuyNowButton();
-            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
             ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryValue());
             ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryKey(), true, false);
         }

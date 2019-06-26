@@ -208,7 +208,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
 //        Double amountAfterTax = TestUtils.round_amount(roundedPurchaseAmount + taxAmount);
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
+        TestUtils.setShippingSameAsBillingSwitch(true); //choose shipping same as billing option
 //        String buyNowButtonText = TestUtils.getText(withId(R.id.buyNowButton));
         //verify that the "Shipping" button has changed to "Pay ..."
         CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("shipping_same_as_billing_view_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
@@ -219,7 +219,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
                     .withFailureHandler(new CustomFailureHandler("shipping_same_as_billing_view_validation" + ": Amount-tax layout is not visible"))
                     .check(matches(ViewMatchers.isDisplayed()));
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //un-checking the switch
+        TestUtils.setShippingSameAsBillingSwitch(false); //un-checking the switch
 
         //verify that the shipping button has changed back "Shipping"
         CreditCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_same_as_billing_view_validation");
@@ -235,7 +235,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
         onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(R.id.billingViewComponent)))).perform(scrollTo(), click());
         onData(hasToString(containsString("New York"))).inAdapterView(withId(R.id.state_list_view)).perform(click());
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
+        TestUtils.setShippingSameAsBillingSwitch(true);
 
         //verify that the credit card info remained the same
         CreditCardLineTesterCommon.credit_card_info_saved_validation("shipping_same_as_billing_info_saved_in_billing_validation", "5288", "12/26", "123");
@@ -243,7 +243,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
         //verify that the contact card info remained the same
         ContactInfoTesterCommon.contact_info_content_validation("shipping_same_as_billing_info_saved_in_billing_validation", applicationContext, R.id.billingViewComponent, "US", true, true);
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+        TestUtils.setShippingSameAsBillingSwitch(false);
     }
 
     /**
@@ -264,8 +264,8 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
         //return to billing
         TestUtils.goBack();
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+        TestUtils.setShippingSameAsBillingSwitch(true);
+        TestUtils.setShippingSameAsBillingSwitch(false);
 
         //continue to shipping
         TestUtils.pressBuyNowButton();

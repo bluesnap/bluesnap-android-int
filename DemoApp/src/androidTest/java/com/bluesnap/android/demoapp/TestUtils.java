@@ -290,7 +290,7 @@ public class TestUtils {
             onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
         if (withShipping && fullInfo) //shipping same as billing is on, un-checking it
-            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+            TestUtils.setShippingSameAsBillingSwitch(false);
 
         pressBuyNowButton();
     }
@@ -321,6 +321,15 @@ public class TestUtils {
     public static void pressBuyNowButton(int buttonComponentResourceId) {
         Espresso.closeSoftKeyboard();
         onView(allOf(withId(R.id.buyNowButton), isDescendantOfA(withId(buttonComponentResourceId)))).perform(click());
+    }
+
+    public static void setShippingSameAsBillingSwitch(boolean setOn) {
+        closeSoftKeyboard();
+        if (setOn) {
+            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight());
+        } else {
+            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+        }
     }
 
     public static double round_amount(double amount) {

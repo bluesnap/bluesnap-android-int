@@ -119,7 +119,7 @@ public class MerchantConfigurationTests extends CheckoutEspressoBasedTester {
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, "SP", true, true);
 
         //check hamburger button visibility in shipping
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+        TestUtils.setShippingSameAsBillingSwitch(false);
         TestUtils.pressBuyNowButton();
         checkCurrencyHamburgerButtonVisibility(isChangeCurrencyAllowed);
 

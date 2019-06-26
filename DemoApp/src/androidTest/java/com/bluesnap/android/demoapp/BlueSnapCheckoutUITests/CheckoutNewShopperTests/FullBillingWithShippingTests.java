@@ -72,7 +72,7 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         //Pre-condition: Current country is the default one
         country_changes_per_fragment_validation();
         amount_tax_view_before_choosing_shipping_same_as_billing();
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft()); //annul shipping same as billing option
+        TestUtils.setShippingSameAsBillingSwitch(false); //annul shipping same as billing option
         amount_tax_view_after_choosing_shipping_same_as_billing();
     }
 
@@ -206,7 +206,7 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         //choose United States for shipping tax
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "United States");
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
+        TestUtils.setShippingSameAsBillingSwitch(true); //choose shipping same as billing option
 
         //verify that the amount tax shipping component is presented
         CreditCardVisibilityTesterCommon.amount_tax_shipping_view_validation("amount_tax_view_before_choosing_shipping_same_as_billing", R.id.amountTaxShippingComponentView, checkoutCurrency,
@@ -231,7 +231,7 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         //change to Costa Rica- a country without shipping tax
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, "Costa Rica");
 
-        onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeRight()); //choose shipping same as billing option
+        TestUtils.setShippingSameAsBillingSwitch(true); //choose shipping same as billing option
 
         //verify that the amount tax shipping component isn't displayed
         onView(allOf(withId(R.id.amountTaxLinearLayout), isDescendantOfA(withId(R.id.amountTaxShippingComponentView))))

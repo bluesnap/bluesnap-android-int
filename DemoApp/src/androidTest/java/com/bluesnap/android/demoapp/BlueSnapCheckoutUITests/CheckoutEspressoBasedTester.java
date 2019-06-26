@@ -106,7 +106,7 @@ public class CheckoutEspressoBasedTester {
 
     public void new_card_basic_fill_info(boolean storeCard, boolean storeCardIsMandatory) {
         if (shopperCheckoutRequirements.isShippingRequired() && shopperCheckoutRequirements.isFullBillingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling())
-            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
+            TestUtils.setShippingSameAsBillingSwitch(false);
 
         //fill in info in billing and continue to shipping or paying
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
