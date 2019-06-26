@@ -46,8 +46,8 @@ class BlueSnapAPI {
     private BlueSnapAPI() {
 
         headerParams = new ArrayList<>();
-        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_HEADER", BuildConfig.VERSION_NAME));
-        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_HEADER_CODE", String.valueOf(BuildConfig.VERSION_CODE)));
+        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_HEADER", "ANDROID SDK " + BuildConfig.VERSION_CODE));
+        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_VERSION_HEADER", BuildConfig.VERSION_NAME));
         headerParams.add(new CustomHTTPParams("BLUESNAP_VERSION_HEADER", String.valueOf(BLUESNAP_VERSION_HEADER)));
     }
 
