@@ -56,9 +56,9 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
         default_country_zip_view_validation_in_billing();
         default_country_state_view_validation_in_billing();
         check_store_card_visibility();
-        shipping_button_validation();
+        pay_button_in_billing_validation();
 
-        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, false, true);
         //Pre-condition: The current fragment displayed is shipping
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
@@ -172,17 +172,19 @@ public class FullBillingWithShippingTests extends CheckoutEspressoBasedTester {
      * This test verifies that the "Pay" button is visible and contains
      * the correct currency symbol and amount
      */
+    public void pay_button_in_billing_validation() {
+        double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
+        CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
+    }
+
+    /**
+     * This test verifies that the "Pay" button is visible and contains
+     * the correct currency symbol and amount
+     */
 
     public void pay_button_in_shipping_validation() {
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
         CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax);
-    }
-
-    /**
-     * This test verifies that the "Shipping" button is visible
-     */
-    public void shipping_button_validation() {
-        CreditCardVisibilityTesterCommon.shipping_button_visibility_and_content_validation("shipping_button_validation");
     }
 
     /**

@@ -54,7 +54,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
         check_store_card_visibility();
         shipping_button_validation();
 
-        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false, true);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_view_validation_in_shipping();
@@ -79,7 +79,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
 
     @Test
     public void minimal_billing_with_shipping_test_inputs() {
-        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, false, true);
         empty_fields_invalid_error_validation_in_shipping();
         name_invalid_error_validation_in_shipping();
         name_invalid_error_validation_using_ime_button_in_shipping();

@@ -18,6 +18,7 @@ class BlueSnapAPI {
     private static final String CONTENT_TYPE = "application/json";
     private static final String ACCEPT = "application/json";
 
+    //blueSnap API version
     private static final double BLUESNAP_VERSION_HEADER = 2.0;
     private static final BlueSnapAPI INSTANCE = new BlueSnapAPI();
 
@@ -46,8 +47,8 @@ class BlueSnapAPI {
     private BlueSnapAPI() {
 
         headerParams = new ArrayList<>();
-        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_HEADER", BuildConfig.VERSION_NAME));
-        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_HEADER_CODE", String.valueOf(BuildConfig.VERSION_CODE)));
+        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_HEADER", "ANDROID SDK " + BuildConfig.VERSION_CODE));
+        headerParams.add(new CustomHTTPParams("BLUESNAP_ORIGIN_VERSION_HEADER", BuildConfig.VERSION_NAME));
         headerParams.add(new CustomHTTPParams("BLUESNAP_VERSION_HEADER", String.valueOf(BLUESNAP_VERSION_HEADER)));
     }
 

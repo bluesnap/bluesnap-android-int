@@ -22,6 +22,7 @@ import org.junit.Rule;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -72,6 +73,7 @@ public class ChoosePaymentMethodEspressoBasedTester {
 
         if (shopperCheckoutRequirements.isShippingRequired()) { //continue to shipping
             TestUtils.pressBuyNowButton();
+            onView(withId(R.id.shippingSameAsBillingSwitch)).perform(swipeLeft());
             ContactInfoTesterCommon.changeCountry(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryValue());
             ContactInfoTesterCommon.fillInContactInfo(R.id.newShoppershippingViewComponent, ContactInfoTesterCommon.shippingContactInfo.getCountryKey(), true, false);
         }
