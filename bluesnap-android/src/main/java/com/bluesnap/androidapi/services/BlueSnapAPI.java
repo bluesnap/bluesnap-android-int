@@ -18,6 +18,7 @@ class BlueSnapAPI {
     private static final String CONTENT_TYPE = "application/json";
     private static final String ACCEPT = "application/json";
 
+    //blueSnap API version
     private static final double BLUESNAP_VERSION_HEADER = 2.0;
     private static final BlueSnapAPI INSTANCE = new BlueSnapAPI();
 
