@@ -90,7 +90,7 @@ public class ChoosePaymentMethodVisibilityTests extends ChoosePaymentMethodEspre
         check_store_card_visibility_after_changing_activities(true);
         check_store_card_visibility_after_changing_activities(false);
 
-        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, true, true);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, true, true, true, true);
         currency_hamburger_button_visibility_in_shipping();
 
         submit_button_visibility_and_content_in_new_card();

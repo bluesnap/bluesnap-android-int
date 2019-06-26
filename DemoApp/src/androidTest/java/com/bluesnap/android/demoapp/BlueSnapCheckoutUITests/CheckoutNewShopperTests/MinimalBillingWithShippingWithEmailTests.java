@@ -46,7 +46,7 @@ public class MinimalBillingWithShippingWithEmailTests extends CheckoutEspressoBa
         check_store_card_visibility();
         shipping_button_validation();
 
-        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, true);
+        TestUtils.continueToShippingOrPayInNewCard(defaultCountryKey, false, true, true);
         new_credit_shipping_contact_info_visibility_validation();
         new_credit_shipping_contact_info_error_messages_validation();
         default_country_zip_view_validation_in_shipping();
