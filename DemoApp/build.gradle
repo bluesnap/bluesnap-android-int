@@ -1,5 +1,5 @@
 plugins {
-    id 'com.gladed.androidgitversion' version '0.2.13'
+    id 'com.gladed.androidgitversion' version '0.4.9'
     id "com.jfrog.bintray" version "1.6"
 
 }
