@@ -11,7 +11,8 @@
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/headerTextView"
