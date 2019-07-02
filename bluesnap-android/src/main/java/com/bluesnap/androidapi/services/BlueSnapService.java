@@ -681,6 +681,7 @@ public class BlueSnapService {
         return res;
     }
 
+
     private interface AfterNewTokenCreatedAction {
         void complete();
     }

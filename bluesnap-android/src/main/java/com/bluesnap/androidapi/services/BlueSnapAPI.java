@@ -30,6 +30,7 @@ class BlueSnapAPI {
     private static final String SDK_INIT = "tokenized-services/sdk-init";
     private static final String UPDATE_SHOPPER = "tokenized-services/shopper";
     private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
+    private static final String CARDINAL_SERVICE = "tokenized-services/3ds-jwt";
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
     private String merchantToken;
@@ -118,6 +119,17 @@ class BlueSnapAPI {
      */
     BlueSnapHTTPResponse retrieveTransactionStatus() {
         return HTTPOperationController.get(url + RETRIEVE_TRANSACTION_SERVICE, CONTENT_TYPE, ACCEPT, headerParams);
+    }
+
+
+
+    /**
+     * create Cardinal JWT
+     *
+     */
+    BlueSnapHTTPResponse createCardinalJWT() {
+        String urlString = url + CARDINAL_SERVICE ;
+        return HTTPOperationController.post(urlString, null, CONTENT_TYPE, ACCEPT, headerParams);
     }
 
 }

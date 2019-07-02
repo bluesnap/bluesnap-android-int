@@ -1,7 +1,9 @@
 package com.bluesnap.androidapi;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.test.InstrumentationRegistry;
 import android.util.Base64;
 import android.util.Log;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
@@ -138,5 +140,13 @@ public class BSAndroidTestsBase {
         Log.i(TAG, "Done");
     }
 
+    /**
+     * Get a context for tests, requires android support libs
+     * @return
+     */
+    Context getTestContext() {
+      return InstrumentationRegistry.getInstrumentation().getContext();
+
+    }
 
 }
