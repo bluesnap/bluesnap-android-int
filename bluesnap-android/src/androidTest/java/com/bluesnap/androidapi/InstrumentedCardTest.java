@@ -22,7 +22,7 @@ import static junit.framework.Assert.*;
 public class InstrumentedCardTest extends BSAndroidTestsBase {
     private static final String TAG = InstrumentedCardTest.class.getSimpleName();
     private static final String CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE = "1234123412341238";
-    private static final String CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED = "5568111111111116";
+    static final String CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED = "5568111111111116";
 
     private static final LinkedHashMap<String, String> creditCardRegex = new LinkedHashMap<>();
 

@@ -21,10 +21,15 @@ public class CardinalJWT {
         this.jwt = JWT;
     }
 
-    public String parse(String jwt) {
+    /*
+        Extract the jwt from a bluesnap http response
+
+     */
+    public String parse(String responseString) {
         try {
-            JSONObject jwtJson = new JSONObject(jwt);
-            return jwtJson.getString("CardinalJWT");
+            JSONObject jwtJson = new JSONObject(responseString);
+            jwt = jwtJson.getString("jwt");
+            return jwt;
         } catch (JSONException e) {
             e.printStackTrace();
         }
