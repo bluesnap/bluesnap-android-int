@@ -28,6 +28,10 @@ import static org.junit.Assert.fail;
 
 public class CardinalAPITest extends BSAndroidTestsBase {
 
+    static final String CARD_NUMBER_3DS_CARDIANL_CARD = "4000000000000002"; //Other card numbers fail in tests
+    static final String CARDINAL_CARD_CVV = "123";
+    static final String CARDINAL_CARD_EXP = "01/2022";
+
 
     @Test
     public void cardinal_token_tests() throws Exception {
@@ -53,7 +57,7 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         final CreditCard card = new CreditCard();
         Double amount = 30.5D;
         String currency = "USD";
-        card.update(CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED, "11/25", "123");
+        card.update(CARD_NUMBER_3DS_CARDIANL_CARD, CARDINAL_CARD_EXP, CARDINAL_CARD_CVV);
         purchaseDetails.setCreditCard(card);
         CardinalManager cardinalManager = CardinalManager.getInstance();
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
@@ -64,8 +68,8 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());
         String Last4 = jsonObject.getString("last4Digits");
         String ccType = jsonObject.getString("ccType");
-        assertEquals("MASTERCARD", ccType);
-        assertEquals("1116", Last4);
+        assertEquals("VISA", ccType);
+        assertEquals("0002", Last4);
         BS3DSAuthResponse authResponse = cardinalManager.authWith3DS("USD", amount);
         assertEquals("CHALLENGE_REQUIRED", authResponse.getEnrollmentStatus());
         assertNotNull("No transactionID from cardinal", authResponse.getTransactionId());
