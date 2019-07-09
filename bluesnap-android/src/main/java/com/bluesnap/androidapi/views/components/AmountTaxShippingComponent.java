@@ -120,6 +120,13 @@ public class AmountTaxShippingComponent extends LinearLayout {
         else
             storeCardRelativeLayout.setVisibility(VISIBLE);
 
+        setAmountTaxView();
+    }
+
+    /**
+     * set Sub Total and Tax Amount
+     */
+    public void setAmountTaxView() {
         final PriceDetails priceDetails = sdkRequest.getPriceDetails();
         if (sdkRequest instanceof SdkRequestShopperRequirements || (sdkRequest instanceof SdkRequestSubscriptionCharge && priceDetails == null) || !priceDetails.isSubtotalTaxSet()) {
             amountTaxLinearLayout.setVisibility(GONE);

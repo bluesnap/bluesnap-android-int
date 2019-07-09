@@ -16,8 +16,6 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,7 +40,7 @@ public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspres
             returningShopper.getBillingContactInfo().setEmail("");
     }
 
-    public void returning_shopper_minimal_billing_with_email_common_tester() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_common_tester() {
         credit_card_in_list_visibility_validation();
         onData(anything()).inAdapterView(ViewMatchers.withId(R.id.oneLineCCViewComponentsListView)).atPosition(0).perform(click());
         credit_card_view_visibility_validation();
@@ -65,42 +63,42 @@ public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspres
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_1() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_1() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_2() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_2() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_3() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_3() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_4() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_4() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_5() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_5() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_6() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_6() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_7() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_7() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
     @Test
-    public void returning_shopper_minimal_billing_with_email_test_8() throws IOException {
+    public void returning_shopper_minimal_billing_with_email_test_8() {
         returning_shopper_minimal_billing_with_email_common_tester();
     }
 
@@ -145,7 +143,7 @@ public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspres
      * This test verifies that the billing contact info presents the correct
      * content when pressing the billing edit button in returning shopper.
      */
-    public void billing_contact_info_content_validation() throws IOException {
+    public void billing_contact_info_content_validation() {
         //verify info has been saved
         ContactInfoTesterCommon.contact_info_content_validation("billing_contact_info_content_validation in " + returningShopper.getShippingContactInfo(),
                 applicationContext, R.id.billingViewComponent, returningShopper.getBillingContactInfo().getCountryKey(), false, true, returningShopper.getBillingContactInfo());
@@ -156,7 +154,7 @@ public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspres
      * billing contact info presents the new content after editing the info.
      * It uses the "Done" button to go back to credit card fragment.
      */
-    public void returning_shopper_edit_billing_contact_info_using_done_button_validation() throws IOException {
+    public void returning_shopper_edit_billing_contact_info_using_done_button_validation() {
         ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_billing_contact_info_using_done_button_validation in " + returningShopper.getShopperDescription(),
                 applicationContext, R.id.billingViewSummarizedComponent, false, true, true, null);
     }
@@ -166,7 +164,7 @@ public class ReturningShopperMinimalBillingWithEmailTests extends CheckoutEspres
      * billing contact info presents the old content after editing the info,
      * since it uses the "Back" button to go back to credit card fragment.
      */
-    public void returning_shopper_edit_billing_contact_info_using_back_button_validation() throws IOException {
+    public void returning_shopper_edit_billing_contact_info_using_back_button_validation() {
         ContactInfoTesterCommon.returning_shopper_edit_contact_info_validation("returning_shopper_edit_billing_contact_info_using_back_button_validation in " + returningShopper.getShopperDescription(),
                 applicationContext, R.id.billingViewSummarizedComponent, false, true, false, returningShopper.getBillingContactInfo());
     }

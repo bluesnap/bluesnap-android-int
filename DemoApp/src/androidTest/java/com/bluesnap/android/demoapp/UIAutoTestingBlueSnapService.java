@@ -425,77 +425,72 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     // Set up and lunch activity for returning shopper checkout flow
     public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isExistingCard) throws BSPaymentRequestException, InterruptedException, JSONException {
         setExistingCard(isExistingCard);
-        purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
+//        purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
 
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         setSdk(sdkRequest, shopperCheckoutRequirements);
         setupAndLaunch(sdkRequest, true, vaultedShopperId);
     }
 
-    // Create new vaulted shopper
     public void createVaultedShopper(boolean withCreditCard) throws JSONException {
-        createVaultedShopperService(withCreditCard, new CreateVaultedShopperInterface() {
-            @Override
-            public void onServiceSuccess() throws JSONException {
-                JSONObject jsonObject = new JSONObject(createVaultedShopperResponse);
-                vaultedShopperId = getOptionalString(jsonObject, "vaultedShopperId");
-            }
-
-            @Override
-            public void onServiceFailure() {
-                fail("Cannot create shopper from merchant server");
-            }
-        });
+        createVaultedShopper(withCreditCard, false);
     }
 
-    // Make a vaulted shopper API call
-    private void createVaultedShopperService(boolean withCreditCard, final CreateVaultedShopperInterface createVaultedShopper) throws JSONException {
-        JSONObject body = withCreditCard ? createVaultedShopperWithCreditCardDataObject() : createBasicVaultedShopperDataObject();
+    // Create new vaulted shopper
+    public void createVaultedShopper(boolean withCreditCard, boolean withShipping) throws JSONException {
+        JSONObject body = createVaultedShopperDataObject(withCreditCard, withShipping);
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             createVaultedShopperResponse = response.getResponseString();
-            createVaultedShopper.onServiceSuccess();
+            JSONObject jsonObject = new JSONObject(createVaultedShopperResponse);
+            vaultedShopperId = getOptionalString(jsonObject, "vaultedShopperId");
         } else {
             Log.e(TAG, "createVaultedShopperService API error: " + response);
-            createVaultedShopper.onServiceFailure();
+            fail("Cannot create shopper from merchant server");
         }
     }
 
-    // Create JSONObject for a vaulted shopper with only first and last name and email
-    private JSONObject createBasicVaultedShopperDataObject() throws JSONException {
+    // Create JSONObject for a vaulted shopper with optionals credit card and shipping info
+    private JSONObject createVaultedShopperDataObject(boolean withCreditCard, boolean withShipping) throws JSONException {
         JSONObject postData = new JSONObject();
 
         postData.put("firstName", "Fanny");
         postData.put("lastName", "Brice");
         postData.put("email", "some@mail.com");
 
-        return postData;
-    }
+        if (withCreditCard) {
+            JSONObject jsonObjectCreditCard = new JSONObject();
+            jsonObjectCreditCard.put("expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
+            jsonObjectCreditCard.put("securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
+            jsonObjectCreditCard.put("expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
+            jsonObjectCreditCard.put("cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
 
-    // Create JSONObject for a vaulted shopper with credit card info
-    private JSONObject createVaultedShopperWithCreditCardDataObject() throws JSONException {
-        JSONObject postData = new JSONObject();
+            JSONObject jsonObjectFirstElement = new JSONObject();
+            jsonObjectFirstElement.put("creditCard", jsonObjectCreditCard);
 
-        JSONObject jsonObjectCreditCard = new JSONObject();
-        jsonObjectCreditCard.put("expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
-        jsonObjectCreditCard.put("securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
-        jsonObjectCreditCard.put("expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
-        jsonObjectCreditCard.put("cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
+            JSONArray jsonArrayCreditCardInfo = new JSONArray();
+            jsonArrayCreditCardInfo.put(jsonObjectFirstElement);
 
-        JSONObject jsonObjectFirstElement = new JSONObject();
-        jsonObjectFirstElement.put("creditCard", jsonObjectCreditCard);
+            JSONObject jsonObjectPaymentSources = new JSONObject();
+            jsonObjectPaymentSources.put("creditCardInfo", jsonArrayCreditCardInfo);
 
-        JSONArray jsonArrayCreditCardInfo = new JSONArray();
-        jsonArrayCreditCardInfo.put(jsonObjectFirstElement);
+            postData.put("paymentSources", jsonObjectPaymentSources);
+        }
 
-        JSONObject jsonObjectPaymentSources = new JSONObject();
-        jsonObjectPaymentSources.put("creditCardInfo", jsonArrayCreditCardInfo);
+        if (withShipping){
+            JSONObject jsonObjectShippingContactInfo = new JSONObject();
+            jsonObjectShippingContactInfo.put("firstName", ContactInfoTesterCommon.shippingContactInfo.getFirstName());
+            jsonObjectShippingContactInfo.put("lastName", ContactInfoTesterCommon.shippingContactInfo.getLastName());
+            jsonObjectShippingContactInfo.put("address1", ContactInfoTesterCommon.shippingContactInfo.getAddress());
+            jsonObjectShippingContactInfo.put("city", ContactInfoTesterCommon.shippingContactInfo.getCity());
+            jsonObjectShippingContactInfo.put("state", ContactInfoTesterCommon.shippingContactInfo.getState());
+            jsonObjectShippingContactInfo.put("zip", ContactInfoTesterCommon.shippingContactInfo.getZip());
+            jsonObjectShippingContactInfo.put("country", ContactInfoTesterCommon.shippingContactInfo.getCountryKey().toLowerCase());
 
-        postData.put("paymentSources", jsonObjectPaymentSources);
 
-        postData.put("firstName", "Fanny");
-        postData.put("lastName", "Brice");
-        postData.put("email", "some@mail.com");
+            postData.put("shippingContactInfo", jsonObjectShippingContactInfo);
+
+        }
 
         return postData;
     }

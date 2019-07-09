@@ -272,7 +272,7 @@ public class ContactInfoTesterCommon {
         CreditCardVisibilityTesterCommon.check_contact_info_invalid_error_visibility(testName, R.id.input_layout_state, componentResourceId, "state", false);
     }
 
-    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail) throws IOException {
+    public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail) {
         TestingShopperContactInfo contactInfo = (componentResourceId == R.id.billingViewComponent) ? billingContactInfo : shippingContactInfo;
         contact_info_content_validation(testName, context, componentResourceId, country, fullInfo, withEmail, contactInfo);
     }
@@ -283,7 +283,7 @@ public class ContactInfoTesterCommon {
      * while using the back button summarized_contact_info_visibility_validation
      */
     public static void contact_info_content_validation(String testName, Context context, int componentResourceId, String country, boolean fullInfo, boolean withEmail,
-                                                       TestingShopperContactInfo contactInfo) throws IOException {
+                                                       TestingShopperContactInfo contactInfo) {
         Espresso.closeSoftKeyboard();
 
         //Verify country has been saved in current component
@@ -329,7 +329,7 @@ public class ContactInfoTesterCommon {
      * o.w. it uses the "Back" button and verifies the info doesn't change.
      */
     public static void returning_shopper_edit_contact_info_validation(String testName, Context context, int summarizedComponentResourceId, boolean fullInfo,
-                                                                      boolean withEmail, boolean useDoneButton, TestingShopperContactInfo verifyContactInfo) throws IOException {
+                                                                      boolean withEmail, boolean useDoneButton, TestingShopperContactInfo verifyContactInfo) {
         int buttonComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.returningShopperBillingFragmentButtonComponentView : R.id.returningShopperShippingFragmentButtonComponentView;
         int editableComponent = (summarizedComponentResourceId == R.id.billingViewSummarizedComponent) ? R.id.billingViewComponent : R.id.returningShoppershippingViewComponent;
 
