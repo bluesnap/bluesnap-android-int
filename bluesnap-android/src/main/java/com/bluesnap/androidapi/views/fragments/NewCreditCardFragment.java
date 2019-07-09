@@ -242,8 +242,6 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         BlueSnapService.getInstance().updateTax("", "", getActivity());
-        if (!sdkRequest.getShopperCheckoutRequirements().isBillingRequired())
-            amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {
             @Override
