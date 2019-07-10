@@ -6,6 +6,9 @@ import org.json.JSONObject;
 
 import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
 
+/**
+ * A representation of API auth response, matches Cardinal V1
+ */
 public class BS3DSAuthResponse extends  BSModel{
 
 

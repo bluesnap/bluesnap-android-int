@@ -1,5 +1,13 @@
 package com.bluesnap.androidapi;
 
+import android.app.Instrumentation;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.support.test.rule.ActivityTestRule;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.BS3DSAuthRequest;
 import com.bluesnap.androidapi.models.BS3DSAuthResponse;
@@ -8,11 +16,18 @@ import com.bluesnap.androidapi.models.CardinalJWT;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
+import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.CardinalManager;
+import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.bluesnap.androidapi.InstrumentedCardTest.CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -27,10 +42,22 @@ import static org.junit.Assert.fail;
  */
 
 public class CardinalAPITest extends BSAndroidTestsBase {
+    private static final String TAG = CardinalAPITest.class.getSimpleName();
 
     static final String CARD_NUMBER_3DS_CARDIANL_CARD = "4000000000000002"; //Other card numbers fail in tests
     static final String CARDINAL_CARD_CVV = "123";
     static final String CARDINAL_CARD_EXP = "01/2022";
+
+    @Rule
+    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
+            BluesnapCheckoutActivity.class, false, false);
+    private Instrumentation mInstrumentation;
+    private BluesnapCheckoutActivity mActivity;
+
+    @Before
+    public void setUp() throws Exception {
+        mActivity = mActivityRule.getActivity();
+    }
 
 
     @Test
@@ -44,12 +71,14 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         cardinalManager.configureCardinal(getTestContext());
         cardinalJWT = cardinalManager.createCardinalJWT();
         assertTrue(cardinalJWT.getJWT().length() > 10);
-        cardinalManager.init(cardinalJWT);
+//        cardinalManager.init(cardinalJWT);
     }
 
 
+//    @Test(timeout = 20000)
     @Test
     public void cardinal_tx_test() throws Exception {
+        Log.d(TAG, "starting test");
         final PurchaseDetails purchaseDetails = new PurchaseDetails();
         final BillingContactInfo billingContactInfo = new BillingContactInfo();
         purchaseDetails.setBillingContactInfo(billingContactInfo);
@@ -71,8 +100,29 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         assertEquals("VISA", ccType);
         assertEquals("0002", Last4);
         BS3DSAuthResponse authResponse = cardinalManager.authWith3DS("USD", amount);
+        Log.d(TAG, "Got auth response");
         assertEquals("CHALLENGE_REQUIRED", authResponse.getEnrollmentStatus());
         assertNotNull("No transactionID from cardinal", authResponse.getTransactionId());
+       // assertNotNull("test activity is null", mActivity);
+
+        AtomicBoolean waitingForIntent = new AtomicBoolean(false);
+
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Got broadcastReceiver intent");
+                    waitingForIntent.set(false);
+            }
+        };
+
+        BlueSnapLocalBroadcastManager.registerReceiver(getTestContext(), CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
+
+        cardinalManager.process(authResponse,mActivity , purchaseDetails);
+
+        while (!waitingForIntent.get()) {
+            Log.d(TAG, "Waiting for br");
+            Thread.sleep(500);
+        }
 
     }
 }

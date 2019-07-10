@@ -145,8 +145,8 @@ public class BSAndroidTestsBase {
      * @return
      */
     Context getTestContext() {
-      return InstrumentationRegistry.getInstrumentation().getContext();
-
+      Context context = InstrumentationRegistry.getInstrumentation().getContext();
+      return context;
     }
 
 }
