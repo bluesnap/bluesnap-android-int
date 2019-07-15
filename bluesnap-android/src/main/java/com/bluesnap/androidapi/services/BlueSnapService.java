@@ -339,6 +339,8 @@ public class BlueSnapService {
                         } catch (Exception e) {
                             Log.e(TAG, "Kount SDK initialization error " + e.getMessage());
                         }
+
+                        CardinalManager.getInstance().createCardinalJWT();
                         callback.onSuccess();
                     } catch (Exception e) {
                         Log.e(TAG, "exception: ", e);

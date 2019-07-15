@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.models.BS3DSAuthResponse;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
@@ -28,6 +29,7 @@ import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.CardinalManager;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.fragments.BlueSnapFragment;
@@ -43,6 +45,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -61,6 +64,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SdkRequestBase sdkRequest;
     private NewCreditCardShippingFragment newCreditCardShippingFragment;
+    private String cardinalResult;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -417,6 +421,9 @@ public class CreditCardActivity extends AppCompatActivity {
                             // update card type from server result
                             sdkResult.setCardType(ccType);
                             sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
+
+                            cardinal3DS(purchaseDetails);
+
                             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
                             setResult(RESULT_OK, resultIntent);
                             //Only set the remember shopper here since failure can lead to missing tokenization on the server
@@ -470,6 +477,51 @@ public class CreditCardActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String cardinal3DS(PurchaseDetails purchaseDetails){
+
+        try {
+            // Request auth with 3DS
+            CardinalManager cardinalManager = CardinalManager.getInstance();
+            BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
+
+            cardinalResult = authResponse.getEnrollmentStatus();
+
+            // Start Cardinal challenge
+            if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
+
+                AtomicBoolean waitingForIntent = new AtomicBoolean(true);
+
+                BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        Log.d(TAG, "Got broadcastReceiver intent");
+                        waitingForIntent.set(false);
+
+                        String event = intent.getAction();
+
+                        cardinalResult = intent.getStringExtra(event);
+                    }
+                };
+
+                BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
+
+                cardinalManager.process(authResponse,this, purchaseDetails);
+
+                while (waitingForIntent.get()) {
+                    Log.d(TAG, "Waiting for br");
+                    Thread.sleep(500);
+                }
+
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Cardinal Service Error", e);
+            cardinalResult = "3DS Authentication failed";
+        }
+
+        return cardinalResult;
     }
 
     /**
