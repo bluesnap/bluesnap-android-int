@@ -1,16 +1,16 @@
-package com.bluesnap.androidapi;
+package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 
-import android.app.Instrumentation;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.BS3DSAuthResponse;
 import com.bluesnap.androidapi.models.BillingContactInfo;
-import com.bluesnap.androidapi.models.CardinalJWT;
 import com.bluesnap.androidapi.models.CreditCard;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
@@ -19,63 +19,35 @@ import com.bluesnap.androidapi.services.CardinalManager;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-/**
- * Created by oz on 10/30/17.
- */
+@RunWith(AndroidJUnit4.class)
+public class CardinalUITest extends CheckoutEspressoBasedTester {
 
-public class CardinalAPITest extends BSAndroidTestsBase {
-    private static final String TAG = CardinalAPITest.class.getSimpleName();
+    private static final String TAG = CardinalUITest.class.getSimpleName();
 
     static final String CARD_NUMBER_3DS_CARDIANL_CARD = "4000000000000002"; //Other card numbers fail in tests
     static final String CARDINAL_CARD_CVV = "123";
     static final String CARDINAL_CARD_EXP = "01/2022";
 
-    @Rule
-    public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
-            BluesnapCheckoutActivity.class, false, true);
-    private Instrumentation mInstrumentation;
-    private BluesnapCheckoutActivity mActivity;
-
-    @Before
-    public void setUp() throws Exception {
-
-        mActivity = mActivityRule.getActivity();
-    }
-
-
-    //@Test
-    public void cardinal_token_tests() throws Exception {
-        CardinalJWT cardinalJWT;
-        CardinalManager cardinalManager = CardinalManager.getInstance();
-
-        Double amount = 30.5D;
-        SdkRequest sdkRequest = new SdkRequest(amount, "USD");
-        blueSnapService.setSdkRequest(sdkRequest);
-        cardinalManager.configureCardinal(getTestContext());
-        cardinalJWT = cardinalManager.createCardinalJWT(purchaseDetails.getCreditCard());
-        assertTrue(cardinalJWT.getJWT().length() > 10);
-//        cardinalManager.init(cardinalJWT);
-    }
-
-
-//    @Test(timeout = 20000)
     @Test
     public void cardinal_tx_test() throws Exception {
         Log.d(TAG, "starting test");
-        Context thisTestContext = mActivity.getApplicationContext();
+        shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true, false);
+
+        checkoutSetup();
+
+        Activity mActivity = mActivityRule.getActivity();
+        Context thisTestContext = mActivityRule.getActivity().getApplicationContext();
+        assertNotNull(thisTestContext);
+
         final PurchaseDetails purchaseDetails = new PurchaseDetails();
         final BillingContactInfo billingContactInfo = new BillingContactInfo();
         purchaseDetails.setBillingContactInfo(billingContactInfo);
@@ -89,9 +61,9 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         cardinalManager.configureCardinal(thisTestContext);
 
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
-        blueSnapService.setSdkRequest(sdkRequest);
+        uIAutoTestingBlueSnapService.blueSnapService.setSdkRequest(sdkRequest);
         cardinalManager.createCardinalJWT(purchaseDetails.getCreditCard());
-        BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
+        BlueSnapHTTPResponse blueSnapHTTPResponse = uIAutoTestingBlueSnapService.blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
         JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());
         String Last4 = jsonObject.getString("last4Digits");
@@ -102,29 +74,26 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         Log.d(TAG, "Got auth response");
         assertEquals("CHALLENGE_REQUIRED", authResponse.getEnrollmentStatus());
         assertNotNull("No transactionID from cardinal", authResponse.getTransactionId());
-       // assertNotNull("test activity is null", mActivity);
+        // assertNotNull("test activity is null", mActivity);
 
-        AtomicBoolean waitingForIntent = new AtomicBoolean(false);
+        AtomicBoolean waitingForIntent = new AtomicBoolean(true);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Got broadcastReceiver intent");
-                    waitingForIntent.set(false);
+                waitingForIntent.set(false);
             }
         };
 
-        BlueSnapLocalBroadcastManager.registerReceiver(getTestContext(), CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(thisTestContext, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
 
-        cardinalManager.process(authResponse,mActivity , purchaseDetails);
+        cardinalManager.process(authResponse,mActivityRule.getActivity() , purchaseDetails);
 
-        while (!waitingForIntent.get()) {
+        while (waitingForIntent.get()) {
             Log.d(TAG, "Waiting for br");
             Thread.sleep(500);
         }
 
     }
 }
-
-
-
