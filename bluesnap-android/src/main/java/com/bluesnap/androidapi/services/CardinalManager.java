@@ -2,8 +2,11 @@ package com.bluesnap.androidapi.services;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.BS3DSAuthRequest;
@@ -76,11 +79,6 @@ public class CardinalManager  {
         jsonObject = new JSONObject(response.getResponseString());
         return BS3DSAuthResponse.fromJson(jsonObject);
     }
-
-    public void process3DS() {
-       //     blueSnapAPI.process3DS()
-    }
-
     /**
      *
      * @return
@@ -97,7 +95,7 @@ public class CardinalManager  {
         CardinalJWT  cardinalJWT = new CardinalJWT();
         cardinalJWT.parse(response.getResponseString());
         this.cardinalToken = cardinalJWT;
-        Cardinal.getInstance().init(creditCard.getNumber(), cardinalToken.getJWT(), new CardinalInitService() {
+        Cardinal.getInstance().init(cardinalToken.getJWT(),creditCard.getNumber(), new CardinalInitService() {
             @Override
             public void onSetupCompleted(String consumerSessionID) {
                 Log.d(TAG, "cardinal init completed");
@@ -133,14 +131,22 @@ public class CardinalManager  {
      */
     public void process(BS3DSAuthResponse authResponse, Activity activity, PurchaseDetails purchaseDetails) {
 
-        Cardinal.getInstance().cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), activity, new CardinalValidateReceiver() {
-            @Override
-            public void onValidated(Context context, ValidateResponse validateResponse, String s) {
-                Log.d(TAG, "Cardinal validated callback");
-            cardinalValidationResult = validateResponse;
-            BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED , TAG);
+        Handler refresh = new Handler(Looper.getMainLooper());
+        refresh.post(new Runnable() {
+            public void run()
+            {
+                Cardinal.getInstance().cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), activity, new CardinalValidateReceiver() {
+                    @Override
+                    public void onValidated(Context context, ValidateResponse validateResponse, String s) {
+                        Log.d(TAG, "Cardinal validated callback");
+                        cardinalValidationResult = validateResponse;
+                        BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED , TAG);
+                    }
+                });
             }
         });
+
+
 
     }
 

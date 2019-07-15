@@ -26,7 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class CardinalUITest extends CheckoutEspressoBasedTester {
@@ -94,6 +96,6 @@ public class CardinalUITest extends CheckoutEspressoBasedTester {
             Log.d(TAG, "Waiting for br");
             Thread.sleep(500);
         }
-
+        assertFalse(waitingForIntent.get());
     }
 }
