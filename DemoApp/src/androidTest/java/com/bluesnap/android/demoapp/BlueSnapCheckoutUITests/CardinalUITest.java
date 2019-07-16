@@ -46,7 +46,7 @@ public class CardinalUITest extends CheckoutEspressoBasedTester {
 
         checkoutSetup();
 
-        Activity mActivity = mActivityRule.getActivity();
+//        Activity mActivity = mActivityRule.getActivity();
         Context thisTestContext = mActivityRule.getActivity().getApplicationContext();
         assertNotNull(thisTestContext);
 
@@ -64,7 +64,8 @@ public class CardinalUITest extends CheckoutEspressoBasedTester {
 
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         uIAutoTestingBlueSnapService.blueSnapService.setSdkRequest(sdkRequest);
-        cardinalManager.createCardinalJWT(purchaseDetails.getCreditCard());
+        cardinalManager.createCardinalJWT();
+        cardinalManager.initCardinal(purchaseDetails.getCreditCard());
         BlueSnapHTTPResponse blueSnapHTTPResponse = uIAutoTestingBlueSnapService.blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
         JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());

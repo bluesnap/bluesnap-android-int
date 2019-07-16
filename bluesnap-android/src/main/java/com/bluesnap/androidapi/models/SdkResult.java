@@ -52,6 +52,8 @@ public class SdkResult implements Parcelable {
     private String token;
     private String kountSessionId;
 
+    private String cardinalResult;
+
     public SdkResult() {
     }
 

@@ -56,16 +56,20 @@ public class CardinalAPITest extends BSAndroidTestsBase {
     }
 
 
-    //@Test
+    @Test
     public void cardinal_token_tests() throws Exception {
         CardinalJWT cardinalJWT;
         CardinalManager cardinalManager = CardinalManager.getInstance();
+        final CreditCard card = new CreditCard();
 
+        card.update(CARD_NUMBER_3DS_CARDIANL_CARD, CARDINAL_CARD_EXP, CARDINAL_CARD_CVV);
         Double amount = 30.5D;
         SdkRequest sdkRequest = new SdkRequest(amount, "USD");
         blueSnapService.setSdkRequest(sdkRequest);
         cardinalManager.configureCardinal(getTestContext());
-        cardinalJWT = cardinalManager.createCardinalJWT(purchaseDetails.getCreditCard());
+        cardinalJWT = cardinalManager.createCardinalJWT();
+        cardinalManager.initCardinal(card);
+        //TODO: wait for callback/event after calling initCardinal()
         assertTrue(cardinalJWT.getJWT().length() > 10);
 //        cardinalManager.init(cardinalJWT);
     }
@@ -90,7 +94,9 @@ public class CardinalAPITest extends BSAndroidTestsBase {
 
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         blueSnapService.setSdkRequest(sdkRequest);
-        cardinalManager.createCardinalJWT(purchaseDetails.getCreditCard());
+        cardinalManager.createCardinalJWT();
+        cardinalManager.initCardinal(purchaseDetails.getCreditCard());
+        //TODO: wait for callback/event after calling initCardinal()
         BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
         JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());

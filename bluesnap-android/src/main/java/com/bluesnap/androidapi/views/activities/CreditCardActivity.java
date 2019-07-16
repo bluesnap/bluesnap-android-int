@@ -393,49 +393,9 @@ public class CreditCardActivity extends AppCompatActivity {
                 try {
                     BlueSnapHTTPResponse response = blueSnapService.submitTokenizedDetails(purchaseDetails);
                     if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        try {
-                            String Last4;
-                            String ccType;
-                            SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
-                            if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
-                                // New Card
-                                JSONObject jsonObject = new JSONObject(response.getResponseString());
-                                Last4 = jsonObject.getString("last4Digits");
-                                ccType = jsonObject.getString("ccType");
-                                Log.d(TAG, "tokenization of new credit card");
-                            } else {
-                                // Reused Card
-                                Last4 = shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
-                                ccType = shopper.getNewCreditCardInfo().getCreditCard().getCardType();
-                                Log.d(TAG, "tokenization of previous used credit card");
-                            }
+                        cardinal3DS(purchaseDetails, shopper, resultIntent, response);
 
-                            sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
-                            if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
-                                sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
-                            sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
-                            sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
-                            // update last4 from server result
-                            sdkResult.setLast4Digits(Last4);
-                            // update card type from server result
-                            sdkResult.setCardType(ccType);
-                            sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
-
-                            cardinal3DS(purchaseDetails);
-
-                            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-                            setResult(RESULT_OK, resultIntent);
-                            //Only set the remember shopper here since failure can lead to missing tokenization on the server
-                            shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
-                            Log.d(TAG, "tokenization finished");
-                            finish();
-                        } catch (NullPointerException | JSONException e) {
-                            Log.e(TAG, "", e);
-                            String errorMsg = String.format("Service Error %s", e.getMessage());
-                            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
-                            finish();
-                        }
                     } else if (response.getResponseCode() == 400 && null != blueSnapService.getTokenProvider() && !"".equals(response.getResponseString())) {
                         try {
                             JSONObject errorResponse = new JSONObject(response.getResponseString());
@@ -479,11 +439,21 @@ public class CreditCardActivity extends AppCompatActivity {
         });
     }
 
-    private String cardinal3DS(PurchaseDetails purchaseDetails){
+    /**
+     * 3DS flow
+     */
+    private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
 
         try {
             // Request auth with 3DS
             CardinalManager cardinalManager = CardinalManager.getInstance();
+
+            cardinalManager.configureCardinal(this);
+
+            cardinalManager.initCardinal(purchaseDetails.getCreditCard());
+
+            //TODO: wait for callback/event after calling initCardinal()
+
             BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
 
             cardinalResult = authResponse.getEnrollmentStatus();
@@ -491,37 +461,78 @@ public class CreditCardActivity extends AppCompatActivity {
             // Start Cardinal challenge
             if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
 
-                AtomicBoolean waitingForIntent = new AtomicBoolean(true);
 
                 BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         Log.d(TAG, "Got broadcastReceiver intent");
-                        waitingForIntent.set(false);
 
                         String event = intent.getAction();
 
                         cardinalResult = intent.getStringExtra(event);
+                        finishFromActivity(shopper, resultIntent, response);
                     }
                 };
 
                 BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
 
-                cardinalManager.process(authResponse,this, purchaseDetails);
-
-                while (waitingForIntent.get()) {
-                    Log.d(TAG, "Waiting for br");
-                    Thread.sleep(500);
-                }
+                cardinalManager.process(authResponse, this, purchaseDetails);
 
             }
 
         } catch (Exception e) {
             Log.e(TAG, "Cardinal Service Error", e);
             cardinalResult = "3DS Authentication failed";
+            finishFromActivity(shopper, resultIntent, response);
+        }
+    }
+
+    /**
+     * 3DS flow
+     */
+    private void finishFromActivity(Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
+        try {
+            String Last4;
+            String ccType;
+            SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+
+            if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
+                // New Card
+                JSONObject jsonObject = new JSONObject(response.getResponseString());
+                Last4 = jsonObject.getString("last4Digits");
+                ccType = jsonObject.getString("ccType");
+                Log.d(TAG, "tokenization of new credit card");
+            } else {
+                // Reused Card
+                Last4 = shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
+                ccType = shopper.getNewCreditCardInfo().getCreditCard().getCardType();
+                Log.d(TAG, "tokenization of previous used credit card");
+            }
+
+            sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
+            if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
+                sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
+            sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
+            sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
+            // update last4 from server result
+            sdkResult.setLast4Digits(Last4);
+            // update card type from server result
+            sdkResult.setCardType(ccType);
+            sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
+
+            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
+            setResult(RESULT_OK, resultIntent);
+            //Only set the remember shopper here since failure can lead to missing tokenization on the server
+            shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
+            Log.d(TAG, "tokenization finished");
+            finish();
+        } catch (NullPointerException | JSONException e) {
+            Log.e(TAG, "", e);
+            String errorMsg = String.format("Service Error %s", e.getMessage());
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
+            finish();
         }
 
-        return cardinalResult;
     }
 
     /**

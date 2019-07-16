@@ -83,19 +83,30 @@ public class CardinalManager  {
      *
      * @return
      * @throws  TODO: This should throw specific error
-     * @param creditCard
      */
-    public CardinalJWT createCardinalJWT(CreditCard creditCard) throws Exception {
+    public CardinalJWT createCardinalJWT() throws Exception {
         BlueSnapHTTPResponse response = blueSnapAPI.createCardinalJWT();
         if (response.getResponseCode() != HTTP_OK) {
             Log.e(TAG, "Get cardinal error:\n" + response);
-            throw  new Exception("unable to get Cardinal token")  ;
+            throw new Exception("unable to get Cardinal token");
         }
 
         CardinalJWT  cardinalJWT = new CardinalJWT();
         cardinalJWT.parse(response.getResponseString());
         this.cardinalToken = cardinalJWT;
-        Cardinal.getInstance().init(cardinalToken.getJWT(),creditCard.getNumber(), new CardinalInitService() {
+
+        return cardinalJWT;
+    }
+
+    // TODO: add a callback argument or Broadcast an event
+
+    /**
+     * @param creditCard
+     * @return
+     * @throws TODO: This should throw specific error
+     */
+    public void initCardinal(CreditCard creditCard) {
+        Cardinal.getInstance().init(cardinalToken.getJWT(), creditCard.getNumber(), new CardinalInitService() {
             @Override
             public void onSetupCompleted(String consumerSessionID) {
                 Log.d(TAG, "cardinal init completed");
@@ -107,7 +118,7 @@ public class CardinalManager  {
                 Log.d(TAG, "Error Message: " + validateResponse.getErrorDescription());
             }
         });
-        return cardinalJWT;
+
     }
 
 
@@ -129,7 +140,7 @@ public class CardinalManager  {
      * @param authResponse
      * @param activity
      */
-    public void process(BS3DSAuthResponse authResponse, Activity activity, PurchaseDetails purchaseDetails) {
+    public void process(final BS3DSAuthResponse authResponse, Activity activity, final PurchaseDetails purchaseDetails) {
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
