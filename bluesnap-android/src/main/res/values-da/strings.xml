@@ -56,5 +56,22 @@
     <string name="billing_zip">Fakturerings-postnummer</string>
     <string name="billing">fakturering</string>
     <string name="subscribe">Tilmeld</string>
-    <string name="store_card">Gem mit kort sikkert for fremtidige køb</string>
+    <string name="done">Færdig</string>
+    <string name="err_msg_address">Indtast en gyldig adresse</string>
+    <string name="err_msg_city">Indtast en gyldig by</string>
+    <string name="err_msg_email">Indtast gyldig e-mailadresse</string>
+    <string name="err_msg_name">Indtast dit fulde navn</string>
+    <string name="err_msg_state">Indtast en gyldig stat</string>
+    <string name="err_msg_zip">Indtast et gyldigt postnummer</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_name">Fulde navn</string>
+    <string name="invalid_cvv">Ugyldigt CVV</string>
+    <string name="invalid_date">Ugyldig dato</string>
+    <string name="newCardText">Nyt kort</string>
+    <string name="payment">Betaling</string>
+    <string name="payment_type">Betalingsform</string>
+    <string name="select_state">Vælg stat</string>
+    <string name="shipping_same_as_billing">Forsendelse samme som fakturering</string>
+    <string name="store_card">Opbevar mit kort sikkert</string>
+    <string name="submit">Indsend</string>
 </resources>

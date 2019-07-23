@@ -56,5 +56,22 @@
     <string name="billing_zip">Sąskaitų siuntimo adresas</string>
     <string name="billing">atsiskaitymas</string>
     <string name="subscribe">Prenumeruoti</string>
-    <string name="store_card">Mano kortelę saugiai laikyti pirkimams ateityje</string>
+    <string name="done">Atlikta</string>
+    <string name="err_msg_address">Įveskite galiojantį adresą</string>
+    <string name="err_msg_city">Įveskite galiojantį miestą</string>
+    <string name="err_msg_email">Įveskite galiojantį el. pašto adresą</string>
+    <string name="err_msg_name">Įveskite galiojantį vardą ir pavardę</string>
+    <string name="err_msg_state">Įveskite galiojančią valstybę</string>
+    <string name="err_msg_zip">Įveskite galiojantį pašto indeksą</string>
+    <string name="hint_email">El. paštas</string>
+    <string name="hint_name">Vardas ir pavardė</string>
+    <string name="invalid_cvv">Negaliojantis CVV</string>
+    <string name="invalid_date">Negaliojanti data</string>
+    <string name="newCardText">Nauja kortelė</string>
+    <string name="payment">Mokėjimas</string>
+    <string name="payment_type">Mokėjimo tipas</string>
+    <string name="select_state">Pasirinkti valstybę</string>
+    <string name="shipping_same_as_billing">Pristatymo ir atsiskaitymo adresai sutampa</string>
+    <string name="store_card">Saugiai saugoti mano kortelę</string>
+    <string name="submit">Pateikti</string>
 </resources>

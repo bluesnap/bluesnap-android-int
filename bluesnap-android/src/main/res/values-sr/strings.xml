@@ -56,5 +56,22 @@
     <string name="billing_zip">Поштански број за фактуре</string>
     <string name="billing">наплате</string>
     <string name="subscribe">претплатити се</string>
-    <string name="store_card">Безбедно запамти моју картицу за касније куповине</string>
+    <string name="done">Готово</string>
+    <string name="err_msg_address">Упишите исправну адресу</string>
+    <string name="err_msg_city">Упишите исправан назив града</string>
+    <string name="err_msg_email">Упишите исправну адресу е-поште</string>
+    <string name="err_msg_name">Упишите своје пуно име</string>
+    <string name="err_msg_state">Упишите исправан назив државе</string>
+    <string name="err_msg_zip">Упишите исправан поштански број</string>
+    <string name="hint_email">Е-пошта</string>
+    <string name="hint_name">Пуно име</string>
+    <string name="invalid_cvv">Неисправан контролни код</string>
+    <string name="invalid_date">Неисправан датум</string>
+    <string name="newCardText">Нова картица</string>
+    <string name="payment">Плаћање</string>
+    <string name="payment_type">Врста плаћања</string>
+    <string name="select_state">Одаберите државу</string>
+    <string name="shipping_same_as_billing">Адреса испоруке иста као за доставу рачуна</string>
+    <string name="store_card">Безбедно сачувајте податке о мојој картици</string>
+    <string name="submit">Пошаљи</string>
 </resources>

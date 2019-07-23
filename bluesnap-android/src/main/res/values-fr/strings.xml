@@ -56,5 +56,22 @@
     <string name="billing_zip">ZIP de facturation</string>
     <string name="billing">facturation</string>
     <string name="subscribe">Souscrire</string>
-    <string name="store_card">Conserver les données de ma carte de façon sécurisée pour de futurs achats</string>
+    <string name="done">Terminé</string>
+    <string name="err_msg_address">Entrez une adresse valide</string>
+    <string name="err_msg_city">Entrez une ville valide</string>
+    <string name="err_msg_email">Entrez une adresse e-mail valide</string>
+    <string name="err_msg_name">Entrez votre nom complet</string>
+    <string name="err_msg_state">Entrez un État valide</string>
+    <string name="err_msg_zip">Entrez un code postal valide</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_name">Nom et prénom</string>
+    <string name="invalid_cvv">CVV non valide</string>
+    <string name="invalid_date">Date non valide</string>
+    <string name="newCardText">Nouvelle carte</string>
+    <string name="payment">Paiement</string>
+    <string name="payment_type">Type de paiement</string>
+    <string name="select_state">Sélectionnez l\'État</string>
+    <string name="shipping_same_as_billing">Expédition identique à facturation</string>
+    <string name="store_card">Conserver ma carte de façon sécurisée</string>
+    <string name="submit">Envoyer</string>
 </resources>

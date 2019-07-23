@@ -56,5 +56,22 @@
     <string name="billing_zip">Zip код на фактурата</string>
     <string name="billing">фактуриране</string>
     <string name="subscribe">Абонирай се</string>
-    <string name="store_card">Разбира се, запазете картата ми за бъдещи покупки</string>
+    <string name="done">Готово</string>
+    <string name="err_msg_address">Въведете валиден адрес</string>
+    <string name="err_msg_city">Въведете валиден град</string>
+    <string name="err_msg_email">Въведете валиден имейл адрес</string>
+    <string name="err_msg_name">Въведете пълното си име</string>
+    <string name="err_msg_state">Въведете валидно състояние</string>
+    <string name="err_msg_zip">Въведете валиден пощенски код</string>
+    <string name="hint_email">Имейл</string>
+    <string name="hint_name">Пълно име</string>
+    <string name="invalid_cvv">Невалиден CVV код</string>
+    <string name="invalid_date">Невалидна дата</string>
+    <string name="newCardText">Нова карта</string>
+    <string name="payment">Плащане</string>
+    <string name="payment_type">Тип плащане</string>
+    <string name="select_state">Изберете държава</string>
+    <string name="shipping_same_as_billing">Адресът за доставка е същият като за фактуриране</string>
+    <string name="store_card">Съхрани картата ми безопасно</string>
+    <string name="submit">Изпращане</string>
 </resources>

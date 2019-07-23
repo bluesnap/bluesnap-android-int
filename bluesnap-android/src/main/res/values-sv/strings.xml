@@ -56,5 +56,22 @@
     <string name="billing_zip">Faktureringspostnummer</string>
     <string name="billing">fakturering</string>
     <string name="subscribe">Prenumerera</string>
-    <string name="store_card">Lagra mitt kort säkert för framtida köp</string>
+    <string name="done">Klart</string>
+    <string name="err_msg_address">Ange en giltig adress</string>
+    <string name="err_msg_city">Ange en giltig stad</string>
+    <string name="err_msg_email">Ange giltig e-postadress</string>
+    <string name="err_msg_name">Ange ditt fullständiga namn</string>
+    <string name="err_msg_state">Ange en giltig delstat</string>
+    <string name="err_msg_zip">Ange ett giltigt postnummer</string>
+    <string name="hint_email">E-post</string>
+    <string name="hint_name">Fullständigt namn</string>
+    <string name="invalid_cvv">Ogiltigt CVV</string>
+    <string name="invalid_date">Ogiltigt datum</string>
+    <string name="newCardText">Nytt kort</string>
+    <string name="payment">Betalning</string>
+    <string name="payment_type">Betalningstyp</string>
+    <string name="select_state">Välj delstat</string>
+    <string name="shipping_same_as_billing">Leverans samma som fakturering</string>
+    <string name="store_card">Lagra mitt kort säkert</string>
+    <string name="submit">Skicka</string>
 </resources>

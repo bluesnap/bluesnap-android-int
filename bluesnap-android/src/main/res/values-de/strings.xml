@@ -56,5 +56,22 @@
     <string name="billing_zip">Rechnungs-Zip</string>
     <string name="billing">Abrechnung</string>
     <string name="subscribe">Abonnieren</string>
-    <string name="store_card">Kartendaten für zukünftige Käufe sicher speichern</string>
+    <string name="done">Erledigt</string>
+    <string name="err_msg_address">Geben Sie eine gültige Adresse ein</string>
+    <string name="err_msg_city">Geben Sie eine gültige Stadt ein</string>
+    <string name="err_msg_email">Geben Sie eine gültige E-Mail-Adresse ein</string>
+    <string name="err_msg_name">Geben Sie Ihren vollständigen Namen ein</string>
+    <string name="err_msg_state">Geben Sie eine gültiges Bundesland ein</string>
+    <string name="err_msg_zip">Geben Sie eine gültige Postleitzahl ein</string>
+    <string name="hint_email">E-Mail</string>
+    <string name="hint_name">Vollständiger Name</string>
+    <string name="invalid_cvv">Ungültige Kartenprüfnummer (CVV)</string>
+    <string name="invalid_date">Ungültiges Datum</string>
+    <string name="newCardText">Neue Karte</string>
+    <string name="payment">Zahlung</string>
+    <string name="payment_type">Zahlungsart</string>
+    <string name="select_state">Bundesland wählen</string>
+    <string name="shipping_same_as_billing">Lieferadresse gleich wie Rechnungsadresse</string>
+    <string name="store_card">Meine Karte sicher aufbewahren</string>
+    <string name="submit">Übermitteln</string>
 </resources>

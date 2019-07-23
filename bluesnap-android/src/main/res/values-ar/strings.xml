@@ -55,4 +55,23 @@
     <string name="webview">عرض الويب</string>
     <string name="billing_zip">الفاتوره البريديه</string>
     <string name="billing">الفواتير</string>
+    <string name="done">تمت العملية</string>
+    <string name="err_msg_address">أدخل عنوانًا صالحًا</string>
+    <string name="err_msg_city">أدخل مدينة صالحة</string>
+    <string name="err_msg_email">أدخل عنوان بريد إلكتروني صالح</string>
+    <string name="err_msg_name">أدخل اسمك الكامل</string>
+    <string name="err_msg_state">أدخل ولاية صالحة</string>
+    <string name="err_msg_zip">أدخل رمز منطقةٍ/ رمزًا بريديًا صالحًا</string>
+    <string name="hint_email">البريد الإلكتروني</string>
+    <string name="hint_name">الاسم الكامل</string>
+    <string name="invalid_cvv">قيمة التحقق من البطاقة غير صالحة</string>
+    <string name="invalid_date">التاريخ غير صالح</string>
+    <string name="newCardText">بطاقة جديدة</string>
+    <string name="payment">دفع</string>
+    <string name="payment_type">نوع الدفع</string>
+    <string name="select_state">اختر ولاية</string>
+    <string name="shipping_same_as_billing">قيمة الشحن بنفس قيمة الفواتير</string>
+    <string name="store_card">تخزين بطاقتي بشكل آمن</string>
+    <string name="submit">تقديم</string>
+    <string name="subscribe">اشتراك</string>
 </resources>

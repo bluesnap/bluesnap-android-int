@@ -56,5 +56,22 @@
     <string name="billing_zip">帳單郵政編碼</string>
     <string name="billing">计费</string>
     <string name="subscribe">订阅</string>
-    <string name="store_card">安全储存我的卡片，以备将来购买之用</string>
+    <string name="done">完成</string>
+    <string name="err_msg_address">輸入有效地址</string>
+    <string name="err_msg_city">輸入正確城市</string>
+    <string name="err_msg_email">輸入有效電郵地址</string>
+    <string name="err_msg_name">輸入您的姓名</string>
+    <string name="err_msg_state">輸入正確州份</string>
+    <string name="err_msg_zip">輸入正確郵政編碼</string>
+    <string name="hint_email">電子郵件</string>
+    <string name="hint_name">姓名</string>
+    <string name="invalid_cvv">信用卡認證編號 (CVV)無效</string>
+    <string name="invalid_date">日期不正確</string>
+    <string name="newCardText">新卡</string>
+    <string name="payment">付款</string>
+    <string name="payment_type">支付方式</string>
+    <string name="select_state">選擇州份</string>
+    <string name="shipping_same_as_billing">郵寄地址與帳單地址相同</string>
+    <string name="store_card">安全儲存我的卡資料</string>
+    <string name="submit">提交</string>
 </resources>

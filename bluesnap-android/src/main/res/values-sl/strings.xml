@@ -55,4 +55,23 @@
     <string name="webview">Spletni pogled</string>
     <string name="billing_zip">zaračunavanje zip</string>
     <string name="billing">zaračunavanje</string>
+    <string name="done">Končano</string>
+    <string name="err_msg_address">Vnesite veljaven naslov</string>
+    <string name="err_msg_city">Vnesite veljavno mesto</string>
+    <string name="err_msg_email">Vnesite veljaven e-poštni naslov</string>
+    <string name="err_msg_name">Vnesite ime in priimek</string>
+    <string name="err_msg_state">Vnesite veljavno zvezno državo</string>
+    <string name="err_msg_zip">Vnesite veljavno poštno kodo / poštno številko</string>
+    <string name="hint_email">E-pošta</string>
+    <string name="hint_name">Ime in priimek</string>
+    <string name="invalid_cvv">Neveljavna številka CVV</string>
+    <string name="invalid_date">Neveljaven datum</string>
+    <string name="newCardText">Nova kartica</string>
+    <string name="payment">Plačilo</string>
+    <string name="payment_type">Vrsta plačila</string>
+    <string name="select_state">Izberite zvezno državo</string>
+    <string name="shipping_same_as_billing">Enak kot naslov plačnika</string>
+    <string name="store_card">Varno shrani mojo kartico</string>
+    <string name="submit">Pošlji</string>
+    <string name="subscribe">Naročite se</string>
 </resources>

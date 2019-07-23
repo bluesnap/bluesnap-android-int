@@ -56,5 +56,22 @@
     <string name="billing_zip">Postcode voor facturering</string>
     <string name="billing">facturering</string>
     <string name="subscribe">abonneren</string>
-    <string name="store_card">Sla mijn kaart veilig op voor toekomstige aankopen</string>
+    <string name="done">Klaar</string>
+    <string name="err_msg_address">Voer een geldig adres in</string>
+    <string name="err_msg_city">Voer een geldige stad in</string>
+    <string name="err_msg_email">Voer een geldig e-mailadres in</string>
+    <string name="err_msg_name">Voer uw volledige naam in</string>
+    <string name="err_msg_state">Voer een geldige staat in</string>
+    <string name="err_msg_zip">Voer een geldige postcode in</string>
+    <string name="hint_email">E-mailadres</string>
+    <string name="hint_name">Volledige naam</string>
+    <string name="invalid_cvv">Ongeldige CVV</string>
+    <string name="invalid_date">Ongeldige datum</string>
+    <string name="newCardText">Nieuwe kaart</string>
+    <string name="payment">Betaling</string>
+    <string name="payment_type">Betalingstype</string>
+    <string name="select_state">Selecteer staat</string>
+    <string name="shipping_same_as_billing">Verzending hetzelfde als facturering</string>
+    <string name="store_card">Sla mijn kaart veilig op</string>
+    <string name="submit">Verzenden</string>
 </resources>

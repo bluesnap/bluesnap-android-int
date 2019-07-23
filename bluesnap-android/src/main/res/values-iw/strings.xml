@@ -56,4 +56,22 @@
     <string name="billing_zip">מיקוד</string>
     <string name="billing">חיוב</string>
     <string name="subscribe">הירשם</string>
+    <string name="done">בוצע</string>
+    <string name="err_msg_address">נא להזין כתובת חוקית</string>
+    <string name="err_msg_city">נא להזין שם עיר חוקי</string>
+    <string name="err_msg_email">נא להזין כתובת אימייל חוקית</string>
+    <string name="err_msg_name">נא להזין את שמך המלא</string>
+    <string name="err_msg_state">נא להזין שם מדינה חוקי</string>
+    <string name="err_msg_zip">נא להזין מיקוד חוקי</string>
+    <string name="hint_email">אימייל</string>
+    <string name="hint_name">שם מלא</string>
+    <string name="invalid_cvv">קוד CVV לא חוקי</string>
+    <string name="invalid_date">תאריך לא חוקי</string>
+    <string name="newCardText">כרטיס חדש</string>
+    <string name="payment">תשלום</string>
+    <string name="payment_type">סוג התשלום</string>
+    <string name="select_state">בחר מדינה</string>
+    <string name="shipping_same_as_billing">הכתובת למשלוח זהה לכתובת לחיוב</string>
+    <string name="store_card">אחסנו את פרטי האשראי שלי בצורה בטוחה</string>
+    <string name="submit">שליחה</string>
 </resources>

@@ -56,5 +56,22 @@
     <string name="billing_zip">請求先郵便番号</string>
     <string name="billing">課金</string>
     <string name="subscribe">申し込む</string>
-    <string name="store_card">カード情報を今後使用できるよう安全に保管する</string>
+    <string name="done">完了</string>
+    <string name="err_msg_address">有効な住所を入力してください</string>
+    <string name="err_msg_city">有効な市町村区を入力してください</string>
+    <string name="err_msg_email">有効なメールアドレスを入力してください</string>
+    <string name="err_msg_name">氏名を入力してください</string>
+    <string name="err_msg_state">有効な都道府県を入力してください</string>
+    <string name="err_msg_zip">有効な郵便番号を入力してください</string>
+    <string name="hint_email">Eメール</string>
+    <string name="hint_name">氏名</string>
+    <string name="invalid_cvv">無効なCVV</string>
+    <string name="invalid_date">無効な日付</string>
+    <string name="newCardText">新しいカード</string>
+    <string name="payment">お支払い</string>
+    <string name="payment_type">お支払いタイプ</string>
+    <string name="select_state">都道府県を選択</string>
+    <string name="shipping_same_as_billing">請求先と配送先が同じ</string>
+    <string name="store_card">カードを安全に保管する</string>
+    <string name="submit">送信</string>
 </resources>

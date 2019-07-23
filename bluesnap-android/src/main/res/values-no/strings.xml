@@ -56,5 +56,22 @@
     <string name="billing_zip">Frakt-zip</string>
     <string name="billing">fakturering</string>
     <string name="subscribe">Abonnere</string>
-    <string name="store_card">Jeg vil at kortet mitt skal lagres, sånn at det kan brukes for framtidige kjøp</string>
+    <string name="done">Ferdig</string>
+    <string name="err_msg_address">Oppgi en gyldig adresse</string>
+    <string name="err_msg_city">Oppgi en gyldig by</string>
+    <string name="err_msg_email">Oppgi en gyldig e-postadresse</string>
+    <string name="err_msg_name">Oppgi for- og etternavnet ditt</string>
+    <string name="err_msg_state">Oppgi en gyldig stat/fylke</string>
+    <string name="err_msg_zip">Oppgi et gyldig postnummer</string>
+    <string name="hint_email">E-post</string>
+    <string name="hint_name">For- og etternavn</string>
+    <string name="invalid_cvv">Ugyldig CVV</string>
+    <string name="invalid_date">Ugyldig dato</string>
+    <string name="newCardText">Nytt kort</string>
+    <string name="payment">Betaling</string>
+    <string name="payment_type">Betalingstype</string>
+    <string name="select_state">Velg stat</string>
+    <string name="shipping_same_as_billing">Samme adresse for post og fakturering</string>
+    <string name="store_card">Lagre kortet mitt trygt</string>
+    <string name="submit">Send inn</string>
 </resources>

@@ -56,5 +56,22 @@
     <string name="billing_zip">Kodi postal i faturimit</string>
     <string name="billing">faturimit</string>
     <string name="subscribe">pajtohem</string>
-    <string name="store_card">Ruajë të sigurt kartën time për blerje në të ardhmen</string>
+    <string name="store_card">Ruaj në mënyrë të sigurt kartën time</string>
+    <string name="done">Kryer</string>
+    <string name="err_msg_address">Shëno një adresë të vlefshme </string>
+    <string name="err_msg_city">Shëno një qytet të vlefshëm</string>
+    <string name="err_msg_email">Shëno adresë të vlefshme të emailit </string>
+    <string name="err_msg_name">Shëno emrin e plotë </string>
+    <string name="err_msg_state">Shëno një shtet të vlefshëm </string>
+    <string name="err_msg_zip">Shëno një kod postar të vlefshëm </string>
+    <string name="hint_email">Email</string>
+    <string name="hint_name">Emri i plotë </string>
+    <string name="invalid_cvv">CCV e pavlefshme </string>
+    <string name="invalid_date">Datë e pavlefshme </string>
+    <string name="newCardText">Kartë e re</string>
+    <string name="payment">Pagesë </string>
+    <string name="payment_type">Lloji i pagesës</string>
+    <string name="select_state">Përzgjidh shtetin</string>
+    <string name="shipping_same_as_billing">Dërgesa e njëjtë me faturimin</string>
+    <string name="submit">Dërgo </string>
 </resources>

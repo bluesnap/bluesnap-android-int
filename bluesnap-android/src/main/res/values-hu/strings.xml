@@ -56,5 +56,22 @@
     <string name="billing_zip">Számlázási irányítószám</string>
     <string name="billing">számlázás</string>
     <string name="subscribe">Iratkozz fel</string>
-    <string name="store_card">Kártyám biztonságos megjegyzése későbbi vásárlások esetére</string>
+    <string name="done">vége</string>
+    <string name="err_msg_address">Adjon meg egy érvényes címet</string>
+    <string name="err_msg_city">Adjon meg egy érvényes várost</string>
+    <string name="err_msg_email">Adjon meg egy érvényes e-mail címet</string>
+    <string name="err_msg_name">Írja be a teljes nevét</string>
+    <string name="err_msg_state">Adjon meg egy érvényes állapotot</string>
+    <string name="err_msg_zip">Adjon meg egy érvényes irányítószámot</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_name">Teljes név</string>
+    <string name="invalid_cvv">Érvénytelen CVV</string>
+    <string name="invalid_date">Érvénytelen dátum</string>
+    <string name="newCardText">Új kártya</string>
+    <string name="payment">fizetés</string>
+    <string name="payment_type">Fizetési mód</string>
+    <string name="select_state">Válassza az államot</string>
+    <string name="shipping_same_as_billing">A szállítási és számlázási cím azonos</string>
+    <string name="store_card">A kártyámat biztonságosan tárolja</string>
+    <string name="submit">Küldje</string>
 </resources>

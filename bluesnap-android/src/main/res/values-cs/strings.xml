@@ -56,5 +56,22 @@
     <string name="billing_zip">PSČ pro fakturaci</string>
     <string name="billing">fakturace</string>
     <string name="subscribe">předplatit</string>
-    <string name="store_card">Bezpečně uložit mou kartu pro budoucí nákupy</string>
+    <string name="done">Hotovo</string>
+    <string name="err_msg_address">Zadejte platnou adresu</string>
+    <string name="err_msg_city">Zadejte platné město</string>
+    <string name="err_msg_email">Zadejte platnou e-mailovou adresu</string>
+    <string name="err_msg_name">Zadejte své celé jméno</string>
+    <string name="err_msg_state">Zadejte platný stát</string>
+    <string name="err_msg_zip">Zadejte platné PSČ</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_name">Celé jméno</string>
+    <string name="invalid_cvv">Neplatné CVV</string>
+    <string name="invalid_date">Neplatné datum</string>
+    <string name="newCardText">Nová karta</string>
+    <string name="payment">Platba</string>
+    <string name="payment_type">Typ platby</string>
+    <string name="select_state">Vyberte stát</string>
+    <string name="shipping_same_as_billing">Doručovací adresa stejná jako fakturační</string>
+    <string name="store_card">Bezpečně uložit mou kartu</string>
+    <string name="submit">Odeslat</string>
 </resources>

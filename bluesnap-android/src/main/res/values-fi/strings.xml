@@ -56,5 +56,22 @@
     <string name="billing_zip">Laskutusosoitteen postinumero</string>
     <string name="billing">laskutus</string>
     <string name="subscribe">merkitä</string>
-    <string name="store_card">Tallenna korttini turvallisesti tulevia ostoksia varten</string>
+    <string name="done">Valmis</string>
+    <string name="err_msg_address">Syötä kelvollinen osoite</string>
+    <string name="err_msg_city">Syötä kelvollinen kaupunki</string>
+    <string name="err_msg_email">Syötä kelvollinen sähköpostiosoite</string>
+    <string name="err_msg_name">Syötä koko nimesi</string>
+    <string name="err_msg_state">Syötä kelvollinen valtio</string>
+    <string name="err_msg_zip">Syötä kelvollinen postinumero</string>
+    <string name="hint_email">Sähköpostiosoite</string>
+    <string name="hint_name">Koko nimi</string>
+    <string name="invalid_cvv">Virheellinen CVV</string>
+    <string name="invalid_date">Virheellinen päivämäärä</string>
+    <string name="newCardText">Uusi kortti</string>
+    <string name="payment">Maksu</string>
+    <string name="payment_type">Maksutapa</string>
+    <string name="select_state">Valitse tila</string>
+    <string name="shipping_same_as_billing">Toimitus sama kuin laskutus</string>
+    <string name="store_card">Tallenna korttini turvallisesti</string>
+    <string name="submit">Lähetä</string>
 </resources>

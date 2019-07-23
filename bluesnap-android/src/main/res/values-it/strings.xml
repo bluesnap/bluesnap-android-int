@@ -56,5 +56,22 @@
     <string name="billing_zip">CAP di fatturazione</string>
     <string name="billing">fatturazione</string>
     <string name="subscribe">sottoscrivi</string>
-    <string name="store_card">Metti da parte senza rischi la mia carta per futuri acquisti</string>
+    <string name="done">è finita</string>
+    <string name="err_msg_address">Inserisci un indirizzo valido</string>
+    <string name="err_msg_city">Inserisci una città valida</string>
+    <string name="err_msg_email">Inserisci un indirizzo email valido</string>
+    <string name="err_msg_name">Inserisci il tuo nome completo</string>
+    <string name="err_msg_state">Inserisci uno stato valido</string>
+    <string name="err_msg_zip">Inserisci un codice zip / zip valido</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_name">Nome completo</string>
+    <string name="invalid_cvv">CVV non valido</string>
+    <string name="invalid_date">Data non valida</string>
+    <string name="newCardText">Nuova carta</string>
+    <string name="payment">pagamento</string>
+    <string name="payment_type">Tipo di pagamento</string>
+    <string name="select_state">Seleziona stato</string>
+    <string name="shipping_same_as_billing">La spedizione e l\'indirizzo di fatturazione sono gli stessi</string>
+    <string name="store_card">Conserva la mia carta in modo sicuro</string>
+    <string name="submit">presentare</string>
 </resources>

@@ -56,5 +56,22 @@
     <string name="billing_zip">Kod pocztowy faktury</string>
     <string name="billing">dane do faktury</string>
     <string name="subscribe">Subskrybować</string>
-    <string name="store_card">Zapisz bezpiecznie informacje o mojej karcie na potrzeby przyszłych transakcji</string>
+    <string name="done">Gotowe</string>
+    <string name="err_msg_address">Wprowadź prawidłowy adres</string>
+    <string name="err_msg_city">Wprowadź prawidłową miejscowość</string>
+    <string name="err_msg_email">Wprowadź prawidłowy adres e-mail</string>
+    <string name="err_msg_name">Wprowadź swoje imię i nazwisko</string>
+    <string name="err_msg_state">Wprowadź prawidłowy(-e) stan/województwo</string>
+    <string name="err_msg_zip">Wprowadź prawidłowy kod pocztowy</string>
+    <string name="hint_email">Adres e-mail</string>
+    <string name="hint_name">Imię i nazwisko</string>
+    <string name="invalid_cvv">Nieprawidłowy kod CVV</string>
+    <string name="invalid_date">Nieprawidłowa data</string>
+    <string name="newCardText">Nowa karta</string>
+    <string name="payment">Płatność</string>
+    <string name="payment_type">Typ płatności</string>
+    <string name="select_state">Wybierz stan/województwo</string>
+    <string name="shipping_same_as_billing">Adres wysyłkowy taki sam jak na rachunku</string>
+    <string name="store_card">Bezpiecznie przechowuj dane mojej karty</string>
+    <string name="submit">Zatwierdź</string>
 </resources>

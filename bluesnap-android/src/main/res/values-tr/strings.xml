@@ -56,5 +56,22 @@
     <string name="billing_zip">Fatura Zip Kodu</string>
     <string name="billing">fatura</string>
     <string name="subscribe">Abone ol</string>
-    <string name="store_card">Kartımı gelecek alışverişler için güvenli şekilde kaydet</string>
+    <string name="done">Bitti</string>
+    <string name="err_msg_address">Geçerli bir adres girin</string>
+    <string name="err_msg_city">Geçerli bir şehir girin</string>
+    <string name="err_msg_email">Geçerli bir e-posta adresi girin</string>
+    <string name="err_msg_name">Tam adınızı girin</string>
+    <string name="err_msg_state">Geçerli bir devlet girin</string>
+    <string name="err_msg_zip">Geçerli bir zip/posta kodu girin</string>
+    <string name="hint_email">E-posta</string>
+    <string name="hint_name">Tam Adı</string>
+    <string name="invalid_cvv">Geçersiz CVV</string>
+    <string name="invalid_date">Geçersiz tarih</string>
+    <string name="newCardText">Yeni Kart</string>
+    <string name="payment">Ödeme</string>
+    <string name="payment_type">Ödeme Türü</string>
+    <string name="select_state">Devlet Seçin</string>
+    <string name="shipping_same_as_billing">Gönderi ve fatura adresi aynı</string>
+    <string name="store_card">Kartımı güvenle depola</string>
+    <string name="submit">Gönder</string>
 </resources>

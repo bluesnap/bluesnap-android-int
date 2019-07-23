@@ -56,5 +56,22 @@
     <string name="billing_zip">Индекс по адресу выставления счета</string>
     <string name="billing">биллинг</string>
     <string name="subscribe">Подписывайся</string>
-    <string name="store_card">Безопасно сохранить мою карту для будущих покупок</string>
+    <string name="done">Готово</string>
+    <string name="err_msg_address">Введите действительный адрес</string>
+    <string name="err_msg_city">Введите действительный город</string>
+    <string name="err_msg_email">Введите действительный адрес электронной почты</string>
+    <string name="err_msg_name">Введите полное имя</string>
+    <string name="err_msg_state">Введите действительный штат</string>
+    <string name="err_msg_zip">Введите действительный почтовый индекс</string>
+    <string name="hint_email">Адрес электронной почты</string>
+    <string name="hint_name">Полное имя</string>
+    <string name="invalid_cvv">Неверный код CVV</string>
+    <string name="invalid_date">Неверная дата</string>
+    <string name="newCardText">Новая карта</string>
+    <string name="payment">Оплата</string>
+    <string name="payment_type">Вид оплаты</string>
+    <string name="select_state">Выберите штат</string>
+    <string name="shipping_same_as_billing">Адрес доставки совпадает с платежным адресом</string>
+    <string name="store_card">Безопасно сохранить мою карту</string>
+    <string name="submit">Отправить</string>
 </resources>
