@@ -30,7 +30,9 @@ import org.json.JSONObject;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class CardinalManager  {
-    public static final String CARDINAL_VALIDATED = "com.bluesnap.intent.CARDINAL_CARD_VALIDATED";;
+    public static final String CARDINAL_VALIDATED = "com.bluesnap.intent.CARDINAL_CARD_VALIDATED";
+    public static final String CARDINAL_INITIALIZED = "com.bluesnap.intent.CARDINAL_INITIALIZED";
+    ;
     private static final String TAG = CardinalManager.class.getSimpleName();
     private static CardinalManager instance = null;
     //private static Cardinal cardinal = Cardinal.getInstance();
@@ -105,12 +107,13 @@ public class CardinalManager  {
      * @return
      * @throws TODO: This should throw specific error
      */
-    public void initCardinal(CreditCard creditCard) {
+    public void initCardinal(CreditCard creditCard, Activity activity) {
         Cardinal.getInstance().init(cardinalToken.getJWT(), creditCard.getNumber(), new CardinalInitService() {
             @Override
             public void onSetupCompleted(String consumerSessionID) {
                 Log.d(TAG, "cardinal init completed");
                 DirectoryServerID directoryServerID = DirectoryServerID.DEFAULT;
+                BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_INITIALIZED, TAG);
             }
 
             @Override

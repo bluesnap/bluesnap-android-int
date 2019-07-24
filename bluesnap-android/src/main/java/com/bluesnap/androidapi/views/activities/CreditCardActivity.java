@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
@@ -65,6 +66,7 @@ public class CreditCardActivity extends AppCompatActivity {
     private SdkRequestBase sdkRequest;
     private NewCreditCardShippingFragment newCreditCardShippingFragment;
     private String cardinalResult;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,6 +107,8 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
 
+        progressBar = findViewById(R.id.payProgressBar);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -349,6 +353,8 @@ public class CreditCardActivity extends AppCompatActivity {
     }
 
     public void finishFromFragment(final Shopper shopper) {
+        progressBar.setVisibility(View.VISIBLE);
+
         Intent resultIntent = new Intent();
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
         if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
@@ -444,15 +450,38 @@ public class CreditCardActivity extends AppCompatActivity {
      */
     private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
 
+
+        // Request auth with 3DS
+        CardinalManager cardinalManager = CardinalManager.getInstance();
+
+        cardinalManager.configureCardinal(this);
+
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Got broadcastReceiver intent");
+
+                blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
+                    }
+                });
+            }
+        };
+
+        BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_INITIALIZED, broadcastReceiver);
+
+        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), this);
+
+//        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
+
+    }
+
+    private void authCardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
         try {
             // Request auth with 3DS
             CardinalManager cardinalManager = CardinalManager.getInstance();
-
-            cardinalManager.configureCardinal(this);
-
-            cardinalManager.initCardinal(purchaseDetails.getCreditCard());
-
-            //TODO: wait for callback/event after calling initCardinal()
 
             BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
 
@@ -461,16 +490,21 @@ public class CreditCardActivity extends AppCompatActivity {
             // Start Cardinal challenge
             if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
 
-
                 BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         Log.d(TAG, "Got broadcastReceiver intent");
 
-                        String event = intent.getAction();
+                        blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                String event = intent.getAction();
 
-                        cardinalResult = intent.getStringExtra(event);
-                        finishFromActivity(shopper, resultIntent, response);
+                                cardinalResult = intent.getStringExtra(event);
+                                finishFromActivity(shopper, resultIntent, response);
+                            }
+                        });
+
                     }
                 };
 
@@ -478,6 +512,8 @@ public class CreditCardActivity extends AppCompatActivity {
 
                 cardinalManager.process(authResponse, this, purchaseDetails);
 
+            } else {
+                finishFromActivity(shopper, resultIntent, response);
             }
 
         } catch (Exception e) {
@@ -485,6 +521,7 @@ public class CreditCardActivity extends AppCompatActivity {
             cardinalResult = "3DS Authentication failed";
             finishFromActivity(shopper, resultIntent, response);
         }
+
     }
 
     /**

@@ -65,7 +65,7 @@ public class CardinalUITest extends CheckoutEspressoBasedTester {
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         uIAutoTestingBlueSnapService.blueSnapService.setSdkRequest(sdkRequest);
         cardinalManager.createCardinalJWT();
-        cardinalManager.initCardinal(purchaseDetails.getCreditCard());
+        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), mActivityRule.getActivity());
         BlueSnapHTTPResponse blueSnapHTTPResponse = uIAutoTestingBlueSnapService.blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
         JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());

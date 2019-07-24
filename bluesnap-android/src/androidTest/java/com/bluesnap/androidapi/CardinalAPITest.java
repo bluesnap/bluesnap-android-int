@@ -68,7 +68,7 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         blueSnapService.setSdkRequest(sdkRequest);
         cardinalManager.configureCardinal(getTestContext());
         cardinalJWT = cardinalManager.createCardinalJWT();
-        cardinalManager.initCardinal(card);
+        cardinalManager.initCardinal(card, mActivity);
         //TODO: wait for callback/event after calling initCardinal()
         assertTrue(cardinalJWT.getJWT().length() > 10);
 //        cardinalManager.init(cardinalJWT);
@@ -95,7 +95,7 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         blueSnapService.setSdkRequest(sdkRequest);
         cardinalManager.createCardinalJWT();
-        cardinalManager.initCardinal(purchaseDetails.getCreditCard());
+        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), mActivity);
         //TODO: wait for callback/event after calling initCardinal()
         BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
