@@ -1,9 +1,10 @@
 package com.bluesnap.androidapi.models;
 
-import android.util.Log;
 import com.bluesnap.androidapi.R;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -30,6 +31,29 @@ public class CreditCardTypeResolver {
     public static final String ELO = "Elo";
     public static final String UNKNOWN = "Unknown";
     public static final String NEWCARD = "NEWCARD";
+
+    private static Map<String, String> creditCardTypes;
+
+    static {
+        creditCardTypes = new HashMap<>();
+        creditCardTypes.put("AMEX", "American Express");
+        creditCardTypes.put("DISCOVER", "Discover");
+        creditCardTypes.put("JCB", "JCB");
+        creditCardTypes.put("DINERS", "Diners Club");
+        creditCardTypes.put("VISA", "Visa");
+        creditCardTypes.put("MASTERCARD", "MasterCard");
+        creditCardTypes.put("CHINA_UNION_PAY", "China Union Pay");
+        creditCardTypes.put("CARTE_BLEUE", "Carte Bleue");
+        creditCardTypes.put("CABAL", "Cabal");
+        creditCardTypes.put("ARGENCARD", "Argencard");
+        creditCardTypes.put("TARJETASHOPPING", "Tarjeta Shopping");
+        creditCardTypes.put("NARANJA", "Naranja");
+        creditCardTypes.put("CENCOSUD", "Cencosud");
+        creditCardTypes.put("HIPERCARD", "Hipercard");
+        creditCardTypes.put("ELO", "Elo");
+        creditCardTypes.put("UNKNOWN", "Unknown");
+        creditCardTypes.put("NEWCARD", "NEWCARD");
+    }
 
     private static final CreditCardTypeResolver INSTANCE = new CreditCardTypeResolver();
 
@@ -115,14 +139,10 @@ public class CreditCardTypeResolver {
      * @return client side name representation of credit card type
      */
     public String getCardTypeResource(String cardTypeResourceName) {
-        try {
-            return (String) CreditCardTypeResolver.class.getDeclaredField(cardTypeResourceName).get(null);
-        } catch (IllegalAccessException e) {
-            Log.e(TAG, "getCardTypeResource IllegalAccessException: ", e);
-            return UNKNOWN;
-        } catch (NoSuchFieldException e) {
-            Log.e(TAG, "getCardTypeResource NoSuchFieldException: ", e);
-            return UNKNOWN;
-        }
+
+        String result = creditCardTypes.get(cardTypeResourceName);
+
+        return (result == null ? UNKNOWN : result);
+
     }
 }
