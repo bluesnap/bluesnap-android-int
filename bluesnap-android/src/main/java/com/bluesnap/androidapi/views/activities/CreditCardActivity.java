@@ -485,8 +485,6 @@ public class CreditCardActivity extends AppCompatActivity {
 
             BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
 
-            cardinalResult = authResponse.getEnrollmentStatus();
-
             // Start Cardinal challenge
             if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
 
@@ -500,7 +498,6 @@ public class CreditCardActivity extends AppCompatActivity {
                             public void run() {
                                 String event = intent.getAction();
 
-                                cardinalResult = intent.getStringExtra(event);
                                 finishFromActivity(shopper, resultIntent, response);
                             }
                         });
@@ -518,7 +515,6 @@ public class CreditCardActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "Cardinal Service Error", e);
-            cardinalResult = "3DS Authentication failed";
             finishFromActivity(shopper, resultIntent, response);
         }
 
@@ -556,6 +552,7 @@ public class CreditCardActivity extends AppCompatActivity {
             // update card type from server result
             sdkResult.setCardType(ccType);
             sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
+            sdkResult.setCardinalResult(CardinalManager.getInstance().getCardinalResult());
 
             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
             setResult(RESULT_OK, resultIntent);

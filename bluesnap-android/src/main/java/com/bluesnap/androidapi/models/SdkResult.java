@@ -282,4 +282,11 @@ public class SdkResult implements Parcelable {
         this.googlePayToken = googlePayToken;
     }
 
+    public String getCardinalResult() {
+        return cardinalResult;
+    }
+
+    public void setCardinalResult(String cardinalResult) {
+        this.cardinalResult = cardinalResult;
+    }
 }
