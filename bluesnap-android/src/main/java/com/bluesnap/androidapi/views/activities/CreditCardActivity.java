@@ -445,40 +445,38 @@ public class CreditCardActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * 3DS flow
-     */
+//    /**
+//     * 3DS flow
+//     */
+//    private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
+//
+//
+//        // Request auth with 3DS
+//        CardinalManager cardinalManager = CardinalManager.getInstance();
+//
+//        cardinalManager.configureCardinal(this);
+//
+//        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                Log.d(TAG, "Got broadcastReceiver intent");
+//
+//                blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
+//                    }
+//                });
+//            }
+//        };
+//
+//        BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_INITIALIZED, broadcastReceiver);
+//
+//        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), this);
+//
+//    }
+
     private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
-
-
-        // Request auth with 3DS
-        CardinalManager cardinalManager = CardinalManager.getInstance();
-
-        cardinalManager.configureCardinal(this);
-
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "Got broadcastReceiver intent");
-
-                blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
-                    }
-                });
-            }
-        };
-
-        BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_INITIALIZED, broadcastReceiver);
-
-        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), this);
-
-//        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
-
-    }
-
-    private void authCardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
         try {
             // Request auth with 3DS
             CardinalManager cardinalManager = CardinalManager.getInstance();
@@ -507,7 +505,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
                 BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
 
-                cardinalManager.process(authResponse, this, purchaseDetails);
+                cardinalManager.process(authResponse, this, purchaseDetails.getCreditCard());
 
             } else {
                 finishFromActivity(shopper, resultIntent, response);

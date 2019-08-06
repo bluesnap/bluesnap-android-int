@@ -1,6 +1,5 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +15,6 @@ import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.CardinalManager;
-import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
 import org.json.JSONObject;
 import org.junit.Test;
@@ -64,7 +62,7 @@ public class CardinalUITest extends CheckoutEspressoBasedTester {
 
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         uIAutoTestingBlueSnapService.blueSnapService.setSdkRequest(sdkRequest);
-        cardinalManager.createCardinalJWT();
+        cardinalManager.setCardinalJWT();
         cardinalManager.initCardinal(purchaseDetails.getCreditCard(), mActivityRule.getActivity());
         BlueSnapHTTPResponse blueSnapHTTPResponse = uIAutoTestingBlueSnapService.blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());

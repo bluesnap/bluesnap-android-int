@@ -26,6 +26,7 @@ class BlueSnapAPI {
     private static final String CARD_TOKENIZE = "payment-fields-tokens/";
     private static final String RATES_SERVICE = "tokenized-services/rates";
     private static final String BASE_CURRENCY = "?base-currency=";
+    private static final String CREATE_JWT = "&create-jwt=";
     private static final String SUPPORTED_PAYMENT_METHODS = "tokenized-services/supported-payment-methods";
     private static final String SDK_INIT = "tokenized-services/sdk-init";
     private static final String UPDATE_SHOPPER = "tokenized-services/shopper";
@@ -98,7 +99,7 @@ class BlueSnapAPI {
      */
     BlueSnapHTTPResponse sdkInit(final String baseCurrency) {
 
-        return HTTPOperationController.get(url + SDK_INIT + BASE_CURRENCY + baseCurrency, CONTENT_TYPE, ACCEPT, headerParams);
+        return HTTPOperationController.get(url + SDK_INIT + BASE_CURRENCY + baseCurrency + CREATE_JWT + "True", CONTENT_TYPE, ACCEPT, headerParams);
     }
 
     /**

@@ -21,6 +21,7 @@ import com.cardinalcommerce.cardinalmobilesdk.enums.CardinalUiType;
 import com.cardinalcommerce.cardinalmobilesdk.models.CardinalConfigurationParameters;
 import com.cardinalcommerce.cardinalmobilesdk.models.ValidateResponse;
 import com.cardinalcommerce.cardinalmobilesdk.services.CardinalInitService;
+import com.cardinalcommerce.cardinalmobilesdk.services.CardinalProcessBinService;
 import com.cardinalcommerce.cardinalmobilesdk.services.CardinalValidateReceiver;
 import com.cardinalcommerce.shared.models.enums.DirectoryServerID;
 
@@ -40,8 +41,9 @@ public class CardinalManager  {
     private static CardinalManager instance = null;
     //private static Cardinal cardinal = Cardinal.getInstance();
     private BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
-    private CardinalJWT cardinalToken;
+    private String cardinalToken;
 
+    private boolean cardinalFailure = false;
     private String cardinalResult = BS3DSAuthResponse.AUTHENTICATION_UNAVAILABLE;
 
 
@@ -56,6 +58,8 @@ public class CardinalManager  {
 
     // This method can and should be caleld before a token is obtained to save time later
     public void configureCardinal(Context context) {
+        setCardinalFailure(false);
+
         CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
         //TODO: Staging or production
         cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
@@ -75,22 +79,22 @@ public class CardinalManager  {
     // TODO: add a callback argument or Broadcast an event
 
     /**
-     * @param creditCard
      * @return
      * @throws //TODO: This should throw specific error
      */
-    public void initCardinal(CreditCard creditCard, Activity activity) {
-        Cardinal.getInstance().init(cardinalToken.getJWT(), creditCard.getNumber(), new CardinalInitService() {
+    public void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
+        Cardinal.getInstance().init(cardinalToken, new CardinalInitService() {
             @Override
             public void onSetupCompleted(String consumerSessionID) {
                 Log.d(TAG, "cardinal init completed");
                 DirectoryServerID directoryServerID = DirectoryServerID.DEFAULT;
-                BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_INITIALIZED, TAG);
+                initCardinalServiceCallback.onSuccess();
             }
 
             @Override
             public void onValidated(ValidateResponse validateResponse, String s) {
                 Log.d(TAG, "Error Message: " + validateResponse.getErrorDescription());
+                initCardinalServiceCallback.onFailure();
             }
         });
 
@@ -101,22 +105,14 @@ public class CardinalManager  {
      * @return
      * @throws  //TODO: This should throw specific error
      */
-    public CardinalJWT createCardinalJWT() throws Exception {
-        BlueSnapHTTPResponse response = blueSnapAPI.createCardinalJWT();
-        if (response.getResponseCode() != HTTP_OK) {
-            Log.e(TAG, "Get cardinal error:\n" + response);
-            throw new Exception("unable to get Cardinal token");
-        }
+    public void setCardinalJWT(String tokenJWT) throws Exception {
 
-        CardinalJWT  cardinalJWT = new CardinalJWT();
-        cardinalJWT.parse(response.getResponseString());
-        this.cardinalToken = cardinalJWT;
+        this.cardinalToken = tokenJWT;
 
-        return cardinalJWT;
     }
 
     public BS3DSAuthResponse authWith3DS(String currency, Double amount) throws Exception {
-        BS3DSAuthRequest authRequest = new BS3DSAuthRequest(currency, amount, cardinalToken.getJWT());
+        BS3DSAuthRequest authRequest = new BS3DSAuthRequest(currency, amount, cardinalToken);
         BlueSnapHTTPResponse response = blueSnapAPI.tokenizeDetails(authRequest.toJson().toString());
         JSONObject jsonObject;
         if (response.getResponseCode() != HTTP_OK) {
@@ -125,7 +121,7 @@ public class CardinalManager  {
 
         jsonObject = new JSONObject(response.getResponseString());
         BS3DSAuthResponse authResponse = BS3DSAuthResponse.fromJson(jsonObject);
-        if (authResponse.getEnrollmentStatus() != "CHALLENGE_REQUIRED") {
+        if (!authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
             cardinalResult = authResponse.getEnrollmentStatus();
         }
         return authResponse;
@@ -139,7 +135,7 @@ public class CardinalManager  {
 //                cardinal.cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), authResponse.getAcsUrl(),  DirectoryServerID.VISA01, (Activity) activity, CardinalManager.instance);
 
 
-    public CardinalJWT getCardinalToken() {
+    public String getCardinalToken() {
         return cardinalToken;
     }
 
@@ -149,25 +145,32 @@ public class CardinalManager  {
      * @param authResponse
      * @param activity
      */
-    public void process(final BS3DSAuthResponse authResponse, Activity activity, final PurchaseDetails purchaseDetails) {
+    public void process(final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
-                Cardinal.getInstance().cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), activity, new CardinalValidateReceiver() {
+
+                Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
                     @Override
-                    public void onValidated(Context context, ValidateResponse validateResponse, String s) {
-                        Log.d(TAG, "Cardinal validated callback");
+                    public void onComplete() {
+                        Cardinal.getInstance().cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), activity, new CardinalValidateReceiver() {
+                            @Override
+                            public void onValidated(Context context, ValidateResponse validateResponse, String s) {
+                                Log.d(TAG, "Cardinal validated callback");
 
-                        if (!s.isEmpty()) {
-                            processCardinalResult(s);
-                        } else {
-                            cardinalResult = BS3DSAuthResponse.AUTHENTICATION_UNAVAILABLE;
-                        }
+                                if (!s.isEmpty()) {
+                                    processCardinalResult(s);
+                                } else {
+                                    cardinalResult = BS3DSAuthResponse.AUTHENTICATION_UNAVAILABLE;
+                                }
 
-                        BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, TAG);
+                                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, TAG);
+                            }
+                        });
                     }
                 });
+
             }
         });
 
@@ -223,7 +226,7 @@ public class CardinalManager  {
     private JSONObject createDataObject(String resultJwt) {
         JSONObject jsonObject = new JSONObject();
 
-        putJSONifNotNull(jsonObject, "jwt", cardinalToken.getJWT());
+        putJSONifNotNull(jsonObject, "jwt", cardinalToken);
         putJSONifNotNull(jsonObject, "resultJwt", resultJwt);
 
 
@@ -232,5 +235,13 @@ public class CardinalManager  {
 
     public String getCardinalResult() {
         return cardinalResult;
+    }
+
+    public boolean isCardinalFailure() {
+        return cardinalFailure;
+    }
+
+    public void setCardinalFailure(boolean cardinalFailure) {
+        this.cardinalFailure = cardinalFailure;
     }
 }
