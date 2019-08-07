@@ -11,8 +11,6 @@ import static com.bluesnap.androidapi.utils.JsonParser.getOptionalString;
  */
 public class BS3DSAuthResponse extends  BSModel{
 
-    public static final String AUTHENTICATION_UNAVAILABLE = "AUTHENTICATION_UNAVAILABLE";
-
     private String enrollmentStatus;
     private String acsUrl;
     private String payload;
