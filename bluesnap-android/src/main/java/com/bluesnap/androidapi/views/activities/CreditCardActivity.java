@@ -400,7 +400,11 @@ public class CreditCardActivity extends AppCompatActivity {
                     BlueSnapHTTPResponse response = blueSnapService.submitTokenizedDetails(purchaseDetails);
                     if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
-                        cardinal3DS(purchaseDetails, shopper, resultIntent, response);
+                        if (sdkRequest.isActivate3DS()) {
+                            cardinal3DS(purchaseDetails, shopper, resultIntent, response);
+                        } else {
+                            finishFromActivity(shopper, resultIntent, response);
+                        }
 
                     } else if (response.getResponseCode() == 400 && null != blueSnapService.getTokenProvider() && !"".equals(response.getResponseString())) {
                         try {
@@ -476,6 +480,7 @@ public class CreditCardActivity extends AppCompatActivity {
 //
 //    }
 
+    //TODO: add log.d
     private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
         try {
             // Request auth with 3DS

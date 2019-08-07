@@ -6,5 +6,4 @@ package com.bluesnap.androidapi.services;
 public interface InitCardinalServiceCallback {
     void onSuccess();
 
-    void onFailure();
 }

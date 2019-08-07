@@ -20,6 +20,10 @@ public class SdkRequestShopperRequirements extends SdkRequestBase {
     }
 
     @Override
+    public void setActivate3DS(boolean activate3DS) {
+    }
+
+    @Override
     public boolean isAllowCurrencyChange() {
         return false;
     }

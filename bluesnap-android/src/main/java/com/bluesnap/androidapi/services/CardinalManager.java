@@ -94,7 +94,7 @@ public class CardinalManager  {
             @Override
             public void onValidated(ValidateResponse validateResponse, String s) {
                 Log.d(TAG, "Error Message: " + validateResponse.getErrorDescription());
-                initCardinalServiceCallback.onFailure();
+                cardinalFailure = true;
             }
         });
 

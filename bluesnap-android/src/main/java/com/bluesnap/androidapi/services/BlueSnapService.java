@@ -352,11 +352,6 @@ public class BlueSnapService {
                             public void onSuccess() {
                                 callback.onSuccess();
                             }
-
-                            @Override
-                            public void onFailure() {
-                                cardinalManager.setCardinalFailure(true);
-                            }
                         });
 
 
