@@ -161,13 +161,14 @@ public class CardinalManager  {
                             public void onValidated(Context context, ValidateResponse validateResponse, String s) {
                                 Log.d(TAG, "Cardinal validated callback");
 
-                                if (!s.isEmpty()) {
+                                if (validateResponse.actionCode.equals("NOACTION") || validateResponse.actionCode.equals("SUCCESS")) {
                                     processCardinalResult(s);
                                 } else {
                                     cardinalResult = AUTHENTICATION_UNAVAILABLE;
                                 }
 
-                                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, TAG);
+                                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, validateResponse.actionCode.getString(), TAG);
+
                             }
                         });
                     }

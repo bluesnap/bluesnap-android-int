@@ -284,7 +284,7 @@ public class CreditCardActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RESULT_COUNTRY)
                 BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
-            else
+            else if (requestCode == RESULT_STATE)
                 BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
         }
     }
@@ -496,14 +496,20 @@ public class CreditCardActivity extends AppCompatActivity {
                     public void onReceive(Context context, Intent intent) {
                         Log.d(TAG, "Got broadcastReceiver intent");
 
-                        blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                String event = intent.getAction();
+                        String actionCode = intent.getStringExtra(CardinalManager.CARDINAL_VALIDATED);
+                        if (actionCode.equals("CANCEL")) {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            //TODO: pop-up message to shopper
+                        } else {
+                            blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String event = intent.getAction();
 
-                                finishFromActivity(shopper, resultIntent, response);
-                            }
-                        });
+                                    finishFromActivity(shopper, resultIntent, response);
+                                }
+                            });
+                        }
 
                     }
                 };
