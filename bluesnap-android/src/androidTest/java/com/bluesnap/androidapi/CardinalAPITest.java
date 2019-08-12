@@ -16,8 +16,10 @@ import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.CardinalManager;
+import com.bluesnap.androidapi.services.InitCardinalServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
@@ -67,11 +69,15 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         SdkRequest sdkRequest = new SdkRequest(amount, "USD");
         blueSnapService.setSdkRequest(sdkRequest);
         cardinalManager.configureCardinal(getTestContext());
-        cardinalJWT = cardinalManager.setCardinalJWT();
-        cardinalManager.initCardinal(mActivity);
-        //TODO: wait for callback/event after calling initCardinal()
-        assertTrue(cardinalJWT.getJWT().length() > 10);
-//        cardinalManager.init(cardinalJWT);
+//        assertTrue(cardinalJWT.getJWT().length() > 10);
+//        cardinalManager.setCardinalJWT();
+        cardinalManager.initCardinal(new InitCardinalServiceCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "onSuccess");
+            }
+        });
+
     }
 
 
@@ -95,9 +101,20 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         blueSnapService.setSdkRequest(sdkRequest);
 
-        cardinalManager.setCardinalJWT();
-        cardinalManager.initCardinal(mActivity);
+        cardinalManager.setCardinalJWT("");
+        cardinalManager.initCardinal(() -> {
+            try {
+                afterInitCardinal(cardinalManager, purchaseDetails, amount);
+            } catch (Exception e) {
+                fail();
+            }
+        });
         //TODO: wait for callback/event after calling initCardinal()
+
+
+    }
+
+    private void afterInitCardinal(CardinalManager cardinalManager, PurchaseDetails purchaseDetails, Double amount) throws Exception {
         BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
         assertEquals(HTTP_OK, blueSnapHTTPResponse.getResponseCode());
         JSONObject jsonObject = new JSONObject(blueSnapHTTPResponse.getResponseString());
@@ -109,27 +126,26 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         Log.d(TAG, "Got auth response");
         assertEquals("CHALLENGE_REQUIRED", authResponse.getEnrollmentStatus());
         assertNotNull("No transactionID from cardinal", authResponse.getTransactionId());
-       // assertNotNull("test activity is null", mActivity);
+        // assertNotNull("test activity is null", mActivity);
 
-        AtomicBoolean waitingForIntent = new AtomicBoolean(false);
+        AtomicBoolean waitingForIntent = new AtomicBoolean(true);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "Got broadcastReceiver intent");
-                    waitingForIntent.set(false);
+                waitingForIntent.set(false);
             }
         };
 
         BlueSnapLocalBroadcastManager.registerReceiver(getTestContext(), CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
 
-        cardinalManager.process(authResponse,mActivity , purchaseDetails);
+        cardinalManager.process(authResponse, mActivity, purchaseDetails.getCreditCard());
 
-        while (!waitingForIntent.get()) {
+        while (waitingForIntent.get()) {
             Log.d(TAG, "Waiting for br");
             Thread.sleep(500);
         }
-
     }
 
 }

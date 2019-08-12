@@ -30,6 +30,7 @@ import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.CardinalManager;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
@@ -499,7 +500,13 @@ public class CreditCardActivity extends AppCompatActivity {
                         String actionCode = intent.getStringExtra(CardinalManager.CARDINAL_VALIDATED);
                         if (actionCode.equals("CANCEL")) {
                             progressBar.setVisibility(View.INVISIBLE);
-                            //TODO: pop-up message to shopper
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BluesnapAlertDialog.setDialog(CreditCardActivity.this, "3DS Authentication is required", "");
+                                }
+                            });
+
                         } else {
                             blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
                                 @Override
