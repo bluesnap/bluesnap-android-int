@@ -21,6 +21,9 @@ public class SDKConfiguration {
     //@SerializedName("supportedPaymentMethods")
     private SupportedPaymentMethods supportedPaymentMethods;
 
+    //@SerializedName("threeDSecureJwt")
+    private String cardinalToken;
+
 
 
     public int getKountMerchantId() {
@@ -64,5 +67,13 @@ public class SDKConfiguration {
 
     public void setSupportedPaymentMethods(SupportedPaymentMethods supportedPaymentMethods) {
         this.supportedPaymentMethods = supportedPaymentMethods;
+    }
+
+    public String getCardinalToken() {
+        return cardinalToken;
+    }
+
+    public void setCardinalToken(String cardinalToken) {
+        this.cardinalToken = cardinalToken;
     }
 }

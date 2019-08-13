@@ -345,7 +345,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
                                 };
                             }
                         };
-                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, merchantStoreCurrency, null, new BluesnapServiceCallback() {
+                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, merchantStoreCurrency, InstrumentationRegistry.getInstrumentation().getContext(), new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");

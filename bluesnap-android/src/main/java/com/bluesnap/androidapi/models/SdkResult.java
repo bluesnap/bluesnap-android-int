@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
-
 import static com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK;
 
 /**
@@ -51,6 +49,8 @@ public class SdkResult implements Parcelable {
 
     private String token;
     private String kountSessionId;
+
+    private String cardinalResult;
 
     public SdkResult() {
     }
@@ -280,4 +280,11 @@ public class SdkResult implements Parcelable {
         this.googlePayToken = googlePayToken;
     }
 
+    public String getCardinalResult() {
+        return cardinalResult;
+    }
+
+    public void setCardinalResult(String cardinalResult) {
+        this.cardinalResult = cardinalResult;
+    }
 }

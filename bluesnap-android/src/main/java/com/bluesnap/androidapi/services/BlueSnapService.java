@@ -339,7 +339,22 @@ public class BlueSnapService {
                         } catch (Exception e) {
                             Log.e(TAG, "Kount SDK initialization error " + e.getMessage());
                         }
-                        callback.onSuccess();
+
+                        CardinalManager cardinalManager = CardinalManager.getInstance();
+
+                        //set JWT in Cardinal manager
+                        cardinalManager.setCardinalJWT(sDKConfiguration.getCardinalToken());
+
+                        //cardinal configure & init
+                        cardinalManager.configureCardinal(context, getBlueSnapToken().isProduction());
+                        cardinalManager.initCardinal(new InitCardinalServiceCallback() {
+                            @Override
+                            public void onSuccess() {
+                                callback.onSuccess();
+                            }
+                        });
+
+
                     } catch (Exception e) {
                         Log.e(TAG, "exception: ", e);
                         callback.onFailure();
@@ -680,6 +695,7 @@ public class BlueSnapService {
         }
         return res;
     }
+
 
     private interface AfterNewTokenCreatedAction {
         void complete();

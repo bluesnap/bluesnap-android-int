@@ -1,7 +1,9 @@
 package com.bluesnap.androidapi;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.test.InstrumentationRegistry;
 import android.util.Base64;
 import android.util.Log;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
@@ -110,7 +112,7 @@ public class BSAndroidTestsBase {
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
-                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, null, new BluesnapServiceCallback() {
+                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, getTestContext() , new BluesnapServiceCallback() {
 
                     @Override
                     public void onSuccess() {
@@ -138,5 +140,13 @@ public class BSAndroidTestsBase {
         Log.i(TAG, "Done");
     }
 
+    /**
+     * Get a context for tests, requires android support libs
+     * @return
+     */
+    Context getTestContext() {
+      Context context = InstrumentationRegistry.getInstrumentation().getContext();
+      return context;
+    }
 
 }

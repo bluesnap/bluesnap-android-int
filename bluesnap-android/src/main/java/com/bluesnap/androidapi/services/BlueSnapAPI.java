@@ -26,10 +26,13 @@ class BlueSnapAPI {
     private static final String CARD_TOKENIZE = "payment-fields-tokens/";
     private static final String RATES_SERVICE = "tokenized-services/rates";
     private static final String BASE_CURRENCY = "?base-currency=";
+    private static final String CREATE_JWT = "&create-jwt=";
     private static final String SUPPORTED_PAYMENT_METHODS = "tokenized-services/supported-payment-methods";
     private static final String SDK_INIT = "tokenized-services/sdk-init";
     private static final String UPDATE_SHOPPER = "tokenized-services/shopper";
     private static final String PAYPAL_SERVICE = "tokenized-services/paypal-token?amount=";
+    private static final String CARDINAL_SERVICE_CREATE_JWT = "tokenized-services/3ds-jwt";
+    private static final String CARDINAL_SERVICE_PROCESS_RESULT = "tokenized-services/3ds-process-result";
     private static final String PAYPAL_SHIPPING = "&req-confirm-shipping=0&no-shipping=2";
     private static final String RETRIEVE_TRANSACTION_SERVICE = "tokenized-services/transaction-status";
     private String merchantToken;
@@ -96,7 +99,7 @@ class BlueSnapAPI {
      */
     BlueSnapHTTPResponse sdkInit(final String baseCurrency) {
 
-        return HTTPOperationController.get(url + SDK_INIT + BASE_CURRENCY + baseCurrency, CONTENT_TYPE, ACCEPT, headerParams);
+        return HTTPOperationController.get(url + SDK_INIT + BASE_CURRENCY + baseCurrency + CREATE_JWT + "True", CONTENT_TYPE, ACCEPT, headerParams);
     }
 
     /**
@@ -118,6 +121,25 @@ class BlueSnapAPI {
      */
     BlueSnapHTTPResponse retrieveTransactionStatus() {
         return HTTPOperationController.get(url + RETRIEVE_TRANSACTION_SERVICE, CONTENT_TYPE, ACCEPT, headerParams);
+    }
+
+
+
+    /**
+     * create Cardinal JWT
+     *
+     */
+    BlueSnapHTTPResponse createCardinalJWT() {
+        String urlString = url + CARDINAL_SERVICE_CREATE_JWT;
+        return HTTPOperationController.post(urlString, null, CONTENT_TYPE, ACCEPT, headerParams);
+    }
+
+    /**
+     * process Cardinal result
+     */
+    BlueSnapHTTPResponse processCardinalResult(String body) {
+        String urlString = url + CARDINAL_SERVICE_PROCESS_RESULT;
+        return HTTPOperationController.post(urlString, body, CONTENT_TYPE, ACCEPT, headerParams);
     }
 
 }

@@ -34,6 +34,11 @@ public class SdkRequest extends SdkRequestBase {
     }
 
     @Override
+    public void setActivate3DS(boolean activate3DS) {
+        this.activate3DS = activate3DS;
+    }
+
+    @Override
     public boolean isAllowCurrencyChange() {
         return allowCurrencyChange;
     }

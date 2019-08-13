@@ -16,10 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
+import com.bluesnap.androidapi.models.BS3DSAuthResponse;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
@@ -28,6 +30,8 @@ import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
+import com.bluesnap.androidapi.services.BluesnapAlertDialog;
+import com.bluesnap.androidapi.services.CardinalManager;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.fragments.BlueSnapFragment;
@@ -43,6 +47,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -61,6 +66,8 @@ public class CreditCardActivity extends AppCompatActivity {
     private final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     private SdkRequestBase sdkRequest;
     private NewCreditCardShippingFragment newCreditCardShippingFragment;
+    private String cardinalResult;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,6 +108,8 @@ public class CreditCardActivity extends AppCompatActivity {
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
 
+        progressBar = findViewById(R.id.payProgressBar);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -276,7 +285,7 @@ public class CreditCardActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RESULT_COUNTRY)
                 BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
-            else
+            else if (requestCode == RESULT_STATE)
                 BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.STATE_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);
         }
     }
@@ -345,6 +354,8 @@ public class CreditCardActivity extends AppCompatActivity {
     }
 
     public void finishFromFragment(final Shopper shopper) {
+        progressBar.setVisibility(View.VISIBLE);
+
         Intent resultIntent = new Intent();
         sdkRequest = BlueSnapService.getInstance().getSdkRequest();
         if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
@@ -389,46 +400,13 @@ public class CreditCardActivity extends AppCompatActivity {
                 try {
                     BlueSnapHTTPResponse response = blueSnapService.submitTokenizedDetails(purchaseDetails);
                     if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        try {
-                            String Last4;
-                            String ccType;
-                            SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
 
-                            if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
-                                // New Card
-                                JSONObject jsonObject = new JSONObject(response.getResponseString());
-                                Last4 = jsonObject.getString("last4Digits");
-                                ccType = jsonObject.getString("ccType");
-                                Log.d(TAG, "tokenization of new credit card");
-                            } else {
-                                // Reused Card
-                                Last4 = shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
-                                ccType = shopper.getNewCreditCardInfo().getCreditCard().getCardType();
-                                Log.d(TAG, "tokenization of previous used credit card");
-                            }
-
-                            sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
-                            if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
-                                sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
-                            sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
-                            sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
-                            // update last4 from server result
-                            sdkResult.setLast4Digits(Last4);
-                            // update card type from server result
-                            sdkResult.setCardType(ccType);
-                            sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
-                            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-                            setResult(RESULT_OK, resultIntent);
-                            //Only set the remember shopper here since failure can lead to missing tokenization on the server
-                            shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
-                            Log.d(TAG, "tokenization finished");
-                            finish();
-                        } catch (NullPointerException | JSONException e) {
-                            Log.e(TAG, "", e);
-                            String errorMsg = String.format("Service Error %s", e.getMessage());
-                            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
-                            finish();
+                        if (sdkRequest.isActivate3DS()) {
+                            cardinal3DS(purchaseDetails, shopper, resultIntent, response);
+                        } else {
+                            finishFromActivity(shopper, resultIntent, response);
                         }
+
                     } else if (response.getResponseCode() == 400 && null != blueSnapService.getTokenProvider() && !"".equals(response.getResponseString())) {
                         try {
                             JSONObject errorResponse = new JSONObject(response.getResponseString());
@@ -470,6 +448,141 @@ public class CreditCardActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+//    /**
+//     * 3DS flow
+//     */
+//    private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
+//
+//
+//        // Request auth with 3DS
+//        CardinalManager cardinalManager = CardinalManager.getInstance();
+//
+//        cardinalManager.configureCardinal(this);
+//
+//        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                Log.d(TAG, "Got broadcastReceiver intent");
+//
+//                blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
+//                    }
+//                });
+//            }
+//        };
+//
+//        BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_INITIALIZED, broadcastReceiver);
+//
+//        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), this);
+//
+//    }
+
+    //TODO: add log.d
+    private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
+        try {
+            // Request auth with 3DS
+            CardinalManager cardinalManager = CardinalManager.getInstance();
+
+            BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
+
+            // Start Cardinal challenge
+            if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
+
+                BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        Log.d(TAG, "Got broadcastReceiver intent");
+
+                        String actionCode = intent.getStringExtra(CardinalManager.CARDINAL_VALIDATED);
+                        if (actionCode.equals("CANCEL")) {
+                            progressBar.setVisibility(View.INVISIBLE);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BluesnapAlertDialog.setDialog(CreditCardActivity.this, "3DS Authentication is required", "");
+                                }
+                            });
+
+                        } else {
+                            blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String event = intent.getAction();
+
+                                    finishFromActivity(shopper, resultIntent, response);
+                                }
+                            });
+                        }
+
+                    }
+                };
+
+                BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
+
+                cardinalManager.process(authResponse, this, purchaseDetails.getCreditCard());
+
+            } else {
+                finishFromActivity(shopper, resultIntent, response);
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Cardinal Service Error", e);
+            finishFromActivity(shopper, resultIntent, response);
+        }
+
+    }
+
+    /**
+     * 3DS flow
+     */
+    private void finishFromActivity(Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
+        try {
+            String Last4;
+            String ccType;
+            SdkResult sdkResult = BlueSnapService.getInstance().getSdkResult();
+
+            if (shopper.getNewCreditCardInfo().getCreditCard().getIsNewCreditCard()) {
+                // New Card
+                JSONObject jsonObject = new JSONObject(response.getResponseString());
+                Last4 = jsonObject.getString("last4Digits");
+                ccType = jsonObject.getString("ccType");
+                Log.d(TAG, "tokenization of new credit card");
+            } else {
+                // Reused Card
+                Last4 = shopper.getNewCreditCardInfo().getCreditCard().getCardLastFourDigits();
+                ccType = shopper.getNewCreditCardInfo().getCreditCard().getCardType();
+                Log.d(TAG, "tokenization of previous used credit card");
+            }
+
+            sdkResult.setBillingContactInfo(shopper.getNewCreditCardInfo().getBillingContactInfo());
+            if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired())
+                sdkResult.setShippingContactInfo(shopper.getShippingContactInfo());
+            sdkResult.setKountSessionId(KountService.getInstance().getKountSessionId());
+            sdkResult.setToken(BlueSnapService.getInstance().getBlueSnapToken().getMerchantToken());
+            // update last4 from server result
+            sdkResult.setLast4Digits(Last4);
+            // update card type from server result
+            sdkResult.setCardType(ccType);
+            sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
+            sdkResult.setCardinalResult(CardinalManager.getInstance().getCardinalResult());
+
+            resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
+            setResult(RESULT_OK, resultIntent);
+            //Only set the remember shopper here since failure can lead to missing tokenization on the server
+            shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
+            Log.d(TAG, "tokenization finished");
+            finish();
+        } catch (NullPointerException | JSONException e) {
+            Log.e(TAG, "", e);
+            String errorMsg = String.format("Service Error %s", e.getMessage());
+            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
+            finish();
+        }
+
     }
 
     /**

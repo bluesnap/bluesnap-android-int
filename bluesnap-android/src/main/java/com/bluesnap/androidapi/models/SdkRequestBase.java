@@ -17,6 +17,7 @@ public abstract class SdkRequestBase {
     PriceDetails priceDetails;
     ShopperCheckoutRequirements shopperCheckoutRequirements;
     private TaxCalculator taxCalculator;
+    protected boolean activate3DS = false;
 
     boolean allowCurrencyChange = true;
     boolean googlePayTestMode = true;
@@ -38,6 +39,12 @@ public abstract class SdkRequestBase {
     public void setTaxCalculator(TaxCalculator taxCalculator) {
         this.taxCalculator = taxCalculator;
     }
+
+    public boolean isActivate3DS() {
+        return activate3DS;
+    }
+
+    public abstract void setActivate3DS(boolean activate3DS);
 
     public void setAllowCurrencyChange(boolean allowCurrencyChange) {
         this.allowCurrencyChange = allowCurrencyChange;
