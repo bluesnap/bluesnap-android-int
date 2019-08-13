@@ -35,7 +35,6 @@ import static java.net.HttpURLConnection.HTTP_OK;
 
 public class CardinalManager  {
     public static final String CARDINAL_VALIDATED = "com.bluesnap.intent.CARDINAL_CARD_VALIDATED";
-    private static final String AUTHENTICATION_UNAVAILABLE = "AUTHENTICATION_UNAVAILABLE";
 
     private static final String TAG = CardinalManager.class.getSimpleName();
     private static CardinalManager instance = null;
@@ -43,8 +42,9 @@ public class CardinalManager  {
     private BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
     private String cardinalToken;
 
+    // this property is an indication to NOT trigger cardinal in second phase (after submit)
     private boolean cardinalFailure = false;
-    private String cardinalResult = AUTHENTICATION_UNAVAILABLE;
+    private String cardinalResult = CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name();
 
 
     public static CardinalManager getInstance() {
@@ -56,10 +56,24 @@ public class CardinalManager  {
         }
     }
 
-    // This method can and should be caleld before a token is obtained to save time later
-    public void configureCardinal(Context context) {
+    /**
+     *
+     */
+    public void setCardinalJWT(String tokenJWT) {
+        // reset CardinalFailure and CardinalResult for singleton use
         setCardinalFailure(false);
-        cardinalResult = AUTHENTICATION_UNAVAILABLE;
+        setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+
+        if (tokenJWT == null)
+            setCardinalFailure(true);
+
+        this.cardinalToken = tokenJWT;
+    }
+
+    // This method can and should be called before a token is obtained to save time later
+    public void configureCardinal(Context context) {
+        if (isCardinalFailure())
+            return;
 
         CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
         //TODO: Staging or production
@@ -77,10 +91,7 @@ public class CardinalManager  {
         Cardinal.getInstance().configure(context, cardinalConfigurationParameters);
     }
 
-    // TODO: add a callback argument or Broadcast an event
-
     /**
-     * @return
      * @throws //TODO: This should throw specific error
      */
     public void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
@@ -98,20 +109,9 @@ public class CardinalManager  {
             @Override
             public void onValidated(ValidateResponse validateResponse, String s) {
                 Log.d(TAG, "Error Message: " + validateResponse.getErrorDescription());
-                cardinalFailure = true;
+                setCardinalFailure(true);
             }
         });
-
-    }
-
-    /**
-     *
-     * @return
-     * @throws  //TODO: This should throw specific error
-     */
-    public void setCardinalJWT(String tokenJWT) throws Exception {
-
-        this.cardinalToken = tokenJWT;
 
     }
 
@@ -129,7 +129,7 @@ public class CardinalManager  {
         jsonObject = new JSONObject(response.getResponseString());
         BS3DSAuthResponse authResponse = BS3DSAuthResponse.fromJson(jsonObject);
         if (!authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
-            cardinalResult = authResponse.getEnrollmentStatus();
+            setCardinalResult(authResponse.getEnrollmentStatus());
         }
         return authResponse;
     }
@@ -146,8 +146,6 @@ public class CardinalManager  {
      * @param activity
      */
     public void process(final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
-        if (isCardinalFailure())
-            return;
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
@@ -163,12 +161,13 @@ public class CardinalManager  {
 
                                 if (validateResponse.actionCode.equals("NOACTION") || validateResponse.actionCode.equals("SUCCESS")) {
                                     processCardinalResult(s);
+                                } else if (validateResponse.actionCode.equals("FAILURE")) {
+                                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILURE.name());
                                 } else {
-                                    cardinalResult = AUTHENTICATION_UNAVAILABLE;
+                                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
                                 }
 
                                 BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, validateResponse.actionCode.getString(), TAG);
-
                             }
                         });
                     }
@@ -176,8 +175,6 @@ public class CardinalManager  {
 
             }
         });
-
-
     }
 
     /**
@@ -185,9 +182,6 @@ public class CardinalManager  {
      * @throws //TODO: This should throw specific error
      */
     public void processCardinalResult(String resultJwt) {
-        if (isCardinalFailure())
-            return;
-
         String body = createDataObject(resultJwt).toString();
         BlueSnapHTTPResponse response = blueSnapAPI.processCardinalResult(body);
         if (response.getResponseCode() != HTTP_OK) {
@@ -195,9 +189,10 @@ public class CardinalManager  {
         } else {
             try {
                 JSONObject jsonObject = new JSONObject(response.getResponseString());
-                cardinalResult = getOptionalString(jsonObject, "authResult");
+                setCardinalResult(getOptionalString(jsonObject, "authResult"));
             } catch (JSONException e) {
                 Log.e(TAG, "Error in parsing cardinal result:\n" + response);
+                setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
             }
         }
     }
@@ -228,11 +223,21 @@ public class CardinalManager  {
         return cardinalResult;
     }
 
+    public void setCardinalResult(String cardinalResult) {
+        this.cardinalResult = cardinalResult;
+    }
+
     public boolean isCardinalFailure() {
         return cardinalFailure;
     }
 
     public void setCardinalFailure(boolean cardinalFailure) {
         this.cardinalFailure = cardinalFailure;
+    }
+
+    private enum CardinalManagerResponse {
+        AUTHENTICATION_UNAVAILABLE,
+        AUTHENTICATION_FAILURE,
+        AUTHENTICATION_NOT_SUPPORTED
     }
 }
