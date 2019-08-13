@@ -47,6 +47,12 @@ public class CardinalManager  {
     private String cardinalResult = CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name();
 
 
+    private enum CardinalManagerResponse {
+        AUTHENTICATION_UNAVAILABLE,
+        AUTHENTICATION_FAILURE,
+        AUTHENTICATION_NOT_SUPPORTED
+    }
+
     public static CardinalManager getInstance() {
         if (instance == null) {
             instance = new CardinalManager();
@@ -71,13 +77,18 @@ public class CardinalManager  {
     }
 
     // This method can and should be called before a token is obtained to save time later
-    public void configureCardinal(Context context) {
+    public void configureCardinal(Context context, Boolean isProduction) {
         if (isCardinalFailure())
             return;
 
         CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
         //TODO: Staging or production
-        cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
+        if (isProduction) {
+            cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.PRODUCTION);
+        } else {
+            cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
+        }
+
         cardinalConfigurationParameters.setTimeout(8000);
         JSONArray rType = new JSONArray();
         rType.put(CardinalRenderType.OTP);
@@ -235,9 +246,4 @@ public class CardinalManager  {
         this.cardinalFailure = cardinalFailure;
     }
 
-    private enum CardinalManagerResponse {
-        AUTHENTICATION_UNAVAILABLE,
-        AUTHENTICATION_FAILURE,
-        AUTHENTICATION_NOT_SUPPORTED
-    }
 }

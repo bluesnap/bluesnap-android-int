@@ -58,7 +58,7 @@ public class CardinalUITest extends CheckoutEspressoBasedTester {
 //        card.update(CARD_NUMBER_3DS_CARDIANL_CARD, CARDINAL_CARD_EXP, CARDINAL_CARD_CVV);
 //        purchaseDetails.setCreditCard(card);
 //        CardinalManager cardinalManager = CardinalManager.getInstance();
-//        cardinalManager.configureCardinal(thisTestContext);
+//        cardinalManager.configureCardinal(thisTestContext,  uIAutoTestingBlueSnapService.blueSnapService.getBlueSnapToken().isProduction());
 //
 //        SdkRequest sdkRequest = new SdkRequest(amount, currency);
 //        uIAutoTestingBlueSnapService.blueSnapService.setSdkRequest(sdkRequest);
