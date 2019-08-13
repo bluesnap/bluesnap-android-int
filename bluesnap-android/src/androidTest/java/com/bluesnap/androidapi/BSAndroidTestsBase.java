@@ -112,7 +112,7 @@ public class BSAndroidTestsBase {
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
-                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, null, new BluesnapServiceCallback() {
+                blueSnapService.setup(merchantToken, tokenProvider, baseCurrency, getTestContext() , new BluesnapServiceCallback() {
 
                     @Override
                     public void onSuccess() {
