@@ -68,7 +68,7 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         Double amount = 30.5D;
         SdkRequest sdkRequest = new SdkRequest(amount, "USD");
         blueSnapService.setSdkRequest(sdkRequest);
-        cardinalManager.configureCardinal(getTestContext());
+        cardinalManager.configureCardinal(getTestContext(), blueSnapService.getBlueSnapToken().isProduction());
 //        assertTrue(cardinalJWT.getJWT().length() > 10);
 //        cardinalManager.setCardinalJWT();
         cardinalManager.initCardinal(new InitCardinalServiceCallback() {
@@ -96,7 +96,7 @@ public class CardinalAPITest extends BSAndroidTestsBase {
         card.update(CARD_NUMBER_3DS_CARDIANL_CARD, CARDINAL_CARD_EXP, CARDINAL_CARD_CVV);
         purchaseDetails.setCreditCard(card);
         CardinalManager cardinalManager = CardinalManager.getInstance();
-        cardinalManager.configureCardinal(thisTestContext);
+        cardinalManager.configureCardinal(thisTestContext, blueSnapService.getBlueSnapToken().isProduction());
 
         SdkRequest sdkRequest = new SdkRequest(amount, currency);
         blueSnapService.setSdkRequest(sdkRequest);

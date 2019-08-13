@@ -57,13 +57,19 @@ public class CardinalManager  {
     }
 
     // This method can and should be caleld before a token is obtained to save time later
-    public void configureCardinal(Context context) {
+    public void configureCardinal(Context context, Boolean isProduction) {
         setCardinalFailure(false);
         cardinalResult = AUTHENTICATION_UNAVAILABLE;
 
         CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
         //TODO: Staging or production
-        cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
+        if (isProduction) {
+            cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.PRODUCTION);
+        }
+        else {
+            cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
+        }
+
         cardinalConfigurationParameters.setTimeout(8000);
         JSONArray rType = new JSONArray();
         rType.put(CardinalRenderType.OTP);
