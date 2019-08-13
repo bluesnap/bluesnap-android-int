@@ -94,7 +94,7 @@ dependencies {
     // Cardinal Required libraries
     implementation (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
     implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '7.0.1'
-    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
+    //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
 
 
     implementation 'com.android.support:appcompat-v7:28.0.0'
