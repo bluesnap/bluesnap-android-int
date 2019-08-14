@@ -47,7 +47,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by roy.biber on 20/02/2018.
@@ -450,37 +449,6 @@ public class CreditCardActivity extends AppCompatActivity {
         });
     }
 
-//    /**
-//     * 3DS flow
-//     */
-//    private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
-//
-//
-//        // Request auth with 3DS
-//        CardinalManager cardinalManager = CardinalManager.getInstance();
-//
-//        cardinalManager.configureCardinal(this);
-//
-//        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Log.d(TAG, "Got broadcastReceiver intent");
-//
-//                blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        authCardinal3DS(purchaseDetails, shopper, resultIntent, response);
-//                    }
-//                });
-//            }
-//        };
-//
-//        BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_INITIALIZED, broadcastReceiver);
-//
-//        cardinalManager.initCardinal(purchaseDetails.getCreditCard(), this);
-//
-//    }
-
     //TODO: add log.d
     private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
         try {
@@ -568,7 +536,7 @@ public class CreditCardActivity extends AppCompatActivity {
             // update card type from server result
             sdkResult.setCardType(ccType);
             sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.CC);
-            sdkResult.setCardinalResult(CardinalManager.getInstance().getCardinalResult());
+            sdkResult.setThreeDSAuthenticationResult(CardinalManager.getInstance().getCardinalResult());
 
             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
             setResult(RESULT_OK, resultIntent);
