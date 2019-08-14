@@ -4,16 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
 
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
 import com.bluesnap.androidapi.models.BS3DSAuthRequest;
 import com.bluesnap.androidapi.models.BS3DSAuthResponse;
-import com.bluesnap.androidapi.models.CardinalJWT;
 import com.bluesnap.androidapi.models.CreditCard;
-import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.cardinalcommerce.cardinalmobilesdk.Cardinal;
 import com.cardinalcommerce.cardinalmobilesdk.enums.CardinalEnvironment;
 import com.cardinalcommerce.cardinalmobilesdk.enums.CardinalRenderType;
@@ -49,7 +45,7 @@ public class CardinalManager  {
 
     private enum CardinalManagerResponse {
         AUTHENTICATION_UNAVAILABLE,
-        AUTHENTICATION_FAILURE,
+        AUTHENTICATION_FAILED,
         AUTHENTICATION_NOT_SUPPORTED
     }
 
@@ -173,7 +169,7 @@ public class CardinalManager  {
                                 if (validateResponse.actionCode.equals("NOACTION") || validateResponse.actionCode.equals("SUCCESS")) {
                                     processCardinalResult(s);
                                 } else if (validateResponse.actionCode.equals("FAILURE")) {
-                                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILURE.name());
+                                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
                                 } else {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
                                 }

@@ -50,7 +50,7 @@ public class SdkResult implements Parcelable {
     private String token;
     private String kountSessionId;
 
-    private String cardinalResult;
+    private String threeDSAuthenticationResult;
 
     public SdkResult() {
     }
@@ -280,11 +280,11 @@ public class SdkResult implements Parcelable {
         this.googlePayToken = googlePayToken;
     }
 
-    public String getCardinalResult() {
-        return cardinalResult;
+    public String getThreeDSAuthenticationResult() {
+        return threeDSAuthenticationResult;
     }
 
-    public void setCardinalResult(String cardinalResult) {
-        this.cardinalResult = cardinalResult;
+    public void setThreeDSAuthenticationResult(String threeDSAuthenticationResult) {
+        this.threeDSAuthenticationResult = threeDSAuthenticationResult;
     }
 }
