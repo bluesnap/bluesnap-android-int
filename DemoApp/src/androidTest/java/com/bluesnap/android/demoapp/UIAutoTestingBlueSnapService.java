@@ -32,6 +32,7 @@ import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.CardinalManager;
 import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
@@ -502,7 +503,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     // Verify that the checkout activity ends with the correct result code
     // Verify that the amount and currency in sdkResult are right
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
-        sdkResult = blueSnapService.getSdkResult();
 
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
@@ -514,15 +514,25 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
 
+        checkSDKResult();
+
+        makeCheckoutTransaction(shopperCheckoutRequirements, cardStored);
+    }
+
+    public void checkSDKResult() {
+        checkSDKResult(CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+    }
+
+    public void checkSDKResult(String expected3DSResult) {
+        sdkResult = blueSnapService.getSdkResult();
         // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
-        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
-
-        makeCheckoutTransaction(sdkResult, shopperCheckoutRequirements, cardStored);
+        assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
+        assertEquals("SDKResult wrong 3DSResult", sdkResult.getThreeDSAuthenticationResult(), expected3DSResult);
     }
 
     // Make a credit card transaction for checkout flow and validate the shopper details in server
-    private void makeCheckoutTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) {
+    private void makeCheckoutTransaction(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) {
         transactions = DemoTransactions.getInstance();
         transactions.setContext(applicationContext);
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {

@@ -43,7 +43,9 @@ public class CardinalManager  {
     private String cardinalResult = CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name();
 
 
-    private enum CardinalManagerResponse {
+    public enum CardinalManagerResponse {
+        AUTHENTICATION_BYPASSED,
+        AUTHENTICATION_SUCCEEDED,
         AUTHENTICATION_UNAVAILABLE,
         AUTHENTICATION_FAILED,
         AUTHENTICATION_NOT_SUPPORTED
@@ -166,9 +168,9 @@ public class CardinalManager  {
                             public void onValidated(Context context, ValidateResponse validateResponse, String s) {
                                 Log.d(TAG, "Cardinal validated callback");
 
-                                if (validateResponse.actionCode.equals("NOACTION") || validateResponse.actionCode.equals("SUCCESS")) {
+                                if (validateResponse.actionCode.getString().equals("NOACTION") || validateResponse.actionCode.getString().equals("SUCCESS")) {
                                     processCardinalResult(s);
-                                } else if (validateResponse.actionCode.equals("FAILURE")) {
+                                } else if (validateResponse.actionCode.getString().equals("FAILURE")) {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
                                 } else {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
