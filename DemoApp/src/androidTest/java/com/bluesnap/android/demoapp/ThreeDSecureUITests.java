@@ -95,7 +95,7 @@ public class ThreeDSecureUITests {
      * <p>
      * It runs in test mode.
      */
-//    @Test
+    @Test
     public void threeDS_full_billing_with_email_with_shipping_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException {
         TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
 
@@ -147,9 +147,16 @@ public class ThreeDSecureUITests {
 
         new_card_basic_fill_info(shopperCheckoutRequirements);
 
-        mDevice.findObject(new UiSelector()
-                .resourceIdMatches(".*:id/billingButtonComponentView"))
-                .click();
+
+        if (shopperCheckoutRequirements.isShippingRequired()) {
+            mDevice.findObject(new UiSelector()
+                    .resourceIdMatches(".*:id/shippingButtonComponentView"))
+                    .click();
+        } else {
+            mDevice.findObject(new UiSelector()
+                    .resourceIdMatches(".*:id/billingButtonComponentView"))
+                    .click();
+        }
 
         UiObject threeDSSubmitButton = mDevice.findObject(new UiSelector()
                 .text("SUBMIT"));
