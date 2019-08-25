@@ -11,6 +11,7 @@ import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutReturningSho
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestUtils;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
+import com.bluesnap.android.demoapp.TestingShopperCreditCard;
 import com.bluesnap.android.demoapp.UIAutoTestingBlueSnapService;
 import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
@@ -60,21 +61,28 @@ public class CheckoutEspressoBasedTester {
         taxAmount = uIAutoTestingBlueSnapService.getTaxAmount();
     }
 
-
+    // basic new shopper checkout
     protected void checkoutSetup() throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(false, "", true, false, false);
+        checkoutSetup(false, "", true, false, false, false);
     }
 
+    // basic returning shopper checkout
     protected void checkoutSetup(boolean forReturningShopper) throws BSPaymentRequestException, InterruptedException, JSONException {
-        checkoutSetup(forReturningShopper, "", true, false, false);
+        checkoutSetup(forReturningShopper, "", true, false, false, false);
+    }
+
+    // all merchant configurations
+    protected void checkoutSetup(boolean allowCurrencyChange, boolean hideStoreCard, boolean disableGooglePay, boolean activate3DS) throws BSPaymentRequestException, InterruptedException, JSONException {
+        checkoutSetup(false, "", allowCurrencyChange, hideStoreCard, disableGooglePay, activate3DS);
     }
 
     protected void checkoutSetup(boolean forReturningShopper, String returningShopperId, boolean allowCurrencyChange,
-                                 boolean hideStoreCard, boolean disableGooglePay) throws BSPaymentRequestException, InterruptedException, JSONException {
+                                 boolean hideStoreCard, boolean disableGooglePay, boolean activate3DS) throws BSPaymentRequestException, InterruptedException, JSONException {
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         sdkRequest.setAllowCurrencyChange(allowCurrencyChange);
         sdkRequest.setHideStoreCardSwitch(hideStoreCard);
         sdkRequest.setGooglePayActive(!disableGooglePay);
+        sdkRequest.setActivate3DS(activate3DS);
         uIAutoTestingBlueSnapService.setSdk(sdkRequest, shopperCheckoutRequirements);
         uIAutoTestingBlueSnapService.setupAndLaunch(sdkRequest, forReturningShopper, returningShopperId);
         returningShopper = uIAutoTestingBlueSnapService.getReturningShopper();
@@ -101,15 +109,24 @@ public class CheckoutEspressoBasedTester {
     }
 
     public void new_card_basic_fill_info(boolean storeCard) {
-        new_card_basic_fill_info(storeCard, false);
+        new_card_basic_fill_info(storeCard, false, null);
     }
 
-    public void new_card_basic_fill_info(boolean storeCard, boolean storeCardIsMandatory) {
+    public void new_card_basic_fill_info(TestingShopperCreditCard creditCard) {
+        new_card_basic_fill_info(false, false, creditCard);
+    }
+
+    public void new_card_basic_fill_info(boolean storeCard, boolean storeCardIsMandatory, TestingShopperCreditCard creditCard) {
         if (shopperCheckoutRequirements.isShippingRequired() && shopperCheckoutRequirements.isFullBillingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling())
             TestUtils.setShippingSameAsBillingSwitch(false);
 
         //fill in info in billing and continue to shipping or paying
-        CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        if (creditCard != null) {
+            CreditCardLineTesterCommon.fillInCCLineWithValidCard(creditCard);
+        } else {
+            CreditCardLineTesterCommon.fillInCCLineWithValidCard();
+        }
+
         ContactInfoTesterCommon.changeCountry(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryValue());
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, ContactInfoTesterCommon.billingContactInfo.getCountryKey(), shopperCheckoutRequirements.isFullBillingRequired(), shopperCheckoutRequirements.isEmailRequired());
 

@@ -230,13 +230,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
-
-    public void setSdk(SdkRequestBase sdkRequest, boolean withFullBilling, boolean withEmail, boolean withShipping) {
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(withFullBilling);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(withEmail);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(withShipping);
-    }
-
     private void doSetup() {
         try {
             wakeUpDeviceScreen();
@@ -497,12 +490,20 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, false);
+        finishDemoPurchase(shopperCheckoutRequirements, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+    }
+
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
+        finishDemoPurchase(shopperCheckoutRequirements, cardStored, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+    }
+
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String expected3DSResult) throws InterruptedException {
+        finishDemoPurchase(shopperCheckoutRequirements, false, expected3DSResult);
     }
 
     // Verify that the checkout activity ends with the correct result code
     // Verify that the amount and currency in sdkResult are right
-    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored, String expected3DSResult) throws InterruptedException {
 
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
@@ -514,21 +515,17 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
 
-        checkSDKResult();
+        checkSDKResult(expected3DSResult);
 
         makeCheckoutTransaction(shopperCheckoutRequirements, cardStored);
-    }
-
-    public void checkSDKResult() {
-        checkSDKResult(CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
     }
 
     public void checkSDKResult(String expected3DSResult) {
         sdkResult = blueSnapService.getSdkResult();
         // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
-        assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
-        assertEquals("SDKResult wrong 3DSResult", sdkResult.getThreeDSAuthenticationResult(), expected3DSResult);
+        assertEquals("SDKResult wrong currency", checkoutCurrency, sdkResult.getCurrencyNameCode());
+        assertEquals("SDKResult wrong 3DSResult", expected3DSResult, sdkResult.getThreeDSAuthenticationResult());
     }
 
     // Make a credit card transaction for checkout flow and validate the shopper details in server
@@ -566,7 +563,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                Assert.assertEquals("SDKResult wrong credit card was charged", transactions.getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
+                assertEquals("SDKResult wrong credit card was charged", transactions.getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
             }
 
             @Override
@@ -925,10 +922,10 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         if (fieldName.equals("amount")) // ignoring format differences (such as number of zeros after decimal point), comparing numeric values only
-            Assert.assertTrue(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, Double.parseDouble(expectedResult) - Double.parseDouble(fieldContent) == 0);
+            assertTrue(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, Double.parseDouble(expectedResult) - Double.parseDouble(fieldContent) == 0);
 
         else
-            Assert.assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
+            assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
     }
 
     // Verify that the activity returned with the correct result code

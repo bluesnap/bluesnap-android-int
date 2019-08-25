@@ -11,7 +11,16 @@ public class TestingShopperCreditCard {
     public static final TestingShopperCreditCard MASTERCARD_CREDIT_CARD = new TestingShopperCreditCard("5572758886015288", "123", "5288",
             "MASTERCARD", "DEBIT", 12, 2026, "26");
 
-    public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS = new TestingShopperCreditCard("4000000000001091", "123", "1091",
+    public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_SUCCESS = new TestingShopperCreditCard("4000000000001091", "123", "1091",
+            "VISA", "", 10, 2020, "20");
+
+    public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_UNAVAILABLE = new TestingShopperCreditCard("4000000000001059", "123", "1059",
+            "VISA", "", 10, 2020, "20");
+
+    public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_BYPASS = new TestingShopperCreditCard("4000000000001133", "123", "1133",
+            "VISA", "", 10, 2020, "20");
+
+    public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_FAILURE = new TestingShopperCreditCard("4000000000001042", "123", "1042",
             "VISA", "", 10, 2020, "20");
 
     private String cardNumber;

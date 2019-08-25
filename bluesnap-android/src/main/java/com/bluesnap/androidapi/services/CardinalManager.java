@@ -80,7 +80,6 @@ public class CardinalManager  {
             return;
 
         CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
-        //TODO: Staging or production
         if (isProduction) {
             cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.PRODUCTION);
         } else {

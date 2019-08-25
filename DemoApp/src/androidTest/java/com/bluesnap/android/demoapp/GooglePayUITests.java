@@ -28,7 +28,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
  */
 
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
 public class GooglePayUITests {
 
@@ -81,7 +81,7 @@ public class GooglePayUITests {
      * <p>
      * It runs in test mode.
      */
-    @Test
+//    @Test
     public void googlePay_checkout_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException {
         TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
 
@@ -97,7 +97,7 @@ public class GooglePayUITests {
      * <p>
      * It runs in test mode.
      */
-    @Test
+//    @Test
     public void googlePay_choose_and_create_payment() throws UiObjectNotFoundException, InterruptedException, JSONException {
         TestingShopperCheckoutRequirements shopperCheckoutRequirements = new TestingShopperCheckoutRequirements(true, true, true);
 
