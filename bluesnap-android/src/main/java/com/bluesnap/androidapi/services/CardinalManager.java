@@ -103,21 +103,24 @@ public class CardinalManager  {
      * @throws //TODO: This should throw specific error
      */
     public void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
-        if (isCardinalFailure())
+        if (isCardinalFailure()) {
+            initCardinalServiceCallback.onComplete();
             return;
+        }
 
         Cardinal.getInstance().init(cardinalToken, new CardinalInitService() {
             @Override
             public void onSetupCompleted(String consumerSessionID) {
                 Log.d(TAG, "cardinal init completed");
                 DirectoryServerID directoryServerID = DirectoryServerID.DEFAULT;
-                initCardinalServiceCallback.onSuccess();
+                initCardinalServiceCallback.onComplete();
             }
 
             @Override
             public void onValidated(ValidateResponse validateResponse, String s) {
                 Log.d(TAG, "Error Message: " + validateResponse.getErrorDescription());
                 setCardinalFailure(true);
+                initCardinalServiceCallback.onComplete();
             }
         });
 
@@ -194,6 +197,7 @@ public class CardinalManager  {
         BlueSnapHTTPResponse response = blueSnapAPI.processCardinalResult(body);
         if (response.getResponseCode() != HTTP_OK) {
             Log.e(TAG, "Error in processing cardinal result:\n" + response);
+            setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
         } else {
             try {
                 JSONObject jsonObject = new JSONObject(response.getResponseString());

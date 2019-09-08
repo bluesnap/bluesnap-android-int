@@ -349,7 +349,7 @@ public class BlueSnapService {
                         cardinalManager.configureCardinal(context, getBlueSnapToken().isProduction());
                         cardinalManager.initCardinal(new InitCardinalServiceCallback() {
                             @Override
-                            public void onSuccess() {
+                            public void onComplete() {
                                 callback.onSuccess();
                             }
                         });
