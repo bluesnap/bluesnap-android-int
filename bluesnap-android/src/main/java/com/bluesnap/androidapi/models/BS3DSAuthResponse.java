@@ -15,6 +15,7 @@ public class BS3DSAuthResponse extends  BSModel{
     private String acsUrl;
     private String payload;
     private String transactionId;
+    private String threeDSVersion;
 
     @Nullable
     public static BS3DSAuthResponse fromJson(@Nullable JSONObject jsonObject) {
@@ -24,6 +25,7 @@ public class BS3DSAuthResponse extends  BSModel{
         response.setAcsUrl(getOptionalString(jsonObject, "acsUrl"));
         response.setPayload(getOptionalString(jsonObject, "payload"));
         response.setTransactionId(getOptionalString(jsonObject, "transactionId"));
+        response.setThreeDSVersion(getOptionalString(jsonObject, "threeDSVersion"));
         return response;
     }
 
@@ -64,6 +66,14 @@ public class BS3DSAuthResponse extends  BSModel{
         return transactionId;
     }
 
+    public String getThreeDSVersion() {
+        return threeDSVersion;
+    }
+
+    public void setThreeDSVersion(String threeDSVersion) {
+        this.threeDSVersion = threeDSVersion;
+    }
+
     @Override
     public String toString() {
         return "BS3DSAuthResponse{" +
@@ -71,6 +81,7 @@ public class BS3DSAuthResponse extends  BSModel{
                 ", acsUrl='" + acsUrl + '\'' +
                 ", payload='" + payload + '\'' +
                 ", transactionId='" + transactionId + '\'' +
+                ", threeDSVersion='" + threeDSVersion + '\'' +
                 '}';
     }
 }

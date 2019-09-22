@@ -139,9 +139,16 @@ public class CardinalManager  {
 
         jsonObject = new JSONObject(response.getResponseString());
         BS3DSAuthResponse authResponse = BS3DSAuthResponse.fromJson(jsonObject);
-        if (!authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
+        if (!authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) { // populate Enrollment Status as the result
             setCardinalResult(authResponse.getEnrollmentStatus());
         }
+
+        // verifying 3DS version
+        String firstChar = authResponse.getThreeDSVersion().substring(0, 1);
+        if (!firstChar.equals("2")) {
+            setCardinalResult(CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name());
+        }
+
         return authResponse;
     }
 
