@@ -14,6 +14,7 @@ import com.cardinalcommerce.cardinalmobilesdk.Cardinal;
 import com.cardinalcommerce.cardinalmobilesdk.enums.CardinalEnvironment;
 import com.cardinalcommerce.cardinalmobilesdk.enums.CardinalRenderType;
 import com.cardinalcommerce.cardinalmobilesdk.enums.CardinalUiType;
+import com.cardinalcommerce.cardinalmobilesdk.models.CardinalActionCode;
 import com.cardinalcommerce.cardinalmobilesdk.models.CardinalConfigurationParameters;
 import com.cardinalcommerce.cardinalmobilesdk.models.ValidateResponse;
 import com.cardinalcommerce.cardinalmobilesdk.services.CardinalInitService;
@@ -177,9 +178,9 @@ public class CardinalManager  {
                             public void onValidated(Context context, ValidateResponse validateResponse, String s) {
                                 Log.d(TAG, "Cardinal validated callback");
 
-                                if (validateResponse.actionCode.getString().equals("NOACTION") || validateResponse.actionCode.getString().equals("SUCCESS")) {
+                                if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
                                     processCardinalResult(s);
-                                } else if (validateResponse.actionCode.getString().equals("FAILURE")) {
+                                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
                                 } else {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
