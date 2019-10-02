@@ -34,10 +34,19 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/transactionResult"
+        android:id="@+id/threeDSResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/paymentResultTextView2"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/transactionResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/threeDSResult"
         android:layout_centerHorizontal="true"
         android:padding="10dp"
         android:textAppearance="?android:attr/textAppearanceLarge" />

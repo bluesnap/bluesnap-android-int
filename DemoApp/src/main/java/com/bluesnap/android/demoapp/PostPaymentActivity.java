@@ -43,8 +43,8 @@ public class PostPaymentActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         ShippingContactInfo shippingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS);
         BillingContactInfo billingContactInfo = getIntent().getParcelableExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS);
-        TextView paymentResultTextView2
-                = (TextView) findViewById(R.id.paymentResultTextView2);
+        TextView paymentResultTextView2 = (TextView) findViewById(R.id.paymentResultTextView2);
+        TextView threeDSResultTextView = (TextView) findViewById(R.id.threeDSResult);
         continueShippingView = (TextView) findViewById(R.id.continueShippingButton);
         continueShippingView.setVisibility(View.GONE);
         transactionResultTextView = (TextView) findViewById(R.id.transactionResult);
@@ -56,6 +56,7 @@ public class PostPaymentActivity extends AppCompatActivity {
         DecimalFormat decimalFormat = AndroidUtil.getDecimalFormat();
         paymentResultTextView2.setText("Your payment of  " + (sdkResult.getCurrencyNameCode() == null ? " " : sdkResult.getCurrencyNameCode())
                 + " " + (sdkResult.getAmount().isNaN() ? " " : decimalFormat.format(sdkResult.getAmount())) + " has been sent.");
+        threeDSResultTextView.setText("3DS Result: " + sdkResult.getThreeDSAuthenticationResult());
 //        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             // String merchantToken = extras.getString("MERCHANT_TOKEN");
