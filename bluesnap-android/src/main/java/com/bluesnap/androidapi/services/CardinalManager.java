@@ -180,9 +180,9 @@ public class CardinalManager  {
 
                                 if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
                                     processCardinalResult(s);
-                                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
+                                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE) || validateResponse.actionCode.equals(CardinalActionCode.ERROR)) {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
-                                } else {
+                                } else { //cancel
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
                                 }
 

@@ -466,7 +466,11 @@ public class CreditCardActivity extends AppCompatActivity {
                         Log.d(TAG, "Got broadcastReceiver intent");
 
                         String actionCode = intent.getStringExtra(CardinalManager.CARDINAL_VALIDATED);
-                        if (actionCode.equals("CANCEL")) {
+
+                        if (actionCode.equals("FAILURE") || actionCode.equals("ERROR")) {
+                            finishWithFailure(response);
+
+                        } else if (actionCode.equals("CANCEL")) {
                             progressBar.setVisibility(View.INVISIBLE);
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -502,6 +506,13 @@ public class CreditCardActivity extends AppCompatActivity {
             finishFromActivity(shopper, resultIntent, response);
         }
 
+    }
+
+    private void finishWithFailure(BlueSnapHTTPResponse response) {
+        String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+        Log.e(TAG, errorMsg);
+        setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
+        finish();
     }
 
     /**
