@@ -934,9 +934,12 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
             Field f = Activity.class.getDeclaredField("mResultCode"); //NoSuchFieldException
             f.setAccessible(true);
             int mResultCode = f.getInt(mActivityRule.getActivity());
-            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", expectedResultCode, mResultCode);
+            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", Activity.RESULT_OK, mResultCode);
         } catch (Exception e) {
             fail();
         }
+
+        assertEquals("The result code from SDK is not correct. ", expectedResultCode, blueSnapService.getSdkResult().getResult());
+
     }
 }

@@ -28,6 +28,8 @@ import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
+import com.bluesnap.androidapi.services.BS3DSAuthRequestException;
+import com.bluesnap.androidapi.services.BSProcess3DSResultRequestException;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
@@ -426,19 +428,13 @@ public class CreditCardActivity extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
-                                Log.e(TAG, errorMsg);
-                                setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
-                                finish();
+                                finishFromActivityWithFailure(response);
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "json parsing exception", e);
                         }
                     } else {
-                        String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
-                        Log.e(TAG, errorMsg);
-                        setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
-                        finish();
+                        finishFromActivityWithFailure(response);
                     }
 
                 } catch (JSONException ex) {
@@ -458,14 +454,17 @@ public class CreditCardActivity extends AppCompatActivity {
             BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
 
             // Start Cardinal challenge
-            if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED") && !(cardinalManager.getCardinalResult().equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name()))) {
+            if (authResponse != null && authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")
+                    && !(cardinalManager.getCardinalResult().equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name()))) {
 
                 BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         Log.d(TAG, "Got broadcastReceiver intent");
 
-                        String actionCode = intent.getStringExtra(CardinalManager.CARDINAL_VALIDATED);
+                        String actionCode = intent.getStringExtra("actionCode");
+                        String resultJwt = intent.getStringExtra("resultJwt");
+
                         if (actionCode.equals("CANCEL")) {
                             progressBar.setVisibility(View.INVISIBLE);
                             runOnUiThread(new Runnable() {
@@ -475,15 +474,21 @@ public class CreditCardActivity extends AppCompatActivity {
                                 }
                             });
 
-                        } else {
+                        } else if (actionCode.equals("NOACTION") || actionCode.equals("SUCCESS")) {
                             blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    String event = intent.getAction();
+                                    try {
+                                        cardinalManager.processCardinalResult(resultJwt);
+                                    } catch (BSProcess3DSResultRequestException e) {
+                                        finishFromActivityWithFailure(response);
+                                    }
 
                                     finishFromActivity(shopper, resultIntent, response);
                                 }
                             });
+                        } else { //cardinal failure
+                            finishFromActivityWithFailure(response);
                         }
 
                     }
@@ -497,11 +502,20 @@ public class CreditCardActivity extends AppCompatActivity {
                 finishFromActivity(shopper, resultIntent, response);
             }
 
-        } catch (Exception e) {
+        } catch (BS3DSAuthRequestException e) { // auth request error
             Log.e(TAG, "Cardinal Service Error", e);
-            finishFromActivity(shopper, resultIntent, response);
+            finishFromActivityWithFailure(response);
+        } catch (JSONException e) {
+            Log.e(TAG, "JsonException");
         }
 
+    }
+
+    private void finishFromActivityWithFailure(BlueSnapHTTPResponse response) {
+        String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+        Log.e(TAG, errorMsg);
+        setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
+        finish();
     }
 
     /**
@@ -545,10 +559,7 @@ public class CreditCardActivity extends AppCompatActivity {
             Log.d(TAG, "tokenization finished");
             finish();
         } catch (NullPointerException | JSONException e) {
-            Log.e(TAG, "", e);
-            String errorMsg = String.format("Service Error %s", e.getMessage());
-            setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));   //TODO Display error to the user
-            finish();
+            finishFromActivityWithFailure(response);
         }
 
     }

@@ -112,7 +112,7 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-        setResult(BS_CHOOSE_PAYMENT_METHOD_RESULT_OK, resultIntent);
+        setResult(Activity.RESULT_OK, resultIntent);
         //Only set the remember shopper here since failure can lead to missing tokenization on the server
         shopper.getNewCreditCardInfo().getCreditCard().setTokenizationSuccess();
         Log.d(TAG, "tokenization finished");

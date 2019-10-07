@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
@@ -127,7 +128,8 @@ public class CardinalManager  {
 
     }
 
-    public BS3DSAuthResponse authWith3DS(String currency, Double amount) throws Exception {
+    @Nullable
+    public BS3DSAuthResponse authWith3DS(String currency, Double amount) throws BS3DSAuthRequestException, JSONException {
         if (isCardinalFailure())
             return null;
 
@@ -135,7 +137,7 @@ public class CardinalManager  {
         BlueSnapHTTPResponse response = blueSnapAPI.tokenizeDetails(authRequest.toJson().toString());
         JSONObject jsonObject;
         if (response.getResponseCode() != HTTP_OK) {
-            throw new Exception("BS API Exception - tokenize 3ds"); // TODO create BSExceptions
+            throw new BS3DSAuthRequestException("BS API Exception - tokenize 3ds");
         }
 
         jsonObject = new JSONObject(response.getResponseString());
@@ -179,14 +181,14 @@ public class CardinalManager  {
                                 Log.d(TAG, "Cardinal validated callback");
 
                                 if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
-                                    processCardinalResult(s);
+                                    // do nothing
                                 } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
                                 } else {
                                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
                                 }
 
-                                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, validateResponse.actionCode.getString(), TAG);
+                                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, "actionCode", validateResponse.actionCode.getString(), "resultJwt", s, TAG);
                             }
                         });
                     }
@@ -198,14 +200,14 @@ public class CardinalManager  {
 
     /**
      * @return
-     * @throws //TODO: This should throw specific error
+     * @throws BSProcess3DSResultRequestException
      */
-    public void processCardinalResult(String resultJwt) {
+    public void processCardinalResult(String resultJwt) throws BSProcess3DSResultRequestException {
         String body = createDataObject(resultJwt).toString();
         BlueSnapHTTPResponse response = blueSnapAPI.processCardinalResult(body);
         if (response.getResponseCode() != HTTP_OK) {
             Log.e(TAG, "Error in processing cardinal result:\n" + response);
-            setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+            throw new BSProcess3DSResultRequestException("BS API Exception - process 3ds result");
         } else {
             try {
                 JSONObject jsonObject = new JSONObject(response.getResponseString());
