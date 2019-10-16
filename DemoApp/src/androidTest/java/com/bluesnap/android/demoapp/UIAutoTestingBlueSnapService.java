@@ -490,20 +490,21 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+        finishDemoPurchase(shopperCheckoutRequirements, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
     }
 
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, cardStored, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+        finishDemoPurchase(shopperCheckoutRequirements, cardStored, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
     }
 
-    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String expected3DSResult) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, false, expected3DSResult);
+    // for 3DS flows
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String expected3DSResult, boolean isResultOK) throws InterruptedException {
+        finishDemoPurchase(shopperCheckoutRequirements, false, expected3DSResult, isResultOK);
     }
 
     // Verify that the checkout activity ends with the correct result code
     // Verify that the amount and currency in sdkResult are right
-    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored, String expected3DSResult) throws InterruptedException {
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored, String expected3DSResult, boolean isResultOK) throws InterruptedException {
 
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
@@ -511,21 +512,24 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         // Verify activity ended with success
-        checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK);
+        checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK, isResultOK);
 
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
 
-        checkSDKResult(expected3DSResult);
+        checkSDKResult(expected3DSResult, isResultOK);
 
         makeCheckoutTransaction(shopperCheckoutRequirements, cardStored);
     }
 
-    public void checkSDKResult(String expected3DSResult) {
+    public void checkSDKResult(String expected3DSResult, boolean isResultOK) {
         sdkResult = blueSnapService.getSdkResult();
         // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
         assertEquals("SDKResult wrong currency", checkoutCurrency, sdkResult.getCurrencyNameCode());
-        assertEquals("SDKResult wrong 3DSResult", expected3DSResult, sdkResult.getThreeDSAuthenticationResult());
+
+        if (isResultOK) {
+            assertEquals("SDKResult wrong 3DSResult", expected3DSResult, sdkResult.getThreeDSAuthenticationResult());
+        }
     }
 
     // Make a credit card transaction for checkout flow and validate the shopper details in server
@@ -930,11 +934,16 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
     // Verify that the activity returned with the correct result code
     private void checkResultOk(int expectedResultCode) {
+        checkResultOk(expectedResultCode, true);
+    }
+
+    private void checkResultOk(int expectedResultCode, boolean isResultOK) {
         try {
             Field f = Activity.class.getDeclaredField("mResultCode"); //NoSuchFieldException
             f.setAccessible(true);
             int mResultCode = f.getInt(mActivityRule.getActivity());
-            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", Activity.RESULT_OK, mResultCode);
+            int expectedActivityResultCode = isResultOK ? Activity.RESULT_OK : BluesnapCheckoutActivity.RESULT_SDK_FAILED;
+            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", expectedActivityResultCode, mResultCode);
         } catch (Exception e) {
             fail();
         }

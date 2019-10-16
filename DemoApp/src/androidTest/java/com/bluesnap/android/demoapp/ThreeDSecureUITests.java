@@ -63,7 +63,7 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
     @Test
     public void threeDS_success_minimal_billing_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
         setupBeforeTransaction(false, false, false);
-        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_SUCCESS, CardinalManager.CardinalManagerResponse.AUTHENTICATION_SUCCEEDED.name());
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_SUCCESS, true, CardinalManager.CardinalManagerResponse.AUTHENTICATION_SUCCEEDED.name());
     }
 
     /**
@@ -76,7 +76,7 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
     @Test
     public void threeDS_success_full_billing_with_email_with_shipping_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
         setupBeforeTransaction(true, true, true);
-        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_SUCCESS, CardinalManager.CardinalManagerResponse.AUTHENTICATION_SUCCEEDED.name());
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_SUCCESS, true, CardinalManager.CardinalManagerResponse.AUTHENTICATION_SUCCEEDED.name());
     }
 
     /**
@@ -89,7 +89,7 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
     @Test
     public void threeDS_bypass_minimal_billing_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
         setupBeforeTransaction(false, false, false);
-        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_BYPASS, CardinalManager.CardinalManagerResponse.AUTHENTICATION_BYPASSED.name());
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_BYPASS, true, CardinalManager.CardinalManagerResponse.AUTHENTICATION_BYPASSED.name());
     }
 
     /**
@@ -102,7 +102,20 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
     @Test
     public void threeDS_unavailable_minimal_billing_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
         setupBeforeTransaction(false, false, false);
-        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_UNAVAILABLE, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_UNAVAILABLE, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+    }
+
+    /**
+     * This test does an end-to-end checkout with 3DS flow
+     * for unsupported credit card
+     * with minimal billing.
+     * <p>
+     * It runs in test mode.
+     */
+    @Test
+    public void threeDS_unsupported_minimal_billing_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
+        setupBeforeTransaction(false, false, false);
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_NOT_SUPPORTED, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name());
     }
 
     /**
@@ -115,10 +128,14 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
     @Test
     public void threeDS_failure_minimal_billing_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
         setupBeforeTransaction(false, false, false);
-        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_FAILURE, CardinalManager.CardinalManagerResponse.AUTHENTICATION_FAILED.name());
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_FAILURE, true, CardinalManager.CardinalManagerResponse.AUTHENTICATION_FAILED.name(), false);
     }
 
-    private void basic3DSFlow(TestingShopperCreditCard creditCard, String expected3DSResult) throws UiObjectNotFoundException, InterruptedException {
+    private void basic3DSFlow(TestingShopperCreditCard creditCard, boolean isChallengeRequired, String expected3DSResult) throws UiObjectNotFoundException, InterruptedException {
+        basic3DSFlow(creditCard, isChallengeRequired, expected3DSResult, true);
+    }
+
+    private void basic3DSFlow(TestingShopperCreditCard creditCard, boolean isChallengeRequired, String expected3DSResult, boolean isResultOK) throws UiObjectNotFoundException, InterruptedException {
 
         int buttonComponent = (shopperCheckoutRequirements.isShippingRequired() && !shopperCheckoutRequirements.isShippingSameAsBilling()) ? R.id.shippingButtonComponentView : R.id.billingButtonComponentView;
         //onView(withId(R.id.newCardButton)).perform(click());
@@ -127,7 +144,7 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
 
         TestUtils.pressBuyNowButton(buttonComponent);
 
-        if (expected3DSResult.equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_SUCCEEDED.name()) || expected3DSResult.equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_BYPASSED.name())) {
+        if (isChallengeRequired) {
             UiObject threeDSSubmitButton = mDevice.findObject(new UiSelector()
                     .text("SUBMIT"));
 
@@ -142,7 +159,7 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
             threeDSSubmitButton.click();
         }
 
-        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements, expected3DSResult);
+        uIAutoTestingBlueSnapService.finishDemoPurchase(shopperCheckoutRequirements, expected3DSResult, isResultOK);
 
     }
 

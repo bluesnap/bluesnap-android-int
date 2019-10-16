@@ -487,8 +487,8 @@ public class CreditCardActivity extends AppCompatActivity {
                                     finishFromActivity(shopper, resultIntent, response);
                                 }
                             });
-                        } else { //cardinal failure
-                            finishFromActivityWithFailure(response);
+                        } else { //cardinal internal failure
+                            finishFromActivityWithFailure(null);
                         }
 
                     }
@@ -496,7 +496,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
                 BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
 
-                cardinalManager.process(authResponse, this, purchaseDetails.getCreditCard());
+                cardinalManager.process(authResponse, this, purchaseDetails.getCreditCard(), ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName()));
 
             } else {
                 finishFromActivity(shopper, resultIntent, response);
@@ -512,7 +512,14 @@ public class CreditCardActivity extends AppCompatActivity {
     }
 
     private void finishFromActivityWithFailure(BlueSnapHTTPResponse response) {
-        String errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+        String errorMsg;
+
+        if (response != null) {
+            errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+        } else {
+            errorMsg = "SDK Error";
+        }
+
         Log.e(TAG, errorMsg);
         setResult(BluesnapCheckoutActivity.RESULT_SDK_FAILED, new Intent().putExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG, errorMsg));
         finish();
@@ -559,7 +566,7 @@ public class CreditCardActivity extends AppCompatActivity {
             Log.d(TAG, "tokenization finished");
             finish();
         } catch (NullPointerException | JSONException e) {
-            finishFromActivityWithFailure(response);
+            finishFromActivityWithFailure(null);
         }
 
     }

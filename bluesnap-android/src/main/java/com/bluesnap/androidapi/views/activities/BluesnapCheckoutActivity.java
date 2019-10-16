@@ -485,8 +485,10 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 break;
             }
             case CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE: {
-                setResult(resultCode, data);
-                finish();
+                if (resultCode != Activity.RESULT_CANCELED) {
+                    setResult(resultCode, data);
+                    finish();
+                }
                 break;
             }
             case CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE: {
@@ -495,7 +497,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 break;
             }
             case WebViewActivity.PAYPAL_REQUEST_CODE: {
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode != Activity.RESULT_CANCELED) {
                     setResult(resultCode, data);
                     finish();
                 }

@@ -102,7 +102,6 @@ public class CardinalManager  {
     }
 
     /**
-     * @throws //TODO: This should throw specific error
      */
     public void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
         if (isCardinalFailure()) {
@@ -163,39 +162,57 @@ public class CardinalManager  {
     /**
      * Call cardinal cca_continue,
      * We use the deprecated method due to the payload returned from the API.
-     * @param authResponse
-     * @param activity
+     * @param authResponse - 3DS authentication response from server
+     * @param activity - current displayed activity
+     * @param creditCard - shopper's credit card
+     * @param isReturningShopper - true if this is a returning shopper flow, false w.s.
      */
-    public void process(final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
+    public void process(final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard, boolean isReturningShopper) {
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
 
-                Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
-                    @Override
-                    public void onComplete() {
-                        Cardinal.getInstance().cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), activity, new CardinalValidateReceiver() {
-                            @Override
-                            public void onValidated(Context context, ValidateResponse validateResponse, String s) {
-                                Log.d(TAG, "Cardinal validated callback");
-
-                                if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
-                                    // do nothing
-                                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
-                                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
-                                } else {
-                                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
-                                }
-
-                                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, "actionCode", validateResponse.actionCode.getString(), "resultJwt", s, TAG);
-                            }
-                        });
-                    }
-                });
-
+                if (!isReturningShopper) { // new card mode - passing the cc number to cardinal for processing
+                    Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
+                        @Override
+                        public void onComplete() {
+                            process(authResponse, activity);
+                        }
+                    });
+                } else { // vaulted card - moving straight to cardinal challenge
+                    process(authResponse, activity);
+                }
             }
         });
+    }
+
+    /**
+     * Call cardinal cca_continue,
+     * We use the deprecated method due to the payload returned from the API.
+     *
+     * @param authResponse - 3DS authentication response from server
+     * @param activity     - current displayed activity
+     */
+    private void process(final BS3DSAuthResponse authResponse, Activity activity) {
+
+        Cardinal.getInstance().cca_continue(authResponse.getTransactionId(), authResponse.getPayload(), activity, new CardinalValidateReceiver() {
+            @Override
+            public void onValidated(Context context, ValidateResponse validateResponse, String s) {
+                Log.d(TAG, "Cardinal validated callback");
+
+                if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
+                    // do nothing
+                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
+                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
+                } else {
+                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+                }
+
+                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, "actionCode", validateResponse.actionCode.getString(), "resultJwt", s, TAG);
+            }
+        });
+
     }
 
     /**
