@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -65,7 +67,7 @@ public class CardinalManager  {
     /**
      *
      */
-    public void setCardinalJWT(String tokenJWT) {
+    void setCardinalJWT(@Nullable String tokenJWT) {
         // reset CardinalFailure and CardinalResult for singleton use
         setCardinalFailure(false);
         setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
@@ -77,7 +79,7 @@ public class CardinalManager  {
     }
 
     // This method can and should be called before a token is obtained to save time later
-    public void configureCardinal(Context context, Boolean isProduction) {
+    void configureCardinal(Context context, boolean isProduction) {
         if (isCardinalFailure())
             return;
 
@@ -103,7 +105,7 @@ public class CardinalManager  {
 
     /**
      */
-    public void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
+    void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
         if (isCardinalFailure()) {
             initCardinalServiceCallback.onComplete();
             return;
@@ -141,6 +143,10 @@ public class CardinalManager  {
 
         jsonObject = new JSONObject(response.getResponseString());
         BS3DSAuthResponse authResponse = BS3DSAuthResponse.fromJson(jsonObject);
+        if (authResponse == null) {
+            return null;
+        }
+
         if (!authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) { // populate Enrollment Status as the result
             setCardinalResult(authResponse.getEnrollmentStatus());
         }
@@ -167,7 +173,7 @@ public class CardinalManager  {
      * @param creditCard - shopper's credit card
      * @param isReturningShopper - true if this is a returning shopper flow, false w.s.
      */
-    public void process(final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard, boolean isReturningShopper) {
+    public void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard, boolean isReturningShopper) {
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
@@ -262,15 +268,15 @@ public class CardinalManager  {
         return cardinalResult;
     }
 
-    public void setCardinalResult(String cardinalResult) {
+    private void setCardinalResult(String cardinalResult) {
         this.cardinalResult = cardinalResult;
     }
 
-    public boolean isCardinalFailure() {
+    private boolean isCardinalFailure() {
         return cardinalFailure;
     }
 
-    public void setCardinalFailure(boolean cardinalFailure) {
+    private void setCardinalFailure(boolean cardinalFailure) {
         this.cardinalFailure = cardinalFailure;
     }
 
