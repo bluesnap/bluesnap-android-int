@@ -453,6 +453,11 @@ public class CreditCardActivity extends AppCompatActivity {
 
             BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
 
+            if (authResponse == null) {
+                Log.e(TAG, "Auth response is missing");
+                finishFromActivity(shopper, resultIntent, response);
+                return;
+            }
             // Start Cardinal challenge
             if (authResponse != null && authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")
                     && !(cardinalManager.getCardinalResult().equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name()))) {
