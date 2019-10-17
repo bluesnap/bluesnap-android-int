@@ -426,13 +426,21 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         setupAndLaunch(sdkRequest, true, vaultedShopperId);
     }
 
-    public void createVaultedShopper(boolean withCreditCard) throws JSONException {
-        createVaultedShopper(withCreditCard, false);
+    public void createVaultedShopper(boolean withDefaultCreditCard) throws JSONException {
+        createVaultedShopper(withDefaultCreditCard ? TestingShopperCreditCard.VISA_CREDIT_CARD : null, false);
+    }
+
+    public void createVaultedShopper(boolean withDefaultCreditCard, boolean withShipping) throws JSONException {
+        createVaultedShopper(withDefaultCreditCard ? TestingShopperCreditCard.VISA_CREDIT_CARD : null, withShipping);
+    }
+
+    public void createVaultedShopper(TestingShopperCreditCard creditCard) throws JSONException {
+        createVaultedShopper(creditCard, false);
     }
 
     // Create new vaulted shopper
-    public void createVaultedShopper(boolean withCreditCard, boolean withShipping) throws JSONException {
-        JSONObject body = createVaultedShopperDataObject(withCreditCard, withShipping);
+    public void createVaultedShopper(TestingShopperCreditCard creditCard, boolean withShipping) throws JSONException {
+        JSONObject body = createVaultedShopperDataObject(creditCard, withShipping);
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             createVaultedShopperResponse = response.getResponseString();
@@ -445,19 +453,19 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     // Create JSONObject for a vaulted shopper with optionals credit card and shipping info
-    private JSONObject createVaultedShopperDataObject(boolean withCreditCard, boolean withShipping) throws JSONException {
+    private JSONObject createVaultedShopperDataObject(TestingShopperCreditCard creditCard, boolean withShipping) throws JSONException {
         JSONObject postData = new JSONObject();
 
         postData.put("firstName", "Fanny");
         postData.put("lastName", "Brice");
         postData.put("email", "some@mail.com");
 
-        if (withCreditCard) {
+        if (creditCard != null) {
             JSONObject jsonObjectCreditCard = new JSONObject();
-            jsonObjectCreditCard.put("expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
-            jsonObjectCreditCard.put("securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
-            jsonObjectCreditCard.put("expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
-            jsonObjectCreditCard.put("cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
+            jsonObjectCreditCard.put("expirationYear", creditCard.getExpirationYear());
+            jsonObjectCreditCard.put("securityCode", Integer.parseInt(creditCard.getCvv()));
+            jsonObjectCreditCard.put("expirationMonth", Integer.toString(creditCard.getExpirationMonth()));
+            jsonObjectCreditCard.put("cardNumber", Long.parseLong(creditCard.getCardNumber()));
 
             JSONObject jsonObjectFirstElement = new JSONObject();
             jsonObjectFirstElement.put("creditCard", jsonObjectCreditCard);
