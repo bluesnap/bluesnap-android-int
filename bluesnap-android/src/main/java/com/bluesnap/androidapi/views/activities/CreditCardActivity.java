@@ -455,11 +455,11 @@ public class CreditCardActivity extends AppCompatActivity {
 
             if (authResponse == null) {
                 Log.e(TAG, "Auth response is missing");
-                finishFromActivity(shopper, resultIntent, response);
+                finishFromActivityWithFailure(response);
                 return;
             }
             // Start Cardinal challenge
-            if (authResponse != null && authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")
+            if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")
                     && !(cardinalManager.getCardinalResult().equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name()))) {
 
                 BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
