@@ -242,8 +242,6 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH, broadcastReceiver);
         BlueSnapLocalBroadcastManager.registerReceiver(getActivity(), BlueSnapLocalBroadcastManager.SHIPPING_SWITCH_ACTIVATED, broadcastReceiver);
         BlueSnapService.getInstance().updateTax("", "", getActivity());
-        if (!sdkRequest.getShopperCheckoutRequirements().isBillingRequired())
-            amountTaxShippingComponentView.setShippingSameAsBillingVisibility(View.GONE);
         amountTaxShippingComponentView.setAmountTaxVisibility(View.GONE);
         buttonComponentView.setBuyNowButton(ButtonComponent.ButtonComponentText.SHIPPING, new View.OnClickListener() {
             @Override
@@ -269,7 +267,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             String event = intent.getAction();
             Log.d(TAG, event);
             if (BlueSnapLocalBroadcastManager.CURRENCY_UPDATED_EVENT.equals(event)) {
-                amountTaxShippingComponentView.setAmountTaxShipping();
+                amountTaxShippingComponentView.setAmountTaxView();
                 buttonComponentView.setBuyNowButton(buttonComponentText);
             } else if (BlueSnapLocalBroadcastManager.ONE_LINE_CC_EDIT_FINISH.equals(event)) {
                 // billingViewComponent.requestFocusOnNameInput();

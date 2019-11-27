@@ -283,13 +283,17 @@ public class TestUtils {
     }
 
     public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail, boolean withShipping, boolean storeCard) {
+        continueToShippingOrPayInNewCard(country, fullInfo, withEmail, withShipping, storeCard, false);
+    }
+
+    public static void continueToShippingOrPayInNewCard(String country, boolean fullInfo, boolean withEmail, boolean withShipping, boolean storeCard, boolean shopperHasShippingInfo) {
         CreditCardLineTesterCommon.fillInCCLineWithValidCard();
         ContactInfoTesterCommon.fillInContactInfo(R.id.billingViewComponent, country, fullInfo, withEmail);
 
         if (storeCard)
             onView(withId(R.id.storeCardSwitch)).perform(swipeRight());
 
-        if (withShipping && fullInfo) //shipping same as billing is on, un-checking it
+        if (withShipping && fullInfo && !shopperHasShippingInfo) //shipping same as billing is on, un-checking it
             TestUtils.setShippingSameAsBillingSwitch(false);
 
         pressBuyNowButton();

@@ -425,10 +425,7 @@ public class CreditCardVisibilityTesterCommon {
             onView(withId(R.id.storeCardRelativeLayout))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card layout is not visible"))
                     .check(matches(isDisplayed()));
-            //verify store card textView is visible
-//            onView(withId(R.id.storeCardTextView))
-//                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is not visible"))
-//                    .check(matches(isDisplayed()));
+
             //verify store card switch is visible
             onView(withId(R.id.storeCardSwitch))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is not visible"))
@@ -438,10 +435,7 @@ public class CreditCardVisibilityTesterCommon {
             onView(withId(R.id.storeCardRelativeLayout))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card layout is visible"))
                     .check(matches(not(ViewMatchers.isDisplayed())));
-            //verify store card textView is not visible
-//            onView(withId(R.id.storeCardTextView))
-//                    .withFailureHandler(new CustomFailureHandler(testName + ": Store card textView is visible"))
-//                    .check(matches(not(ViewMatchers.isDisplayed())));
+
             //verify store card switch is not visible
             onView(withId(R.id.storeCardSwitch))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Store card switch is visible"))
@@ -513,5 +507,51 @@ public class CreditCardVisibilityTesterCommon {
             TestUtils.setStoreCardSwitch(!setTo);
     }
 
+    // Use in case shouldBeVisible is false
+    public static void check_shipping_same_as_billing_switch_visibility(String testName, boolean shouldBeVisible) {
+        check_shipping_same_as_billing_switch_visibility(testName, shouldBeVisible,false);
+    }
+
+    /**
+     * This test verifies the visibility of the "shipping same as billing" switch.
+     */
+    public static void check_shipping_same_as_billing_switch_visibility(String testName, boolean shouldBeVisible, boolean shouldBeOn) {
+
+        if (shouldBeVisible) {
+            //verify store card layout is visible
+            onView(withId(R.id.shippingSameAsBillingRelativeLayout))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Shipping same as billing layout is not visible"))
+                    .check(matches(isDisplayed()));
+
+            //verify store card switch is visible
+            onView(withId(R.id.shippingSameAsBillingSwitch))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Shipping same as billing switch is not visible"))
+                    .check(matches(isDisplayed()));
+        } else {
+            //verify store card layout is not visible
+            onView(withId(R.id.shippingSameAsBillingRelativeLayout))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Shipping same as billing layout is visible"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
+
+            //verify store card switch is not visible
+            onView(withId(R.id.shippingSameAsBillingSwitch))
+                    .withFailureHandler(new CustomFailureHandler(testName + ": Shipping same as billing switch is visible"))
+                    .check(matches(not(ViewMatchers.isDisplayed())));
+        }
+
+        if (shouldBeVisible) {
+            if (shouldBeOn) {
+                //verify store card layout is checked
+                onView(withId(R.id.shippingSameAsBillingSwitch))
+                        .withFailureHandler(new CustomFailureHandler(testName + ": Shipping same as billing switch is not checked"))
+                        .check(matches(isChecked()));
+            } else {
+                //verify store card layout is not checked
+                onView(withId(R.id.shippingSameAsBillingSwitch))
+                        .withFailureHandler(new CustomFailureHandler(testName + ": Shipping same as billing switch is checked"))
+                        .check(matches(not(isChecked())));
+            }
+        }
+    }
 
 }

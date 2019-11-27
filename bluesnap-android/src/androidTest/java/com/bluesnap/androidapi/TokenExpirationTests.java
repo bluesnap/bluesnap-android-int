@@ -37,7 +37,7 @@ public class TokenExpirationTests extends BSAndroidTestsBase {
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
-                blueSnapService.setup(EXPIRED_TOKEN, tokenProvider, baseCurrency, null, new BluesnapServiceCallback() {
+                blueSnapService.setup(EXPIRED_TOKEN, tokenProvider, baseCurrency, getTestContext(), new BluesnapServiceCallback() {
 
                     @Override
                     public void onSuccess() {

@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
-
 import static com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK;
 
 /**
@@ -52,6 +50,8 @@ public class SdkResult implements Parcelable {
     private String token;
     private String kountSessionId;
 
+    private String threeDSAuthenticationResult;
+
     public SdkResult() {
     }
 
@@ -66,6 +66,7 @@ public class SdkResult implements Parcelable {
         setKountSessionId(in.readString());
         setGooglePayToken(in.readString());
         setToken(in.readString());
+        setThreeDSAuthenticationResult(in.readString());
 
         if (BS_CHOOSE_PAYMENT_METHOD_RESULT_OK != getResult()) {
             setAmount(in.readDouble());
@@ -86,6 +87,7 @@ public class SdkResult implements Parcelable {
         dest.writeString(getKountSessionId());
         dest.writeString(getGooglePayToken());
         dest.writeString(getToken());
+        dest.writeString(getThreeDSAuthenticationResult());
 
         if (BS_CHOOSE_PAYMENT_METHOD_RESULT_OK != getResult()) {
             if (null != getAmount())
@@ -112,6 +114,8 @@ public class SdkResult implements Parcelable {
         if (getAmount() != null && !getAmount().equals(that.getAmount())) return false;
         if (getCurrencyNameCode() != null && !getCurrencyNameCode().equals(that.getCurrencyNameCode()))
             return false;
+        if (!getThreeDSAuthenticationResult().equals(that.getThreeDSAuthenticationResult()))
+            return false;
         return getCardType().equals(that.getCardType());
     }
 
@@ -123,6 +127,7 @@ public class SdkResult implements Parcelable {
         if (null != getCurrencyNameCode())
             result = 31 * result + getCurrencyNameCode().hashCode();
         result = 31 * result + getCardType().hashCode();
+        result = 31 * result + getThreeDSAuthenticationResult().hashCode();
         return result;
     }
 
@@ -130,6 +135,7 @@ public class SdkResult implements Parcelable {
         if (getAmount() != null && getAmount().equals(0.0)) return false;
         if (getCurrencyNameCode() != null && getCurrencyNameCode().isEmpty()) return false;
         if (getExpDate() == null || getExpDate().isEmpty()) return false;
+        if (getThreeDSAuthenticationResult().isEmpty()) return false;
         return !(getLast4Digits() == null || Integer.valueOf(getLast4Digits()) == 0);
     }
 
@@ -144,7 +150,8 @@ public class SdkResult implements Parcelable {
                 ", token=" + getToken() + '\'' +
                 ", billingContactInfo" + billingContactInfo + '\'' +
                 ", shippingContactInfo" + shippingContactInfo + '\'' +
-                ", kountSessionId=" + kountSessionId + '\'';
+                ", kountSessionId=" + kountSessionId + '\'' +
+                ", threeDSAuthenticationResult=" + threeDSAuthenticationResult + '\'';
 
         if (null != amount)
             s += ", amount=" + getAmount() + '\'' +
@@ -280,4 +287,11 @@ public class SdkResult implements Parcelable {
         this.googlePayToken = googlePayToken;
     }
 
+    public String getThreeDSAuthenticationResult() {
+        return threeDSAuthenticationResult;
+    }
+
+    public void setThreeDSAuthenticationResult(String threeDSAuthenticationResult) {
+        this.threeDSAuthenticationResult = threeDSAuthenticationResult;
+    }
 }

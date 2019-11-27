@@ -76,7 +76,7 @@ public class SubscriptionChargeEspressoBasedTester extends CheckoutEspressoBased
         double tax = defaultCountryKey.equals("US") ? taxAmount : 0.00;
         CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.billingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);
 
-        new_card_basic_fill_info(true, true);
+        new_card_basic_fill_info(true, true, null);
 
         if (shopperCheckoutRequirements.isShippingRequired()) {
             CreditCardVisibilityTesterCommon.pay_button_visibility_and_content_validation("pay_button_in_shipping_validation", R.id.shippingButtonComponentView, checkoutCurrency, purchaseAmount, tax, true, withPriceDetails);

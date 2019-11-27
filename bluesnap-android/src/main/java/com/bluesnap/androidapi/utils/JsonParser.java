@@ -103,6 +103,8 @@ public class JsonParser {
                 CreditCardTypeResolver.setCreditCardRegex(sdkConfiguration.getSupportedPaymentMethods().getCreditCardRegex());
             }
 
+            sdkConfiguration.setCardinalToken(jsonObject.getString("threeDSecureJwt"));
+
 
         } catch (JSONException ex) {
             Log.e(TAG, "Error on parse sdk configuration " + ex.getMessage());

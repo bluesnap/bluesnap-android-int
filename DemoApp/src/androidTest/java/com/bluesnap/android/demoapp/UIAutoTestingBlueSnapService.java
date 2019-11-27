@@ -32,6 +32,7 @@ import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapServiceCallback;
+import com.bluesnap.androidapi.services.CardinalManager;
 import com.bluesnap.androidapi.services.TaxCalculator;
 import com.bluesnap.androidapi.services.TokenProvider;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
@@ -229,13 +230,6 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
-
-    public void setSdk(SdkRequestBase sdkRequest, boolean withFullBilling, boolean withEmail, boolean withShipping) {
-        sdkRequest.getShopperCheckoutRequirements().setBillingRequired(withFullBilling);
-        sdkRequest.getShopperCheckoutRequirements().setEmailRequired(withEmail);
-        sdkRequest.getShopperCheckoutRequirements().setShippingRequired(withShipping);
-    }
-
     private void doSetup() {
         try {
             wakeUpDeviceScreen();
@@ -345,7 +339,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
                                 };
                             }
                         };
-                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, merchantStoreCurrency, null, new BluesnapServiceCallback() {
+                        BlueSnapService.getInstance().setup(merchantToken, tokenProvider, merchantStoreCurrency, InstrumentationRegistry.getInstrumentation().getContext(), new BluesnapServiceCallback() {
                             @Override
                             public void onSuccess() {
                                 Log.d(TAG, "Service finish setup");
@@ -425,89 +419,100 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     // Set up and lunch activity for returning shopper checkout flow
     public void returningShopperSetUp(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean isExistingCard) throws BSPaymentRequestException, InterruptedException, JSONException {
         setExistingCard(isExistingCard);
-        purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
+//        purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
 
         SdkRequest sdkRequest = new SdkRequest(purchaseAmount, checkoutCurrency);
         setSdk(sdkRequest, shopperCheckoutRequirements);
         setupAndLaunch(sdkRequest, true, vaultedShopperId);
     }
 
-    // Create new vaulted shopper
-    public void createVaultedShopper(boolean withCreditCard) throws JSONException {
-        createVaultedShopperService(withCreditCard, new CreateVaultedShopperInterface() {
-            @Override
-            public void onServiceSuccess() throws JSONException {
-                JSONObject jsonObject = new JSONObject(createVaultedShopperResponse);
-                vaultedShopperId = getOptionalString(jsonObject, "vaultedShopperId");
-            }
-
-            @Override
-            public void onServiceFailure() {
-                fail("Cannot create shopper from merchant server");
-            }
-        });
+    public void createVaultedShopper(boolean withDefaultCreditCard) throws JSONException {
+        createVaultedShopper(withDefaultCreditCard ? TestingShopperCreditCard.VISA_CREDIT_CARD : null, false);
     }
 
-    // Make a vaulted shopper API call
-    private void createVaultedShopperService(boolean withCreditCard, final CreateVaultedShopperInterface createVaultedShopper) throws JSONException {
-        JSONObject body = withCreditCard ? createVaultedShopperWithCreditCardDataObject() : createBasicVaultedShopperDataObject();
+    public void createVaultedShopper(boolean withDefaultCreditCard, boolean withShipping) throws JSONException {
+        createVaultedShopper(withDefaultCreditCard ? TestingShopperCreditCard.VISA_CREDIT_CARD : null, withShipping);
+    }
+
+    public void createVaultedShopper(TestingShopperCreditCard creditCard) throws JSONException {
+        createVaultedShopper(creditCard, false);
+    }
+
+    // Create new vaulted shopper
+    public void createVaultedShopper(TestingShopperCreditCard creditCard, boolean withShipping) throws JSONException {
+        JSONObject body = createVaultedShopperDataObject(creditCard, withShipping);
         BlueSnapHTTPResponse response = HTTPOperationController.post(SANDBOX_URL + SANDBOX_VAULTED_SHOPPER, body.toString(), "application/json", "application/json", sahdboxHttpHeaders);
         if (response.getResponseCode() >= 200 && response.getResponseCode() < 300) {
             createVaultedShopperResponse = response.getResponseString();
-            createVaultedShopper.onServiceSuccess();
+            JSONObject jsonObject = new JSONObject(createVaultedShopperResponse);
+            vaultedShopperId = getOptionalString(jsonObject, "vaultedShopperId");
         } else {
             Log.e(TAG, "createVaultedShopperService API error: " + response);
-            createVaultedShopper.onServiceFailure();
+            fail("Cannot create shopper from merchant server");
         }
     }
 
-    // Create JSONObject for a vaulted shopper with only first and last name and email
-    private JSONObject createBasicVaultedShopperDataObject() throws JSONException {
+    // Create JSONObject for a vaulted shopper with optionals credit card and shipping info
+    private JSONObject createVaultedShopperDataObject(TestingShopperCreditCard creditCard, boolean withShipping) throws JSONException {
         JSONObject postData = new JSONObject();
 
         postData.put("firstName", "Fanny");
         postData.put("lastName", "Brice");
         postData.put("email", "some@mail.com");
 
-        return postData;
-    }
+        if (creditCard != null) {
+            JSONObject jsonObjectCreditCard = new JSONObject();
+            jsonObjectCreditCard.put("expirationYear", creditCard.getExpirationYear());
+            jsonObjectCreditCard.put("securityCode", Integer.parseInt(creditCard.getCvv()));
+            jsonObjectCreditCard.put("expirationMonth", Integer.toString(creditCard.getExpirationMonth()));
+            jsonObjectCreditCard.put("cardNumber", Long.parseLong(creditCard.getCardNumber()));
 
-    // Create JSONObject for a vaulted shopper with credit card info
-    private JSONObject createVaultedShopperWithCreditCardDataObject() throws JSONException {
-        JSONObject postData = new JSONObject();
+            JSONObject jsonObjectFirstElement = new JSONObject();
+            jsonObjectFirstElement.put("creditCard", jsonObjectCreditCard);
 
-        JSONObject jsonObjectCreditCard = new JSONObject();
-        jsonObjectCreditCard.put("expirationYear", TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationYear());
-        jsonObjectCreditCard.put("securityCode", Integer.parseInt(TestingShopperCreditCard.VISA_CREDIT_CARD.getCvv()));
-        jsonObjectCreditCard.put("expirationMonth", Integer.toString(TestingShopperCreditCard.VISA_CREDIT_CARD.getExpirationMonth()));
-        jsonObjectCreditCard.put("cardNumber", Long.parseLong(TestingShopperCreditCard.VISA_CREDIT_CARD.getCardNumber()));
+            JSONArray jsonArrayCreditCardInfo = new JSONArray();
+            jsonArrayCreditCardInfo.put(jsonObjectFirstElement);
 
-        JSONObject jsonObjectFirstElement = new JSONObject();
-        jsonObjectFirstElement.put("creditCard", jsonObjectCreditCard);
+            JSONObject jsonObjectPaymentSources = new JSONObject();
+            jsonObjectPaymentSources.put("creditCardInfo", jsonArrayCreditCardInfo);
 
-        JSONArray jsonArrayCreditCardInfo = new JSONArray();
-        jsonArrayCreditCardInfo.put(jsonObjectFirstElement);
+            postData.put("paymentSources", jsonObjectPaymentSources);
+        }
 
-        JSONObject jsonObjectPaymentSources = new JSONObject();
-        jsonObjectPaymentSources.put("creditCardInfo", jsonArrayCreditCardInfo);
+        if (withShipping){
+            JSONObject jsonObjectShippingContactInfo = new JSONObject();
+            jsonObjectShippingContactInfo.put("firstName", ContactInfoTesterCommon.shippingContactInfo.getFirstName());
+            jsonObjectShippingContactInfo.put("lastName", ContactInfoTesterCommon.shippingContactInfo.getLastName());
+            jsonObjectShippingContactInfo.put("address1", ContactInfoTesterCommon.shippingContactInfo.getAddress());
+            jsonObjectShippingContactInfo.put("city", ContactInfoTesterCommon.shippingContactInfo.getCity());
+            jsonObjectShippingContactInfo.put("state", ContactInfoTesterCommon.shippingContactInfo.getState());
+            jsonObjectShippingContactInfo.put("zip", ContactInfoTesterCommon.shippingContactInfo.getZip());
+            jsonObjectShippingContactInfo.put("country", ContactInfoTesterCommon.shippingContactInfo.getCountryKey().toLowerCase());
 
-        postData.put("paymentSources", jsonObjectPaymentSources);
 
-        postData.put("firstName", "Fanny");
-        postData.put("lastName", "Brice");
-        postData.put("email", "some@mail.com");
+            postData.put("shippingContactInfo", jsonObjectShippingContactInfo);
+
+        }
 
         return postData;
     }
 
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, false);
+        finishDemoPurchase(shopperCheckoutRequirements, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
+    }
+
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
+        finishDemoPurchase(shopperCheckoutRequirements, cardStored, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
+    }
+
+    // for 3DS flows
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, String expected3DSResult, boolean isResultOK) throws InterruptedException {
+        finishDemoPurchase(shopperCheckoutRequirements, false, expected3DSResult, isResultOK);
     }
 
     // Verify that the checkout activity ends with the correct result code
     // Verify that the amount and currency in sdkResult are right
-    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
-        sdkResult = blueSnapService.getSdkResult();
+    public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored, String expected3DSResult, boolean isResultOK) throws InterruptedException {
 
         while (!mActivity.isDestroyed()) {
             Log.d(TAG, "Waiting for tokenized credit card service to finish");
@@ -515,19 +520,28 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         // Verify activity ended with success
-        checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK);
+        checkResultOk(BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK, isResultOK);
 
         sDKConfiguration = BlueSnapService.getInstance().getsDKConfiguration();
 
+        checkSDKResult(expected3DSResult, isResultOK);
+
+        makeCheckoutTransaction(shopperCheckoutRequirements, cardStored);
+    }
+
+    public void checkSDKResult(String expected3DSResult, boolean isResultOK) {
+        sdkResult = blueSnapService.getSdkResult();
         // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
         assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
-        Assert.assertEquals("SDKResult wrong currency", sdkResult.getCurrencyNameCode(), checkoutCurrency);
+        assertEquals("SDKResult wrong currency", checkoutCurrency, sdkResult.getCurrencyNameCode());
 
-        makeCheckoutTransaction(sdkResult, shopperCheckoutRequirements, cardStored);
+        if (isResultOK) {
+            assertEquals("SDKResult wrong 3DSResult", expected3DSResult, sdkResult.getThreeDSAuthenticationResult());
+        }
     }
 
     // Make a credit card transaction for checkout flow and validate the shopper details in server
-    private void makeCheckoutTransaction(SdkResult sdkResult, TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) {
+    private void makeCheckoutTransaction(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) {
         transactions = DemoTransactions.getInstance();
         transactions.setContext(applicationContext);
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
@@ -561,7 +575,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         transactions.createCreditCardTransaction(sdkResult, new BluesnapServiceCallback() {
             @Override
             public void onSuccess() {
-                Assert.assertEquals("SDKResult wrong credit card was charged", transactions.getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
+                assertEquals("SDKResult wrong credit card was charged", transactions.getCardLastFourDigits(), TestingShopperCreditCard.VISA_CREDIT_CARD.getCardLastFourDigits());
             }
 
             @Override
@@ -920,21 +934,29 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
 
         if (fieldName.equals("amount")) // ignoring format differences (such as number of zeros after decimal point), comparing numeric values only
-            Assert.assertTrue(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, Double.parseDouble(expectedResult) - Double.parseDouble(fieldContent) == 0);
+            assertTrue(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, Double.parseDouble(expectedResult) - Double.parseDouble(fieldContent) == 0);
 
         else
-            Assert.assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
+            assertEquals(fieldName + " was not saved correctly in DataBase for shopper: " + vaultedShopperId, expectedResult, fieldContent);
     }
 
     // Verify that the activity returned with the correct result code
     private void checkResultOk(int expectedResultCode) {
+        checkResultOk(expectedResultCode, true);
+    }
+
+    private void checkResultOk(int expectedResultCode, boolean isResultOK) {
         try {
             Field f = Activity.class.getDeclaredField("mResultCode"); //NoSuchFieldException
             f.setAccessible(true);
             int mResultCode = f.getInt(mActivityRule.getActivity());
-            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", expectedResultCode, mResultCode);
+            int expectedActivityResultCode = isResultOK ? Activity.RESULT_OK : BluesnapCheckoutActivity.RESULT_SDK_FAILED;
+            assertEquals("The result code from activity: " + Activity.class.getName() + " is not correct. ", expectedActivityResultCode, mResultCode);
         } catch (Exception e) {
             fail();
         }
+
+        assertEquals("The result code from SDK is not correct. ", expectedResultCode, blueSnapService.getSdkResult().getResult());
+
     }
 }

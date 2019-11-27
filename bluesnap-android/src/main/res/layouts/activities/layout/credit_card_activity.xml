@@ -48,9 +48,17 @@
             android:id="@+id/creditCardFrameLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/headerRelativeLayout"
-            >
+            android:layout_below="@+id/headerRelativeLayout">
 
         </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/payProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center" />
+
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -47,7 +47,7 @@ public class MerchantConfigurationTests extends CheckoutEspressoBasedTester {
     public void setupForSdk(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling, boolean allowCurrencyChange, boolean hideStoreCardSwitch, boolean disableGooglePay) throws InterruptedException, BSPaymentRequestException, JSONException {
         shopperCheckoutRequirements.setTestingShopperCheckoutRequirements(fullBillingRequired, emailRequired, shippingRequired, shippingSameAsBilling);
 
-        checkoutSetup(false, "", allowCurrencyChange, hideStoreCardSwitch, disableGooglePay);
+        checkoutSetup(allowCurrencyChange, hideStoreCardSwitch, disableGooglePay, false);
     }
 
 

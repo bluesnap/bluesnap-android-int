@@ -35,7 +35,7 @@ public class NewShopperEndToEndTests extends CheckoutEspressoBasedTester {
     public void setupBeforeTransaction(boolean fullBillingRequired, boolean emailRequired, boolean shippingRequired, boolean shippingSameAsBilling, boolean hideStoreCard) throws InterruptedException, BSPaymentRequestException, JSONException {
         shopperCheckoutRequirements.setTestingShopperCheckoutRequirements(fullBillingRequired, emailRequired, shippingRequired, shippingSameAsBilling);
 
-        checkoutSetup(false,"",true, hideStoreCard,false);
+        checkoutSetup(true, hideStoreCard, false, false);
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 

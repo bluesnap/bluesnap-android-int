@@ -128,6 +128,7 @@ public class OneLineCCEditComponent extends LinearLayout {
                 return false;
             }
         });
+
         moveToCcImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +176,8 @@ public class OneLineCCEditComponent extends LinearLayout {
 
         // flag for activation of the next button, relevant only for the second time
         activateMoveToCcImageButton = false;
+
+        creditCardNumberEditText.requestFocus();
     }
 
     /**

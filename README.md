@@ -142,6 +142,13 @@ By default it is false; if you wish to hide the store card switch, you can speci
 ```
 sdkRequest.setHideStoreCardSwitch(true);
 ```
+An `SdkRequest` instance contains also an `activate3DS` property: require a 3D Secure Authentication from the shopper while paying with credit card.
+By default it is false; if you wish to activate 3DS Authentication, you can specifically change this value like this:
+```
+sdkRequest.setActivate3DS(true);
+```
+For more information see
+[3D Secure Authentication](https://github.com/bluesnap/bluesnap-android-int#3D-Secure-Authentication).
 
 #### Handling tax updates in checkout flow (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 
@@ -272,7 +279,7 @@ More information on any of these functions can be found in `BlueSnapService.java
 If a shopper makes a purchase with PayPal, a PayPal transaction ID will be passed as part of the `SdkResult`.
 All the other fields that are relevant to a credit card transaction will be empty.
 
-## Google Pay(Beta)
+## Google Pay
 We've added Google Pay support to our SDK, which involves some dependencies and settings in the SDK's build.gradle.
 Enable the Android Pay API by adding the following to the <application> tag of your AndroidManifest.xml:
 
@@ -289,6 +296,15 @@ To get approved by Google, see [Google Pay Developer Documentation](https://deve
 ## Kount
 The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [https://developers.bluesnap.com/docs/fraud-prevention] 
 
+## 3D Secure Authentication
+The SDK includes an integrated Cardinal SDK for 3DS Authentication. If you choose to activate this service and the shopper chooses credit card as payment method, a cardinal result will be passed as part of the `SdkResult` (threeDSAuthenticationResult property).
+ 
+If 3DS Authentication was not successful, the threeDSAuthenticationResult property will contain one of the following errors:
+* `AUTHENTICATION_UNAVAILABLE` = 3D Secure is unavailable for this card or a technical error occurred.
+* `AUTHENTICATION_FAILED` = Payment/Transaction error.
+* `AUTHENTICATION_NOT_SUPPORTED` = No attempt to run 3D Secure challenge was done due to unsupported 3DS version.  
+
+In that case, you can decide whether you want to proceed with the transaction without 3DS Authentication or not.
 ## Customization and UI Overrides
 The SDK allows you to customize the checkout experience, change colors, icons and basic layouts. One way to achieve that is by overriding the SDK resources files in your application and provide matching resource file names to override the SDK default values.
 
@@ -302,7 +318,7 @@ It also covers most of the SDK features.
 ### Demo app token
 The Demo app will obtain a merchant token from BlueSnap sandbox servers using HTTP calls and demo credentials. This procedure should be replaced by your server-side calls. In production applications, you do not need to put your BlueSnap API credetials in your app code.
 
-To get started with the demo application, you will need Sandbox API credetials.
+To get started with the demo application, you will need Sandbox API credentials.
 
 1. Clone the git repository.
 2. Import the project by choosing "Import Project" and selecting the build.gradle file in the checkout directory.
