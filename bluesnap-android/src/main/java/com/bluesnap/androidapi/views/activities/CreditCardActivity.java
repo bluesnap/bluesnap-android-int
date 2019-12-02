@@ -470,6 +470,12 @@ public class CreditCardActivity extends AppCompatActivity {
                         String actionCode = intent.getStringExtra("actionCode");
                         String resultJwt = intent.getStringExtra("resultJwt");
 
+                        if (actionCode == null) {
+                            Log.e(TAG, "Action Code from cardinal is missing");
+                            finishFromActivityWithFailure(response);
+                            return;
+                        }
+
                         if (actionCode.equals("CANCEL")) {
                             progressBar.setVisibility(View.INVISIBLE);
                             runOnUiThread(new Runnable() {
@@ -492,7 +498,8 @@ public class CreditCardActivity extends AppCompatActivity {
                                     finishFromActivity(shopper, resultIntent, response);
                                 }
                             });
-                        } else { //cardinal internal failure
+                        } else { //cardinal internal failure or authentication failure
+                            // TODO: Change this after receiving "proceed with/without 3DS" from server in init API call
                             finishFromActivityWithFailure(null);
                         }
 
