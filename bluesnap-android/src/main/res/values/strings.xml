@@ -23,7 +23,7 @@
     <string name="continueShopping">Continue</string>
     <string name="shipping_information">Shipping information</string>
     <string name="invalid_card_number">Invalid Card Number</string>
-    <string name="coupon_questionmark">Coupon?</string>
+    <string name="coupon_questionmark" translatable="false">Coupon?</string>
     <string name="done">Done</string>
     <string name="shipping">Shipping</string>
     <string name="submit">Submit</string>
@@ -108,7 +108,7 @@
     <string name="street_hint">Street</string>
     <string name="postal_code_hint">Postal Code</string>
     <string name="mm_yy">MM/YY</string>
-    <string name="coupon"> Coupon</string>
+    <string name="coupon" translatable="false"> Coupon</string>
     <string name="merchant">Merchant</string>
     <string name="_0" translatable="false">0</string>
     <string name="webview">WebView</string>
