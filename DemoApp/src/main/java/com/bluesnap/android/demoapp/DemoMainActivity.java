@@ -670,9 +670,9 @@ public class DemoMainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         boolean isSubscription = false;
-        if (resultCode != BluesnapCheckoutActivity.BS_CHECKOUT_RESULT_OK && resultCode != BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK) {
+        if (resultCode != BluesnapCheckoutActivity.RESULT_OK) {
             if (data != null) {
-                String sdkErrorMsg = "SDK Failed to process the request:";
+                String sdkErrorMsg = "SDK Failed to process the request: ";
                 sdkErrorMsg += data.getStringExtra(BluesnapCheckoutActivity.SDK_ERROR_MSG);
                 showDialog(sdkErrorMsg);
             } else {

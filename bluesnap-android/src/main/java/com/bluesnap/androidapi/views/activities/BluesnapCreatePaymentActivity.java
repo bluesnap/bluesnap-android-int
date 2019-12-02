@@ -1,6 +1,7 @@
 package com.bluesnap.androidapi.views.activities;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -67,7 +68,7 @@ public class BluesnapCreatePaymentActivity extends BluesnapCheckoutActivity {
                 sdkResult.setCardType(chosenPaymentMethod.getCreditCard().getCardType());
                 Log.d(TAG, sdkResult.toString());
                 resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-                setResult(BS_CHECKOUT_RESULT_OK, resultIntent);
+                setResult(Activity.RESULT_OK, resultIntent);
                 //Only set the remember shopper here since failure can lead to missing tokenization on the server
                 chosenPaymentMethod.getCreditCard().setTokenizationSuccess();
                 Log.d(TAG, "tokenization finished");

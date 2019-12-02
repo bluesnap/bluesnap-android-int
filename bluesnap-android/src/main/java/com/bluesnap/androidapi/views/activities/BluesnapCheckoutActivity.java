@@ -485,24 +485,20 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
                 break;
             }
             case CreditCardActivity.CREDIT_CARD_ACTIVITY_REQUEST_CODE: {
-                if (resultCode == Activity.RESULT_OK) {
-                    setResult(BS_CHECKOUT_RESULT_OK, data);
+                if (resultCode != Activity.RESULT_CANCELED) {
+                    setResult(resultCode, data);
                     finish();
                 }
                 break;
             }
             case CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE: {
-                if (resultCode == Activity.RESULT_OK) {
-                    setResult(BS_CHECKOUT_RESULT_OK, data);
-                } else {
-                    setResult(resultCode, data);
-                }
+                setResult(resultCode, data);
                 finish();
                 break;
             }
             case WebViewActivity.PAYPAL_REQUEST_CODE: {
-                if (resultCode == Activity.RESULT_OK) {
-                    setResult(BS_CHECKOUT_RESULT_OK, data);
+                if (resultCode != Activity.RESULT_CANCELED) {
+                    setResult(resultCode, data);
                     finish();
                 }
                 break;
@@ -538,7 +534,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_PAYMENT_RESULT, sdkResult);
-                            setResult(BS_CHECKOUT_RESULT_OK, resultIntent);
+                            setResult(Activity.RESULT_OK, resultIntent);
 
                             finish();
 
