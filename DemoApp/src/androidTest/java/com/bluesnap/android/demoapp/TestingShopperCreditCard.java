@@ -7,24 +7,24 @@ package com.bluesnap.android.demoapp;
 public class TestingShopperCreditCard {
 
     public static final TestingShopperCreditCard VISA_CREDIT_CARD = new TestingShopperCreditCard("4111111111111111", "123", "1111",
-            "VISA", "", 11, 2019, "19");
+            "VISA", "", 11, 2025, "25");
     public static final TestingShopperCreditCard MASTERCARD_CREDIT_CARD = new TestingShopperCreditCard("5572758886015288", "123", "5288",
             "MASTERCARD", "DEBIT", 12, 2026, "26");
 
     public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_SUCCESS = new TestingShopperCreditCard("4000000000001091", "123", "1091",
-            "VISA", "", 10, 2020, "20");
+            "VISA", "", 10, 2025, "25");
 
     public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_UNAVAILABLE = new TestingShopperCreditCard("4000000000001059", "123", "1059",
-            "VISA", "", 10, 2020, "20");
+            "VISA", "", 10, 2025, "25");
 
     public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_NOT_SUPPORTED = new TestingShopperCreditCard("4000000000000002", "123", "0002",
-            "VISA", "", 10, 2020, "20");
+            "VISA", "", 10, 2025, "25");
 
     public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_BYPASS = new TestingShopperCreditCard("4000000000001133", "123", "1133",
-            "VISA", "", 10, 2020, "20");
+            "VISA", "", 10, 2025, "25");
 
     public static final TestingShopperCreditCard VISA_CREDIT_CARD_FOR_3DS_FAILURE = new TestingShopperCreditCard("4000000000001109", "123", "1109",
-            "VISA", "", 10, 2020, "20");
+            "VISA", "", 10, 2025, "25");
 
     private String cardNumber;
     private String cvv;
@@ -45,16 +45,6 @@ public class TestingShopperCreditCard {
         this.expirationMonth = expirationMonth;
         this.expirationYear = expirationYear;
         this.expirationYearLastTwoDigit = expirationYearLastTwoDigit;
-    }
-
-    public TestingShopperCreditCard(TestingShopperCreditCard creditCard) {
-        cardNumber = creditCard.getCardNumber();
-        cvv = creditCard.getCvv();
-        cardLastFourDigits = creditCard.getCardLastFourDigits();
-        cardType = creditCard.getCardType();
-        cardSubType = creditCard.getCardSubType();
-        expirationMonth = creditCard.getExpirationMonth();
-        expirationYear = creditCard.getExpirationYear();
     }
 
     public String getCvv() {
