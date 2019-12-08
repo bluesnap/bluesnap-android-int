@@ -73,5 +73,5 @@
     <string name="select_state">Одаберите државу</string>
     <string name="shipping_same_as_billing">Адреса испоруке иста као за доставу рачуна</string>
     <string name="store_card">Безбедно сачувајте податке о мојој картици</string>
-    <string name="submit">Пошаљи</string>
+    <string name="submit">прихвати</string>
 </resources>

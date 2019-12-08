@@ -55,7 +55,7 @@
     <string name="webview">NettVisning</string>
     <string name="billing_zip">Frakt-zip</string>
     <string name="billing">fakturering</string>
-    <string name="subscribe">Abonnere</string>
+    <string name="subscribe">Abonneer</string>
     <string name="done">Ferdig</string>
     <string name="err_msg_address">Oppgi en gyldig adresse</string>
     <string name="err_msg_city">Oppgi en gyldig by</string>
@@ -73,5 +73,5 @@
     <string name="select_state">Velg stat</string>
     <string name="shipping_same_as_billing">Samme adresse for post og fakturering</string>
     <string name="store_card">Lagre kortet mitt trygt</string>
-    <string name="submit">Send inn</string>
+    <string name="submit">Sende inn</string>
 </resources>

@@ -73,5 +73,5 @@
     <string name="select_state">Zadajte región/štát</string>
     <string name="shipping_same_as_billing">Adresa doručenia rovnaká ako platobná</string>
     <string name="store_card">Bezpečne uchovajte údaje mojej karty</string>
-    <string name="submit">Odoslať</string>
+    <string name="submit">Predložiť</string>
 </resources>

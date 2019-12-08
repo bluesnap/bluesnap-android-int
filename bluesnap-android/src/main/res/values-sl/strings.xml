@@ -72,6 +72,6 @@
     <string name="select_state">Izberite zvezno državo</string>
     <string name="shipping_same_as_billing">Enak kot naslov plačnika</string>
     <string name="store_card">Varno shrani mojo kartico</string>
-    <string name="submit">Pošlji</string>
-    <string name="subscribe">Naročite se</string>
+    <string name="submit">oddati</string>
+    <string name="subscribe">naročite se</string>
 </resources>

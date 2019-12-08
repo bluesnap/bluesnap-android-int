@@ -55,7 +55,7 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">Kodi postal i faturimit</string>
     <string name="billing">faturimit</string>
-    <string name="subscribe">pajtohem</string>
+    <string name="subscribe">Abonohu</string>
     <string name="store_card">Ruaj në mënyrë të sigurt kartën time</string>
     <string name="done">Kryer</string>
     <string name="err_msg_address">Shëno një adresë të vlefshme </string>
@@ -73,5 +73,5 @@
     <string name="payment_type">Lloji i pagesës</string>
     <string name="select_state">Përzgjidh shtetin</string>
     <string name="shipping_same_as_billing">Dërgesa e njëjtë me faturimin</string>
-    <string name="submit">Dërgo </string>
+    <string name="submit">Paraqes </string>
 </resources>

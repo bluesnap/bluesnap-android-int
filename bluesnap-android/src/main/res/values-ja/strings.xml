@@ -73,5 +73,5 @@
     <string name="select_state">都道府県を選択</string>
     <string name="shipping_same_as_billing">請求先と配送先が同じ</string>
     <string name="store_card">カードを安全に保管する</string>
-    <string name="submit">送信</string>
+    <string name="submit">提出する</string>
 </resources>

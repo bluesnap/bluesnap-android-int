@@ -55,7 +55,7 @@
     <string name="webview">תצוגת אתר</string>
     <string name="billing_zip">מיקוד</string>
     <string name="billing">חיוב</string>
-    <string name="subscribe">הירשם</string>
+    <string name="subscribe">הצטרף כמנוי</string>
     <string name="done">בוצע</string>
     <string name="err_msg_address">נא להזין כתובת חוקית</string>
     <string name="err_msg_city">נא להזין שם עיר חוקי</string>
@@ -70,8 +70,8 @@
     <string name="newCardText">כרטיס חדש</string>
     <string name="payment">תשלום</string>
     <string name="payment_type">סוג התשלום</string>
-    <string name="select_state">בחר מדינה</string>
+    <string name="select_state">נא לבחור מדינה</string>
     <string name="shipping_same_as_billing">הכתובת למשלוח זהה לכתובת לחיוב</string>
     <string name="store_card">אחסנו את פרטי האשראי שלי בצורה בטוחה</string>
-    <string name="submit">שליחה</string>
+    <string name="submit">שלח</string>
 </resources>

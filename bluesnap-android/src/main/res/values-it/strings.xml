@@ -55,7 +55,7 @@
     <string name="webview">Visuale Web</string>
     <string name="billing_zip">CAP di fatturazione</string>
     <string name="billing">fatturazione</string>
-    <string name="subscribe">sottoscrivi</string>
+    <string name="subscribe">"Iscriviti "</string>
     <string name="done">è finita</string>
     <string name="err_msg_address">Inserisci un indirizzo valido</string>
     <string name="err_msg_city">Inserisci una città valida</string>
@@ -73,5 +73,5 @@
     <string name="select_state">Seleziona stato</string>
     <string name="shipping_same_as_billing">La spedizione e l\'indirizzo di fatturazione sono gli stessi</string>
     <string name="store_card">Conserva la mia carta in modo sicuro</string>
-    <string name="submit">presentare</string>
+    <string name="submit">Sottoscrivi</string>
 </resources>

@@ -55,7 +55,7 @@
     <string name="webview">Žiniatinklio rodinys</string>
     <string name="billing_zip">Sąskaitų siuntimo adresas</string>
     <string name="billing">atsiskaitymas</string>
-    <string name="subscribe">Prenumeruoti</string>
+    <string name="subscribe">Abonējiet</string>
     <string name="done">Atlikta</string>
     <string name="err_msg_address">Įveskite galiojantį adresą</string>
     <string name="err_msg_city">Įveskite galiojantį miestą</string>
@@ -73,5 +73,5 @@
     <string name="select_state">Pasirinkti valstybę</string>
     <string name="shipping_same_as_billing">Pristatymo ir atsiskaitymo adresai sutampa</string>
     <string name="store_card">Saugiai saugoti mano kortelę</string>
-    <string name="submit">Pateikti</string>
+    <string name="submit">Iesniegt</string>
 </resources>

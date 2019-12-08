@@ -55,7 +55,7 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">Código zip de facturación</string>
     <string name="billing">facturación</string>
-    <string name="subscribe">Suscribir</string>
+    <string name="subscribe">suscribir</string>
     <string name="done">Hecho</string>
     <string name="err_msg_address">Introduzca una dirección válida</string>
     <string name="err_msg_city">Introduzca una ciudad válida</string>

@@ -55,7 +55,7 @@
     <string name="webview">WebGörünümü</string>
     <string name="billing_zip">Fatura Zip Kodu</string>
     <string name="billing">fatura</string>
-    <string name="subscribe">Abone ol</string>
+    <string name="subscribe">abone ol</string>
     <string name="done">Bitti</string>
     <string name="err_msg_address">Geçerli bir adres girin</string>
     <string name="err_msg_city">Geçerli bir şehir girin</string>

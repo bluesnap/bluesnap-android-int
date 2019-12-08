@@ -55,7 +55,7 @@
     <string name="webview">Webvisning</string>
     <string name="billing_zip">Fakturerings-postnummer</string>
     <string name="billing">fakturering</string>
-    <string name="subscribe">Tilmeld</string>
+    <string name="subscribe">abonnere</string>
     <string name="done">Færdig</string>
     <string name="err_msg_address">Indtast en gyldig adresse</string>
     <string name="err_msg_city">Indtast en gyldig by</string>

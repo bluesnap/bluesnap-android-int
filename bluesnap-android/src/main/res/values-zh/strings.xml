@@ -55,7 +55,7 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">帳單郵政編碼</string>
     <string name="billing">计费</string>
-    <string name="subscribe">订阅</string>
+    <string name="subscribe">訂閱</string>
     <string name="done">完成</string>
     <string name="err_msg_address">輸入有效地址</string>
     <string name="err_msg_city">輸入正確城市</string>

@@ -55,7 +55,7 @@
     <string name="webview">Webes nézet</string>
     <string name="billing_zip">Számlázási irányítószám</string>
     <string name="billing">számlázás</string>
-    <string name="subscribe">Iratkozz fel</string>
+    <string name="subscribe">Feliratkozás</string>
     <string name="done">vége</string>
     <string name="err_msg_address">Adjon meg egy érvényes címet</string>
     <string name="err_msg_city">Adjon meg egy érvényes várost</string>
@@ -73,5 +73,5 @@
     <string name="select_state">Válassza az államot</string>
     <string name="shipping_same_as_billing">A szállítási és számlázási cím azonos</string>
     <string name="store_card">A kártyámat biztonságosan tárolja</string>
-    <string name="submit">Küldje</string>
+    <string name="submit">beküldése</string>
 </resources>

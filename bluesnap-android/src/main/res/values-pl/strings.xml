@@ -55,7 +55,7 @@
     <string name="webview">WebView</string>
     <string name="billing_zip">Kod pocztowy faktury</string>
     <string name="billing">dane do faktury</string>
-    <string name="subscribe">Subskrybować</string>
+    <string name="subscribe">Zapisz</string>
     <string name="done">Gotowe</string>
     <string name="err_msg_address">Wprowadź prawidłowy adres</string>
     <string name="err_msg_city">Wprowadź prawidłową miejscowość</string>

@@ -73,5 +73,5 @@
     <string name="select_state">Välj delstat</string>
     <string name="shipping_same_as_billing">Leverans samma som fakturering</string>
     <string name="store_card">Lagra mitt kort säkert</string>
-    <string name="submit">Skicka</string>
+    <string name="submit">lämna</string>
 </resources>

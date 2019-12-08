@@ -55,7 +55,7 @@
     <string name="webview">웹검토</string>
     <string name="billing_zip">청구할 주소</string>
     <string name="billing">과금</string>
-    <string name="subscribe">구독 신청</string>
+    <string name="subscribe">구독하다</string>
     <string name="done">완료</string>
     <string name="err_msg_address">유효한 주소를 입력하세요 </string>
     <string name="err_msg_city">유효한 도시를 입력하세요 </string>
@@ -73,5 +73,5 @@
     <string name="select_state">도 선택 </string>
     <string name="shipping_same_as_billing">청구한 대로 배송하기 </string>
     <string name="store_card">나의 카드 안전 보관 </string>
-    <string name="submit">제출 </string>
+    <string name="submit">제출하다</string>
 </resources>

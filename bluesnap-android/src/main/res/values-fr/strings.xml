@@ -55,7 +55,7 @@
     <string name="webview">VueWeb</string>
     <string name="billing_zip">ZIP de facturation</string>
     <string name="billing">facturation</string>
-    <string name="subscribe">Souscrire</string>
+    <string name="subscribe">souscrire</string>
     <string name="done">Terminé</string>
     <string name="err_msg_address">Entrez une adresse valide</string>
     <string name="err_msg_city">Entrez une ville valide</string>
@@ -73,5 +73,5 @@
     <string name="select_state">Sélectionnez l\'État</string>
     <string name="shipping_same_as_billing">Expédition identique à facturation</string>
     <string name="store_card">Conserver ma carte de façon sécurisée</string>
-    <string name="submit">Envoyer</string>
+    <string name="submit">Soumettre</string>
 </resources>

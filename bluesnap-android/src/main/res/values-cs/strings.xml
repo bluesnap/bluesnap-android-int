@@ -73,5 +73,5 @@
     <string name="select_state">Vyberte stát</string>
     <string name="shipping_same_as_billing">Doručovací adresa stejná jako fakturační</string>
     <string name="store_card">Bezpečně uložit mou kartu</string>
-    <string name="submit">Odeslat</string>
+    <string name="submit">Předložit</string>
 </resources>

@@ -72,6 +72,6 @@
     <string name="select_state">اختر ولاية</string>
     <string name="shipping_same_as_billing">قيمة الشحن بنفس قيمة الفواتير</string>
     <string name="store_card">تخزين بطاقتي بشكل آمن</string>
-    <string name="submit">تقديم</string>
-    <string name="subscribe">اشتراك</string>
+    <string name="submit">خضع</string>
+    <string name="subscribe">الاشتراك</string>
 </resources>
