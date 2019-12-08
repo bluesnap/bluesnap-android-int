@@ -282,11 +282,15 @@ public class OneLineCCEditComponent extends LinearLayout {
             if (s.length() <= 2)
                 return;
 
-            final String ccNum = s.toString().trim();
-            changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(ccNum));
+            try {
+                final String ccNum = s.toString().trim();
+                changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(ccNum));
 
-            if (s.length() == getResources().getInteger(R.integer.ccn_max_length)) {
-                expEditText.requestFocus();
+                if (s.length() == getResources().getInteger(R.integer.ccn_max_length)) {
+                    expEditText.requestFocus();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "creditCardNumberWatcher error", e );
             }
         }
 

@@ -28,20 +28,6 @@ import static org.hamcrest.Matchers.not;
 public class CCFormValidityTest extends CheckoutEspressoBasedTester {
     private static final String TAG = CCFormValidityTest.class.getSimpleName();
 
-//    @After
-//    public void keepRunning() {
-//        //        while (true) { Thread.sleep(2000); } //Remove this
-//        //Thread.sleep(1000);
-//    }
-//
-//
-//    @Before
-//    public void setup() throws InterruptedException, BSPaymentRequestException {
-//        SdkRequest sdkRequest = new SdkRequest(23.4, "USD");
-//        setupAndLaunch(sdkRequest);
-//        onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
-//    }
-
     //    @Test
     public void ccn_new_card_validation_messages() {
 
