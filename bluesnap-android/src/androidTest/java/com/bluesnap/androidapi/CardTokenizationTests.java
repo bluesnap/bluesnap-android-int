@@ -36,6 +36,7 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         final BillingContactInfo billingContactInfo = new BillingContactInfo();
         purchaseDetails.setBillingContactInfo(billingContactInfo);
         billingContactInfo.setFullName("John Doe");
+        purchaseDetails.setStoreCard(true);
         final CreditCard card = new CreditCard();
         purchaseDetails.setCreditCard(card);
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;

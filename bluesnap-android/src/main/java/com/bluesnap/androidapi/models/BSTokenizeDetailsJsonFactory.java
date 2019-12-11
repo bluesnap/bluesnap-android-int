@@ -50,7 +50,7 @@ public class BSTokenizeDetailsJsonFactory {
      * @return {@link JSONObject} representation for api put call for the server
      * @throws JSONException in case of invalid JSON object (should not happen)
      */
-    public static JSONObject createDataObject(@NonNull ShopperCheckoutRequirements shopperCheckoutRequirements, @NonNull CreditCard creditCard, @NonNull BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo, boolean storeCard) throws JSONException {
+    public static JSONObject createDataObject(@NonNull CreditCard creditCard, @Nullable BillingContactInfo billingContactInfo, @Nullable ShippingContactInfo shippingContactInfo, boolean storeCard) throws JSONException {
         JSONObject postData = new JSONObject();
 
         if (creditCard.getIsNewCreditCard()) {
@@ -63,26 +63,25 @@ public class BSTokenizeDetailsJsonFactory {
 
         }
 
-        putJSONifNotNull(postData, BILLINGFIRSTNAME, billingContactInfo.getFirstName());
-        putJSONifNotNull(postData, BILLINGLASTNAME, billingContactInfo.getLastName());
-        putJSONifNotNull(postData, BILLINGCOUNTRY, billingContactInfo.getCountry());
+        if (null != billingContactInfo) {
+            putJSONifNotNull(postData, BILLINGFIRSTNAME, billingContactInfo.getFirstName());
+            putJSONifNotNull(postData, BILLINGLASTNAME, billingContactInfo.getLastName());
+            putJSONifNotNull(postData, BILLINGCOUNTRY, billingContactInfo.getCountry());
 
-        if (null != billingContactInfo.getZip() && !"".equals(billingContactInfo.getZip()))
-            putJSONifNotNull(postData, BILLINGZIP, billingContactInfo.getZip());
+            if (null != billingContactInfo.getZip() && !"".equals(billingContactInfo.getZip()))
+                putJSONifNotNull(postData, BILLINGZIP, billingContactInfo.getZip());
 
-        if (shopperCheckoutRequirements.isBillingRequired()) {
+
             if (BlueSnapValidator.checkCountryHasState(billingContactInfo.getCountry()))
                 putJSONifNotNull(postData, BILLINGSTATE, billingContactInfo.getState());
             putJSONifNotNull(postData, BILLINGCITY, billingContactInfo.getCity());
             putJSONifNotNull(postData, BILLINGADDRESS, billingContactInfo.getAddress());
-        }
 
-        if (shopperCheckoutRequirements.isEmailRequired())
             putJSONifNotNull(postData, EMAIL, billingContactInfo.getEmail());
-
+        }
         //postData.put(PHONE, creditCardInfo.getBillingContactInfo().getPhone());
 
-        if (shopperCheckoutRequirements.isShippingRequired() || null != shippingContactInfo) {
+        if (null != shippingContactInfo) {
             putJSONifNotNull(postData, SHIPPINGFIRSTNAME, shippingContactInfo.getFirstName());
             putJSONifNotNull(postData, SHIPPINGLASTNAME, shippingContactInfo.getLastName());
             putJSONifNotNull(postData, SHIPPINGCOUNTRY, shippingContactInfo.getCountry());
@@ -105,15 +104,14 @@ public class BSTokenizeDetailsJsonFactory {
      * @return {@link JSONObject} representation for api put call for the server
      * @throws JSONException in case of invalid JSON object (should not happen)
      */
-    public static JSONObject createDataObject(@NonNull ShopperCheckoutRequirements shopperCheckoutRequirements, @NonNull PurchaseDetails purchaseDetails) throws JSONException {
+    public static JSONObject createDataObject(@NonNull PurchaseDetails purchaseDetails) throws JSONException {
         CreditCard creditCard = purchaseDetails.getCreditCard();
         BillingContactInfo billingContactInfo = purchaseDetails.getBillingContactInfo();
         ShippingContactInfo shippingContactInfo = null;
-        if (shopperCheckoutRequirements.isShippingRequired())
-            shippingContactInfo = purchaseDetails.getShippingContactInfo();
+        shippingContactInfo = purchaseDetails.getShippingContactInfo();
 
         boolean storeCard = purchaseDetails.getStoreCard();
 
-        return createDataObject(shopperCheckoutRequirements, creditCard, billingContactInfo, shippingContactInfo, storeCard);
+        return createDataObject(creditCard, billingContactInfo, shippingContactInfo, storeCard);
     }
 }

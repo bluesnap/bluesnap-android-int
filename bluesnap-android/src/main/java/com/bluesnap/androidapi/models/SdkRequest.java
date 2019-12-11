@@ -24,7 +24,7 @@ public class SdkRequest extends SdkRequestBase {
     }
 
     public SdkRequest(Double amount, String currencyNameCode, ShopperCheckoutRequirements shopperCheckoutRequirements) {
-        shopperCheckoutRequirements = new ShopperCheckoutRequirements(shopperCheckoutRequirements);
+        this.shopperCheckoutRequirements = new ShopperCheckoutRequirements(shopperCheckoutRequirements);
         priceDetails = new PriceDetails(amount, currencyNameCode, 0D);
     }
 
