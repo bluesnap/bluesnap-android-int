@@ -34,6 +34,7 @@ import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
 import com.bluesnap.androidapi.services.CardinalManager;
+import com.bluesnap.androidapi.services.CardinalManager.CardinalManagerResponse;
 import com.bluesnap.androidapi.services.KountService;
 import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.fragments.BlueSnapFragment;
@@ -451,72 +452,36 @@ public class CreditCardActivity extends AppCompatActivity {
             // Request auth with 3DS
             CardinalManager cardinalManager = CardinalManager.getInstance();
 
-            BS3DSAuthResponse authResponse = cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount());
+            BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.d(TAG, "Got broadcastReceiver intent");
 
-            if (authResponse == null) {
-                Log.e(TAG, "Auth response is missing");
-                finishFromActivityWithFailure(response);
-                return;
-            }
-            // Start Cardinal challenge
-            if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")
-                    && !(cardinalManager.getCardinalResult().equals(CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name()))) {
+                    if (cardinalManager.getCardinalResult().equals(CardinalManagerResponse.AUTHENTICATION_CANCELED.name())) {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                BluesnapAlertDialog.setDialog(CreditCardActivity.this, "3DS Authentication is required", "");
+                            }
+                        });
 
-                BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        Log.d(TAG, "Got broadcastReceiver intent");
+                    } else if (cardinalManager.getCardinalResult().equals(CardinalManagerResponse.AUTHENTICATION_FAILED.name())
+                            || cardinalManager.getCardinalResult().equals(CardinalManagerResponse.CARDINAL_ERROR.name())) { //cardinal internal error or authentication failure
 
-                        String actionCode = intent.getStringExtra("actionCode");
-                        String resultJwt = intent.getStringExtra("resultJwt");
+                        // TODO: Change this after receiving "proceed with/without 3DS" from server in init API call
+                        finishFromActivityWithFailure(null);
 
-                        if (actionCode == null) {
-                            Log.e(TAG, "Action Code from cardinal is missing");
-                            finishFromActivityWithFailure(response);
-                            return;
-                        }
-
-                        if (actionCode.equals("CANCEL")) {
-                            progressBar.setVisibility(View.INVISIBLE);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    BluesnapAlertDialog.setDialog(CreditCardActivity.this, "3DS Authentication is required", "");
-                                }
-                            });
-
-                        } else if (actionCode.equals("NOACTION") || actionCode.equals("SUCCESS")) {
-                            blueSnapService.getAppExecutors().networkIO().execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        cardinalManager.processCardinalResult(resultJwt);
-                                    } catch (BSProcess3DSResultRequestException e) {
-                                        finishFromActivityWithFailure(response);
-                                    }
-
-                                    finishFromActivity(shopper, resultIntent, response);
-                                }
-                            });
-                        } else { //cardinal internal failure or authentication failure
-                            // TODO: Change this after receiving "proceed with/without 3DS" from server in init API call
-                            finishFromActivityWithFailure(null);
-                        }
-
+                    } else { //cardinal success (success/bypass/unavailable/unsupported)
+                        finishFromActivity(shopper, resultIntent, response);
                     }
-                };
+                }
+            };
 
-                BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_VALIDATED, broadcastReceiver);
+            BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_PROCESS, broadcastReceiver);
 
-                cardinalManager.process(authResponse, this, purchaseDetails.getCreditCard(), ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName()));
+            cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount(), this, purchaseDetails.getCreditCard(), ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName()));
 
-            } else {
-                finishFromActivity(shopper, resultIntent, response);
-            }
-
-        } catch (BS3DSAuthRequestException e) { // auth request error
-            Log.e(TAG, "Cardinal Service Error", e);
-            finishFromActivityWithFailure(response);
         } catch (JSONException e) {
             Log.e(TAG, "JsonException");
         }

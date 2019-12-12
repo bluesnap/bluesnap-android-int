@@ -526,16 +526,18 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
 
         checkSDKResult(expected3DSResult, isResultOK);
 
-        makeCheckoutTransaction(shopperCheckoutRequirements, cardStored);
+        if (isResultOK) {
+            makeCheckoutTransaction(shopperCheckoutRequirements, cardStored);
+        }
     }
 
-    public void checkSDKResult(String expected3DSResult, boolean isResultOK) {
-        sdkResult = blueSnapService.getSdkResult();
-        // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
-        assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
-        assertEquals("SDKResult wrong currency", checkoutCurrency, sdkResult.getCurrencyNameCode());
-
+    private void checkSDKResult(String expected3DSResult, boolean isResultOK) {
         if (isResultOK) {
+            sdkResult = blueSnapService.getSdkResult();
+            // verify that both currency symbol and purchase amount received by sdkResult matches those we actually chose
+            assertTrue("SDK Result amount not equals", Math.abs(sdkResult.getAmount() - purchaseAmount) < 0.0000000001);
+            assertEquals("SDKResult wrong currency", checkoutCurrency, sdkResult.getCurrencyNameCode());
+
             assertEquals("SDKResult wrong 3DSResult", expected3DSResult, sdkResult.getThreeDSAuthenticationResult());
         }
     }

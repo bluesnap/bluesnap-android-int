@@ -1,34 +1,23 @@
 package com.bluesnap.android.demoapp;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
 import android.widget.EditText;
 
-import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
-import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
-import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutEspressoBasedTester;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.services.CardinalManager;
 
 import org.json.JSONException;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static java.lang.Thread.sleep;
@@ -129,7 +118,7 @@ public class ThreeDSecureUITests extends CheckoutEspressoBasedTester {
     @Test
     public void threeDS_unsupported_minimal_billing_basic_transaction() throws UiObjectNotFoundException, InterruptedException, JSONException, BSPaymentRequestException {
         setupBeforeTransaction(false, false, false);
-        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_NOT_SUPPORTED, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name());
+        basic3DSFlow(TestingShopperCreditCard.VISA_CREDIT_CARD_FOR_3DS_NOT_SUPPORTED, false, CardinalManager.CardinalManagerResponse.CARD_NOT_SUPPORTED.name());
     }
 
     /**
