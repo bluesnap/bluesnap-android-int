@@ -21,15 +21,12 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
-import com.bluesnap.androidapi.models.BS3DSAuthResponse;
 import com.bluesnap.androidapi.models.PurchaseDetails;
 import com.bluesnap.androidapi.models.SdkRequestBase;
 import com.bluesnap.androidapi.models.SdkRequestShopperRequirements;
 import com.bluesnap.androidapi.models.SdkResult;
 import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.models.SupportedPaymentMethods;
-import com.bluesnap.androidapi.services.BS3DSAuthRequestException;
-import com.bluesnap.androidapi.services.BSProcess3DSResultRequestException;
 import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BluesnapAlertDialog;
@@ -429,13 +426,13 @@ public class CreditCardActivity extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                finishFromActivityWithFailure(response);
+                                finishFromActivityWithFailure(response.toString());
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "json parsing exception", e);
                         }
                     } else {
-                        finishFromActivityWithFailure(response);
+                        finishFromActivityWithFailure(response.toString());
                     }
 
                 } catch (JSONException ex) {
@@ -448,7 +445,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
     //TODO: add log.d
     private void cardinal3DS(PurchaseDetails purchaseDetails, Shopper shopper, final Intent resultIntent, BlueSnapHTTPResponse response) {
-        try {
+
             // Request auth with 3DS
             CardinalManager cardinalManager = CardinalManager.getInstance();
 
@@ -470,7 +467,8 @@ public class CreditCardActivity extends AppCompatActivity {
                             || cardinalManager.getCardinalResult().equals(CardinalManagerResponse.CARDINAL_ERROR.name())) { //cardinal internal error or authentication failure
 
                         // TODO: Change this after receiving "proceed with/without 3DS" from server in init API call
-                        finishFromActivityWithFailure(null);
+                        String error = intent.getStringExtra("CARDINAL_PROCESS_DONE");
+                        finishFromActivityWithFailure(error);
 
                     } else { //cardinal success (success/bypass/unavailable/unsupported)
                         finishFromActivity(shopper, resultIntent, response);
@@ -478,7 +476,9 @@ public class CreditCardActivity extends AppCompatActivity {
                 }
             };
 
-            BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_PROCESS, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(this, CardinalManager.CARDINAL_PROCESS_DONE, broadcastReceiver);
+
+        try {
 
             cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount(), this, purchaseDetails.getCreditCard(), ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName()));
 
@@ -488,11 +488,11 @@ public class CreditCardActivity extends AppCompatActivity {
 
     }
 
-    private void finishFromActivityWithFailure(BlueSnapHTTPResponse response) {
+    private void finishFromActivityWithFailure(String response) {
         String errorMsg;
 
         if (response != null) {
-            errorMsg = String.format("Service Error %s, %s", response.getResponseCode(), response.getResponseString());
+            errorMsg = "Service Error: " + response;
         } else {
             errorMsg = "SDK Error";
         }

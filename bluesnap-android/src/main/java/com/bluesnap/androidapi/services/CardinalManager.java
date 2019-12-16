@@ -33,7 +33,7 @@ import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class CardinalManager  {
-    public static final String CARDINAL_PROCESS = "com.bluesnap.intent.CARDINAL_CARD_VALIDATED";
+    public static final String CARDINAL_PROCESS_DONE = "com.bluesnap.intent.CARDINAL_CARD_VALIDATED";
 
     private static final String TAG = CardinalManager.class.getSimpleName();
     private static CardinalManager instance = null;
@@ -137,7 +137,7 @@ public class CardinalManager  {
 
     public void authWith3DS(String currency, Double amount, Activity activity, final CreditCard creditCard, boolean isReturningShopper) throws JSONException {
         if (!is3DSecureEnabled() || isCardinalError()) { // cardinal is disabled in merchant configuration or error occurred
-            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS, TAG);
+            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS_DONE, TAG);
             return;
         }
 
@@ -148,14 +148,14 @@ public class CardinalManager  {
             //TODO: should we return this service error response in the event so that we can return it to the merchant in onResult?
             Log.e(TAG, "BS Server Error in 3DS Auth API call:\n" + response);
             setCardinalResult(CardinalManagerResponse.CARDINAL_ERROR.name());
-            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS, TAG);
+            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS_DONE, response.toString(), TAG);
         }
 
         jsonObject = new JSONObject(response.getResponseString());
         BS3DSAuthResponse authResponse = BS3DSAuthResponse.fromJson(jsonObject);
         if (authResponse == null) {
             setCardinalResult(CardinalManagerResponse.CARDINAL_ERROR.name());
-            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS, TAG);
+            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS_DONE, TAG);
             return;
         }
 
@@ -164,13 +164,13 @@ public class CardinalManager  {
             String firstChar = authResponse.getThreeDSVersion().substring(0, 1);
             if (!firstChar.equals("2")) {
                 setCardinalResult(CardinalManagerResponse.CARD_NOT_SUPPORTED.name());
-                BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS_DONE, TAG);
             } else { // call process
                 process(authResponse, activity, creditCard, isReturningShopper);
             }
         } else { // populate Enrollment Status as cardinal result
             setCardinalResult(authResponse.getEnrollmentStatus());
-            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS, TAG);
+            BlueSnapLocalBroadcastManager.sendMessage(activity, CARDINAL_PROCESS_DONE, TAG);
         }
     }
 
@@ -227,6 +227,8 @@ public class CardinalManager  {
                     } catch (BSProcess3DSResultRequestException e) {
                         //TODO: should we return this service error response in the event so that we can return it to the merchant in onResult?
                         setCardinalResult(CardinalManagerResponse.CARDINAL_ERROR.name());
+                        BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_PROCESS_DONE, e.getMessage(), TAG);
+                        return;
                     }
                 } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
@@ -236,7 +238,7 @@ public class CardinalManager  {
                     setCardinalResult(CardinalManagerResponse.AUTHENTICATION_CANCELED.name());
                 }
 
-                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_PROCESS, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_PROCESS_DONE, TAG);
             }
         });
 
@@ -251,7 +253,7 @@ public class CardinalManager  {
         BlueSnapHTTPResponse response = blueSnapAPI.processCardinalResult(body);
         if (response.getResponseCode() != HTTP_OK) {
             Log.e(TAG, "BS Server Error in 3DS process result API call:\n" + response);
-            throw new BSProcess3DSResultRequestException("BS API Exception - 3ds process result");
+            throw new BSProcess3DSResultRequestException(response.toString());
         } else {
             try {
                 JSONObject jsonObject = new JSONObject(response.getResponseString());
