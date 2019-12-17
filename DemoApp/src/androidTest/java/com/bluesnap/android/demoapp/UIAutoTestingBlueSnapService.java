@@ -39,8 +39,6 @@ import com.bluesnap.androidapi.services.TokenServiceCallback;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 import com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity;
 
-import junit.framework.Assert;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -498,11 +496,11 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     }
 
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, false, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
+        finishDemoPurchase(shopperCheckoutRequirements, false, CardinalManager.ThreeDSManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
     }
 
     public void finishDemoPurchase(TestingShopperCheckoutRequirements shopperCheckoutRequirements, boolean cardStored) throws InterruptedException {
-        finishDemoPurchase(shopperCheckoutRequirements, cardStored, CardinalManager.CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
+        finishDemoPurchase(shopperCheckoutRequirements, cardStored, CardinalManager.ThreeDSManagerResponse.AUTHENTICATION_UNAVAILABLE.name(), true);
     }
 
     // for 3DS flows
