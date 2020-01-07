@@ -57,7 +57,7 @@ public class CardinalManager  {
         // challenge was canceled by the user
         AUTHENTICATION_CANCELED,
 
-        // cardinal internal or server error
+        // cardinal internal error or server error
         THREE_DS_ERROR,
 
         // V1 unsupported cards
@@ -136,7 +136,7 @@ public class CardinalManager  {
 
     }
 
-    public void authWith3DS(String currency, Double amount, Activity activity, final CreditCard creditCard, boolean isReturningShopper) throws JSONException {
+    public void authWith3DS(String currency, Double amount, Activity activity, final CreditCard creditCard) throws JSONException {
         if (!is3DSecureEnabled() || isCardinalError()) { // cardinal is disabled in merchant configuration or error occurred
             BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
             return;
@@ -166,7 +166,7 @@ public class CardinalManager  {
                 setThreeDSAuthResult(ThreeDSManagerResponse.CARD_NOT_SUPPORTED.name());
                 BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
             } else { // call process
-                process(authResponse, activity, creditCard, isReturningShopper);
+                process(authResponse, activity, creditCard);
             }
         } else { // populate Enrollment Status as 3DS result
             setThreeDSAuthResult(authResponse.getEnrollmentStatus());
@@ -185,15 +185,14 @@ public class CardinalManager  {
      * @param authResponse - 3DS authentication response from server
      * @param activity - current displayed activity
      * @param creditCard - shopper's credit card
-     * @param isReturningShopper - true if this is a returning shopper flow, false w.s.
      */
-    public void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard, boolean isReturningShopper) {
+    private void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
 
-                if (!isReturningShopper) { // new card mode - passing the cc number to cardinal for processing
+                if (creditCard.getIsNewCreditCard()) { // new card mode - passing the cc number to cardinal for processing
                     Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
                         @Override
                         public void onComplete() {
@@ -282,7 +281,7 @@ public class CardinalManager  {
         return jsonObject;
     }
 
-    public boolean is3DSecureEnabled() {
+    private boolean is3DSecureEnabled() {
         return (cardinalToken != null);
     }
 

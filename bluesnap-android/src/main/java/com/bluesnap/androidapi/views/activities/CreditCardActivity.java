@@ -480,7 +480,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
         try {
 
-            cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount(), this, purchaseDetails.getCreditCard(), ReturningShopperCreditCardFragment.TAG.equals(getBlueSnapFragmentClassSimpleName()));
+            cardinalManager.authWith3DS(blueSnapService.getSdkResult().getCurrencyNameCode(), blueSnapService.getSdkResult().getAmount(), this, purchaseDetails.getCreditCard());
 
         } catch (JSONException e) {
             Log.d(TAG, "Error in parsing authWith3DS API response");
