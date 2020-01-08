@@ -19,9 +19,9 @@ To get started, add the following line in your `build.gradle` file in the depend
 # Available flows for collecting payment details
 
 There are 3 supported flow types:
-* Checkout: Submit shopper and payment details for a transaction
-* Configure shopper’s payment method details: Submit the shopper's Chosen Payment Method details
-* Pay with selected payment method: Submit the shopper's Chosen Payment Method details for a transaction, in case they weren't already, based on the Chosen Payment Method
+* Checkout: Create a transaction for a new or existing shopper
+* Configure shopper: Collect a shopper's information and selected payment method
+* Pay with selected payment method: Create a transaction using an existing shopper's selected payment method
 
 Any of those flows can be done by using either the BlueSnap SDK UI or your own UI, at your convenience. Please note that by using your own UI, you will be required to handle the data-transmission to BlueSnap as well.
 
@@ -96,21 +96,29 @@ BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "<
 An `SdkRequest` instance is required to pass information about the purchase to the SDK.
 The instance include:
  - Price Details (mandatory for 1st and 3rd flow, though optional for subscription in 1st flow):
-   -- the current purchase amount 
-   -- purchase currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code)
+   
+   - the current purchase amount 
+   
+   - purchase currency (as an [ISO 4217](https://developers.bluesnap.com/docs/currency-codes) currency code)
+ 
  - Shopper Checkout Requirements
-   -- billingRequired: if false, the SDK will collect name and country; if true, it will collect also the billing address.
-   -- emailRequired: if true, the SDK will collect email as part of the billing information.
-   -- shippingRequired: if true, the SDK will collect shipping details.
+   
+   - billingRequired: if false, the SDK will only collect name, country and zip code; if true, it will collect also the billing address.
+   
+   - emailRequired: if true, the SDK will collect email as part of the billing information.
+   
+   - shippingRequired: if true, the SDK will collect shipping details.
  
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode,  boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
-An `SdkRequest` instance contain also an `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By default it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
+An `SdkRequest` instance also contains the following properties: 
+
+- `allowCurrencyChange`: if true, the SDK will allow the shopper to change the purchase currency. By default it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
 ```
 sdkRequest.setAllowCurrencyChange(false);
 ```
-An `SdkRequest` instance contain also a `googlePayTestMode` property: if true (default), Google Pay flow will work in TEST mode, which means any card you enter will result in dummy card details.
+- `googlePayTestMode`: if true (default), Google Pay flow will work in TEST mode, which means any card you enter will result in dummy card details.
 if you set it to false, the SDK will instatiate Google Pay in PRODUCTION mode, which requires Google's approval of the app. If your app is not approved and you set to PRODUCTION mode, when clicking on the Google Pay button, you will get a pop-up saying "This merchant is not enabled for Google Pay"). 
 Google Pay TEST mode is only supported in BlueSnap's Sandbox environment; if you try it in production, the app flow will work, but your transaction will fail.
 You can specifically change this value like this:
