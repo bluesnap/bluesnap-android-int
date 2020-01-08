@@ -112,36 +112,35 @@ The instance include:
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode,  boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
-An `SdkRequest` instance also contains the following properties: 
+An `SdkRequest` instance also contains the following: 
 
-- `allowCurrencyChange`: if true, the SDK will allow the shopper to change the purchase currency. By default it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
-```
-sdkRequest.setAllowCurrencyChange(false);
-```
-- `googlePayTestMode`: if true (default), Google Pay flow will work in TEST mode, which means any card you enter will result in dummy card details.
+- `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By default it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
+    ```
+    sdkRequest.setAllowCurrencyChange(false);
+    ```
+- `setGooglePayActive` method: if you support Google Pay as a payment method (in BlueSnap console), it will be enabled for the shopper inside the SDK (in case the device supports it).
+if you wish to disable GooglePay for this purchase, you can do it like this:
+    ```
+    sdkRequest.setGooglePayActive(false);
+    ```
+- `googlePayTestMode` property: if true (default), Google Pay flow will work in TEST mode, which means any card you enter will result in dummy card details.
 if you set it to false, the SDK will instatiate Google Pay in PRODUCTION mode, which requires Google's approval of the app. If your app is not approved and you set to PRODUCTION mode, when clicking on the Google Pay button, you will get a pop-up saying "This merchant is not enabled for Google Pay"). 
 Google Pay TEST mode is only supported in BlueSnap's Sandbox environment; if you try it in production, the app flow will work, but your transaction will fail.
 You can specifically change this value like this:
-```
-sdkRequest.setGooglePayTestMode(false);
-```
-An `SdkRequest` instance contains also a `setGooglePayActive` method: if you support Google Pay as a payment method it will be enabled for the shopper inside the SDK (in case the device supports it).
-You may want to disable it like this:
-```
-sdkRequest.setGooglePayActive(false);
-```
-An `SdkRequest` instance contains also an `hideStoreCardSwitch` property: allows to hide the Securely store my card for future purchases Switch.
+    ```
+    sdkRequest.setGooglePayTestMode(false);
+    ```
+- `hideStoreCardSwitch` property: if true, the SDK will hide the Securely store my card Switch from the shopper and the card will **not** be stored in BlueSnap server.
 By default it is false; if you wish to hide the store card switch, you can specifically change this value like this:
-```
-sdkRequest.setHideStoreCardSwitch(true);
-```
-An `SdkRequest` instance contains also an `activate3DS` property: require a 3D Secure Authentication from the shopper while paying with credit card.
+    ```
+    sdkRequest.setHideStoreCardSwitch(true);
+    ```
+- `activate3DS` property: if true, the SDK will require a 3D Secure Authentication from the shopper when paying with credit card.
 By default it is false; if you wish to activate 3DS Authentication, you can specifically change this value like this:
-```
-sdkRequest.setActivate3DS(true);
-```
-For more information see
-[3D Secure Authentication](https://github.com/bluesnap/bluesnap-android-int#3D-Secure-Authentication).
+    ```
+    sdkRequest.setActivate3DS(true);
+    ```
+    For more information see [3D Secure Authentication](https://github.com/bluesnap/bluesnap-android-int#3D-Secure-Authentication).
 
 #### Handling tax updates in checkout flow (optional)
 If you choose to collect shipping details (i.e. withShipping is set to true), 
