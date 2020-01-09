@@ -354,7 +354,7 @@ To set Google Pay mode to PRODUCTION, change the googlePayTestMode value in your
 To get approved by Google, see [Google Pay Developer Documentation](https://developers.google.com/pay/api/processors/guides/test-and-validation/developer-documentation-checklist).
 
 ## Kount
-The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [Fraud Prevention Documentation][https://developers.bluesnap.com/docs/fraud-prevention].
+The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [Fraud Prevention Documentation](https://developers.bluesnap.com/docs/fraud-prevention).
 
 ## 3D Secure Authentication
 The SDK includes an integrated Cardinal SDK for 3DS Authentication. 
