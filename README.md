@@ -34,7 +34,7 @@ Steps required for this flow (more information on each below):Steps required for
 * Get the SdkResult (if using our UI)
 * Complete the transaction or activate the subscription
 
-## Configure shopper’s payment method details flow:
+## Configure shopper flow:
 This flow will be used in apps where you wish to save the shopper's payment details upon registration, and use it later in a quick and easy fashion. This flow can be run only for an existing shopper (you can easily create the shopper using BlueSnap API). If the shopper chooses a Credit card, we collect the billing details and store them on BlueSnap servers, so that the (later) charge will not require the shopper to type any information. If the shopper chooses Google Pay or PayPal, we simply keep this preference, so that in the next step (Create Payment flow), the shopper will automatically get the GooglePay pop-up or the PayPal page.
 Steps required for this flow (more information on each below):
 * Generate a token for the choose payment (for the existing shopper)
@@ -43,7 +43,7 @@ Steps required for this flow (more information on each below):
 * Once you get the activity result, there is nothing else for you to do beside check that it was successful; if successful, then the shopper details are already updated on BlueSnap servers.
 
 ## Pay with selected payment method flow:
-This is where you quickly complete the payment with the shopper’s chosen payment method. This flow can be run only for an existing shopper that HAS valid chosen payment details. If (in the previous step: Configure shopper’s payment method details flow) the shopper chose a credit card, you will get the response immediately; if the shopper chose Google Pay or PayPal, they will now do the payment flow. In both cases, the result is the same as in the Checkout flow: The SDK result returns some (non secure) information, but mainly all you need to do now is let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.If (in the previous step: Choose Payment method flow) the shopper chose a credit card, you will get the response immediately; if the shopper chose Google Pay or PayPal, they will now do the payment flow). In both cases, the result is the same as in the Checkout flow: The SDK result returns some (non secure) information, but mainly all you need to do now is let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.
+This is where you quickly complete the payment with the shopper’s chosen payment method. This flow can be run only for an existing shopper that HAS valid chosen payment details. If (in the previous step: Configure shopper flow) the shopper chose a credit card, you will get the response immediately; if the shopper chose Google Pay or PayPal, they will now do the payment flow. In both cases, the result is the same as in the Checkout flow: The SDK result returns some (non secure) information, but mainly all you need to do now is let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction.
 Steps required for this flow (more information on each below):
 * Generate a token for the transaction (for the existing shopper)
 * Initialize the SDK with the token
@@ -90,7 +90,14 @@ BlueSnapService.getInstance().setup("MERCHANT_TOKEN_STRING", tokenProvider(), "<
 **Note:**  For each purchase, you'll need to call setup() 
 
 ## Use BlueSnap SDK UI
+The SDK includes a pre-built form, enabling you to easily collect the shopper's information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
 
+- Checkout flow - To launch this flow, you'll create a `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method.
+In case of subscription charge, you'll create an `SdkRequestSubscriptionCharge` instance instead, while the purchase amount and currency are optional.
+
+- Configure shopper flow - To launch this flow, you'll create an `SdkRequestShopperRequirements` instance (without the purchase amount and currency), and then start the `BluesnapChoosePaymentMethodActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
+
+- Pay with selected payment method flow - To launch this flow, you'll create an `SdkRequest` instance (with the purchase amount and currency), and then start the `BluesnapCreatePaymentActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
 
 ### Create an SdkRequest instance 
 An `SdkRequest` instance is required to pass information about the purchase to the SDK.
@@ -119,18 +126,18 @@ An `SdkRequest` instance also contains the following:
     sdkRequest.setAllowCurrencyChange(false);
     ```
 - `setGooglePayActive` method: if you support Google Pay as a payment method (in BlueSnap console), it will be enabled for the shopper inside the SDK (in case the device supports it).
-if you wish to disable GooglePay for this purchase, you can do it like this:
+If you wish to disable Google Pay for this purchase, you can do it like this:
     ```
     sdkRequest.setGooglePayActive(false);
     ```
 - `googlePayTestMode` property: if true (default), Google Pay flow will work in TEST mode, which means any card you enter will result in dummy card details.
-if you set it to false, the SDK will instatiate Google Pay in PRODUCTION mode, which requires Google's approval of the app. If your app is not approved and you set to PRODUCTION mode, when clicking on the Google Pay button, you will get a pop-up saying "This merchant is not enabled for Google Pay"). 
+If you set it to false, the SDK will instatiate Google Pay in PRODUCTION mode, which requires Google's approval of the app. If your app is not approved and you set to PRODUCTION mode, when clicking on the Google Pay button, you will get a pop-up saying "This merchant is not enabled for Google Pay"). 
 Google Pay TEST mode is only supported in BlueSnap's Sandbox environment; if you try it in production, the app flow will work, but your transaction will fail.
 You can specifically change this value like this:
     ```
     sdkRequest.setGooglePayTestMode(false);
     ```
-- `hideStoreCardSwitch` property: if true, the SDK will hide the Securely store my card Switch from the shopper and the card will **not** be stored in BlueSnap server.
+- `hideStoreCardSwitch` property: if true, the SDK will hide the "Securely store my card" switch from the shopper and the card will **not** be stored in BlueSnap server.
 By default it is false; if you wish to hide the store card switch, you can specifically change this value like this:
     ```
     sdkRequest.setHideStoreCardSwitch(true);
@@ -184,29 +191,13 @@ sdkRequest.getShopperCheckoutRequirements().setEmailRequired(true);
 ```
 
 ### Set Sdk Request
-before launching the activity set the `SdkRequest` in `BlueSnapService`.
+Before launching the activity set the `SdkRequest` in `BlueSnapService`.
 ```
 BlueSnapService.getInstance().setSdkRequest(sdkRequest);
 ```
-### Launch the BluesnapCheckoutActivity and collect shopper payment info (Checkout flow)
-The SDK includes a pre-built checkout form, enabling you to easily collect the shopper's information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
-
-To launch the checkout flow, you'll create an `SdkRequest` instance with the purchase amount and currency, and then start the `BluesnapCheckoutActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method.
-
-In case of subscription charge, you'll create an `SdkRequestSubscriptionCharge` instance instead, while the purchase amount and currency are optional.
-
-### Launch the BluesnapChoosePaymentMethodActivity to collect shopper chosen payment info (Choose Payment method flow)
-The SDK includes a pre-built form, enabling you to easily collect the shopper's chosen payment information. You won't have to handle card number or expiration date validations, or the storage of sensitive information. 
-
-To launch this flow, you'll create an `SdkRequestShopperRequirements` instance (without the purchase amount and currency), and then start the `BluesnapChoosePaymentMethodActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
-
-### Launch the BluesnapCreatePaymentActivity to collect shopper payment info based on previously chosen payment method (Create Payment flow)
-The SDK enables you to easily collect the shopper's information that was saved before (in case the chosen payment method is a credit card; if the chosen payment type was PayPal or Google Pay, the flow will collect the required details similar to the checkout flow). You won't have to handle validations or the storage of sensitive information. 
-
-To launch this flow, you'll create an `SdkRequest` instance (with the purchase amount and currency), and then start the `BluesnapCreatePaymentActivity` by creating an Android Intent and passing the `SdkRequest` using the setSdkRequest method
 
 ### Launch BluesnapCheckoutActivity / BluesnapChoosePaymentMethodActivity / BluesnapCreatePaymentActivity
-Launch the checkout activity.
+Launch the suitable activity for the desired flow. For example, for the checkout flow:
 ```
 Intent intent = new Intent(getApplicationContext(), BluesnapCheckoutActivity.class);
 startActivityForResult(intent);
@@ -215,7 +206,7 @@ This function will launch the checkout activity, display the checkout form with 
 
 > **Reminder:** As part of the checkout process, the shopper's card details will be sent directly and securely to BlueSnap's servers, so you won't have to touch the sensitive data yourself.
 
-When the shopper completes checkout, you'll get an Android Activity Result with an `SdkResult` instance.
+Once the shopper completes the flow, you'll get an Android Activity Result with an `SdkResult` instance.
 
 **Note:** For every time you launch the activity you need to activate the `BlueSnapService.getInstance().setup(...)` before and set a new SdkRequest `BlueSnapService.getInstance().setSdkRequest(sdkRequest);`.
 
@@ -253,7 +244,7 @@ The result code can be:
 * Otherwise - not successful
 
 An `SdkResult` instance holds the purchase details (for BluesnapCheckoutActivity and BluesnapCreatePaymentActivity), such as the purchase amount and currency, whether the transaction involved a returning shopper, and whether the shopper paid via card or PayPal. 
-In case of BluesnapChosenPaymentMethodActivity, you get the chosen PM details as well as teh chose PM itself.
+In case of BluesnapChosenPaymentMethodActivity, you get the chosen PM details as well as the chosen PM itself.
 
 For credit card transactions, the card last four digits, card type, and shopper name will be included. For PayPal transactions, the PayPal transaction ID will be included. 
 
@@ -293,7 +284,11 @@ If you are submitting an existing card (for an existing shopper and a credit car
  - cardType
  - newCreditCard=false
  
-### Submit details into BlueSnap server
+```
+PurchaseDetails purchaseDetails = new PurchaseDetails(creditCard,billingContactInfo,shippingContactInfo,storeCard);
+```
+
+### Submit the shopper's details into BlueSnap server
 
 ```
 BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetails(purchaseDetails);
@@ -301,19 +296,19 @@ BlueSnapHTTPResponse blueSnapHTTPResponse = blueSnapService.submitTokenizedDetai
 
 Use `BlueSnapHTTPResponse` to verify that the API call response code is 200 (HTTP_OK).
 
-### Handle 3D secure authentication
+### Handle 3D Secure authentication
 
 BlueSnap SDK integrates Cardinal SDK to provide a full handling of 3D secure authentication. The `CardinalManager` class provides an easy infrastructure for all data-transmission to BlueSnap and Cardinal servers. Mainly all you need to do is a single call to a `CardinalManager` method. To do so, first you'll need to register a BroadcastReceiver with the event `CardinalManager.THREE_DS_AUTH_DONE_EVENT` to handle the authentication result; than, you will call the following method:
 ```
-CardinalManager.getInstance().authWith3DS(currency, amount, activity, creditCard, isReturningShopper);
+CardinalManager.getInstance().authWith3DS(currency, amount, activity, creditCard);
 ```
-Where **creditCard** is the credit card you've already submitted to BlueSnap server (in the previous step: Submit details into BlueSnap server) and **isNewCreditCard** indicates whether this is a new or an existing card.
+Where **creditCard** is the credit card you've already submitted to BlueSnap server (in the previous step: Submit details into BlueSnap server).
 
 In case the card's 3DS version is supported and the shopper identity verification is required: a Cardinal activity will be lunched and the shopper will be asked to enter the authentication code. 
 
 Once the 3D Secure flow is done, you will catch the event and the 3D Secure result will be available:
 ```
-CardinalManager.getInstance().getThreeDSAuthResult();
+String result = CardinalManager.getInstance().getThreeDSAuthResult();
 ```
 If a server error occurred, the error description will be available in **onReceive()** of the BroadcastReceiver.
 ```
@@ -359,12 +354,21 @@ To set Google Pay mode to PRODUCTION, change the googlePayTestMode value in your
 To get approved by Google, see [Google Pay Developer Documentation](https://developers.google.com/pay/api/processors/guides/test-and-validation/developer-documentation-checklist).
 
 ## Kount
-The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [https://developers.bluesnap.com/docs/fraud-prevention] 
+The SDK includes an integrated Kount SDK for anti fraud functionality. A `kountSessionId` will be sent to BlueSnap servers and also with the server to server call. For more information see [Fraud Prevention Documentation][https://developers.bluesnap.com/docs/fraud-prevention] 
 
 ## 3D Secure Authentication
-The SDK includes an integrated Cardinal SDK for 3DS Authentication. If you are using BlueSnap SDK UI: if you choose to activate this service and the shopper chooses credit card as payment method, the cardinal result will be passed as part of the `SdkResult` (threeDSAuthenticationResult property). If you're using your own UI, the cardinal result will be available in CardinalManager instance. 
+The SDK includes an integrated Cardinal SDK for 3DS Authentication. 
 
-if 3DS Authentication not successful, the result will be one of the following:
+If you are using BlueSnap SDK UI: if you choose to activate this service and the shopper chooses credit card as a payment method, the cardinal result will be passed as part of the `SdkResult`:
+ ```
+ String result = sdkResult.getThreeDSAuthenticationResult();
+ ```
+ If you're using your own UI, the cardinal result will be available in the `CardinalManager` instance:
+ ```
+ String result = CardinalManager.getInstance().getThreeDSAuthResult();
+ ```
+
+if 3DS Authentication was successful, the result will be one of the following:
 * `AUTHENTICATION_SUCCEEDED`
 * `AUTHENTICATION_BYPASSED`
 
