@@ -23,7 +23,7 @@ There are 3 supported flow types:
 * Configure shopper: Collect a shopper's information and selected payment method
 * Pay with selected payment method: Create a transaction using an existing shopper's selected payment method
 
-Any of those flows can be done by using either the BlueSnap SDK UI or your own UI, at your convenience. Please note that by using your own UI, you will be required to handle the data-transmission to BlueSnap as well.
+Any of those flows can be done by using either the BlueSnap SDK UI or your own UI, at your convenience. Please note that by using your own UI, you will be required to handle the data-transmission to BlueSnap as well, by using the `BlueSnapService` class for performing API calls.
 
 ## Checkout flow:
 This flow is the most commonly used: the shopper chooses to buy something from you app, and you perform an end-to-end checkout flow. If you choose to use BlueSnap SDK UI than you’ll call BluesnapCheckoutActivity to handle the UI and data-transmission to BlueSnap; the shopper is asked to choose the payment method (CC/Google Pay/PayPal) and then fills the relevant payment details. The shopper's payment data is tokenized and sent directly to BlueSnap's servers. In this flow we support subscription chrage as well. The activity result returns some of the (non secure) information, but mainly all you need to do now is to complete the transaction: let your app server do an API call to BlueSnap, sending just the token, and the transaction will be completed, or the subscription will become active in case of subscription charge. In case of PayPal, you don't even have to do that, since PayPal flow already completes the transaction. If you are using you own UI, you’ll need to collect and send the shopper’s payment info to BlueSnap server.
@@ -257,14 +257,15 @@ sdkResult.getPaypalInvoiceId(); // A string with the invoice Id
 sdkResult.getChosenPaymentMethodType(); // for 2nd flow
 ```
 
-## Use your own UI
+## Build your own UI
+You need to create UI layout files and activities on your own. Please use the entities and methods provide business logic as described below:
 
 ### Collect all payment info
 Use your own UI to collect all payment info from the shopper.
 
 ### Generate a PurchaseDetails instance (in case of a credit card purchase)
 A `PurchaseDetails` instance is required to pass the purchase details to the BlueSnap server.
-The object includes:
+The object includes the properties:
  - `billingContactInfo` - The shopper's billing information
  - `shippingContactInfo` - The shopper's shipping information
  - `creditCard` (mandatory) - The shopper's credit card information
@@ -369,11 +370,11 @@ If you are using BlueSnap SDK UI: if you choose to activate this service and the
  ```
 
 if 3DS Authentication was successful, the result will be one of the following:
-* `AUTHENTICATION_SUCCEEDED`
-* `AUTHENTICATION_BYPASSED`
+* `AUTHENTICATION_SUCCEEDED` = 3D Secure authentication was successful because the shopper entered their credentials correctly or the issuer authenticated the transaction without requiring shopper identity verification.
+* `AUTHENTICATION_BYPASSED` = 3D Secure authentication was bypassed due to the merchant's configuration.
 
 If 3DS Authentication was **not** successful, the result will be one of the following errors:
-* `AUTHENTICATION_UNAVAILABLE` = 3D Secure is unavailable for this card.
+* `AUTHENTICATION_UNAVAILABLE` = 3D Secure authentication is unavailable for this card.
 * `AUTHENTICATION_FAILED` = Card authentication failed in cardinal challenge.
 * `THREE_DS_ERROR` = Either a Cardinal internal error or a server error occurred.
 * `CARD_NOT_SUPPORTED` = No attempt to run 3D Secure challenge was done due to unsupported 3DS version.
