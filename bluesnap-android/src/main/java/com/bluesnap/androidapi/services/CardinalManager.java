@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;
@@ -34,25 +33,35 @@ import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class CardinalManager  {
-    public static final String CARDINAL_VALIDATED = "com.bluesnap.intent.CARDINAL_CARD_VALIDATED";
+    public static final String THREE_DS_AUTH_DONE_EVENT = "com.bluesnap.intent.3DS_AUTH_DONE";
+    public static final String THREE_DS_AUTH_DONE_EVENT_NAME = "THREE_DS_AUTH_DONE_EVENT";
+    private static final String SUPPORTED_CARD_VERSION = "2";
 
     private static final String TAG = CardinalManager.class.getSimpleName();
     private static CardinalManager instance = null;
-    //private static Cardinal cardinal = Cardinal.getInstance();
     private BlueSnapAPI blueSnapAPI = BlueSnapAPI.getInstance();
     private String cardinalToken;
 
     // this property is an indication to NOT trigger cardinal in second phase (after submit)
-    private boolean cardinalFailure = false;
-    private String cardinalResult = CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name();
+    private boolean cardinalError = false;
+    private String threeDSAuthResult = ThreeDSManagerResponse.AUTHENTICATION_UNAVAILABLE.name();
 
 
-    public enum CardinalManagerResponse {
+    public enum ThreeDSManagerResponse {
+        // server response
         AUTHENTICATION_BYPASSED,
         AUTHENTICATION_SUCCEEDED,
-        AUTHENTICATION_UNAVAILABLE,
-        AUTHENTICATION_FAILED,
-        AUTHENTICATION_NOT_SUPPORTED
+        AUTHENTICATION_UNAVAILABLE, // authentication unavailable for this card
+        AUTHENTICATION_FAILED, // card authentication in cardinal challenge failed
+
+        // challenge was canceled by the user
+        AUTHENTICATION_CANCELED,
+
+        // cardinal internal error or server error
+        THREE_DS_ERROR,
+
+        // V1 unsupported cards
+        CARD_NOT_SUPPORTED
     }
 
     public static CardinalManager getInstance() {
@@ -68,20 +77,18 @@ public class CardinalManager  {
      *
      */
     void setCardinalJWT(@Nullable String tokenJWT) {
-        // reset CardinalFailure and CardinalResult for singleton use
-        setCardinalFailure(false);
-        setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
-
-        if (tokenJWT == null)
-            setCardinalFailure(true);
+        // reset CardinalFailure and setThreeDSAuthResult for singleton use
+        setCardinalError(false);
+        setThreeDSAuthResult(ThreeDSManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
 
         this.cardinalToken = tokenJWT;
     }
 
     // This method can and should be called before a token is obtained to save time later
     void configureCardinal(Context context, boolean isProduction) {
-        if (isCardinalFailure())
+        if (!is3DSecureEnabled()) { // 3DS is disabled in merchant configuration
             return;
+        }
 
         CardinalConfigurationParameters cardinalConfigurationParameters = new CardinalConfigurationParameters();
         if (isProduction) {
@@ -106,7 +113,7 @@ public class CardinalManager  {
     /**
      */
     void initCardinal(InitCardinalServiceCallback initCardinalServiceCallback) {
-        if (isCardinalFailure()) {
+        if (!is3DSecureEnabled()) { // cardinal is disabled in merchant configuration
             initCardinalServiceCallback.onComplete();
             return;
         }
@@ -122,42 +129,49 @@ public class CardinalManager  {
             @Override
             public void onValidated(ValidateResponse validateResponse, String s) {
                 Log.d(TAG, "Error Message: " + validateResponse.getErrorDescription());
-                setCardinalFailure(true);
+                setCardinalError(true);
                 initCardinalServiceCallback.onComplete();
             }
         });
 
     }
 
-    @Nullable
-    public BS3DSAuthResponse authWith3DS(String currency, Double amount) throws BS3DSAuthRequestException, JSONException {
-        if (isCardinalFailure())
-            return null;
+    public void authWith3DS(String currency, Double amount, Activity activity, final CreditCard creditCard) throws JSONException {
+        if (!is3DSecureEnabled() || isCardinalError()) { // cardinal is disabled in merchant configuration or error occurred
+            BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
+            return;
+        }
 
         BS3DSAuthRequest authRequest = new BS3DSAuthRequest(currency, amount, cardinalToken);
         BlueSnapHTTPResponse response = blueSnapAPI.tokenizeDetails(authRequest.toJson().toString());
         JSONObject jsonObject;
         if (response.getResponseCode() != HTTP_OK) {
-            throw new BS3DSAuthRequestException("BS API Exception - tokenize 3ds");
+            Log.e(TAG, "BS Server Error in 3DS Auth API call:\n" + response);
+            setThreeDSAuthResult(ThreeDSManagerResponse.THREE_DS_ERROR.name());
+            BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, response.toString(), TAG);
         }
 
         jsonObject = new JSONObject(response.getResponseString());
         BS3DSAuthResponse authResponse = BS3DSAuthResponse.fromJson(jsonObject);
         if (authResponse == null) {
-            return null;
+            setThreeDSAuthResult(ThreeDSManagerResponse.THREE_DS_ERROR.name());
+            BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
+            return;
         }
 
-        if (!authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) { // populate Enrollment Status as the result
-            setCardinalResult(authResponse.getEnrollmentStatus());
+        if (authResponse.getEnrollmentStatus().equals("CHALLENGE_REQUIRED")) {
+            // verifying 3DS version
+            String firstChar = authResponse.getThreeDSVersion().substring(0, 1);
+            if (!firstChar.equals(SUPPORTED_CARD_VERSION)) {
+                setThreeDSAuthResult(ThreeDSManagerResponse.CARD_NOT_SUPPORTED.name());
+                BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
+            } else { // call process
+                process(authResponse, activity, creditCard);
+            }
+        } else { // populate Enrollment Status as 3DS result
+            setThreeDSAuthResult(authResponse.getEnrollmentStatus());
+            BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
         }
-
-        // verifying 3DS version
-        String firstChar = authResponse.getThreeDSVersion().substring(0, 1);
-        if (!firstChar.equals("2")) {
-            setCardinalResult(CardinalManagerResponse.AUTHENTICATION_NOT_SUPPORTED.name());
-        }
-
-        return authResponse;
     }
 
 
@@ -171,15 +185,14 @@ public class CardinalManager  {
      * @param authResponse - 3DS authentication response from server
      * @param activity - current displayed activity
      * @param creditCard - shopper's credit card
-     * @param isReturningShopper - true if this is a returning shopper flow, false w.s.
      */
-    public void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard, boolean isReturningShopper) {
+    private void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
 
         Handler refresh = new Handler(Looper.getMainLooper());
         refresh.post(new Runnable() {
             public void run() {
 
-                if (!isReturningShopper) { // new card mode - passing the cc number to cardinal for processing
+                if (creditCard.getIsNewCreditCard()) { // new card mode - passing the cc number to cardinal for processing
                     Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
                         @Override
                         public void onComplete() {
@@ -208,14 +221,23 @@ public class CardinalManager  {
                 Log.d(TAG, "Cardinal validated callback");
 
                 if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
-                    // do nothing
-                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE) || validateResponse.actionCode.equals(CardinalActionCode.ERROR)) {
-                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_FAILED.name());
+                    try {
+                        processCardinalResult(s);
+                    } catch (BSProcess3DSResultRequestException | JSONException e) {
+                        setThreeDSAuthResult(ThreeDSManagerResponse.THREE_DS_ERROR.name());
+                        BlueSnapLocalBroadcastManager.sendMessage(context, THREE_DS_AUTH_DONE_EVENT, e.getMessage(), TAG);
+                        return;
+                    }
+
+                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
+                    setThreeDSAuthResult(ThreeDSManagerResponse.AUTHENTICATION_FAILED.name());
+                } else if (validateResponse.actionCode.equals(CardinalActionCode.ERROR)) {
+                    setThreeDSAuthResult(ThreeDSManagerResponse.THREE_DS_ERROR.name());
                 } else { // cancel
-                    setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
+                    setThreeDSAuthResult(ThreeDSManagerResponse.AUTHENTICATION_CANCELED.name());
                 }
 
-                BlueSnapLocalBroadcastManager.sendMessage(context, CARDINAL_VALIDATED, "actionCode", validateResponse.actionCode.getString(), "resultJwt", s, TAG);
+                BlueSnapLocalBroadcastManager.sendMessage(context, THREE_DS_AUTH_DONE_EVENT, TAG);
             }
         });
 
@@ -225,20 +247,15 @@ public class CardinalManager  {
      * @return
      * @throws BSProcess3DSResultRequestException
      */
-    public void processCardinalResult(String resultJwt) throws BSProcess3DSResultRequestException {
+    private void processCardinalResult(String resultJwt) throws BSProcess3DSResultRequestException, JSONException {
         String body = createDataObject(resultJwt).toString();
         BlueSnapHTTPResponse response = blueSnapAPI.processCardinalResult(body);
         if (response.getResponseCode() != HTTP_OK) {
-            Log.e(TAG, "Error in processing cardinal result:\n" + response);
-            throw new BSProcess3DSResultRequestException("BS API Exception - process 3ds result");
+            Log.e(TAG, "BS Server Error in 3DS process result API call:\n" + response);
+            throw new BSProcess3DSResultRequestException(response.toString());
         } else {
-            try {
-                JSONObject jsonObject = new JSONObject(response.getResponseString());
-                setCardinalResult(getOptionalString(jsonObject, "authResult"));
-            } catch (JSONException e) {
-                Log.e(TAG, "Error in parsing cardinal result:\n" + response);
-                setCardinalResult(CardinalManagerResponse.AUTHENTICATION_UNAVAILABLE.name());
-            }
+            JSONObject jsonObject = new JSONObject(response.getResponseString());
+            setThreeDSAuthResult(getOptionalString(jsonObject, "authResult"));
         }
     }
 
@@ -264,20 +281,26 @@ public class CardinalManager  {
         return jsonObject;
     }
 
-    public String getCardinalResult() {
-        return cardinalResult;
+    private boolean is3DSecureEnabled() {
+        return (cardinalToken != null);
     }
 
-    private void setCardinalResult(String cardinalResult) {
-        this.cardinalResult = cardinalResult;
+    public String getThreeDSAuthResult() {
+        return threeDSAuthResult;
     }
 
-    private boolean isCardinalFailure() {
-        return cardinalFailure;
+    private void setThreeDSAuthResult(String threeDSAuthResult) {
+        this.threeDSAuthResult = threeDSAuthResult;
     }
 
-    private void setCardinalFailure(boolean cardinalFailure) {
-        this.cardinalFailure = cardinalFailure;
+    private boolean isCardinalError() {
+        return cardinalError;
+    }
+
+    private void setCardinalError(boolean cardinalError) {
+        if (cardinalError)
+            setThreeDSAuthResult(ThreeDSManagerResponse.THREE_DS_ERROR.name());
+        this.cardinalError = cardinalError;
     }
 
 }

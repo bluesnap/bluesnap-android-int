@@ -26,16 +26,11 @@ public class CardTokenizationTests extends BSAndroidTestsBase {
         final String CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE = "1234123412341238";
         final String CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED = "5568111111111116";
 
-        Double amount = 30.5D;
-
-        SdkRequest sdkRequest = new SdkRequest(amount, "USD");
-
-        blueSnapService.setSdkRequest(sdkRequest);
-
         final PurchaseDetails purchaseDetails = new PurchaseDetails();
         final BillingContactInfo billingContactInfo = new BillingContactInfo();
         purchaseDetails.setBillingContactInfo(billingContactInfo);
         billingContactInfo.setFullName("John Doe");
+        purchaseDetails.setStoreCard(true);
         final CreditCard card = new CreditCard();
         purchaseDetails.setCreditCard(card);
         String number = CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED;

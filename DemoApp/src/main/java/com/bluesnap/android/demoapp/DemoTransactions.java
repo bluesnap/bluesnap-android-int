@@ -90,6 +90,7 @@ public class DemoTransactions {
             try {
                 if (responseString != null)
                     errorName = responseString.substring(responseString.indexOf("<error-name>") + "<error-name>".length(), responseString.indexOf("</error-name>"));
+                Log.e(TAG, "Failed TX Response:  " + responseString);
             } catch (Exception e) {
                 Log.e(TAG, "failed to get error name from response string");
                 Log.e(TAG, "Failed TX Response:  " + responseString);

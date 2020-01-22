@@ -240,7 +240,7 @@ public class BlueSnapService {
      */
     public BlueSnapHTTPResponse submitTokenizedDetails(PurchaseDetails purchaseDetails) throws JSONException {
         Log.d(TAG, "Tokenizing card on token " + bluesnapToken.toString());
-        return blueSnapAPI.tokenizeDetails(createDataObject(sdkRequestBase.getShopperCheckoutRequirements(), purchaseDetails).toString());
+        return blueSnapAPI.tokenizeDetails(createDataObject(purchaseDetails).toString());
     }
 
     /**
