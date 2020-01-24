@@ -57,6 +57,12 @@ android {
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
 
+    testOptions {
+        unitTests.all {
+            systemProperty 'robolectric.dependency.repo.url', 'https://repo1.maven.org/maven2'
+        }
+    }
+
 }
 configurations {
 
