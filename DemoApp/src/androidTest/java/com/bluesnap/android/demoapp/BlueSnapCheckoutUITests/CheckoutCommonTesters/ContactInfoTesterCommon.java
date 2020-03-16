@@ -394,10 +394,10 @@ public class ContactInfoTesterCommon {
     private static void moveToNextField(int componentResourceId, boolean withImeButton, int nextFieldResourceId, int currFieldResourceId) {
         if (withImeButton)
             onView(allOf(withId(currFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(pressImeActionButton());
-        else {
+//        else {
             closeSoftKeyboard();
             onView(allOf(withId(nextFieldResourceId), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
-        }
+//        }
     }
 
     public static void changeCountry(int componentResourceId, String country) {

@@ -254,7 +254,7 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
      * Entering an invalid name after entering a valid one
      */
     public void name_invalid_error_validation_using_ime_button_in_billing() {
-        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, 0);
+        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, R.id.input_email);
 
     }
 
@@ -283,7 +283,7 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
      * Entering an invalid email after entering a valid one
      */
     public void email_invalid_error_validation_using_ime_button_in_billing() {
-        ContactInfoTesterCommon.email_invalid_error_validation("email_invalid_error_validation_using_ime_button_in_billing", true, 0);
+        ContactInfoTesterCommon.email_invalid_error_validation("email_invalid_error_validation_using_ime_button_in_billing", true, R.id.input_zip);
 
     }
 
@@ -312,7 +312,7 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
      * Entering an invalid zip after entering a valid one
      */
     public void zip_invalid_error_validation_using_ime_button_in_billing() {
-        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, 0);
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, R.id.input_city);
     }
 
     /**
@@ -340,7 +340,7 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
      * Entering an invalid city after entering a valid one
      */
     public void city_invalid_error_validation_using_ime_button_in_billing() {
-        ContactInfoTesterCommon.city_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, 0);
+        ContactInfoTesterCommon.city_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_billing", R.id.billingViewComponent, true, R.id.input_address);
     }
 
     /**
