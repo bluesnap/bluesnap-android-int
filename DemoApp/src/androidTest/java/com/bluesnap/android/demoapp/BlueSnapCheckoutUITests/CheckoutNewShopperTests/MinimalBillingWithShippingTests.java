@@ -250,7 +250,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
      * Entering an invalid name after entering a valid one
      */
     public void name_invalid_error_validation_using_ime_button_in_shipping() {
-        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, 0);
+        ContactInfoTesterCommon.name_invalid_error_validation("name_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, R.id.input_zip);
 
     }
 
@@ -265,7 +265,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
      * Entering an invalid zip after entering a valid one
      */
     public void zip_invalid_error_validation_in_shipping() {
-        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, false, R.id.input_name);
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_in_shipping", R.id.newShoppershippingViewComponent, false, R.id.input_city);
     }
 
     /**
@@ -279,7 +279,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
      * Entering an invalid zip after entering a valid one
      */
     public void zip_invalid_error_validation_using_ime_button_in_shipping() {
-        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, 0);
+        ContactInfoTesterCommon.zip_invalid_error_validation("zip_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, R.id.input_city);
     }
 
     /**
@@ -307,7 +307,7 @@ public class MinimalBillingWithShippingTests extends CheckoutEspressoBasedTester
      * Entering an invalid city after entering a valid one
      */
     public void city_invalid_error_validation_using_ime_button_in_shipping() {
-        ContactInfoTesterCommon.city_invalid_error_validation("city_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, 0);
+        ContactInfoTesterCommon.city_invalid_error_validation("city_invalid_error_validation_using_ime_button_in_shipping", R.id.newShoppershippingViewComponent, true, R.id.input_address);
     }
 
     /**
