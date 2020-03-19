@@ -287,7 +287,9 @@ public class OneLineCCEditComponent extends LinearLayout {
                 changeCardEditTextDrawable(CreditCardTypeResolver.getInstance().getType(ccNum));
 
                 if (s.length() == getResources().getInteger(R.integer.ccn_max_length)) {
-                    expEditText.requestFocus();
+                    if (setCardNumberFromEditTextAndValidate()) {
+                        expEditText.requestFocus();
+                    }
                 }
             } catch (Exception e) {
                 Log.e(TAG, "creditCardNumberWatcher error", e );
@@ -331,11 +333,19 @@ public class OneLineCCEditComponent extends LinearLayout {
             moveToCcImageButton.setVisibility(View.GONE);
         if (setCardNumberFromEditTextAndValidate()) {
             submitCCNumber();
+
+            creditCardNumberEditText.setHint("");
+
+            creditCardNumberEditText.post(new Runnable() {
+                @Override
+                public void run() {
+                    creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
+                }
+            });
+
+            creditCardNumberEditText.setText(getCardLastFourDigitsForView(newCreditCard.getNumber()));
+            setExpAndCvvVisible();
         }
-        creditCardNumberEditText.setHint("");
-        creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
-        creditCardNumberEditText.setText(getCardLastFourDigitsForView(newCreditCard.getNumber()));
-        setExpAndCvvVisible();
     }
 
     /**
