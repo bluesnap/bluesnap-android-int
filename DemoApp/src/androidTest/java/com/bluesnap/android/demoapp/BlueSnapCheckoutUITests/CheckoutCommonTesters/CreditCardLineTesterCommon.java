@@ -198,19 +198,19 @@ public class CreditCardLineTesterCommon {
         check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, true, withImeButton, nextFieldResourceId, "", true);
 
         //enter a valid exp date and verify error message is not displayed anymore
-        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "11 19", false);
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "10 25", false);
 
         //Entering an invalid exp date- invalid month, and verify error message is displayed
         check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "20 20", true);
 
         //enter a valid exp date and verify error message is not displayed anymore
-        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "11 19", false);
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "10 25", false);
 
         //Entering an invalid exp date- past date, and verify error message is displayed
         check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "10 17", true);
 
         //enter a valid exp date and verify error message is not displayed anymore
-        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "11 19", false);
+        check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, false, withImeButton, nextFieldResourceId, "10 25", false);
 
         //Entering an invalid exp date- only month, and verify error message is displayed
         check_cc_line_input_validation(testName, R.id.expEditText, R.id.expErrorTextView, true, withImeButton, nextFieldResourceId, "12", true);
