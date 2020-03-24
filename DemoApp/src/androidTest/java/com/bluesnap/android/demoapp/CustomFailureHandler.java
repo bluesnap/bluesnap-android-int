@@ -1,6 +1,6 @@
 package com.bluesnap.android.demoapp;
 
-import android.support.test.espresso.FailureHandler;
+import androidx.test.espresso.FailureHandler;
 import android.view.View;
 import org.hamcrest.Matcher;
 

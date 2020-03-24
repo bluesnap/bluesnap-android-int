@@ -1,9 +1,9 @@
 package com.bluesnap.android.demoapp;
 
-import android.app.Application;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.multidex.MultiDexApplication;
+
+import androidx.multidex.MultiDexApplication;
 
 /**
  * This class is for demo crash reporting and analytics.

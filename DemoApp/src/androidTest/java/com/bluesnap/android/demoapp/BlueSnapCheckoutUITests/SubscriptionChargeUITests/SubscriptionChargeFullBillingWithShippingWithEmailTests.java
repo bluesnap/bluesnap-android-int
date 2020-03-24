@@ -1,6 +1,6 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.SubscriptionChargeUITests;
 
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;

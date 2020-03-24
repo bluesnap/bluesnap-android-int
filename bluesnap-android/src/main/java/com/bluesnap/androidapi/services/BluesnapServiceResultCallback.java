@@ -1,6 +1,6 @@
 package com.bluesnap.androidapi.services;
 
-import android.support.annotation.MainThread;
+import androidx.annotation.MainThread;
 import com.bluesnap.androidapi.models.SdkResult;
 
 /**

@@ -3,8 +3,9 @@ package com.bluesnap.android.demoapp;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.MainThread;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.MainThread;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;

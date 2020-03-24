@@ -1,8 +1,10 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.material.textfield.TextInputLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,7 +13,6 @@ import android.widget.TextView;
 
 import com.bluesnap.androidapi.models.BillingContactInfo;
 import com.bluesnap.androidapi.models.SdkRequestBase;
-import com.bluesnap.androidapi.models.Shopper;
 import com.bluesnap.androidapi.services.AndroidUtil;
 import com.bluesnap.androidapi.services.BlueSnapService;
 import com.bluesnap.androidapi.services.BlueSnapValidator;

@@ -1,7 +1,8 @@
 package com.bluesnap.androidapi.views.components;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import com.bluesnap.androidapi.models.ShippingContactInfo;
 import com.bluesnap.androidapi.services.BlueSnapService;

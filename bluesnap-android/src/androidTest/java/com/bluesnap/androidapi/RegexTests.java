@@ -1,6 +1,6 @@
 package com.bluesnap.androidapi;
 
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.util.Log;
 import com.bluesnap.androidapi.models.CreditCardTypeResolver;
 import org.junit.Before;

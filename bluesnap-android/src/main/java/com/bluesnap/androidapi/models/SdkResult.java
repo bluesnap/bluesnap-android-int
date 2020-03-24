@@ -2,7 +2,8 @@ package com.bluesnap.androidapi.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import static com.bluesnap.androidapi.views.activities.BluesnapChoosePaymentMethodActivity.BS_CHOOSE_PAYMENT_METHOD_RESULT_OK;
 

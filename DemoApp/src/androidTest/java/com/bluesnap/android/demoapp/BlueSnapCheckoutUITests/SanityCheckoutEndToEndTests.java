@@ -1,6 +1,6 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests;
 
-import android.support.test.espresso.matcher.ViewMatchers;
+import androidx.test.espresso.matcher.ViewMatchers;
 
 import com.bluesnap.android.demoapp.R;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;
@@ -9,8 +9,8 @@ import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import org.json.JSONException;
 import org.junit.Test;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 
 /**
  * Created by sivani on 18/10/2018.

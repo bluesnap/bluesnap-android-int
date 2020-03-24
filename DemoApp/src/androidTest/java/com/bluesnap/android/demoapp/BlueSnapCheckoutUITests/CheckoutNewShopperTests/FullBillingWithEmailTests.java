@@ -1,8 +1,8 @@
 package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutNewShopperTests;
 
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
@@ -17,14 +17,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 
 /**
  * Created by sivani on 21/07/2018.
  */
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 
 public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
 
@@ -39,7 +39,7 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
     }
 
-    @Test
+    //    @Test
     public void full_billing_with_email_test() {
         cc_line_fields_visibility_validation();
         new_credit_billing_contact_info_visibility_validation();
@@ -56,7 +56,7 @@ public class FullBillingWithEmailTests extends CheckoutEspressoBasedTester {
         //Pre-condition: All fields are empty
     }
 
-    @Test
+    //    @Test
     public void full_billing_with_email_test_inputs() {
         cc_line_error_messages_not_displayed_validation();
 

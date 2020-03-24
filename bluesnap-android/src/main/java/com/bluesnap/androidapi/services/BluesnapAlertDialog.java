@@ -3,7 +3,8 @@ package com.bluesnap.androidapi.services;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 import com.bluesnap.androidapi.R;
 
 /**

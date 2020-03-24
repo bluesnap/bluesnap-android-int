@@ -3,7 +3,8 @@ package com.bluesnap.androidapi;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.test.InstrumentationRegistry;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 import android.util.Base64;
 import android.util.Log;
 import com.bluesnap.androidapi.http.BlueSnapHTTPResponse;

@@ -1,6 +1,6 @@
 package com.bluesnap.android.demoapp;
 
-import android.support.test.espresso.IdlingResource;
+import androidx.test.espresso.IdlingResource;
 import android.view.View;
 
 import javax.annotation.Nullable;

@@ -1,7 +1,7 @@
 package com.bluesnap.androidapi.models;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,7 +9,6 @@ import com.bluesnap.androidapi.utils.JsonParser;
 
 import org.json.JSONObject;
 
-import static com.bluesnap.androidapi.models.BillingContactInfo.ADDRESS_1;
 import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 /**

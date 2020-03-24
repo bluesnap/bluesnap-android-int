@@ -1,6 +1,6 @@
 package com.bluesnap.android.demoapp.ShopperConfigUITests;
 
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.rule.ActivityTestRule;
 
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.WebViewUITests.PayPalWebViewTests;
 import com.bluesnap.android.demoapp.TestingShopperCheckoutRequirements;

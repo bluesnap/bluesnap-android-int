@@ -1,6 +1,6 @@
 package com.bluesnap.androidapi.models;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.json.JSONObject;
 
