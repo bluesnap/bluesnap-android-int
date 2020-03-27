@@ -19,7 +19,7 @@ import static junit.framework.Assert.*;
  * Unit tests for card and card type
  */
 @RunWith(AndroidJUnit4.class)
-public class InstrumentedCardTest extends BSAndroidTestsBase {
+public class InstrumentedCardTest extends BSAndroidIntegrationTestsBase {
     private static final String TAG = InstrumentedCardTest.class.getSimpleName();
     private static final String CARD_NUMBER_VALID_LUHN_UNKNOWN_TYPE = "1234123412341238";
     static final String CARD_NUMBER_VALID_LUHN_MASTERCARD_FAKED = "5568111111111116";

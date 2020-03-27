@@ -20,7 +20,7 @@ import static org.junit.Assert.fail;
  * Created by oz on 4/4/16.
  */
 @RunWith(AndroidJUnit4.class)
-public class EuroBasedCurrencyConverterTests extends BSAndroidTestsBase {
+public class EuroBasedCurrencyConverterTests extends BSAndroidIntegrationTestsBase {
     private static final String TAG = EuroBasedCurrencyConverterTests.class.getSimpleName();
     private static final String EUR = "EUR";
     private static final String ILS = "ILS";

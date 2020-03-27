@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
  * Created by oz on 4/4/16.
  */
 @RunWith(AndroidJUnit4.class)
-public class CurrencyConverterTests extends BSAndroidTestsBase {
+public class CurrencyConverterTests extends BSAndroidIntegrationTestsBase {
 
 
     private static final String TAG = CurrencyConverterTests.class.getSimpleName();

@@ -31,19 +31,19 @@ import static junit.framework.Assert.fail;
  * Created by oz on 10/29/17.
  */
 
-public class BSAndroidTestsBase {
+public class BSAndroidIntegrationTestsBase {
 
-    private static final String TAG = BSAndroidTestsBase.class.getSimpleName();
+    private static final String TAG = BSAndroidIntegrationTestsBase.class.getSimpleName();
     BlueSnapService blueSnapService;
     protected String merchantToken;
     protected TokenProvider tokenProvider;
     protected String baseCurrency;
 
-    BSAndroidTestsBase(String baseCurrency) {
+    BSAndroidIntegrationTestsBase(String baseCurrency) {
         this.baseCurrency = baseCurrency;
     }
 
-    BSAndroidTestsBase() {
+    BSAndroidIntegrationTestsBase() {
         this.baseCurrency = "USD";
     }
 

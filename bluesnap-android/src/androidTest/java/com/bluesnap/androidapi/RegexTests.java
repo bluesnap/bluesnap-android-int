@@ -14,7 +14,7 @@ import static junit.framework.Assert.assertEquals;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class RegexTests extends BSAndroidTestsBase {
+public class RegexTests extends BSAndroidIntegrationTestsBase {
 
     private static final String TAG = RegexTests.class.getSimpleName();
 
