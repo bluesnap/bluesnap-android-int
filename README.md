@@ -119,7 +119,7 @@ The instance include:
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode,  boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
-**Note:**  Please make sure to pass the allowed number of digits after the decimal separator, according to the purchase currency, as specified in [Supported Currencies](https://developers.bluesnap.com/docs/currency-codes)
+**Note:**  Please make sure to pass the allowed number of digits after the decimal separator, according to the purchase currency, as specified in [Supported Currencies](https://developers.bluesnap.com/docs/currency-codes) in **Decimal places** column
 
 An `SdkRequest` instance also contains the following:
 
