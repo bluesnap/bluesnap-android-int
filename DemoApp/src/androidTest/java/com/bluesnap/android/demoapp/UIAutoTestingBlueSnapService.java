@@ -111,7 +111,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
     protected String defaultCountryKey;
     private String defaultCountryValue;
     protected String checkoutCurrency = "USD";
-    protected double purchaseAmount = randomTestValuesGenerator.randomDemoAppPrice();
+    protected double purchaseAmount = Double.parseDouble(TestUtils.getDecimalFormat().format(randomTestValuesGenerator.randomDemoAppPrice()));
     private double taxPercent = randomTestValuesGenerator.randomTaxPercentage() / 100;
     protected double taxAmount = purchaseAmount * taxPercent;
 

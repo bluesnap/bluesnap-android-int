@@ -119,7 +119,9 @@ The instance include:
 ```
 SdkRequest sdkRequest = new SdkRequest(Double amount, String currencyNameCode,  boolean billingRequired, boolean emailRequired, boolean shippingRequired)
 ```
-An `SdkRequest` instance also contains the following: 
+**Note:**  Please make sure to pass the allowed number of digits after the decimal separator, according to the purchase currency, as specified in [Supported Currencies](https://developers.bluesnap.com/docs/currency-codes)
+
+An `SdkRequest` instance also contains the following:
 
 - `allowCurrencyChange` property: if true, the SDK will allow the shopper to change the purchase currency. By default it is true; if you wish to prevent your shoppers from changing the currency, you can specifically change this value like this:
     ```
