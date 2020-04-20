@@ -22,6 +22,7 @@
 
         <ImageView
             android:id="@+id/cardIconImageView"
+            android:contentDescription="@string/desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
