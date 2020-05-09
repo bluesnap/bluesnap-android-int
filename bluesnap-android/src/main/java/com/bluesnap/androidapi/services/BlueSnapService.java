@@ -291,7 +291,7 @@ public class BlueSnapService {
                             JSONObject errorResponse = new JSONObject(response.getErrorResponseString());
                             JSONArray rs2 = (JSONArray) errorResponse.get("message");
                             JSONObject rs3 = (JSONObject) rs2.get(0);
-                            if ("EXPIRED_TOKEN".equals(rs3.get("errorName")))
+                            if ("EXPIRED_TOKEN".equals(rs3.get("errorName"))) {
                                 getTokenProvider().getNewToken(
                                         new TokenServiceCallback() {
                                             @Override
@@ -301,6 +301,10 @@ public class BlueSnapService {
                                             }
                                         }
                                 );
+                            } else {
+                                Log.e(TAG, "Token not found error");
+                                callback.onFailure();
+                            }
                         } catch (JSONException e) {
                             Log.e(TAG, "json parsing exception", e);
                             callback.onFailure();
