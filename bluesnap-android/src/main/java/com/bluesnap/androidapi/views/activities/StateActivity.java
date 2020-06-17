@@ -23,6 +23,7 @@ public class StateActivity extends Activity {
     String localeState;
     StateListAdapter adapter;
     Map<String, Integer> mapIndex;
+    private final TextWatcher searchLineTextWatcher = new SearchLineTextWatcher();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,22 +83,7 @@ public class StateActivity extends Activity {
             }
         });
 
-        inputSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence cs, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence cs, int start, int before, int count) {
-                adapter.getFilter().filter(cs);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        inputSearch.addTextChangedListener(searchLineTextWatcher);
     }
 
     private void getIndexList(String[] lists) {
@@ -128,6 +114,23 @@ public class StateActivity extends Activity {
                 }
             });
             indexLayout.addView(textView);
+        }
+    }
+
+    private class SearchLineTextWatcher implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence cs, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence cs, int start, int before, int count) {
+            adapter.getFilter().filter(cs);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
         }
     }
 }
