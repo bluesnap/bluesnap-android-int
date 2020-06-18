@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.bluesnap.androidapi.R;
@@ -15,6 +16,7 @@ import com.bluesnap.androidapi.views.adapters.StateListAdapter;
 import java.util.*;
 
 public class StateActivity extends Activity {
+    private static final String TAG = StateActivity.class.getSimpleName();
 
     ListView listView;
     String[] state_values_array;
@@ -132,5 +134,12 @@ public class StateActivity extends Activity {
         public void afterTextChanged(Editable s) {
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy() was called");
+        super.onDestroy();
+        inputSearch.removeTextChangedListener(searchLineTextWatcher);
     }
 }

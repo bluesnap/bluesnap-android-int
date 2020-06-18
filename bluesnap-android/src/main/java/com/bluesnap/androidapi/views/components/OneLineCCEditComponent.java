@@ -538,4 +538,10 @@ public class OneLineCCEditComponent extends LinearLayout {
         });
     }
 
+    public void clear() {
+        Log.d(TAG, "clear() was called");
+        creditCardNumberEditText.removeTextChangedListener(creditCardNumberWatcher);
+        expEditText.removeTextChangedListener(expTextWatcher);
+    }
+
 }
