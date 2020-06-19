@@ -18,6 +18,7 @@ import com.bluesnap.androidapi.models.SdkRequest;
 import com.bluesnap.androidapi.services.BSPaymentRequestException;
 import com.bluesnap.androidapi.views.activities.BluesnapCheckoutActivity;
 
+import leakcanary.InstrumentationLeakDetector;
 import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.junit.Rule;
@@ -49,6 +50,8 @@ public class CheckoutEspressoBasedTester {
     protected ReturningShoppersFactory.TestingShopper returningShopper;
     protected TestingShopperCheckoutRequirements shopperCheckoutRequirements;
 
+    //InstrumentationLeakDetector instrumentationLeakDetector = new InstrumentationLeakDetector();
+
     @Rule
     public ActivityTestRule<BluesnapCheckoutActivity> mActivityRule = new ActivityTestRule<>(
             BluesnapCheckoutActivity.class, false, false);
@@ -56,6 +59,8 @@ public class CheckoutEspressoBasedTester {
     protected UIAutoTestingBlueSnapService<BluesnapCheckoutActivity> uIAutoTestingBlueSnapService = new UIAutoTestingBlueSnapService<>(mActivityRule);
 
     public CheckoutEspressoBasedTester() {
+      //  instrumentationLeakDetector.detectLeaks();
+
         checkoutCurrency = uIAutoTestingBlueSnapService.getCheckoutCurrency();
         purchaseAmount = uIAutoTestingBlueSnapService.getPurchaseAmount();
         taxPercent = uIAutoTestingBlueSnapService.getTaxPercent();

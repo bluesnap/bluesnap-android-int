@@ -405,7 +405,7 @@ public class ContactInfoTesterCommon {
     }
 
     public static void changeState(int componentResourceId, String state) {
-        onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(scrollTo(), click());
+        onView(allOf(withId(R.id.input_state), isDescendantOfA(withId(componentResourceId)))).perform(click());
         onData(hasToString(containsString(state))).inAdapterView(withId(R.id.state_list_view)).perform(click());
     }
 

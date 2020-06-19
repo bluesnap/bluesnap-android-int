@@ -12,12 +12,18 @@ android {
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionName androidGitVersion.name()
         versionCode androidGitVersion.code()
         //setProperty("archivesBaseName", "DemoApp-$versionName")
         testBuildType "debug"
         multiDexEnabled true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        //testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArgument "listener", "leakcanary.FailTestOnLeakRunListener"
+
+
+
     }
     buildTypes {
         release {
@@ -39,6 +45,7 @@ android {
         ignoreWarnings true
         disable 'MissingTranslation' //This is disabled until we get updated translations
     }
+
 
 
 }
@@ -105,7 +112,9 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0')
 
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-instrumentation:2.4"
+
 
 
 }
