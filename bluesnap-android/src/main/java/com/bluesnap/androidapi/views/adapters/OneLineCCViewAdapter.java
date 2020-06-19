@@ -22,11 +22,14 @@ import java.util.List;
 public class OneLineCCViewAdapter extends BaseAdapter {
 
     private final Activity context;
-    private List<CreditCardInfo> creditCardInfos;
+    private final List<CreditCardInfo> creditCardInfos;
+    private final ViewGroup caller;
 
-    public OneLineCCViewAdapter(Activity context, List<CreditCardInfo> creditCardInfos) {
+    public OneLineCCViewAdapter(Activity context, List<CreditCardInfo> creditCardInfos, ViewGroup caller) {
         this.context = context;
         this.creditCardInfos = creditCardInfos;
+
+        this.caller = caller;
     }
 
     @Override
@@ -44,12 +47,13 @@ public class OneLineCCViewAdapter extends BaseAdapter {
         return creditCardInfos.indexOf(getItem(position));
     }
 
+
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.one_line_cc_view_component, null);
+            convertView = inflater.inflate(R.layout.one_line_cc_view_component, caller);
         }
 
         TextView ccLastFourDigitsTextView = convertView.findViewById(R.id.ccLastFourDigitsTextView);

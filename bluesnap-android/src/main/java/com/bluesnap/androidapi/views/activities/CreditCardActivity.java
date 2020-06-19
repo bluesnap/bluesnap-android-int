@@ -139,7 +139,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        getBlueSnapFragment().unregisterBlueSnapLocalBroadcastReceiver();
+        newCreditCardShippingFragment = null;
         BlueSnapLocalBroadcastManager.unregisterReceiver(getParent(), broadcastReceiver);
         super.onDestroy();
     }

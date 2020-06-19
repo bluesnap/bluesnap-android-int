@@ -223,5 +223,6 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         inputState = null;
 
         unregisterBlueSnapLocalBroadcastReceiver();;
+        super.onViewRemoved(child);
     }
 }

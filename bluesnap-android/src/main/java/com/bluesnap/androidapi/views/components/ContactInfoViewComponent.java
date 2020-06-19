@@ -121,6 +121,22 @@ public class ContactInfoViewComponent extends LinearLayout {
     @Override
     public void onViewRemoved(View child) {
         inputState = null;
+        inputName = null;
+        inputEmail = null;
+        inputZip = null;
+        inputCity =null ;
+        inputAddress = null;
+
+        inputLayoutName = null;
+        inputLayoutEmail = null;
+        inputLayoutZip = null;
+        inputLayoutState = null;
+        inputLayoutCity = null;
+        inputLayoutAddress = null;
+
+       countryImageButton = null;
+       this.userCountry = null;
+
         clearDisappearingChildren();
         unregisterBlueSnapLocalBroadcastReceiver();
         BlueSnapLocalBroadcastManager.unregisterReceiver(child.getContext(), broadcastReceiver);

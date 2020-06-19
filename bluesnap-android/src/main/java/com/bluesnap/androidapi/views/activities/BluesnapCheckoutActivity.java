@@ -72,7 +72,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     protected ProgressBar progressBar;
     protected SdkRequestBase sdkRequest;
     protected SDKConfiguration sdkConfiguration;
-    protected OneLineCCViewAdapter oneLineCCViewAdapter;
+    //protected OneLineCCViewAdapter oneLineCCViewAdapter;
     protected final BlueSnapService blueSnapService = BlueSnapService.getInstance();
     protected PaymentsClient googlePayClient;
 
@@ -181,9 +181,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        oneLineCCViewAdapter =null;
-        progressBar = null;
-
+        Log.d(TAG,"stopping");
         super.onDestroy();
     }
 
@@ -212,7 +210,6 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        this.oneLineCCViewAdapter = null;
         super.onBackPressed();
     }
 
@@ -281,7 +278,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
 
         //create an adapter to describe how the items are displayed.
         ListView oneLineCCViewComponentsListView = findViewById(R.id.oneLineCCViewComponentsListView);
-        oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray);
+        OneLineCCViewAdapter oneLineCCViewAdapter = new OneLineCCViewAdapter(this, returningShopperCreditCardInfoArray, oneLineCCViewComponentsListView);
         //set the spinners adapter to the previously created one.
         oneLineCCViewComponentsListView.setAdapter(oneLineCCViewAdapter);
 

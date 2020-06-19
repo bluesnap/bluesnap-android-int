@@ -249,6 +249,7 @@ public class UIAutoTestingBlueSnapService<StartUpActivity extends Activity> {
         }
     }
 
+
     public void setupAndLaunch(SdkRequestBase sdkRequest) throws InterruptedException, BSPaymentRequestException {
         setupAndLaunch(sdkRequest, "USD", false, "");
     }

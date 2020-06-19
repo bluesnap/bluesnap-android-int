@@ -64,12 +64,11 @@ public class NewCreditCardFragment extends BlueSnapFragment {
     @Override
     public void onDestroyView() {
         Log.d(TAG, "onDestroyView() was called");
-        super.onDestroyView();
         oneLineCCEditComponent.clear();
         oneLineCCEditComponent = null;
-        billingViewComponent = null;
-
+        billingViewComponent.onViewRemoved(this.getView());
         BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
+        super.onDestroyView();
     }
 
     @Override
