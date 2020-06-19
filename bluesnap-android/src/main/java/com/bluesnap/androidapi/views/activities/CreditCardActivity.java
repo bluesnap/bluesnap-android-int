@@ -104,8 +104,8 @@ public class CreditCardActivity extends AppCompatActivity {
             setHamburgerMenuButtonVisibility(View.INVISIBLE);
         }
 
-        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
-        BlueSnapLocalBroadcastManager.registerReceiver(this, BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getParent(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_REQUEST, broadcastReceiver);
+        BlueSnapLocalBroadcastManager.registerReceiver(getParent(), BlueSnapLocalBroadcastManager.STATE_CHANGE_REQUEST, broadcastReceiver);
 
         progressBar = findViewById(R.id.payProgressBar);
         progressBar.setVisibility(View.INVISIBLE);
@@ -139,14 +139,16 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        getBlueSnapFragment().unregisterBlueSnapLocalBroadcastReceiver();
+        BlueSnapLocalBroadcastManager.unregisterReceiver(getParent(), broadcastReceiver);
         super.onDestroy();
-        BlueSnapLocalBroadcastManager.unregisterReceiver(this, broadcastReceiver);
     }
 
     @Override
     public void onBackPressed() {
         getBlueSnapFragment().onActivityBackPressed();
 
+        BlueSnapLocalBroadcastManager.unregisterReceiver(getParent(), broadcastReceiver);
         super.onBackPressed();
 
         if (NewCreditCardShippingFragment.TAG.equals(fragmentType)) {

@@ -32,6 +32,12 @@ public class BlueSnapFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroyView() {
+        buttonComponentText = null;
+        super.onDestroyView();
+    }
+
     public void onActivityRestoredInstanceState(Bundle savedInstanceState) {
 
     }

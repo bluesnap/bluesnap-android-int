@@ -87,6 +87,9 @@ public class SubscriptionChargeFullBillingWithShippingWithEmailTests extends Sub
 
         Espresso.pressBack();
 
+        System.gc();
+        System.gc();
+
         onView(ViewMatchers.withId(R.id.newCardButton)).perform(click());
 
         String state = ContactInfoTesterCommon.getDefaultStateByCountry(ContactInfoTesterCommon.billingContactInfo.getCountryKey());

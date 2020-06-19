@@ -47,6 +47,13 @@ public class ReturningShopperBillingFragment extends BlueSnapFragment {
     }
 
     @Override
+    public void onDestroy() {
+        billingViewComponent = null;
+        scrollView = null;
+        super.onDestroy();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View inflate = inflater.inflate(R.layout.returning_shopper_billing_fragment, container, false);

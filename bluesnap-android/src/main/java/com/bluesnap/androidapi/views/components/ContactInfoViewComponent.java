@@ -120,7 +120,11 @@ public class ContactInfoViewComponent extends LinearLayout {
      */
     @Override
     public void onViewRemoved(View child) {
+        inputState = null;
+        clearDisappearingChildren();
         unregisterBlueSnapLocalBroadcastReceiver();
+        BlueSnapLocalBroadcastManager.unregisterReceiver(child.getContext(), broadcastReceiver);
+
         super.onViewRemoved(child);
     }
 

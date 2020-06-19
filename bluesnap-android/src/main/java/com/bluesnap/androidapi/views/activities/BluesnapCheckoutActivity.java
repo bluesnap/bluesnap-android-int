@@ -179,6 +179,14 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        oneLineCCViewAdapter =null;
+        progressBar = null;
+
+        super.onDestroy();
+    }
+
     protected void setGooglePayAvailable(boolean available) {
         LinearLayout googlePayButton = findViewById(R.id.googlePayButton);
         if (available) {
@@ -200,6 +208,12 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         verifySDKRequest();
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.oneLineCCViewAdapter = null;
+        super.onBackPressed();
     }
 
     /**

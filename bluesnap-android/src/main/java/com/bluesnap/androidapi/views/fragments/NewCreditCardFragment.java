@@ -66,6 +66,9 @@ public class NewCreditCardFragment extends BlueSnapFragment {
         Log.d(TAG, "onDestroyView() was called");
         super.onDestroyView();
         oneLineCCEditComponent.clear();
+        oneLineCCEditComponent = null;
+        billingViewComponent = null;
+
         BlueSnapLocalBroadcastManager.unregisterReceiver(getActivity(), broadcastReceiver);
     }
 
@@ -284,4 +287,5 @@ public class NewCreditCardFragment extends BlueSnapFragment {
             }
         }
     };
+
 }

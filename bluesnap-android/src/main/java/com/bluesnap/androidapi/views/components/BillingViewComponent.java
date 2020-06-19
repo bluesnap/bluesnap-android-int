@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import com.bluesnap.androidapi.services.BlueSnapLocalBroadcastManager;
 import com.google.android.material.textfield.TextInputLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -217,5 +218,10 @@ public class BillingViewComponent extends ContactInfoViewComponent {
         } else
             setStateVisibility(GONE);
     }
+    @Override
+    public void onViewRemoved(View child) {
+        inputState = null;
 
+        unregisterBlueSnapLocalBroadcastReceiver();;
+    }
 }

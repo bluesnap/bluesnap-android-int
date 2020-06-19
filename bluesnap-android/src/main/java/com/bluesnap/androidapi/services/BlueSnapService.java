@@ -637,24 +637,24 @@ public class BlueSnapService {
      * @return Country - ISO 3166-1 alpha-2 standard, default value is US
      */
     public String getUserCountry(Context context) {
-        try {
-            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (tm == null) {
-                Log.w(TAG, "TelephonyManager is null");
-            } else {
-                final String simCountry = tm.getSimCountryIso();
-                if (simCountry != null && simCountry.length() == 2) {
-                    return simCountry.toUpperCase(Locale.US);
-                } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
-                    String networkCountry = tm.getNetworkCountryIso();
-                    if (networkCountry != null && networkCountry.length() == 2) {
-                        return networkCountry.toUpperCase(Locale.US);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "TelephonyManager, getSimCountryIso or getNetworkCountryIso failed");
-        }
+//        try {
+//            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//            if (tm == null) {
+//                Log.w(TAG, "TelephonyManager is null");
+//            } else {
+//                final String simCountry = tm.getSimCountryIso();
+//                if (simCountry != null && simCountry.length() == 2) {
+//                    return simCountry.toUpperCase(Locale.US);
+//                } else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) {
+//                    String networkCountry = tm.getNetworkCountryIso();
+//                    if (networkCountry != null && networkCountry.length() == 2) {
+//                        return networkCountry.toUpperCase(Locale.US);
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            Log.e(TAG, "TelephonyManager, getSimCountryIso or getNetworkCountryIso failed");
+//        }
 
         return Locale.US.getCountry();
     }
