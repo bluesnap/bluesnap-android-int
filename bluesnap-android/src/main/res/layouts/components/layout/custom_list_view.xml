@@ -18,12 +18,13 @@
               android:textSize="17sp" />
 
     <ImageView
-            android:id="@+id/bluesnap_customlist_list_view_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="10sp"
-            android:padding="5sp"
-            android:src="@drawable/blue_check_mark"
-            android:visibility="invisible" />
+        android:id="@+id/bluesnap_customlist_list_view_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginRight="10sp"
+        android:contentDescription="@string/desc"
+        android:padding="5sp"
+        android:src="@drawable/blue_check_mark"
+        android:visibility="invisible" />
 
 </LinearLayout>

@@ -34,6 +34,7 @@
     <string name="pay">Pay</string>
     <string name="total">Total</string>
     <string name="buynowbutton" translatable="false">BuyNowbutton</string>
+    <string name="desc" translatable="false">View Description</string>
 
     <string name="hint_name">Full Name</string>
     <string name="hint_email">Email</string>
