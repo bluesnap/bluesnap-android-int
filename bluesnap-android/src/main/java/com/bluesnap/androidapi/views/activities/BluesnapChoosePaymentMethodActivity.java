@@ -53,6 +53,7 @@ public class BluesnapChoosePaymentMethodActivity extends BluesnapCheckoutActivit
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CreditCardActivity.CREDIT_CARD_ACTIVITY_DEFAULT_REQUEST_CODE) { // Only new credit card as supported payment method- hide New Card button
                 LinearLayout newCardButton = findViewById(R.id.newCardButton);

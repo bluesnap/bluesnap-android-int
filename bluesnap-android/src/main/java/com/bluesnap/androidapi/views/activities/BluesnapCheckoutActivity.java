@@ -444,7 +444,7 @@ public class BluesnapCheckoutActivity extends AppCompatActivity {
     /**
      * start WebView Activity for PayPal Checkout
      *
-     * @param payPalUrl - received from createPayPalToken {@link com.bluesnap.androidapi.services.BlueSnapAPI}
+     * @param payPalUrl - received from createPayPalToken
      */
     protected void startWebViewActivity(String payPalUrl) {
         Intent newIntent;
