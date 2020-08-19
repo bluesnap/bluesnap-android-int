@@ -281,6 +281,7 @@ public class CreditCardActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RESULT_COUNTRY)
                 BlueSnapLocalBroadcastManager.sendMessage(getApplicationContext(), BlueSnapLocalBroadcastManager.COUNTRY_CHANGE_RESPONSE, data.getStringExtra("result"), TAG);

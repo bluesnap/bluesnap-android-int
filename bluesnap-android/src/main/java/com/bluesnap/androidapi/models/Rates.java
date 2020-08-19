@@ -19,7 +19,6 @@ public class Rates {
     private ArrayList<Currency> currencies;
 
     // internal c'tor for tests
-    @VisibleForTesting
     public Rates(ArrayList<Currency> currencies, String merchantStoreCurrency, String merchantStoreCurrencyName) {
         this.currencies = currencies;
         this.merchantStoreCurrency = merchantStoreCurrency;
