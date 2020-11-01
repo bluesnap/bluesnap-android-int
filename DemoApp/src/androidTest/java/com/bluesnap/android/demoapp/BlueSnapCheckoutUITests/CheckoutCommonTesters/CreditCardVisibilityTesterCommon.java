@@ -368,7 +368,8 @@ public class CreditCardVisibilityTesterCommon {
                     isDescendantOfA(withId(layoutResourceId)),
                     isDescendantOfA(withId(componentResourceId))))
                     .withFailureHandler(new CustomFailureHandler(testName + ": Invalid error message is not displayed for " + fieldName))
-                    .perform(scrollTo()).check(matches(isDisplayed()));
+//                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
 
         else //Verify error message is not displayed
             onView(allOf(withId(R.id.textinput_error),
