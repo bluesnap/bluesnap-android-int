@@ -9,7 +9,8 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        //If you're building your app using Android Gradle plugin 4.0.0 or higher, the plugin extends support for using a number of Java 8 language APIs without requiring a minimum API level for your app.
+        classpath 'com.android.tools.build:gradle:4.1.2'
     }
 }
 
