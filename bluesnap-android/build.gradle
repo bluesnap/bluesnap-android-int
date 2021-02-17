@@ -45,14 +45,14 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
-            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            //buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
+            //buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
-            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            //buildConfigField("long", "VERSION_CODE", "${defaultConfig.versionCode}")
+            //buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
 
         }
     }
@@ -103,9 +103,9 @@ else {
 
 
 dependencies {
-    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    compileOnly (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     // Cardinal Required libraries
-    implementation (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
     implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '7.0.1'
     //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
 
