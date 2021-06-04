@@ -45,7 +45,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}}"
+            buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
         }
+        debug {
+            buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}"
+            buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
+        }
+
     }
 
     lintOptions {
@@ -67,7 +74,7 @@ configurations {
 }
 
 /**
- * BuildConfig credentials
+ * BuildConfig credentials for integration tests
  */
 def sdkUserEnv=System.getenv('BS_API_USER')
 def sdkPasswordEnv=System.getenv('BS_API_PASSWORD')
@@ -86,10 +93,16 @@ else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && 
                 buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
                 buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
                 buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"" + sdkPaypalPassword + "\""
-            }}}
+
+            }
+
+        }
+    }
 }
 else {
-    throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+    print('--------------------- Missing API credentials for integration tests --------------')
+    //throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+    //throw new GradleException("Please make sure your API Credentials are in local.gradle ")
 }
 
 
