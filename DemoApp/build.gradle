@@ -134,5 +134,6 @@ else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && 
 
 }
 else {
+    print('------------------- NO API CREDENTIALS - DEMO API CALLS WILL FAIL --------------------')
     throw new GradleException("Please make sure your API Credentials are in local.gradle ")
 }
