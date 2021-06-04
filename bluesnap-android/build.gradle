@@ -45,12 +45,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}}"
-            buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
+            buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}"
+            buildConfigField 'String', 'VERSION_NAME', "${defaultConfig.versionName}"
         }
         debug {
             buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}"
-            buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
+            buildConfigField 'String', 'VERSION_NAME', "${defaultConfig.versionName}"
         }
 
     }
