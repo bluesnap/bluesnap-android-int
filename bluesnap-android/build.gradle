@@ -108,12 +108,12 @@ else {
 
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+
     // Cardinal Required libraries
-    implementation (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
+    //implementation (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
+    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.1.4-1'
+
     implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '7.0.1'
-    //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
-
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
