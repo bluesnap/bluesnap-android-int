@@ -87,6 +87,9 @@ bintray {
 dependencies {
     implementation project(':bluesnap-android')
 
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
+
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
 
