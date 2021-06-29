@@ -12,9 +12,26 @@ This SDK supports Android SDK 27 and above for development. The minimum Android 
 # Installation
 
 ## Android Studio (Gradle) instructions
-To get started, add the following line in your `build.gradle` file in the dependencies section:
+Follow the [instructions on jitpack](https://jitpack.io/#bluesnap/bluesnap-android-int/) 
 
-    compile 'com.bluesnap:bluesnap-android:[version]'
+Step 1:
+```
+    allprojects {
+	 repositories {
+	      maven { url 'https://jitpack.io' }
+		}
+	}
+```
+
+Step 2:
+```
+   dependencies {
+	 implementation 'com.github.bluesnap:bluesnap-android-int:Tag'
+	}
+```
+
+Step 3: Replace the "Tag" with the desired version.
+
 
 # Available flows for collecting payment details
 

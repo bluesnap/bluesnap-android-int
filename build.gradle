@@ -33,7 +33,8 @@ allprojects {
             url  "https://cardinalcommerceprod.jfrog.io/artifactory/android"
             credentials {
                 username 'bluesnap_sdk_users'
-                password 'AKCp8jQnUytDaavAPeaX5SfvRP8e6PUsrmh8cyp1Be5wBpBdDKhLRmaaKiKj3pnFwu9mwzv2n'
+                // This is here by design:
+                password 'AKCp8jQnUytDaavAPeaX5SfvRP8e6PUsrmh8cyp1Be5wBpBdDKhLRmaaKiKj3pnFwu9mwzv2n' // public password.. not a secret.
             }
         }
     }
