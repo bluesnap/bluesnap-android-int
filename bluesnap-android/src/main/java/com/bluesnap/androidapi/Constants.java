@@ -31,7 +31,7 @@ public class Constants {
 
     public final static String[] COUNTRIES_WITHOUT_ZIP = {
             "AO", "AG", "AW", "AC", "BS", "BZ", "BJ", "BW", "BO", "BF", "BI", "CM", "CF", "KM", "CG", "CD", "CK", "CW", "DJ", "DM", "TP", "GQ", "ER", "FJ", "TF", "GM", "GH", "GD", "GY", "HM",
-            "HK", "KI", "LY", "MO", "MW", "ML", "MR", "NR", "AN", "NU", "KP", "QA", "RW", "KN", "ST", "SC", "SL", "SB", "SR", "SY", "TL", "TG", "TK", "TO", "TV", "UG", "AE", "VU", "YE", "ZW"
+            "HK", "JM", "KI", "LY", "MO", "MW", "ML", "MR", "NR", "AN", "NU", "KP", "QA", "RW", "KN", "ST", "SC", "SL", "SB", "SR", "SY", "TL", "TG", "TK", "TO", "TT", "TV", "UG", "AE", "VU", "YE", "ZW"
 
     };
 
