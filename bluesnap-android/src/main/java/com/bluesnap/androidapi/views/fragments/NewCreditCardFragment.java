@@ -226,7 +226,7 @@ public class NewCreditCardFragment extends BlueSnapFragment {
                 if (oneLineCCEditComponent.getCreditCardNumberEditText().hasFocus())
                     oneLineCCEditComponent.getCvvEditText().requestFocus();
                 if (validateAndSetCreditCardInfoAndBillingInfo() && validateStoreCard()) {
-//                    shopper.setNewCreditCardInfo(newCreditCardInfo);
+                    shopper.setNewCreditCardInfo(newCreditCardInfo);
                     if (sdkRequest.getShopperCheckoutRequirements().isShippingRequired() && amountTaxShippingComponentView.isShippingSameAsBilling())
                         shopper.setShippingContactInfo(billingViewComponent.getViewResourceDetails());
                     finishFromFragment();
