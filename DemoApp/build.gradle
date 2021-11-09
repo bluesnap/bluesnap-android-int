@@ -1,6 +1,5 @@
 plugins {
     id 'com.gladed.androidgitversion' version '0.4.9'
-    id "com.jfrog.bintray" version "1.6"
 
 }
 apply plugin: 'com.android.application'
@@ -43,46 +42,46 @@ android {
 
 }
 String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_APIKEY')
-    // override = true // only for plugin version 1.7 which require java8 and still has bugs
-    publish = true
-    pkg {
-        repo = 'AndroidSDKDemoApp'
-        name = 'DemoAPK'
-        userOrg = 'bluesnap'
-        desc = 'BlueSnap Android SDK Demo App'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/bluesnap/bluesnap-android-int'
-        publicDownloadNumbers = false
-        version {
-            name = versionName
-            released = new Date()
-            vcsTag = androidGitVersion.name()
-            attributes = [
-                    'test'       : String.valueOf(System.getenv('TRAVIS_TEST_RESULT')),
-                    'commit'     : String.valueOf(System.getenv('TRAVIS_COMMIT')),
-                    'jobnumber'  : String.valueOf(System.getenv('TRAVIS_JOB_NUMBER')),
-                    'branch'     : String.valueOf(System.getenv('TRAVIS_BRANCH')),
-                    'versioncode': String.valueOf(androidGitVersion.code())
-            ]
-        }
-    }
-    filesSpec {
-        from('build/outputs/apk') {
-            include '*.apk'
-            exclude('*.asc')
-            exclude('*-debug-unaligned.apk')
-            exclude('*-release-unsigned.apk')
-
-        }
-        into 'travis/' + System.getenv('TRAVIS_BRANCH') + "/"
-        rename { String fileName -> new String('/DemoApp-' + versionName + ".apk")
-        }
-    }
-}
+//
+//bintray {
+//    user = System.getenv('BINTRAY_USER')
+//    key = System.getenv('BINTRAY_APIKEY')
+//    // override = true // only for plugin version 1.7 which require java8 and still has bugs
+//    publish = true
+//    pkg {
+//        repo = 'AndroidSDKDemoApp'
+//        name = 'DemoAPK'
+//        userOrg = 'bluesnap'
+//        desc = 'BlueSnap Android SDK Demo App'
+//        licenses = ['MIT']
+//        vcsUrl = 'https://github.com/bluesnap/bluesnap-android-int'
+//        publicDownloadNumbers = false
+//        version {
+//            name = versionName
+//            released = new Date()
+//            vcsTag = androidGitVersion.name()
+//            attributes = [
+//                    'test'       : String.valueOf(System.getenv('TRAVIS_TEST_RESULT')),
+//                    'commit'     : String.valueOf(System.getenv('TRAVIS_COMMIT')),
+//                    'jobnumber'  : String.valueOf(System.getenv('TRAVIS_JOB_NUMBER')),
+//                    'branch'     : String.valueOf(System.getenv('TRAVIS_BRANCH')),
+//                    'versioncode': String.valueOf(androidGitVersion.code())
+//            ]
+//        }
+//    }
+//    filesSpec {
+//        from('build/outputs/apk') {
+//            include '*.apk'
+//            exclude('*.asc')
+//            exclude('*-debug-unaligned.apk')
+//            exclude('*-release-unsigned.apk')
+//
+//        }
+//        into 'travis/' + System.getenv('TRAVIS_BRANCH') + "/"
+//        rename { String fileName -> new String('/DemoApp-' + versionName + ".apk")
+//        }
+//    }
+//}
 
 dependencies {
     implementation project(':bluesnap-android')
@@ -137,5 +136,6 @@ else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && 
 
 }
 else {
-    throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+    print('------------------- NO API CREDENTIALS - DEMO API CALLS WILL FAIL --------------------')
+    //throw new GradleException("Please make sure your API Credentials are in local.gradle ")
 }

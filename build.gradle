@@ -9,7 +9,8 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -27,13 +28,22 @@ allprojects {
             name 'Google'
         }
         jcenter()
+
+        maven {
+            url  "https://cardinalcommerceprod.jfrog.io/artifactory/android"
+            credentials {
+                username 'bluesnap_sdk_users'
+                // This is here by design:
+                password 'AKCp8jQnUytDaavAPeaX5SfvRP8e6PUsrmh8cyp1Be5wBpBdDKhLRmaaKiKj3pnFwu9mwzv2n' // public password.. not a secret.
+            }
+        }
     }
 
     ext {
-        compileSdkVersion = 29
+        compileSdkVersion = 30
         buildToolsVersion = '29.0.2'
-        minSdkVersion = 21
-        targetSdkVersion = 29
+        minSdkVersion = 19
+        targetSdkVersion = 30
     }
 
 }
