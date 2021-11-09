@@ -1,7 +1,5 @@
 plugins {
     id 'com.gladed.androidgitversion' version '0.4.9'
-    id "com.jfrog.bintray" version "1.6"
-    id "com.github.dcendents.android-maven" version "1.4.1"
 }
 
 apply plugin: 'com.android.library'
@@ -47,7 +45,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}"
+            buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
         }
+        debug {
+            buildConfigField 'int', 'VERSION_CODE', "${defaultConfig.versionCode}"
+            buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
+        }
+
     }
 
     lintOptions {
@@ -69,7 +74,7 @@ configurations {
 }
 
 /**
- * BuildConfig credentials
+ * BuildConfig credentials for integration tests
  */
 def sdkUserEnv=System.getenv('BS_API_USER')
 def sdkPasswordEnv=System.getenv('BS_API_PASSWORD')
@@ -88,21 +93,27 @@ else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && 
                 buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
                 buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
                 buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"" + sdkPaypalPassword + "\""
-            }}}
+
+            }
+
+        }
+    }
 }
 else {
-    throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+    print('--------------------- Missing API credentials for integration tests --------------')
+    //throw new GradleException("Please make sure your API Credentials are in local.gradle ")
+    //throw new GradleException("Please make sure your API Credentials are in local.gradle ")
 }
 
 
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+
     // Cardinal Required libraries
-    implementation (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
+    //implementation (files('libs/cardinalmobilesdk-2.1.4-1.aar'))
+    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.1.4-1'
+
     implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '7.0.1'
-    //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
-
-
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -175,72 +186,72 @@ String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv
 def siteUrl = 'https://github.com/bluesnap/bluesnap-android-int'
 def gitUrl = 'https://github.com/bluesnap/bluesnap-android-int.git'
 version = androidGitVersion.name()
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_APIKEY')
-    configurations = ['archives'] //When uploading configuration files
-    pkg {
-        repo = 'com.bluesnap'
-        group = 'com.bluesnap'
-        name = 'bluesnap-android'
-        userOrg = 'bluesnap'
-        desc = 'BlueSnap Android SDK Demo App'
-        licenses = ['MIT']
-        vcsUrl = gitUrl
-        publicDownloadNumbers = false
-        labels = ['aar', 'android']
-        version {
-            name = androidGitVersion.name()
-            released = new Date()
-            vcsTag = String.valueOf(System.getenv('TRAVIS_TAG'))
-            attributes = [
-                    'test'       : String.valueOf(System.getenv('TRAVIS_TEST_RESULT')),
-                    'commit'     : String.valueOf(System.getenv('TRAVIS_COMMIT')),
-                    'jobnumber'  : String.valueOf(System.getenv('TRAVIS_JOB_NUMBER')),
-                    'branch'     : String.valueOf(System.getenv('TRAVIS_BRANCH')),
-                    'versioncode': String.valueOf(androidGitVersion.code())
-            ]
-        }
-
-    }
-}
-
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                packaging 'aar'
-                name 'Bluesnap Android SDK'
-                groupId 'com.bluesnap'
-                url siteUrl
-                licenses {
-                    license {
-                        name 'MIT'
-                        url 'https://opensource.org/licenses/MIT'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'snpori'
-                        name 'snpori'
-                        email 'oribsnap@gmail.com'
-                    }
-                    developer {
-                        id 'royb'
-                        name 'royb'
-                        email 'roy.biber@bluesnap.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-                }
-            }
-        }
-    }
-}
-
-
-
+//
+//bintray {
+//    user = System.getenv('BINTRAY_USER')
+//    key = System.getenv('BINTRAY_APIKEY')
+//    configurations = ['archives'] //When uploading configuration files
+//    pkg {
+//        repo = 'com.bluesnap'
+//        group = 'com.bluesnap'
+//        name = 'bluesnap-android'
+//        userOrg = 'bluesnap'
+//        desc = 'BlueSnap Android SDK Demo App'
+//        licenses = ['MIT']
+//        vcsUrl = gitUrl
+//        publicDownloadNumbers = false
+//        labels = ['aar', 'android']
+//        version {
+//            name = androidGitVersion.name()
+//            released = new Date()
+//            vcsTag = String.valueOf(System.getenv('TRAVIS_TAG'))
+//            attributes = [
+//                    'test'       : String.valueOf(System.getenv('TRAVIS_TEST_RESULT')),
+//                    'commit'     : String.valueOf(System.getenv('TRAVIS_COMMIT')),
+//                    'jobnumber'  : String.valueOf(System.getenv('TRAVIS_JOB_NUMBER')),
+//                    'branch'     : String.valueOf(System.getenv('TRAVIS_BRANCH')),
+//                    'versioncode': String.valueOf(androidGitVersion.code())
+//            ]
+//        }
+//
+//    }
+//}
+//
+//install {
+//    repositories.mavenInstaller {
+//        pom {
+//            project {
+//                packaging 'aar'
+//                name 'Bluesnap Android SDK'
+//                groupId 'com.bluesnap'
+//                url siteUrl
+//                licenses {
+//                    license {
+//                        name 'MIT'
+//                        url 'https://opensource.org/licenses/MIT'
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id 'snpori'
+//                        name 'snpori'
+//                        email 'oribsnap@gmail.com'
+//                    }
+//                    developer {
+//                        id 'royb'
+//                        name 'royb'
+//                        email 'roy.biber@bluesnap.com'
+//                    }
+//                }
+//                scm {
+//                    connection gitUrl
+//                    developerConnection gitUrl
+//                    url siteUrl
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//
+//

@@ -58,7 +58,7 @@ public class BSTokenizeDetailsJsonFactory {
             putJSONifNotNull(postData, CVV, creditCard.getCvc());
             putJSONifNotNull(postData, EXPDATE, creditCard.getExpirationDate());
         } else {
-            putJSONifNotNull(postData, CARDTYPE, creditCard.getCardType());
+            putJSONifNotNull(postData, CARDTYPE, creditCard.getCardType().toUpperCase());
             putJSONifNotNull(postData, LAST4DIGITS, creditCard.getCardLastFourDigits());
 
         }
