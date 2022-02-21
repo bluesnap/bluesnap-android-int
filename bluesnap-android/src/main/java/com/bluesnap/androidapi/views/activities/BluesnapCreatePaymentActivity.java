@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
@@ -26,6 +27,8 @@ public class BluesnapCreatePaymentActivity extends BluesnapCheckoutActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+
 
         if (savedInstanceState != null && BlueSnapService.getInstance().getSdkRequest() == null) {
             Log.e(TAG, "savedInstanceState missing");

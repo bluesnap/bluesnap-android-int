@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.*;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.CountryListObject;
@@ -26,6 +27,8 @@ public class CountryActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.bluesnap_country_selector);
 
         final ImageButton backButton = findViewById(R.id.back_button);

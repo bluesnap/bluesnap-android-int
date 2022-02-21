@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.*;
 import com.bluesnap.androidapi.R;
 import com.bluesnap.androidapi.models.StateListObject;
@@ -30,6 +31,8 @@ public class StateActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.bluesnap_state_selector);
 
         final ImageButton backButton = findViewById(R.id.back_button);
