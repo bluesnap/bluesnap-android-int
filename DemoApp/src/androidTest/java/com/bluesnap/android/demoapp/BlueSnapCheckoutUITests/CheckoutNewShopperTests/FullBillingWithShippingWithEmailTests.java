@@ -3,6 +3,7 @@ package com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutNewShopperT
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import androidx.test.filters.FlakyTest;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.ContactInfoTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardLineTesterCommon;
 import com.bluesnap.android.demoapp.BlueSnapCheckoutUITests.CheckoutCommonTesters.CreditCardVisibilityTesterCommon;
@@ -54,6 +55,7 @@ public class FullBillingWithShippingWithEmailTests extends CheckoutEspressoBased
     }
 
     @Test
+    @FlakyTest
     public void full_billing_with_shipping_with_email_test() throws IOException {
         cc_line_fields_visibility_validation();
         cc_line_error_messages_not_displayed_validation();
