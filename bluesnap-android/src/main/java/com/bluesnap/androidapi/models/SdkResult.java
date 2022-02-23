@@ -143,7 +143,6 @@ public class SdkResult implements Parcelable {
     @Override
     public String toString() {
         String s = "SdkResult{" +
-                ", cardType='" + getCardType() + '\'' +
                 ", chosenPaymentMethodType=" + getChosenPaymentMethodType() + '\'' +
                 ", result=" + getResult() + '\'' +
                 ", kountSessionId=" + kountSessionId + '\'' +
@@ -152,7 +151,8 @@ public class SdkResult implements Parcelable {
         if (null != amount)
             s += ", amount=" + getAmount() + '\'' +
                     ", currencyNameCode='" + getCurrencyNameCode() + '\'' +
-                    ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'' ;
+                    ", paypalInvoiceId=" + getPaypalInvoiceId() + '\'';
+
         s += '}';
         return s;
     }
