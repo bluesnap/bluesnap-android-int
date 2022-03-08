@@ -162,7 +162,6 @@ public class BlueSnapService {
         // after expired token is replaced - placing new token in payment result
         if (null != sdkResult)
             sdkResult.setToken(merchantToken);
-        Log.d(TAG, "Service change with token" + merchantToken.substring(merchantToken.length() - 5));
 
     }
 

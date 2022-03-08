@@ -256,14 +256,15 @@ public class CardTest extends TestCase {
         assertFalse(BlueSnapValidator.creditCardFullValidation(card));
 
         card.setExpirationMonth(0);
-        card.setExpirationYear(25);
+        card.setExpirationYear(29);
         assertFalse("0 month is invalid", BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
         assertFalse(BlueSnapValidator.creditCardFullValidation(card));
 
         card.setExpirationMonth(1);
-        card.setExpirationYear(22);
-        assertTrue("have we past the year 2022? ", BlueSnapValidator.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
+        card.setExpirationYear(29);
+        assertTrue("have we past the year 2030? ", BlueSnapValidator.isDateInFuture(card.getExpirationMonth(), card.getExpirationYear()));
         assertTrue(BlueSnapValidator.creditCardExpiryDateValidation(card.getExpirationYear(), card.getExpirationMonth()));
+        card.toString();
     }
 
     @Test

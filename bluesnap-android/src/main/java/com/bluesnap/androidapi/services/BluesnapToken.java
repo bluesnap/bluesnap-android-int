@@ -54,7 +54,7 @@ public class BluesnapToken {
         return "BluesnapToken{" +
                 "url='" + url + '\'' +
                 ",  production: '" + Boolean.toString(production) + '\'' +
-                ",  merchantToken: '" + merchantToken.substring(10,3) + '\'' +
+                ",  merchantToken: '" + merchantToken.substring(10) + '\'' +
                 '}';
     }
 }

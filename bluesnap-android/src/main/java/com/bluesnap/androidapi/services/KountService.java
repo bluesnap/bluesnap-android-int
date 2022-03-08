@@ -58,13 +58,11 @@ public class KountService {
                             @Override
                             public void completed(String sessionID) {
                                 Log.d(TAG, "Kount DataCollector completed");
-                                Log.d(TAG, "Data context: " + context);
                             }
 
                             @Override
                             public void failed(String sessionID, final DataCollector.Error error) {
                                 Log.e(TAG, "Kount DataCollector failed: " + error);
-                                Log.d(TAG, "Data context: " + context);
                             }
                         });
                     }

@@ -17,7 +17,7 @@ import static com.bluesnap.androidapi.utils.JsonParser.putJSONifNotNull;
 
 public class CreditCard extends BSModel {
     private static final String SECURITY_CODE = "securityCode";
-    private static final String CARD_NUMBER = "cardNumber";
+    private  final String CARD_NUMBER = "cardNumber";
 
     private static final String CARD_LAST_FOUR_DIGITS = "cardLastFourDigits";
     private static final String EXPIRATION_MONTH = "expirationMonth";
@@ -343,5 +343,10 @@ public class CreditCard extends BSModel {
         putJSONifNotNull(jsonObject, CARD_TYPE, getCardType());
         putJSONifNotNull(jsonObject, CARD_SUB_TYPE, getCardSubType());
         return jsonObject;
+    }
+
+    @Override
+    public String toString() {
+        return "CreditCard{}";
     }
 }

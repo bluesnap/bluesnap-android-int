@@ -362,7 +362,6 @@ public class CreditCardActivity extends AppCompatActivity {
             resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_SHIPPING_DETAILS, shopper.getShippingContactInfo());
         resultIntent.putExtra(BluesnapCheckoutActivity.EXTRA_BILLING_DETAILS, shopper.getNewCreditCardInfo().getBillingContactInfo());
 
-        Log.d(TAG, "Testing if card requires server tokenization:" + shopper.getNewCreditCardInfo().getCreditCard().toString());
         try {
             if (sdkRequest instanceof SdkRequestShopperRequirements) {
                 setResult(RESULT_OK);
@@ -422,7 +421,7 @@ public class CreditCardActivity extends AppCompatActivity {
                                         } catch (UnsupportedEncodingException e) {
                                             Log.e(TAG, "Unsupported Encoding Exception", e);
                                         } catch (JSONException e) {
-                                            Log.e(TAG, "json parsing exception", e);
+                                            Log.e(TAG, "json parsing exception");
                                         }
                                     }
                                 });
