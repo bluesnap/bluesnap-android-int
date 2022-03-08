@@ -166,7 +166,6 @@ public class WebViewActivity extends Activity {
 
         @Override
         public void onPageFinished(final WebView view, final String url) {
-            Log.d(TAG, "webview loaded " + url);
             if (url.startsWith(Constants.getPaypalProceedUrl())) {
                 procceedURL = url;
                 blueSnapService.clearPayPalToken();

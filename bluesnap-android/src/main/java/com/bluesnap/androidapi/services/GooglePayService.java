@@ -86,7 +86,6 @@ public class GooglePayService {
         try {
             String encodedToken = GooglePayService.getInstance().createBlsTokenFromGooglePayPaymentData(paymentData);
             Log.d(TAG, "paymentData encoded as Token for BlueSnap");
-            Log.d(TAG, encodedToken);
 
             sdkResult = BlueSnapService.getInstance().getSdkResult();
             sdkResult.setChosenPaymentMethodType(SupportedPaymentMethods.GOOGLE_PAY);
