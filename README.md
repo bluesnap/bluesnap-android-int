@@ -1,7 +1,7 @@
 ## bluesnap-android
 
-[![Build Status-Master](https://travis-ci.org/bluesnap/bluesnap-android-int.svg?branch=master)](https://travis-ci.org/bluesnap/bluesnap-android-int)
-[![Build Status-Develop](https://travis-ci.org/bluesnap/bluesnap-android-int.svg?branch=develop)](https://travis-ci.org/bluesnap/bluesnap-android-int)
+[![](https://jitpack.io/v/bluesnap/bluesnap-android-int.svg)](https://jitpack.io/#bluesnap/bluesnap-android-int)
+
 
 # About
 BlueSnap's Android SDK enables you to easily accept credit card, Google Pay and PayPal payments directly from your Android app, and then process payments from your server using the Payment API. When you use this library, BlueSnap handles most of the PCI compliance burden for you, as the shopper's payment data is tokenized and sent directly to BlueSnap's servers.
