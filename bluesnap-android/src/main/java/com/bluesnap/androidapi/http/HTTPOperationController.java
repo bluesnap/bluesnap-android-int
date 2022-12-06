@@ -229,7 +229,7 @@ public class HTTPOperationController {
             URL url = new URL(urlString);
             if (isHTTPSURL(urlString)) {
                 httpURLConnection = (HttpsURLConnection) url.openConnection();
-            } else {
+            } else { //TODO: remove support for HTTP connections
                 Log.e(TAG, "Creating non https connection");
                 httpURLConnection = (HttpURLConnection) url.openConnection();
             }

@@ -162,6 +162,7 @@ public class WebViewActivity extends Activity {
 
         WebClientProgressBar(ProgressBar progressBar) {
             this.progressBar = progressBar;
+
         }
 
         @Override
