@@ -52,6 +52,8 @@
                 android:inputType="numberDecimal"
                 android:maxLength="@integer/ccn_max_length"
                 android:nextFocusDown="@+id/expDateEditText"
+                android:layoutDirection="ltr"
+                android:textDirection="ltr"
                 android:textSize="@dimen/contact_info_text_size" />
 
             <ImageButton
