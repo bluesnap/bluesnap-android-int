@@ -21,7 +21,6 @@ import com.cardinalcommerce.cardinalmobilesdk.models.CardinalActionCode;
 import com.cardinalcommerce.cardinalmobilesdk.models.CardinalConfigurationParameters;
 import com.cardinalcommerce.cardinalmobilesdk.models.ValidateResponse;
 import com.cardinalcommerce.cardinalmobilesdk.services.CardinalInitService;
-import com.cardinalcommerce.cardinalmobilesdk.services.CardinalProcessBinService;
 import com.cardinalcommerce.cardinalmobilesdk.services.CardinalValidateReceiver;
 import com.cardinalcommerce.shared.models.enums.DirectoryServerID;
 
@@ -98,7 +97,7 @@ public class CardinalManager  {
             cardinalConfigurationParameters.setEnvironment(CardinalEnvironment.STAGING);
         }
 
-        cardinalConfigurationParameters.setTimeout(8000);
+//        cardinalConfigurationParameters.setTimeout(8000);
         JSONArray rType = new JSONArray();
         rType.put(CardinalRenderType.OTP);
         rType.put(CardinalRenderType.SINGLE_SELECT);
@@ -167,7 +166,7 @@ public class CardinalManager  {
                 setThreeDSAuthResult(ThreeDSManagerResponse.CARD_NOT_SUPPORTED.name());
                 BlueSnapLocalBroadcastManager.sendMessage(activity, THREE_DS_AUTH_DONE_EVENT, TAG);
             } else { // call process
-                process(authResponse, activity, creditCard);
+                process(authResponse, activity);
             }
         } else { // populate Enrollment Status as 3DS result
             setThreeDSAuthResult(authResponse.getEnrollmentStatus());
@@ -187,25 +186,25 @@ public class CardinalManager  {
      * @param activity - current displayed activity
      * @param creditCard - shopper's credit card
      */
-    private void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
-
-        Handler refresh = new Handler(Looper.getMainLooper());
-        refresh.post(new Runnable() {
-            public void run() {
-
-                if (creditCard.getIsNewCreditCard()) { // new card mode - passing the cc number to cardinal for processing
-                    Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
-                        @Override
-                        public void onComplete() {
-                            process(authResponse, activity);
-                        }
-                    });
-                } else { // vaulted card - moving straight to cardinal challenge
-                    process(authResponse, activity);
-                }
-            }
-        });
-    }
+//    private void process(@NonNull final BS3DSAuthResponse authResponse, Activity activity, final CreditCard creditCard) {
+//
+//        Handler refresh = new Handler(Looper.getMainLooper());
+//        refresh.post(new Runnable() {
+//            public void run() {
+//
+//                if (creditCard.getIsNewCreditCard()) { // new card mode - passing the cc number to cardinal for processing
+//                    Cardinal.getInstance().processBin(creditCard.getNumber(), new CardinalProcessBinService() {
+//                        @Override
+//                        public void onComplete() {
+//                            process(authResponse, activity);
+//                        }
+//                    });
+//                } else { // vaulted card - moving straight to cardinal challenge
+//                    process(authResponse, activity);
+//                }
+//            }
+//        });
+//    }
 
     /**
      * Call cardinal cca_continue,
@@ -221,7 +220,7 @@ public class CardinalManager  {
             public void onValidated(Context context, ValidateResponse validateResponse, String s) {
                 Log.d(TAG, "Cardinal validated callback");
 
-                if (validateResponse.actionCode.equals(CardinalActionCode.NOACTION) || validateResponse.actionCode.equals(CardinalActionCode.SUCCESS)) {
+                if (validateResponse.getActionCode().equals(CardinalActionCode.NOACTION) || validateResponse.getActionCode().equals(CardinalActionCode.SUCCESS)) {
                     try {
                         processCardinalResult(s);
                     } catch (BSProcess3DSResultRequestException | JSONException e) {
@@ -230,9 +229,9 @@ public class CardinalManager  {
                         return;
                     }
 
-                } else if (validateResponse.actionCode.equals(CardinalActionCode.FAILURE)) {
+                } else if (validateResponse.getActionCode().equals(CardinalActionCode.FAILURE)) {
                     setThreeDSAuthResult(ThreeDSManagerResponse.AUTHENTICATION_FAILED.name());
-                } else if (validateResponse.actionCode.equals(CardinalActionCode.ERROR)) {
+                } else if (validateResponse.getActionCode().equals(CardinalActionCode.ERROR)) {
                     setThreeDSAuthResult(ThreeDSManagerResponse.THREE_DS_ERROR.name());
                 } else { // cancel
                     setThreeDSAuthResult(ThreeDSManagerResponse.AUTHENTICATION_CANCELED.name());
