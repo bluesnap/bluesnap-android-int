@@ -28,8 +28,8 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     lintOptions {
         quiet false
@@ -40,7 +40,7 @@ android {
 
 
 }
-String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
+//String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
 //
 //bintray {
 //    user = System.getenv('BINTRAY_USER')
@@ -85,7 +85,7 @@ String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv
 dependencies {
     implementation project(':bluesnap-android')
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.1.0'
 
     // Added for Google-Pay
