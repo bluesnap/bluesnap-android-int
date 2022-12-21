@@ -120,8 +120,7 @@ if (file("../local.gradle").exists()) {
     android {
         buildTypes {
 
-            debug
-                    {
+            buildTypes.all  {
                         buildConfigField "String", "BS_API_USER", "\"" + sdkUserEnv + "\""
                         buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
                         buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
