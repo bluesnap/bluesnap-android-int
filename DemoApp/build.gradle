@@ -117,19 +117,23 @@ def sdkPaypalEmail=System.getenv('BS_PAYPAL_EMAIL')
 def sdkPaypalPassword=System.getenv('BS_PAYPAL_PASSWORD')
 
 if (file("../local.gradle").exists()) {
+    print('------------------- Adding buildconfig credentilas form local.gradle --------------------')
     apply from: "../local.gradle"
-}
-
-else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && !sdkPasswordEnv.isEmpty()) {
+} else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && !sdkPasswordEnv.isEmpty()) {
+    print('------------------- Adding buildconfig credentilas form env  --------------------')
     android {
-        buildTypes.all {
+        buildTypes {
 
-                buildConfigField "String", "BS_API_USER", "\"" + sdkUserEnv + "\""
-                buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
-                buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
-                buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"" + sdkPaypalPassword + "\""
-            }}
+            debug
+                    {
+                        buildConfigField "String", "BS_API_USER", "\"" + sdkUserEnv + "\""
+                        buildConfigField "String", "BS_API_PASSWORD", "\"" + sdkPasswordEnv + "\""
+                        buildConfigField "String", "BS_PAYPAL_EMAIL", "\"" + sdkPaypalEmail + "\""
+                        buildConfigField "String", "BS_PAYPAL_PASSWORD", "\"" + sdkPaypalPassword + "\""
 
+                    }
+        }
+    }
 }
 else {
     print('------------------- NO API CREDENTIALS - DEMO API CALLS WILL FAIL --------------------')

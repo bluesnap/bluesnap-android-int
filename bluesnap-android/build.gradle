@@ -117,9 +117,7 @@ def sdkPaypalPassword=System.getenv('BS_PAYPAL_PASSWORD')
 
 if (file("../local.gradle").exists()) {
     apply from: "../local.gradle"
-}
-
-else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && !sdkPasswordEnv.isEmpty()) {
+} else if (sdkUserEnv!=null && !sdkUserEnv.isEmpty() && sdkPasswordEnv != null && !sdkPasswordEnv.isEmpty()) {
     android {
         buildTypes {
             debug {
