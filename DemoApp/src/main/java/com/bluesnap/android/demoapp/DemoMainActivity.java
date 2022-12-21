@@ -58,6 +58,8 @@ import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_PASS;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_TOKEN_CREATION;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_URL;
 import static com.bluesnap.android.demoapp.DemoToken.SANDBOX_USER;
+import static com.bluesnap.androidapi.BuildConfig.VERSION_CODE;
+import static com.bluesnap.androidapi.BuildConfig.VERSION_NAME;
 import static java.net.HttpURLConnection.HTTP_CREATED;
 
 public class DemoMainActivity extends AppCompatActivity {
@@ -184,8 +186,8 @@ public class DemoMainActivity extends AppCompatActivity {
     private void showDemoAppVersion() {
         TextView demoVersionTextView = findViewById(R.id.demoVersionTextView);
         try {
-            int versionCode = BuildConfig.VERSION_CODE;
-            String versionName = BuildConfig.VERSION_NAME;
+            int versionCode =  VERSION_CODE;
+            String versionName = VERSION_NAME;
             demoVersionTextView.setText(String.format(Locale.ENGLISH, "V:%s[%d]", versionName, versionCode));
         } catch (Exception e) {
             Log.e(TAG, "cannot extract version");

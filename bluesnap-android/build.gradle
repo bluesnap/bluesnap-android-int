@@ -1,37 +1,38 @@
-plugins {
-    id 'com.gladed.androidgitversion' version '0.4.9'
-}
+//plugins {
+//    id 'com.gladed.androidgitversion' version '0.4.9'
+//}
 
 apply plugin: 'com.android.library'
 apply plugin: 'checkstyle'
 
-//def getVersionCode = { ->
-//    try {
-//        def stdout = new ByteArrayOutputStream()
-//        exec {
-//            commandLine 'git', 'rev-list', '--first-parent', '--count', 'master'
-//            standardOutput = stdout
-//        }
-//        return Integer.parseInt(stdout.toString().trim())
-//    }
-//    catch (ignored) {
-//        return -1;
-//    }
-//}
-//
-//def getVersionName = { ->
-//    try {
-//        def stdout = new ByteArrayOutputStream()
-//        exec {
-//            commandLine 'git', 'describe', '--tags', '--dirty'
-//            standardOutput = stdout
-//        }
-//        return stdout.toString().trim()
-//    }
-//    catch (ignored) {
-//        return null;
-//    }
-//}
+def getVersionCode = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--first-parent', '--count', 'master'
+            standardOutput = stdout
+        }
+        return Integer.parseInt(stdout.toString().trim())
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
+
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--dirty'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
 //
 //android {
 //    defaultConfig {
@@ -77,14 +78,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // versionName androidGitVersion.name()
-            //        versionCode androidGitVersion.code()
-            buildConfigField 'int', 'VERSION_CODE', "${androidGitVersion.code()}"
-            buildConfigField 'String', 'VERSION_NAME', "\"${androidGitVersion.name()}\""
+
+            buildConfigField 'int', 'VERSION_CODE', "${getVersionCode()}"
+            buildConfigField 'String', 'VERSION_NAME', "\"${getVersionName()}\""
         }
         debug {
-            buildConfigField 'int', 'VERSION_CODE', "${androidGitVersion.code()}"
-            buildConfigField 'String', 'VERSION_NAME', "\"${androidGitVersion.name()}\""
+            buildConfigField 'int', 'VERSION_CODE', "${getVersionCode()}"
+            buildConfigField 'String', 'VERSION_NAME', "\"${getVersionName()}\""
         }
 
     }
@@ -197,24 +197,21 @@ task javadocsJar(type: Jar, dependsOn: javadocs) {
     classifier = 'javadoc'
     from javadocs.destinationDir
 }
-//task sourcesJar(type: Jar) {
-//    classifier = 'sources'
-//    from android.sourceSets.main.java.srcDirs
-//}
+
 
 artifacts {
     //archives javadocsJar
     //archives sourcesJar
 }
 
-androidGitVersion {
-    hideBranches = ['develop', 'master', 'review']
-}
+//androidGitVersion {
+//    hideBranches = ['develop', 'master', 'review']
+//}
 
 /**
  * CI/CD artifact versioning
  */
-String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
-def siteUrl = 'https://github.com/bluesnap/bluesnap-android-int'
-def gitUrl = 'https://github.com/bluesnap/bluesnap-android-int.git'
-version = androidGitVersion.name()
+//String versionName = "v-" + System.getenv('TRAVIS_BRANCH') + "-" + System.getenv('TRAVIS_TAG') + "-" + System.getenv('TRAVIS_JOB_NUMBER')
+//def siteUrl = 'https://github.com/bluesnap/bluesnap-android-int'
+//def gitUrl = 'https://github.com/bluesnap/bluesnap-android-int.git'
+version = getVersionName()
