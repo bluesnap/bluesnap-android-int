@@ -276,12 +276,12 @@ public class DemoMainActivity extends AppCompatActivity {
         ArrayAdapter<String> merchantStoreCurrencyAdapter = new ArrayAdapter<>(this, R.layout.spinner_view, quotesArray.clone());
         ratesSpinner.setAdapter(priceCurrencyAdapter);
         merchantStoreCurrencySpinner.setAdapter(merchantStoreCurrencyAdapter);
-        int currentposition = 0;
+        int currentposition = -1;
         for (String rate : quotesArray) {
+            currentposition++;
             if (rate.equals(currencyByLocale.getCurrencyCode())) {
                 break;
             }
-            currentposition++;
         }
         ratesSpinner.setSelection(currentposition);
         merchantStoreCurrencySpinner.setSelection(currentposition);

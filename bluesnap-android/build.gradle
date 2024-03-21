@@ -109,7 +109,7 @@ dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
     // Cardinal Required libraries
-    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.2.7-2'
+    implementation 'org.jfrog.cardinalcommerce.gradle:cardinalmobilesdk:2.2.7-5'
 
     implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '7.0.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
